@@ -58,7 +58,7 @@ function rpc(req, ok, fail) {
   if (!API) { fail({ message: 'Open this page from your CupSales link.' }); return; }
   var done = false, timer = setTimeout(function () { end(null, { message: 'no answer after 90 seconds', offline: true }); }, 90000);
   function end(x, e) { if (done) return; done = true; clearTimeout(timer); if (e) fail(e); else ok(x); }
-  function parse(status, text) { if (status !== 200) return end(null, { message: 'System problem (HTTP ' + status + ') – tell Joshua' }); var x; try { x = JSON.parse(text); } catch (err) { return end(null, { message: 'System problem (Google did not answer properly) – tell Joshua' }); } end(x); }
+  function parse(status, text) { if (status !== 200) return end(null, { message: 'System problem (HTTP ' + status + ') – tell the manager' }); var x; try { x = JSON.parse(text); } catch (err) { return end(null, { message: 'System problem (Google did not answer properly) – tell the manager' }); } end(x); }
   if (window.fetch) {
     fetch(API, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(req), redirect: 'follow', credentials: 'omit', cache: 'no-store' })
       .then(function (r) { return r.text().then(function (t) { parse(r.status, t); }); }, function (e) { end(null, { message: 'no signal (' + (e && e.message || e) + ')', offline: true }); });
@@ -93,11 +93,11 @@ function call(op, data, sid, ok, fail) {
   rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: op, data: data || {}, sid: sid || '' }, function (r) {
     clearTimeout(slow);
     try {
-      if (!r) { var m0 = 'The system sent back nothing. Close and open the link again. If it happens again, tell Joshua.'; fail ? fail(m0) : show(m0, 'err'); return; }
+      if (!r) { var m0 = 'The system sent back nothing. Close and open the link again. If it happens again, tell the manager.'; fail ? fail(m0) : show(m0, 'err'); return; }
       if (r.auth) { authScreen(r); return; }
       if (r.error) { fail ? fail(r.error) : show(r.error, 'err'); return; }
       ok && ok(r);
-    } catch (x) { var m1 = 'The page had a problem showing this (' + (x && x.message || x) + '). Close and open the link again; tell Joshua if it repeats.'; if (fail) fail(m1); else $('main').innerHTML = '<div class="msg err">' + esc(m1) + '</div>'; }
+    } catch (x) { var m1 = 'The page had a problem showing this (' + (x && x.message || x) + '). Close and open the link again; tell the manager if it repeats.'; if (fail) fail(m1); else $('main').innerHTML = '<div class="msg err">' + esc(m1) + '</div>'; }
   }, function (e) { clearTimeout(slow); var m = 'No connection or the page timed out (' + (e && e.message || e || '') + '). ' + (op === 'init' ? 'Close and open the link again.' : 'Tap the button again – if it was already saved, nothing is saved twice.'); fail ? fail(m, e) : show(m, 'err'); });
 }
 function show(t, kind) { MSG = { t: t, k: kind || 'ok' }; render(); window.scrollTo(0, 0); }
@@ -111,7 +111,7 @@ function bgRefresh() { rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: 'refres
 // ---------------------------------------------------------------- sign-in
 function authScreen(r) {
   $('top').innerHTML = bar(); $('foot').innerHTML = '';
-  if (r.auth === 'bad' || r.auth === 'expired') { $('main').innerHTML = '<div class="pin"><h2>Link not valid</h2><p class="muted">' + (r.auth === 'expired' ? 'This helper link was for one day only.' : 'Ask Joshua for your personal CupSales link.') + '</p></div>'; return; }
+  if (r.auth === 'bad' || r.auth === 'expired') { $('main').innerHTML = '<div class="pin"><h2>Link not valid</h2><p class="muted">' + (r.auth === 'expired' ? 'This helper link was for one day only.' : 'Ask the manager for your personal CupSales link.') + '</p></div>'; return; }
   var set = r.auth === 'setpin';
   $('main').innerHTML = '<div class="pin"><h2>Hello ' + esc(r.name || '') + '</h2><p class="muted">' + (set ? 'Choose a 4-digit PIN. You need it when you open CupSales on a new phone.' : 'Enter your 4-digit PIN.') + '</p>' +
     (r.msg ? '<div class="msg err">' + esc(r.msg) + '</div>' : '') + '<input id="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="off">' +
@@ -302,7 +302,7 @@ function outcomeHtml(o) {
   return '<div class="ask">Delivered ' + esc(c.at.slice(5)) + ' ' + esc(c.time) + ': ' + c.delivered.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') +
     (c.returned.length ? ' · returned ' + c.returned.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') : '') + '<br>Value ' + ghs(c.value) + ' · paid <b>' + ghs(c.paid) + '</b> · ' +
     (c.owing > 0.004 ? '<b style="color:var(--red)">owing ' + ghs(c.owing) + '</b>' : '<b style="color:var(--green)">fully paid</b>') + (c.by ? ' · ' + esc(c.by) : '') +
-    (c.check === 'Disagrees' ? '<br><span class="pill red">You reported this as wrong – Joshua decides</span>' : '<br><button class="ghost" data-act="dispute" data-o="' + o.oid + '">Is this wrong? Tell Joshua</button>') + '</div>';
+    (c.decision ? '<br><span class="pill green">Manager decided: ' + esc(c.decision) + '</span>' : c.check === 'Disagrees' ? '<br><span class="pill red">You reported this as wrong – the manager decides</span>' : '<br><button class="ghost" data-act="dispute" data-o="' + o.oid + '">Is this wrong? Inform manager</button>') + '</div>';
 }
 function toEnterHtml() {
   if (!D.toEnter || !D.toEnter.length) return '';
@@ -314,11 +314,26 @@ ACT.dispute = function (b) {
   var note = prompt('What is wrong with Prince\'s record? (for example: she paid 460 cash, not credit)', ''); if (note === null) return; if (!String(note).trim()) { alert('Write what is wrong.'); return; }
   b.disabled = true; call('dispute', { oid: b.dataset.o, note: note }, 'dp-' + b.dataset.o, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); });
 };
+var DEC = {};
+function decideHtml(x) {
+  var st = DEC[x.eid] || (DEC[x.eid] = { choice: '', cash: '', holder: 'Prince', note: '' });
+  var h = '<div class="ask small">' + esc(x.dec.summary) + '<br><b>' + esc(x.dec.agent) + ' says:</b> ' + esc(x.dec.agentSays || '—') + '</div><div class="seg">' +
+    [['RIDER', 'Prince is right'], ['AGENT', esc(x.dec.agent) + ' is right'], ['OTHER', 'Something else']].map(function (c) { return '<button class="' + (st.choice === c[0] ? 'on' : '') + '" data-act="decch" data-e="' + x.eid + '" data-c="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
+  if (st.choice && st.choice !== 'RIDER') h += '<label>Cash she really paid for THIS order (GHS)</label><input inputmode="decimal" data-inp="deccash" data-e="' + x.eid + '" value="' + esc(st.cash) + '"><label>Who has that cash?</label><select data-chg="dechold" data-e="' + x.eid + '">' + ['Prince', x.dec.agent].map(function (p) { return '<option' + (st.holder === p ? ' selected' : '') + '>' + esc(p) + '</option>'; }).join('') + '</select>';
+  if (st.choice) h += '<label>Note (optional)</label><input data-inp="decnote" data-e="' + x.eid + '" value="' + esc(st.note) + '"><p><button class="main big" data-act="decsave" data-e="' + x.eid + '" data-d="' + x.dec.did + '">SAVE DECISION</button></p>';
+  return h;
+}
+ACT.decch = function (b) { DEC[b.dataset.e].choice = b.dataset.c; render(); };
+INP.deccash = function (el) { DEC[el.dataset.e].cash = el.value; }; INP.decnote = function (el) { DEC[el.dataset.e].note = el.value; }; CHG.dechold = function (el) { DEC[el.dataset.e].holder = el.value; };
+ACT.decsave = function (b) {
+  var st = DEC[b.dataset.e]; if (st.choice !== 'RIDER' && !(String(st.cash).trim() !== '' && num(st.cash) >= 0)) { alert('Type the cash she really paid for this order.'); return; }
+  b.disabled = true; call('decide', { did: b.dataset.d, choice: st.choice, cash: st.choice === 'RIDER' ? '' : num(st.cash), holder: st.holder, note: st.note }, 'dc-' + b.dataset.d, function (r) { delete DEC[b.dataset.e]; load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); });
+};
 function needsHtml() {
   if (!D.needs || !D.needs.length) return '';
   return '<div class="card" style="border-color:var(--red)"><h3>Needs you (' + D.needs.length + ')</h3>' + D.needs.map(function (x) {
     return '<div style="border-top:1px solid var(--line);padding:8px 0"><span class="pill ' + (x.sev === 'High' ? 'red' : 'amber') + '">' + esc(x.type) + '</span> <span class="small muted">' + esc(x.at) + (x.vendor ? ' · ' + esc(x.vendor) : '') + '</span><div class="small" style="margin:4px 0">' + esc(x.text) + '</div><div class="row">' +
-      (x.link ? '<a href="' + esc(x.link) + '" target="_blank"><button class="main">DECIDE</button></a>' : '') + '<button data-act="resolve" data-e="' + x.eid + '">DONE</button></div></div>';
+      (x.dec ? '' : '<button data-act="resolve" data-e="' + x.eid + '">DONE</button>') + '</div>' + (x.dec ? decideHtml(x) : '') + '</div>';
   }).join('') + '</div>';
 }
 ACT.resolve = function (b) { var note = prompt('What was done? (short)', 'Checked'); if (note === null) return; b.disabled = true; call('resolve', { eid: b.dataset.e, note: note }, 'rs-' + b.dataset.e, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); }); };
@@ -346,10 +361,10 @@ function pgToday() {
   return h;
 }
 function cashTable(rows) {
-  return '<table>' + rows.map(function (c) { return '<tr><td>' + esc(c.money) + '</td><td class="right"><b>' + ghs(c.free) + '</b>' + (c.pending > 0 ? '<div class="small muted">+ ' + ghs(c.pending) + ' waiting for confirmation</div>' : '') + '</td><td class="right">' + (c.route && c.free > 0.004 ? '<button data-act="handover" data-src="' + esc(c.src) + '" data-a="' + c.free + '" data-r="' + esc(c.route) + '">HAND OVER</button>' : (c.free > 0.004 ? '<span class="small muted">keep apart – ask Joshua</span>' : '')) + '</td></tr>'; }).join('') + '</table>';
+  return '<table>' + rows.map(function (c) { return '<tr><td>' + esc(c.money) + '</td><td class="right"><b>' + ghs(c.free) + '</b>' + (c.pending > 0 ? '<div class="small muted">+ ' + ghs(c.pending) + ' waiting for confirmation</div>' : '') + '</td><td class="right">' + (c.route && c.free > 0.004 ? '<button data-act="handover" data-src="' + esc(c.src) + '" data-a="' + c.free + '" data-r="' + esc(c.route) + '">HAND OVER</button>' : (c.free > 0.004 ? '<span class="small muted">keep apart – ask the manager</span>' : '')) + '</td></tr>'; }).join('') + '</table>';
 }
 ACT.handover = function (b) {
-  var to = /→ Frank/.test(b.dataset.r) ? 'Frank' : /→ Joshua/.test(b.dataset.r) ? 'Joshua' : 'the HR office logbook';
+  var to = /→ Frank/.test(b.dataset.r) ? 'Frank' : /→ Joshua/.test(b.dataset.r) ? 'the manager' : 'the HR office logbook';
   var amt = prompt('Hand over to ' + to + '. Amount (GHS):', b.dataset.a); if (amt === null) return; if (!(num(amt) > 0)) { alert('Type the amount, e.g. 620.'); return; }
   var lb = ''; if (to === 'the HR office logbook') { lb = prompt('HR logbook page or number where the office signed:', ''); if (lb === null) return; if (!String(lb).trim()) { alert('Write the logbook page or number.'); return; } }
   b.disabled = true; call('handover', { src: b.dataset.src, amount: num(amt), logbook: lb }, 'ho-' + b.dataset.src + '-' + num(amt) + '-' + b.dataset.a + '-' + D.today, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); });
@@ -433,7 +448,7 @@ function pgBook() {
 }
 function pgCash() {
   var B = D.book || { received: [] }; var tot = B.received.reduce(function (t, x) { return t + x.amount; }, 0);
-  return (confirmHtml() || '<div class="card"><p class="muted">No cash waiting for you to count.</p></div>') + '<div class="card"><h3>Received today: ' + ghs(tot) + '</h3><table>' + B.received.map(function (x) { return '<tr><td>' + esc(x.from) + (x.short ? ' <span class="pill red">short – Joshua told</span>' : '') + '</td><td class="right">' + ghs(x.amount) + '</td></tr>'; }).join('') + '</table></div>';
+  return (confirmHtml() || '<div class="card"><p class="muted">No cash waiting for you to count.</p></div>') + '<div class="card"><h3>Received today: ' + ghs(tot) + '</h3><table>' + B.received.map(function (x) { return '<tr><td>' + esc(x.from) + (x.short ? ' <span class="pill red">short – manager told</span>' : '') + '</td><td class="right">' + ghs(x.amount) + '</td></tr>'; }).join('') + '</table></div>';
 }
 function pgRToday() {
   if (!D.releasedToday.length) return '<p class="muted">Nothing released today yet.</p>';
@@ -503,6 +518,7 @@ function pgDone() {
   var tot = D.done.reduce(function (t, x) { return t + x.cash; }, 0);
   var h = '<div class="card"><h3>Cash taken today: ' + ghs(tot) + '</h3><p class="sub">Should match the cash from deliveries in your pocket.</p><table>' + D.done.map(function (x) { return '<tr><td>' + esc(x.time) + '</td><td><b>' + esc(x.vendor) + '</b>' + (x.n > 1 ? ' <span class="small muted">(' + x.n + ' orders)</span>' : '') + '<div class="small muted">' + esc(x.status) + ' · ' + esc(x.pay) + (x.by ? ' · ' + esc(x.by) : '') + '</div></td><td class="right">' + ghs(x.cash) + '</td></tr>'; }).join('') + '</table></div>';
   if (D.cash && D.cash.length) h += '<div class="card"><h3>Cash with me</h3><p class="sub">Omini money to Frank; Clement/Bernice money to the HR office logbook.</p>' + cashTable(D.cash) + '</div>';
+  if (D.decisions && D.decisions.length) h += '<div class="card"><h3>Manager decisions (last 7 days)</h3>' + D.decisions.map(function (x) { return '<div style="border-top:1px solid var(--line);padding:8px 0"><b>' + esc(x.vendor) + '</b> <span class="small muted">' + esc(x.at) + ' · agent ' + esc(x.agent) + '</span><div class="small">' + esc(x.decision) + '</div><div class="small">Now: paid ' + ghs(x.paid) + ' · owing ' + ghs(x.owing) + '</div></div>'; }).join('') + '</div>';
   return h;
 }
 var HSEL = {}, HNAME = '', HRES = null;
@@ -516,7 +532,7 @@ function pgHelpers() {
   return h + '<p><button class="main big" data-act="hmake">MAKE HELPER LINK</button></p></div>';
 }
 INP.hname = function (el) { HNAME = el.value; }; CHG.hsel = function (el) { HSEL[el.dataset.v] = el.checked; };
-ACT.hmake = function (b) { var v = Object.keys(HSEL).filter(function (k) { return HSEL[k]; }); if (!HNAME.trim() || !v.length) { alert('Write the name and tick at least one stop.'); return; } b.disabled = true; b.textContent = 'Making the link…'; call('helper', { name: HNAME, vids: v }, uid(), function (r) { if (!r || !r.url) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show('No link came back – try again. If it happens again, tell Joshua.', 'err'); return; } HRES = r; HSEL = {}; HNAME = ''; MSG = null; render(); window.scrollTo(0, 0); }, function (m) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show(m, 'err'); }); };
+ACT.hmake = function (b) { var v = Object.keys(HSEL).filter(function (k) { return HSEL[k]; }); if (!HNAME.trim() || !v.length) { alert('Write the name and tick at least one stop.'); return; } b.disabled = true; b.textContent = 'Making the link…'; call('helper', { name: HNAME, vids: v }, uid(), function (r) { if (!r || !r.url) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show('No link came back – try again. If it happens again, tell the manager.', 'err'); return; } HRES = r; HSEL = {}; HNAME = ''; MSG = null; render(); window.scrollTo(0, 0); }, function (m) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show(m, 'err'); }); };
 ACT.hnew = function () { HRES = null; render(); };
 ACT.hcopy = function () { var t = $('htext'); try { t.focus(); t.select(); document.execCommand('copy'); show('Copied – paste it to the helper.', 'ok'); } catch (e) { alert('Press and hold the message to copy it.'); } };
 load();
