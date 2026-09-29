@@ -82,7 +82,7 @@ function flush(after) {
       var d = draft(); r.problems.forEach(function (p) { var v = (x.data.vendors || []).filter(function (y) { return y.vid === p.vid; })[0]; if (v && !d.vendors.some(function (y) { return y.vid === v.vid; })) { var n = newV(); n.vid = v.vid; n.lines = v.lines; n.pay = v.pay; n.paid = v.paid ? String(v.paid) : ''; n.promised = v.promised ? String(v.promised) : ''; n.note = v.note || ''; n.replaces = v.replaces || ''; d.vendors = d.vendors.filter(function (y) { return y.vid; }).concat([n]); } }); saveDraft(d);
     }
     var m = r.error ? 'NOT SAVED: ' + r.error : (r.msg || (r.done ? 'Sent: ' + r.done.map(function (d) { return d.vendor; }).join(', ') + (r.problems && r.problems.length ? ' – NOT saved (back on your New order screen): ' + r.problems.map(function (p) { return p.msg; }).join(' ') : '') : 'sent'));
-    NOTES.push(x.label + ' – ' + m); flush(after);
+    if (!r.error) bgRefresh(); NOTES.push(x.label + ' – ' + m); flush(after);
   }, function () { FLUSHING = false; after && after(); });
 }
 var NOTES = [];
@@ -96,6 +96,7 @@ function call(op, data, sid, ok, fail) {
       if (!r) { var m0 = 'The system sent back nothing. Close and open the link again. If it happens again, tell the manager.'; fail ? fail(m0) : show(m0, 'err'); return; }
       if (r.auth) { authScreen(r); return; }
       if (r.error) { fail ? fail(r.error) : show(r.error, 'err'); return; }
+      if (op !== 'init') bgRefresh(); // emails, forms and views are updated in the background
       ok && ok(r);
     } catch (x) { var m1 = 'The page had a problem showing this (' + (x && x.message || x) + '). Close and open the link again; tell the manager if it repeats.'; if (fail) fail(m1); else $('main').innerHTML = '<div class="msg err">' + esc(m1) + '</div>'; }
   }, function (e) { clearTimeout(slow); var m = 'No connection or the page timed out (' + (e && e.message || e || '') + '). ' + (op === 'init' ? 'Close and open the link again.' : 'Tap the button again – if it was already saved, nothing is saved twice.'); fail ? fail(m, e) : show(m, 'err'); });
@@ -120,7 +121,7 @@ function authScreen(r) {
     var p = $('pin').value.trim(); if (!/^\d{4}$/.test(p)) { alert('The PIN is 4 numbers.'); return; }
     if (set && p !== $('pin2').value.trim()) { alert('The two PINs are not the same.'); return; }
     this.disabled = true;
-    rpc({ t: TOKEN, op: 'login', pin: p }, function (x) { if (x && x.session) { SESSION = x.session; ls(SKEY, x.session); $('main').innerHTML = '<p class="muted">Opening…</p>'; load(); } else authScreen(x || { auth: 'pin', msg: 'Try again.' }); }, function (e) { alert('No connection – try again. (' + (e && e.message || e || '') + ')'); authScreen(r); });
+    rpc({ t: TOKEN, op: 'login', pin: p }, function (x) { if (x && x.session) { SESSION = x.session; ls(SKEY, x.session); $('main').innerHTML = '<p class="muted">Opening…</p>'; load(goHash); } else authScreen(x || { auth: 'pin', msg: 'Try again.' }); }, function (e) { alert('No connection – try again. (' + (e && e.message || e || '') + ')'); authScreen(r); });
   };
   $('pin').focus();
 }
@@ -266,7 +267,7 @@ ACT.send = function (b) {
     if (keep.length) saveDraft({ sid: uid(), vendors: keep }); else ls(DKEY, null); // not-saved vendors stay on the screen
     var t = r.dup ? r.msg : 'Sent: ' + r.done.map(function (x) { return x.cancelled ? 'cancelled ' + x.vendor : x.vendor + ' (' + x.oid + ', ' + ghs(x.value) + ')'; }).join('; ') + '.';
     if (r.problems && r.problems.length) t += '\nNOT saved (still on your New order screen): ' + r.problems.map(function (p) { return p.msg; }).join(' ');
-    bgRefresh(); load(function () { show(t + '\nA summary is in your email. Frank sees the orders now.', r.problems && r.problems.length ? 'err' : 'ok'); });
+    load(function () { show(t + '\nA summary is in your email. Frank sees the orders now.', r.problems && r.problems.length ? 'err' : 'ok'); });
   }, function (m, e) { BUSY = false; $('over').innerHTML = ''; if (e && e.offline) { enqueue('orders', data, d.sid, data.vendors.length + ' order(s)'); ls(DKEY, null); show('No signal – the order(s) are saved on this phone. They are sent when you have signal and CupSales is open.', 'info'); return; } show(m, 'err'); });
 };
 // ---------------------------------------------------------------- agent: vendors and today
@@ -340,10 +341,17 @@ ACT.resolve = function (b) { var note = prompt('What was done? (short)', 'Checke
 ACT.entered = function (b) { var ids = [].slice.call(document.querySelectorAll('input[name=ent]:checked')).map(function (x) { return x.value; }); if (!ids.length) { alert('Tick the orders you have entered.'); return; } b.disabled = true; call('entered', { oids: ids }, uid(), function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); }); };
 function confirmHtml() {
   if (!D.toConfirm || !D.toConfirm.length) return '';
-  return '<div class="card"><h3>Cash handed to you – count it</h3>' + D.toConfirm.map(function (x) { return '<div class="row" style="margin:8px 0"><div class="grow"><b>' + ghs(x.amount) + '</b> from ' + esc(x.from) + '<div class="small muted">' + esc(x.money) + ' money · ' + esc(x.at) + '</div></div><button class="main" data-act="confirmC" data-h="' + x.hid + '" data-a="' + x.amount + '">CONFIRM</button></div>'; }).join('') + '</div>';
+  return '<div class="card"><h3>Cash handed to you – count it</h3><p class="sub">Each amount shows the payments it is made of. Check the list with the person, count the cash, then CONFIRM.</p>' + D.toConfirm.map(function (x) {
+    return '<div style="margin:10px 0;padding-bottom:8px;border-bottom:1px solid var(--line)"><div class="row"><div class="grow"><b>' + ghs(x.amount) + '</b> from ' + esc(x.from) + '<div class="small muted">' + esc(x.money) + ' money · ' + esc(x.at) + (x.time ? ' ' + esc(x.time) : '') + ' · ' + esc(x.hid) + '</div></div><button class="main" data-act="confirmC" data-h="' + x.hid + '" data-a="' + x.amount + '" data-n="' + ((x.parts || []).length) + '">CONFIRM</button></div>' + partsHtml(x.parts, true) + (x.note ? '<div class="small muted">Note: ' + esc(x.note) + '</div>' : '') + '</div>';
+  }).join('') + '</div>';
+}
+function partsHtml(parts, open) {
+  if (!parts || !parts.length) return '';
+  return '<details' + (open ? ' open' : '') + ' style="margin-top:6px"><summary class="small">Made of ' + parts.length + ' payment' + (parts.length > 1 ? 's' : '') + '</summary><table class="small">' + parts.map(function (p) {
+    return '<tr><td class="muted" style="white-space:nowrap">' + esc(p.when || '') + '</td><td>' + esc(p.text) + (p.of ? '<div class="muted">part of ' + ghs(p.of) + '</div>' : '') + '</td><td class="right"><b>' + ghs(p.amt) + '</b></td></tr>'; }).join('') + '</table></details>';
 }
 ACT.confirmC = function (b) {
-  var got = prompt('Count the cash. How much is it? (GHS ' + b.dataset.a + ' was sent)', ''); if (got === null) return; if (!(num(got) >= 0) || String(got).trim() === '') { alert('Type a number, e.g. 620.'); return; }
+  var got = prompt('Count the cash. How much is it?\n(GHS ' + b.dataset.a + ' was sent' + (Number(b.dataset.n) ? ', made of the ' + b.dataset.n + ' payment(s) listed' : '') + ')', ''); if (got === null) return; if (!(num(got) >= 0) || String(got).trim() === '') { alert('Type a number, e.g. 620.'); return; }
   b.disabled = true; call('confirm', { hid: b.dataset.h, received: num(got) }, 'cf-' + b.dataset.h, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); });
 };
 function pgToday() {
@@ -361,7 +369,10 @@ function pgToday() {
   return h;
 }
 function cashTable(rows) {
-  return '<table>' + rows.map(function (c) { return '<tr><td>' + esc(c.money) + '</td><td class="right"><b>' + ghs(c.free) + '</b>' + (c.pending > 0 ? '<div class="small muted">+ ' + ghs(c.pending) + ' waiting for confirmation</div>' : '') + '</td><td class="right">' + (c.route && c.free > 0.004 ? '<button data-act="handover" data-src="' + esc(c.src) + '" data-a="' + c.free + '" data-r="' + esc(c.route) + '">HAND OVER</button>' : (c.free > 0.004 ? '<span class="small muted">keep apart – ask the manager</span>' : '')) + '</td></tr>'; }).join('') + '</table>';
+  return rows.map(function (c) { return cashTable1(c); }).join('');
+}
+function cashTable1(c) {
+  return '<table>' + [c].map(function (c) { return '<tr><td>' + esc(c.money) + '</td><td class="right"><b>' + ghs(c.free) + '</b>' + (c.pending > 0 ? '<div class="small muted">+ ' + ghs(c.pending) + ' waiting for confirmation</div>' : '') + '</td><td class="right">' + (c.route && c.free > 0.004 ? '<button data-act="handover" data-src="' + esc(c.src) + '" data-a="' + c.free + '" data-r="' + esc(c.route) + '">HAND OVER</button>' : (c.free > 0.004 ? '<span class="small muted">keep apart – ask the manager</span>' : '')) + '</td></tr>'; }).join('') + '</table>' + partsHtml(c.items, false);
 }
 ACT.handover = function (b) {
   var to = /→ Frank/.test(b.dataset.r) ? 'Frank' : /→ Joshua/.test(b.dataset.r) ? 'the manager' : 'the HR office logbook';
@@ -379,7 +390,7 @@ ACT.editO = function (b) {
 ACT.cancelO = function (b) {
   var o = D.myOrders.filter(function (x) { return x.oid === b.dataset.o; })[0]; if (!o) return;
   if (!confirm('Cancel ' + o.vendor + ' (' + o.oid + ')?' + (o.status !== 'Submitted' ? '\nIt is already with Prince – Frank and Prince will be told.' : ''))) return;
-  call('cancel', { oid: o.oid }, 'c-' + o.oid, function (r) { bgRefresh(); load(function () { show(r.msg || 'Cancelled.'); }); });
+  call('cancel', { oid: o.oid }, 'c-' + o.oid, function (r) { load(function () { show(r.msg || 'Cancelled.'); }); });
 };
 // ---------------------------------------------------------------- warehouse
 function src(id) { for (var i = 0; i < D.sources.length; i++) if (D.sources[i].id === id) return D.sources[i]; return { id: id, name: id }; }
@@ -421,7 +432,7 @@ ACT.relgo = function (b) {
   });
   if (!confirm('Release ' + items.length + ' order(s)?\n\n' + txt.join('\n'))) return;
   b.disabled = true; b.textContent = 'Saving…';
-  call('release', { items: items }, REL.__sid || (REL.__sid = uid()), function (r) { REL = {}; bgRefresh(); load(function () { show((r.dup ? r.msg : 'Released. ' + (r.msgs || []).join(' ')) + '\nPrince has his list.'); }); }, function (m) { b.disabled = false; show(m, 'err'); });
+  call('release', { items: items }, REL.__sid || (REL.__sid = uid()), function (r) { REL = {}; load(function () { show((r.dup ? r.msg : 'Released. ' + (r.msgs || []).join(' ')) + '\nPrince has his list.'); }); }, function (m) { b.disabled = false; show(m, 'err'); });
 };
 function pgOut() {
   var o = D.out || { skus: [] };
@@ -511,7 +522,7 @@ ACT.stopsave = function (b) {
   b.disabled = true; b.textContent = 'Saving…';
   var ret = Object.keys(st.ret).filter(function (k) { return st.ret[k] > 0; }).map(function (k) { var p = k.split('|'); return { oid: p[0], sku: p[1], n: st.ret[k] }; });
   call('stop', { vid: s.id, oids: s.orders.map(function (o) { return o.oid; }), what: st.what, returns: ret, cash: cash, reason: st.reason, note: st.note, claim: st.claim ? { agent: st.cagent || s.orders[0].agent, amount: num(st.camt), when: st.cwhen } : null }, st.sid,
-    function (r) { delete STOP[s.id]; bgRefresh(); load(function () { show(r.msg || 'Saved.'); }); },
+    function (r) { delete STOP[s.id]; load(function () { show(r.msg || 'Saved.'); }); },
     function (m, e) { if (e && e.offline) { enqueue('stop', { vid: s.id, oids: s.orders.map(function (o) { return o.oid; }), what: st.what, returns: ret, cash: cash, reason: st.reason, note: st.note, claim: st.claim ? { agent: st.cagent || s.orders[0].agent, amount: num(st.camt), when: st.cwhen } : null }, st.sid, s.name); delete STOP[s.id]; show('No signal – ' + s.name + ' is saved on this phone. It is sent when you have signal and CupSales is open. Go on to the next stop.', 'info'); return; } b.disabled = false; b.textContent = 'SAVE'; show(m, 'err'); });
 };
 function pgDone() {
@@ -535,5 +546,19 @@ INP.hname = function (el) { HNAME = el.value; }; CHG.hsel = function (el) { HSEL
 ACT.hmake = function (b) { var v = Object.keys(HSEL).filter(function (k) { return HSEL[k]; }); if (!HNAME.trim() || !v.length) { alert('Write the name and tick at least one stop.'); return; } b.disabled = true; b.textContent = 'Making the link…'; call('helper', { name: HNAME, vids: v }, uid(), function (r) { if (!r || !r.url) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show('No link came back – try again. If it happens again, tell the manager.', 'err'); return; } HRES = r; HSEL = {}; HNAME = ''; MSG = null; render(); window.scrollTo(0, 0); }, function (m) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show(m, 'err'); }); };
 ACT.hnew = function () { HRES = null; render(); };
 ACT.hcopy = function () { var t = $('htext'); try { t.focus(); t.select(); document.execCommand('copy'); show('Copied – paste it to the helper.', 'ok'); } catch (e) { alert('Press and hold the message to copy it.'); } };
-load();
+/** Buttons in emails: #cancel=ORD-… asks to cancel that order; #confirm / #decide open the right tab. */
+function goHash() {
+  var h = String(location.hash || '').slice(1); if (!h || !D) return;
+  try { history.replaceState(null, '', location.pathname + location.search); } catch (x) { }
+  if (h.indexOf('cancel=') === 0 && D.screens.indexOf('order') >= 0) {
+    SCREEN = 'order'; TAB = 'today'; render(); var oid = decodeURIComponent(h.slice(7));
+    var o = (D.myOrders || []).filter(function (x) { return x.oid === oid; })[0];
+    if (!o) { show('Order ' + oid + ' is not in your list – it may already be delivered or cancelled.', 'info'); return; }
+    var b = document.querySelector('[data-act=cancelO][data-o="' + oid + '"]');
+    if (!b) { show(o.vendor + ' (' + oid + ') is already ' + o.status + ' – it cannot be cancelled.', 'info'); return; }
+    setTimeout(function () { ACT.cancelO(b); }, 60);
+  } else if (h === 'confirm') { if (D.me.role === 'Warehouse') { SCREEN = 'release'; TAB = 'cash'; } else if (D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; } render(); }
+  else if (h === 'decide' && D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; render(); }
+}
+load(goHash);
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
