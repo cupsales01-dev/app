@@ -4,14 +4,15 @@
 :root{--bg:#f4f6f8;--card:#fff;--ink:#1d2330;--mute:#5f6b7a;--line:#dde3ea;--blue:#1a73e8;--blue2:#e8f0fe;--red:#c5221f;--red2:#fce8e6;--green:#137333;--green2:#e6f4ea;--amber:#8a5a00;--amber2:#fef7e0}
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 Arial,Helvetica,sans-serif}
 #top{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line)}
-.bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px}
-.bar b{font-size:18px}.who{color:var(--mute);font-size:14px}
+.bar{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--blue);color:#fff}
+.bar b{font-size:19px;letter-spacing:.3px}.who{color:#e8f0fe;font-size:14px}
+.tiles{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}.tile{flex:1 1 30%;min-width:96px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}.tile b{display:block;font-size:20px}.tile span{font-size:13px;color:var(--mute)}.tile.red b{color:var(--red)}.tile.green b{color:var(--green)}
 .test{background:var(--red2);color:var(--red);font-weight:bold;font-size:13px;padding:4px 14px}
-.tabs{display:flex;overflow-x:auto;gap:4px;padding:0 10px 8px}
+.tabs{display:flex;overflow-x:auto;gap:6px;padding:8px 10px 8px}
 .tab{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:18px;padding:7px 14px;font-size:15px;color:var(--ink)}
 .tab.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:bold}
 main{padding:12px 12px 110px;max-width:640px;margin:0 auto}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:0 0 12px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
 .card h3{margin:0 0 4px;font-size:17px}.sub{color:var(--mute);font-size:14px}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.grow{flex:1 1 auto;min-width:0}
 input,select,textarea{font:inherit;border:1px solid #b8c2cc;border-radius:8px;padding:10px;width:100%;background:#fff;color:var(--ink)}
@@ -166,7 +167,7 @@ function hitsFor(q, vid) {
 }
 function vInfo(v) {
   var p = [];
-  p.push(v.debt > 0 ? '<span class="pill ' + (v.days > 7 ? 'red' : 'amber') + '">Owes ' + ghs(v.debt) + ' · ' + v.days + ' days</span>' : '<span class="pill green">Owes nothing</span>');
+  p.push(v.debt > 0 ? '<span class="pill ' + (v.days > 7 ? 'red' : v.days >= 4 ? 'amber' : '') + '">Owes ' + ghs(v.debt) + ' · ' + v.days + ' days</span>' : '<span class="pill green">Owes nothing</span>');
   if (v.last) p.push('<span class="pill">Last bought ' + esc(v.last.slice(5)) + (v.since !== '' ? ' (' + v.since + ' d)' : '') + '</span>');
   if (v.stock) p.push('<span class="pill ' + (v.stock === 'Has stock' ? 'green' : 'amber') + '">' + esc(v.stock) + '</span>');
   return p.join('');
@@ -272,20 +273,22 @@ ACT.send = function (b) {
 var VF = 'all', VQ = '';
 function pgVendors() {
   var h = '<input data-inp="vfind" value="' + esc(VQ) + '" placeholder="Find a vendor or school" autocomplete="off"><div class="seg" style="margin:8px 0 12px">' +
-    [['all', 'All'], ['owe', 'Owes > 7 days'], ['nobuy', 'Not bought this month'], ['out', 'Likely out']].map(function (f) { return '<button class="' + (VF === f[0] ? 'on' : '') + '" data-act="vf" data-f="' + f[0] + '">' + f[1] + '</button>'; }).join('') + '</div>';
+    [['all', 'All'], ['debt', 'Everyone who owes'], ['owe4', 'Owes 4+ days'], ['owe', 'Owes 8+ days'], ['nobuy', 'Not bought this month'], ['out', 'Likely out']].map(function (f) { return '<button class="' + (VF === f[0] ? 'on' : '') + '" data-act="vf" data-f="' + f[0] + '">' + f[1] + '</button>'; }).join('') + '</div>';
   return h + '<div id="vlist">' + vlistHtml(vfilter()) + '</div>';
 }
 function vfilter() {
   var m1 = D.today.slice(0, 8) + '01', n = norm(VQ);
   var list = D.vendors.filter(function (v) {
     if (n && norm(v.name + v.school + v.phone).indexOf(n) < 0) return false;
-    if (VF === 'owe') return v.debt > 0 && v.days > 7; if (VF === 'nobuy') return !v.last || v.last < m1; if (VF === 'out') return v.stock === 'Likely out'; return true;
+    if (VF === 'debt') return v.debt > 0; if (VF === 'owe4') return v.debt > 0 && v.days >= 4; if (VF === 'owe') return v.debt > 0 && v.days > 7; if (VF === 'nobuy') return !v.last || v.last < m1; if (VF === 'out') return v.stock === 'Likely out'; return true;
   });
-  if (VF === 'owe') list.sort(function (a, b) { return b.days - a.days; });
+  if (/^(debt|owe4|owe)$/.test(VF)) list.sort(function (a, b) { return b.days - a.days || b.debt - a.debt; });
   return list;
 }
 function vlistHtml(list) {
-  return '<p class="sub">' + list.length + ' vendor(s)' + (VF === 'owe' ? ' – oldest debt first: call them' : '') + '</p>' + list.map(function (v) {
+  var owe = /^(debt|owe4|owe)$/.test(VF), tot = list.reduce(function (t, v) { return t + (v.debt || 0); }, 0);
+  return (owe ? '<div class="tiles"><div class="tile red"><b>' + ghs(tot) + '</b><span>owed by ' + list.length + ' vendor(s)</span></div><div class="tile"><b>' + list.filter(function (v) { return v.days > 7; }).length + '</b><span>over 7 days</span></div><div class="tile"><b>' + list.filter(function (v) { return v.days >= 4 && v.days <= 7; }).length + '</b><span>4–7 days – visit before 7</span></div></div>' : '') +
+    '<p class="sub">' + list.length + ' vendor(s)' + (owe ? ' – oldest debt first' : '') + '</p>' + list.map(function (v) {
     return '<div class="card"><div class="row"><div class="grow"><h3>' + esc(v.name) + '</h3><div class="sub">' + esc(v.school || '') + '</div></div>' + (v.phone ? '<a href="tel:' + esc(v.phone) + '"><button>Call</button></a>' : '') + '<button data-act="orderV" data-v="' + v.id + '">Order</button></div><div>' + vInfo(v) + '</div></div>';
   }).join('');
 }
@@ -298,7 +301,8 @@ function outcomeHtml(o) {
   if (!c.delivered.length) return '<div class="ask">' + esc(c.status || 'Not delivered') + (c.time ? ' · ' + esc(c.time) : '') + '</div>';
   return '<div class="ask">Delivered ' + esc(c.at.slice(5)) + ' ' + esc(c.time) + ': ' + c.delivered.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') +
     (c.returned.length ? ' · returned ' + c.returned.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') : '') + '<br>Value ' + ghs(c.value) + ' · paid <b>' + ghs(c.paid) + '</b> · ' +
-    (c.owing > 0.004 ? '<b style="color:var(--red)">owing ' + ghs(c.owing) + '</b>' : '<b style="color:var(--green)">fully paid</b>') + (c.by ? ' · ' + esc(c.by) : '') + '</div>';
+    (c.owing > 0.004 ? '<b style="color:var(--red)">owing ' + ghs(c.owing) + '</b>' : '<b style="color:var(--green)">fully paid</b>') + (c.by ? ' · ' + esc(c.by) : '') +
+    (c.check === 'Disagrees' ? '<br><span class="pill red">You reported this as wrong – Joshua decides</span>' : '<br><button class="ghost" data-act="dispute" data-o="' + o.oid + '">Is this wrong? Tell Joshua</button>') + '</div>';
 }
 function toEnterHtml() {
   if (!D.toEnter || !D.toEnter.length) return '';
@@ -306,6 +310,18 @@ function toEnterHtml() {
     D.toEnter.map(function (x) { return '<label class="row" style="color:var(--ink);font-size:15px;margin:10px 0"><input type="checkbox" class="chk" name="ent" value="' + x.oid + '"> <span class="grow"><b>' + esc(x.vendor) + '</b>' + (D.me.role === 'Supervisor' ? ' · ' + esc(x.agent) : '') + '<br>' + x.lines.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') + ' · <b>' + esc(x.pay) + '</b> · ' + ghs(x.value) + ' <span class="muted">(' + esc(x.date.slice(5)) + ')</span></span></label>'; }).join('') +
     '<button class="main big" data-act="entered">DONE – TICKED ONES ARE ENTERED</button></div>';
 }
+ACT.dispute = function (b) {
+  var note = prompt('What is wrong with Prince\'s record? (for example: she paid 460 cash, not credit)', ''); if (note === null) return; if (!String(note).trim()) { alert('Write what is wrong.'); return; }
+  b.disabled = true; call('dispute', { oid: b.dataset.o, note: note }, 'dp-' + b.dataset.o, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); });
+};
+function needsHtml() {
+  if (!D.needs || !D.needs.length) return '';
+  return '<div class="card" style="border-color:var(--red)"><h3>Needs you (' + D.needs.length + ')</h3>' + D.needs.map(function (x) {
+    return '<div style="border-top:1px solid var(--line);padding:8px 0"><span class="pill ' + (x.sev === 'High' ? 'red' : 'amber') + '">' + esc(x.type) + '</span> <span class="small muted">' + esc(x.at) + (x.vendor ? ' · ' + esc(x.vendor) : '') + '</span><div class="small" style="margin:4px 0">' + esc(x.text) + '</div><div class="row">' +
+      (x.link ? '<a href="' + esc(x.link) + '" target="_blank"><button class="main">DECIDE</button></a>' : '') + '<button data-act="resolve" data-e="' + x.eid + '">DONE</button></div></div>';
+  }).join('') + '</div>';
+}
+ACT.resolve = function (b) { var note = prompt('What was done? (short)', 'Checked'); if (note === null) return; b.disabled = true; call('resolve', { eid: b.dataset.e, note: note }, 'rs-' + b.dataset.e, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); }); };
 ACT.entered = function (b) { var ids = [].slice.call(document.querySelectorAll('input[name=ent]:checked')).map(function (x) { return x.value; }); if (!ids.length) { alert('Tick the orders you have entered.'); return; } b.disabled = true; call('entered', { oids: ids }, uid(), function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); }); };
 function confirmHtml() {
   if (!D.toConfirm || !D.toConfirm.length) return '';
@@ -316,7 +332,7 @@ ACT.confirmC = function (b) {
   b.disabled = true; call('confirm', { hid: b.dataset.h, received: num(got) }, 'cf-' + b.dataset.h, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); });
 };
 function pgToday() {
-  var h = confirmHtml() + toEnterHtml();
+  var h = needsHtml() + confirmHtml() + toEnterHtml();
   if (D.cash && D.cash.length) { h += '<div class="card"><h3>Cash with me</h3><p class="sub">Omini money goes to Frank; Clement/Bernice money to the HR office logbook.</p>' + cashTable(D.cash) + '</div>'; }
   if (!D.myOrders.length) return h + '<p class="muted">No orders in the last 3 days.</p>';
   D.myOrders.forEach(function (o) {
@@ -400,12 +416,19 @@ function pgOut() {
 }
 ACT.outsave = function (b) { var skus = [].slice.call(document.querySelectorAll('input[name=out]:checked')).map(function (x) { return x.value; }); b.disabled = true; call('outstock', { skus: skus }, uid(), function (r) { load(function () { show(r.msg); }); }); };
 function pgBook() {
-  var B = D.book; if (!B) return '<p class="muted">No book.</p>';
-  var h = '<div class="card"><div class="row"><div class="grow"><h3>Today ' + esc(B.day) + '</h3><div class="sub">' + B.rows.length + ' release(s)</div></div><a href="https://wa.me/?text=' + encodeURIComponent(B.report) + '" target="_blank"><button class="main">SEND REPORT</button></a></div>';
+  var B = D.book; if (!B) return '<p class="muted">No book.</p>'; B.today = B.today || { omini: [], other: [] }; B.owedSkus = B.owedSkus || [];
+  var skl = function (l) { return l && l.length ? l.map(function (x) { return '<span class="pill">' + x.qty + ' ' + esc(x.sku) + '</span>'; }).join('') : '<span class="muted small">none</span>'; };
+  var om = B.rows.filter(function (r) { return r.omini; }), ctn = 0, val = 0; om.forEach(function (r) { val += r.value; r.lines.forEach(function (l) { ctn += l.qty; }); });
+  var owedTot = B.owed.reduce(function (t, w) { return t + w.amount; }, 0);
+  var h = '<div class="tiles"><div class="tile"><b>' + om.length + '</b><span>orders released</span></div><div class="tile"><b>' + ctn + '</b><span>cartons from Omini</span></div><div class="tile"><b>' + ghs(val) + '</b><span>value</span></div></div>' +
+    '<div class="card"><h3>Given out today</h3><div class="sub">From Omini Haven</div><div style="margin:6px 0">' + skl(B.today.omini) + '</div>' + (B.today.other.length ? '<div class="sub">Sent from Clement / Bernice</div><div style="margin:6px 0">' + skl(B.today.other) + '</div>' : '') +
+    '<div class="sub" style="margin-top:8px">Cartons on orders not fully paid – owed to Omini ' + ghs(owedTot) + '</div><div style="margin:6px 0">' + skl(B.owedSkus) + '</div>' +
+    '<a href="https://wa.me/?text=' + encodeURIComponent(B.report) + '" target="_blank"><button class="main big" style="margin-top:6px">SEND TODAY\'S REPORT ON WHATSAPP</button></a></div>' +
+    '<div class="card"><div class="row"><div class="grow"><h3>Today ' + esc(B.day) + '</h3><div class="sub">' + B.rows.length + ' release(s)</div></div></div>';
   h += B.rows.length ? '<table>' + B.rows.map(function (r) { return '<tr><td>' + esc(r.time) + '</td><td><b>' + esc(r.vendor) + '</b><div class="small muted">' + esc(r.agent) + (r.omini ? '' : ' · from ' + esc(r.from)) + '</div><div class="small">' + r.lines.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') + '</div></td><td class="right">' + ghs(r.value) + '<div class="small">' + esc(r.pay) + '</div><div class="small ' + (r.owing > 0.004 ? '' : 'muted') + '">' + esc(r.status) + (r.paid ? ' · paid ' + ghs(r.paid) : '') + (r.delivered && r.owing > 0.004 ? ' · owes ' + ghs(r.owing) : '') + '</div></td></tr>'; }).join('') + '</table>' : '<p class="muted">Nothing released yet today.</p>';
   h += '</div>';
   var tot = B.owed.reduce(function (t, w) { return t + w.amount; }, 0);
-  h += '<div class="card"><h3>Owed to Omini: ' + ghs(tot) + '</h3><p class="sub">' + B.owed.length + ' vendor(s), oldest first. Cartons = what is still unpaid.</p><table>' + B.owed.map(function (w) { return '<tr><td><b>' + esc(w.vendor) + '</b><div class="small muted">' + esc(w.agent) + ' · ' + w.days + ' days</div><div class="small">' + w.skus.map(function (x) { return x.qty + ' ' + esc(x.sku); }).join(', ') + '</div></td><td class="right"><b>' + ghs(w.amount) + '</b></td></tr>'; }).join('') + '</table></div>';
+  h += '<div class="card"><h3>Owed to Omini: ' + ghs(tot) + '</h3><p class="sub">' + B.owed.length + ' vendor(s), oldest first. Cartons = orders not fully paid.</p><table>' + B.owed.map(function (w) { return '<tr><td><b>' + esc(w.vendor) + '</b><div class="small muted">' + esc(w.agent) + ' · ' + w.days + ' days</div><div class="small">' + w.skus.map(function (x) { return x.qty + ' ' + esc(x.sku); }).join(', ') + '</div></td><td class="right"><b>' + ghs(w.amount) + '</b></td></tr>'; }).join('') + '</table></div>';
   return h;
 }
 function pgCash() {
@@ -484,14 +507,17 @@ function pgDone() {
 }
 var HSEL = {}, HNAME = '', HRES = null;
 function pgHelpers() {
-  if (HRES) return '<div class="card"><h3>Link ready</h3><p class="sub">' + esc(HRES.msg) + '</p><textarea rows="8" readonly>' + esc(HRES.text) + '</textarea><p><a href="https://wa.me/?text=' + encodeURIComponent(HRES.text) + '" target="_blank"><button class="main big">SEND ON WHATSAPP</button></a></p><button class="ghost" data-act="hnew">Make another</button></div>';
+  if (HRES) return '<div class="card" style="border-color:var(--green)"><h3>Helper link ready</h3><p class="sub">' + esc(HRES.msg) + '</p><div class="ask" style="word-break:break-all"><b>' + esc(HRES.url) + '</b></div>' +
+    '<p><a href="https://wa.me/?text=' + encodeURIComponent(HRES.text) + '" target="_blank"><button class="main big">SEND TO THE HELPER ON WHATSAPP</button></a></p><p><button class="big" data-act="hcopy">COPY THE MESSAGE</button></p>' +
+    '<label>The message (stops, amounts and the link)</label><textarea id="htext" rows="8" readonly>' + esc(HRES.text) + '</textarea><button class="ghost" data-act="hnew">Make another</button></div>';
   if (!D.stops.length) return '<p class="muted">No stops to give to a helper.</p>';
   var h = '<div class="card"><h3>Give stops to a helper</h3><p class="sub">The helper gets a link for today only, showing only these stops. The cash they collect counts as with Prince – collect it from them.</p><label>Helper\'s name</label><input data-inp="hname" value="' + esc(HNAME) + '">';
   D.stops.forEach(function (s) { h += '<label class="row" style="color:var(--ink);font-size:16px"><input type="checkbox" class="chk" data-chg="hsel" data-v="' + s.id + '"' + (HSEL[s.id] ? ' checked' : '') + '> ' + esc(s.name) + ' <span class="sub">' + esc(s.school || '') + '</span></label>'; });
   return h + '<p><button class="main big" data-act="hmake">MAKE HELPER LINK</button></p></div>';
 }
 INP.hname = function (el) { HNAME = el.value; }; CHG.hsel = function (el) { HSEL[el.dataset.v] = el.checked; };
-ACT.hmake = function (b) { var v = Object.keys(HSEL).filter(function (k) { return HSEL[k]; }); if (!HNAME.trim() || !v.length) { alert('Write the name and tick at least one stop.'); return; } b.disabled = true; call('helper', { name: HNAME, vids: v }, uid(), function (r) { HRES = r; HSEL = {}; HNAME = ''; render(); }, function (m) { b.disabled = false; show(m, 'err'); }); };
+ACT.hmake = function (b) { var v = Object.keys(HSEL).filter(function (k) { return HSEL[k]; }); if (!HNAME.trim() || !v.length) { alert('Write the name and tick at least one stop.'); return; } b.disabled = true; b.textContent = 'Making the link…'; call('helper', { name: HNAME, vids: v }, uid(), function (r) { if (!r || !r.url) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show('No link came back – try again. If it happens again, tell Joshua.', 'err'); return; } HRES = r; HSEL = {}; HNAME = ''; MSG = null; render(); window.scrollTo(0, 0); }, function (m) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show(m, 'err'); }); };
 ACT.hnew = function () { HRES = null; render(); };
+ACT.hcopy = function () { var t = $('htext'); try { t.focus(); t.select(); document.execCommand('copy'); show('Copied – paste it to the helper.', 'ok'); } catch (e) { alert('Press and hold the message to copy it.'); } };
 load();
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
