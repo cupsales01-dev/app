@@ -76,7 +76,7 @@ function flush(after) {
   rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: x.op, data: x.data, sid: x.sid, at: x.at }, function (r) {
     FLUSHING = false;
     if (!r || r.auth) { if (r && r.auth) authScreen(r); return; } // kept on the phone; sent after the PIN
-    if (r.error && /busy|went wrong/i.test(r.error)) { after && after(); return; } // kept; tried again later
+    if (r.error && (r.retry || /busy|went wrong/i.test(r.error))) { after && after(); return; } // kept; tried again later
     ls(QKEY, JSON.stringify(queue().filter(function (y) { return y.sid !== x.sid; })));
     if (x.op === 'orders' && r.problems && r.problems.length) { // vendors that were not saved go back to the New order screen
       var d = draft(); r.problems.forEach(function (p) { var v = (x.data.vendors || []).filter(function (y) { return y.vid === p.vid; })[0]; if (v && !d.vendors.some(function (y) { return y.vid === v.vid; })) { var n = newV(); n.vid = v.vid; n.lines = v.lines; n.pay = v.pay; n.paid = v.paid ? String(v.paid) : ''; n.promised = v.promised ? String(v.promised) : ''; n.note = v.note || ''; n.replaces = v.replaces || ''; d.vendors = d.vendors.filter(function (y) { return y.vid; }).concat([n]); } }); saveDraft(d);
@@ -95,8 +95,8 @@ function call(op, data, sid, ok, fail) {
     try {
       if (!r) { var m0 = 'The system sent back nothing. Close and open the link again. If it happens again, tell the manager.'; fail ? fail(m0) : show(m0, 'err'); return; }
       if (r.auth) { authScreen(r); return; }
-      if (r.error) { fail ? fail(r.error) : show(r.error, 'err'); return; }
       if (op !== 'init') bgRefresh(); // emails, forms and views are updated in the background
+      if (r.error) { fail ? fail(r.error) : show(r.error, 'err'); return; }
       ok && ok(r);
     } catch (x) { var m1 = 'The page had a problem showing this (' + (x && x.message || x) + '). Close and open the link again; tell the manager if it repeats.'; if (fail) fail(m1); else $('main').innerHTML = '<div class="msg err">' + esc(m1) + '</div>'; }
   }, function (e) { clearTimeout(slow); var m = 'No connection or the page timed out (' + (e && e.message || e || '') + '). ' + (op === 'init' ? 'Close and open the link again.' : 'Tap the button again – if it was already saved, nothing is saved twice.'); fail ? fail(m, e) : show(m, 'err'); });
@@ -108,7 +108,7 @@ function load(after) {
       function (m, e) { var c = null; try { c = JSON.parse(ls(CKEY) || 'null'); } catch (x) { } if (e && e.offline && c) { D = c; OFFLINE = true; if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB) TAB = firstTab(); render(); } else $('main').innerHTML = '<div class="msg err">' + esc(m) + '</div>'; });
   });
 }
-function bgRefresh() { rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: 'refresh' }, function () { }, function () { }); }
+function bgRefresh(again) { rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: 'refresh' }, function () { }, function () { if (!again) setTimeout(function () { bgRefresh(true); }, 30000); }); }
 // ---------------------------------------------------------------- sign-in
 function authScreen(r) {
   $('top').innerHTML = bar(); $('foot').innerHTML = '';
@@ -303,7 +303,9 @@ function outcomeHtml(o) {
   return '<div class="ask">Delivered ' + esc(c.at.slice(5)) + ' ' + esc(c.time) + ': ' + c.delivered.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') +
     (c.returned.length ? ' · returned ' + c.returned.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') : '') + '<br>Value ' + ghs(c.value) + ' · paid <b>' + ghs(c.paid) + '</b> · ' +
     (c.owing > 0.004 ? '<b style="color:var(--red)">owing ' + ghs(c.owing) + '</b>' : '<b style="color:var(--green)">fully paid</b>') + (c.by ? ' · ' + esc(c.by) : '') +
-    (c.decision ? '<br><span class="pill green">Manager decided: ' + esc(c.decision) + '</span>' : c.check === 'Disagrees' ? '<br><span class="pill red">You reported this as wrong – the manager decides</span>' : '<br><button class="ghost" data-act="dispute" data-o="' + o.oid + '">Is this wrong? Inform manager</button>') + '</div>';
+    (c.decision ? '<br><span class="pill green">Manager decided: ' + esc(c.decision) + '</span>' : c.check === 'Disagrees' ? '<br><span class="pill red">You reported this as wrong – the manager decides</span>' :
+      c.mismatch && !c.check ? '<div style="margin-top:6px;padding:8px;border-radius:8px;background:var(--amber2);color:var(--amber)"><b>Please check:</b> you said <b>' + esc(c.said || '?') + '</b>, Prince recorded <b>' + esc(c.prince || '?') + '</b>. Is Prince right?<div class="row" style="margin-top:6px"><button class="main" data-act="agree" data-o="' + o.oid + '">YES, PRINCE IS RIGHT</button><button class="warn" data-act="dispute" data-o="' + o.oid + '">NO – INFORM MANAGER</button></div></div>' :
+      '<br><button class="ghost" data-act="dispute" data-o="' + o.oid + '">Is this wrong? Inform manager</button>') + '</div>';
 }
 function toEnterHtml() {
   if (!D.toEnter || !D.toEnter.length) return '';
@@ -311,6 +313,7 @@ function toEnterHtml() {
     D.toEnter.map(function (x) { return '<label class="row" style="color:var(--ink);font-size:15px;margin:10px 0"><input type="checkbox" class="chk" name="ent" value="' + x.oid + '"> <span class="grow"><b>' + esc(x.vendor) + '</b>' + (D.me.role === 'Supervisor' ? ' · ' + esc(x.agent) : '') + '<br>' + x.lines.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') + ' · <b>' + esc(x.pay) + '</b> · ' + ghs(x.value) + ' <span class="muted">(' + esc(x.date.slice(5)) + ')</span></span></label>'; }).join('') +
     '<button class="main big" data-act="entered">DONE – TICKED ONES ARE ENTERED</button></div>';
 }
+ACT.agree = function (b) { b.disabled = true; call('agree', { oid: b.dataset.o }, 'ag-' + b.dataset.o, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); }); };
 ACT.dispute = function (b) {
   var note = prompt('What is wrong with Prince\'s record? (for example: she paid 460 cash, not credit)', ''); if (note === null) return; if (!String(note).trim()) { alert('Write what is wrong.'); return; }
   b.disabled = true; call('dispute', { oid: b.dataset.o, note: note }, 'dp-' + b.dataset.o, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); });
@@ -548,8 +551,14 @@ ACT.hnew = function () { HRES = null; render(); };
 ACT.hcopy = function () { var t = $('htext'); try { t.focus(); t.select(); document.execCommand('copy'); show('Copied – paste it to the helper.', 'ok'); } catch (e) { alert('Press and hold the message to copy it.'); } };
 /** Buttons in emails: #cancel=ORD-… asks to cancel that order; #confirm / #decide open the right tab. */
 function goHash() {
-  var h = String(location.hash || '').slice(1); if (!h || !D) return;
+  if (!D) return;
+  if (typeof google !== 'undefined' && google.script && google.script.url) { try { google.script.url.getLocation(function (l) { goHash2(String(l && l.hash || '')); }); } catch (x) { } return; } // the Google-hosted page
+  var h0 = String(location.hash || '').slice(1); if (!h0) return;
   try { history.replaceState(null, '', location.pathname + location.search); } catch (x) { }
+  goHash2(h0);
+}
+function goHash2(h) {
+  h = String(h || '').replace(/^#/, ''); if (!h || !D || goHash2.done === h) return; goHash2.done = h;
   if (h.indexOf('cancel=') === 0 && D.screens.indexOf('order') >= 0) {
     SCREEN = 'order'; TAB = 'today'; render(); var oid = decodeURIComponent(h.slice(7));
     var o = (D.myOrders || []).filter(function (x) { return x.oid === oid; })[0];
