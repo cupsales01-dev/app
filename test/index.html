@@ -41,7 +41,7 @@ button:disabled{opacity:.5}
 a{color:var(--blue)}table{border-collapse:collapse;width:100%;font-size:14px}td{padding:6px 4px;border-bottom:1px solid var(--line)}
 .right{text-align:right}.muted{color:var(--mute)}.small{font-size:13px}.chk{width:22px;height:22px}
 </style></head><body>
-<div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div>
+<div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div>
 <script>
 var API = "https://script.google.com/macros/s/AKfycbwfwQvxXKKKzOyVWyX7TLW8yRklo1nk8A-jSCmIHRlASAVWnLSRqYuqElmbGu_HCbBTTA/exec", TEST = "1", TOKEN = (function () { var m = location.search.match(/[?&]t=([A-Za-z0-9]{20,40})/), t = m ? m[1] : ''; var k = 'cs_token_' + location.pathname; try { if (t) localStorage.setItem(k, t); else t = localStorage.getItem(k) || ''; } catch (e) { } return t; })();
 var SESSION = '', QKEY = 'cs_q_' + TOKEN, CKEY = 'cs_d_' + TOKEN, OFFLINE = false, SKEY = 'cs_s_' + TOKEN, DKEY = 'cs_draft_' + TOKEN, D = null, SCREEN = '', TAB = '', MSG = null, BUSY = false, OPEN = {}, REL = {}, STOP = {};
@@ -82,7 +82,7 @@ function flush(after) {
       var d = draft(); r.problems.forEach(function (p) { var v = (x.data.vendors || []).filter(function (y) { return y.vid === p.vid; })[0]; if (v && !d.vendors.some(function (y) { return y.vid === v.vid; })) { var n = newV(); n.vid = v.vid; n.lines = v.lines; n.pay = v.pay; n.paid = v.paid ? String(v.paid) : ''; n.promised = v.promised ? String(v.promised) : ''; n.note = v.note || ''; n.replaces = v.replaces || ''; d.vendors = d.vendors.filter(function (y) { return y.vid; }).concat([n]); } }); saveDraft(d);
     }
     var m = r.error ? 'NOT SAVED: ' + r.error : (r.msg || (r.done ? 'Sent: ' + r.done.map(function (d) { return d.vendor; }).join(', ') + (r.problems && r.problems.length ? ' – NOT saved (back on your New order screen): ' + r.problems.map(function (p) { return p.msg; }).join(' ') : '') : 'sent'));
-    if (!r.error) bgRefresh(); NOTES.push(x.label + ' – ' + m); flush(after);
+    NEXTD = null; if (!r.error) bgRefresh(); NOTES.push(x.label + ' – ' + m); flush(after);
   }, function () { FLUSHING = false; after && after(); });
 }
 var NOTES = [];
@@ -90,20 +90,37 @@ window.addEventListener('online', function () { flush(function () { if (NOTES.le
 setInterval(function () { if (queue().length) flush(function () { if (NOTES.length && D) load(function () { show('Sent after the signal came back:\n' + NOTES.splice(0).join('\n'), 'info'); }); }); }, 60000);
 function call(op, data, sid, ok, fail) {
   var slow = setTimeout(function () { if (op === 'init' && !D) $('main').innerHTML = '<div class="pin"><p class="muted">Still opening… the first time after an update can take up to a minute. Please wait.</p></div>'; }, 12000);
-  rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: op, data: data || {}, sid: sid || '' }, function (r) {
+  rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: op, data: data || {}, sid: sid || '', wi: op !== 'init' ? 1 : 0 }, function (r) {
     clearTimeout(slow);
     try {
       if (!r) { var m0 = 'The system sent back nothing. Close and open the link again. If it happens again, tell the manager.'; fail ? fail(m0) : show(m0, 'err'); return; }
       if (r.auth) { authScreen(r); return; }
       if (op !== 'init') bgRefresh(); // emails, forms and views are updated in the background
+      if (r.init) { NEXTD = r.init; NEXTD.__at = Date.now(); } // v2.4.4: the answer to a save already has the new screen
       if (r.error) { fail ? fail(r.error) : show(r.error, 'err'); return; }
       ok && ok(r);
     } catch (x) { var m1 = 'The page had a problem showing this (' + (x && x.message || x) + '). Close and open the link again; tell the manager if it repeats.'; if (fail) fail(m1); else $('main').innerHTML = '<div class="msg err">' + esc(m1) + '</div>'; }
   }, function (e) { clearTimeout(slow); var m = 'No connection or the page timed out (' + (e && e.message || e || '') + '). ' + (op === 'init' ? 'Close and open the link again.' : 'Tap the button again – if it was already saved, nothing is saved twice.'); fail ? fail(m, e) : show(m, 'err'); });
 }
+// v2.4.4: the app's own question boxes (a phone can switch off the browser's pop-ups: "suppress dialogs" – then every question silently answered Cancel)
+var DLGCB = null;
+function dlgOpen(text, input, okLabel, cancelLabel, cb) {
+  DLGCB = cb;
+  $('dlg').innerHTML = '<div class="overlay" style="z-index:50"><div class="sheet"><p style="white-space:pre-line;font-size:16px;margin:0 0 10px">' + esc(text) + '</p>' +
+    (input !== null ? '<input id="dlgin" ' + (input.mode ? 'inputmode="' + input.mode + '" ' : '') + 'value="' + esc(input.value || '') + '" autocomplete="off">' : '') +
+    '<div class="row" style="margin-top:12px">' + (cancelLabel ? '<button class="grow" data-act="dlgNo">' + esc(cancelLabel) + '</button>' : '') + '<button class="main grow" data-act="dlgYes">' + esc(okLabel || 'OK') + '</button></div></div></div>';
+  var el = $('dlgin'); if (el) { el.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); ACT.dlgYes(); } }; try { el.focus(); el.select(); } catch (x) { } }
+}
+function dlgClose() { $('dlg').innerHTML = ''; var cb = DLGCB; DLGCB = null; return cb; }
+function say(text) { dlgOpen(text, null, 'OK', null, null); }
+function ask(text, yes, okLabel) { dlgOpen(text, null, okLabel || 'YES', 'No', function () { yes(); }); }
+function askIn(text, def, mode, yes, okLabel) { dlgOpen(text, { value: def, mode: mode }, okLabel || 'OK', 'Cancel', yes); }
 function show(t, kind) { MSG = { t: t, k: kind || 'ok' }; render(); window.scrollTo(0, 0); }
+var NEXTD = null;
 function load(after) {
   flush(function () {
+    if (NEXTD && !queue().length && Date.now() - (NEXTD.__at || 0) < 20000) { var r0 = NEXTD; NEXTD = null; D = r0; OFFLINE = false; ls(CKEY, JSON.stringify(r0)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })); if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB) TAB = firstTab(); render(); after && after(); return; }
+    NEXTD = null;
     call('init', {}, '', function (r) { D = r; OFFLINE = false; ls(CKEY, JSON.stringify(r)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })); if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB) TAB = firstTab(); render(); after && after(); },
       function (m, e) { var c = null; try { c = JSON.parse(ls(CKEY) || 'null'); } catch (x) { } if (e && e.offline && c) { D = c; OFFLINE = true; if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB) TAB = firstTab(); render(); } else $('main').innerHTML = '<div class="msg err">' + esc(m) + '</div>'; });
   });
@@ -118,10 +135,10 @@ function authScreen(r) {
     (r.msg ? '<div class="msg err">' + esc(r.msg) + '</div>' : '') + '<input id="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="off">' +
     (set ? '<label>Type it again</label><input id="pin2" type="password" inputmode="numeric" maxlength="4">' : '') + '<p><button class="main big" id="go">' + (set ? 'SAVE MY PIN' : 'OPEN') + '</button></p></div>';
   $('go').onclick = function () {
-    var p = $('pin').value.trim(); if (!/^\d{4}$/.test(p)) { alert('The PIN is 4 numbers.'); return; }
-    if (set && p !== $('pin2').value.trim()) { alert('The two PINs are not the same.'); return; }
+    var p = $('pin').value.trim(); if (!/^\d{4}$/.test(p)) { say('The PIN is 4 numbers.'); return; }
+    if (set && p !== $('pin2').value.trim()) { say('The two PINs are not the same.'); return; }
     this.disabled = true;
-    rpc({ t: TOKEN, op: 'login', pin: p }, function (x) { if (x && x.session) { SESSION = x.session; ls(SKEY, x.session); $('main').innerHTML = '<p class="muted">Opening…</p>'; load(goHash); } else authScreen(x || { auth: 'pin', msg: 'Try again.' }); }, function (e) { alert('No connection – try again. (' + (e && e.message || e || '') + ')'); authScreen(r); });
+    rpc({ t: TOKEN, op: 'login', pin: p }, function (x) { if (x && x.session) { SESSION = x.session; ls(SKEY, x.session); $('main').innerHTML = '<p class="muted">Opening…</p>'; load(goHash); } else authScreen(x || { auth: 'pin', msg: 'Try again.' }); }, function (e) { say('No connection – try again. (' + (e && e.message || e || '') + ')'); authScreen(r); });
   };
   $('pin').focus();
 }
@@ -223,7 +240,7 @@ function hitsHtml(x) {
 function findV(d, k) { for (var i = 0; i < d.vendors.length; i++) if (d.vendors[i].k === k) return d.vendors[i]; return null; }
 function edit(el, fn, rerender) { var d = draft(); var x = findV(d, el.dataset.k); if (!x) return; fn(x, d); saveDraft(d); if (rerender) { render(); } }
 INP.vq = function (el) { var d = draft(), x = findV(d, el.dataset.k); if (!x) return; x.q = el.value; saveDraft(d); var box = $('hits-' + x.k); if (box) box.innerHTML = hitsHtml(x); }; // the box itself is not redrawn (no lost letters)
-ACT.pickV = function (b) { edit(b, function (x, d) { if (d.vendors.some(function (y) { return y.vid === b.dataset.v && y !== x; })) { alert('This vendor is already in this order – add products to her card instead.'); return; } x.vid = b.dataset.v; x.q = ''; }, true); };
+ACT.pickV = function (b) { edit(b, function (x, d) { if (d.vendors.some(function (y) { return y.vid === b.dataset.v && y !== x; })) { say('This vendor is already in this order – add products to her card instead.'); return; } x.vid = b.dataset.v; x.q = ''; }, true); };
 ACT.chgV = function (b) { edit(b, function (x) { x.vid = ''; }, true); };
 ACT.addL = function (b) { edit(b, function (x) { x.lines.push({ sku: '', qty: 1 }); }, true); };
 ACT.delL = function (b) { edit(b, function (x) { x.lines.splice(Number(b.dataset.j), 1); }, true); };
@@ -236,7 +253,7 @@ INP.paid = function (el) { edit(el, function (x) { x.paid = el.value; }, false);
 INP.prom = function (el) { edit(el, function (x) { x.promised = el.value; }, false); };
 INP.note = function (el) { edit(el, function (x) { x.note = el.value; }, false); };
 ACT.addV = function () { var d = draft(); d.vendors.push(newV()); saveDraft(d); render(); setTimeout(function () { var ins = document.querySelectorAll('[data-inp=vq]'); if (ins.length) ins[ins.length - 1].focus(); }, 50); };
-ACT.delV = function (b) { if (!confirm('Remove this vendor from the order?')) return; var d = draft(); d.vendors = d.vendors.filter(function (x) { return x.k !== b.dataset.k; }); if (!d.vendors.length) d.vendors.push(newV()); saveDraft(d); render(); };
+ACT.delV = function (b) { ask('Remove this vendor from the order?', function () { var d = draft(); d.vendors = d.vendors.filter(function (x) { return x.k !== b.dataset.k; }); if (!d.vendors.length) d.vendors.push(newV()); saveDraft(d); render(); }, 'REMOVE'); };
 var PAYTXT = { CASH: 'Cash at delivery', CREDIT: 'Credit', PAID_ME: 'Paid now – cash with me', PAID_FRANK: 'Paid now – directly to Frank' };
 ACT.review = function () {
   var d = draft(), bad = [], h = '<h3>Check before sending</h3>';
@@ -252,9 +269,11 @@ ACT.review = function () {
       '<div class="small">' + (x.prepaid ? 'Paid already ' + ghs(x.prepaid) : esc(PAYTXT[x.pay]) + (x.paid && x.pay.indexOf('PAID') === 0 ? ' ' + ghs(num(x.paid)) : '')) + (num(x.promised) > 0 ? ' · promised old debt ' + ghs(num(x.promised)) : '') + ' · <b>' + ghs(vValue(x)) + '</b></div></div>';
   });
   saveDraft(d);
-  if (bad.length) { alert(bad.join('\n')); return; }
+  if (bad.length) { say(bad.join('\n')); return; }
   $('over').innerHTML = '<div class="overlay"><div class="sheet">' + h + '<div class="row"><button class="grow" data-act="closeO">Back</button><button class="main grow" data-act="send">SEND ' + list.length + ' ORDER(S)</button></div></div></div>';
 };
+ACT.dlgYes = function () { var el = $('dlgin'); var v = el ? el.value : true; var cb = dlgClose(); if (cb) cb(v); };
+ACT.dlgNo = function () { dlgClose(); };
 ACT.closeO = function () { $('over').innerHTML = ''; };
 ACT.send = function (b) {
   if (BUSY) return; BUSY = true; b.disabled = true; b.textContent = 'Sending…';
@@ -273,13 +292,22 @@ ACT.send = function (b) {
 // ---------------------------------------------------------------- agent: vendors and today
 var VF = 'all', VQ = '';
 function pgVendors() {
-  var h = '<input data-inp="vfind" value="' + esc(VQ) + '" placeholder="Find a vendor or school" autocomplete="off"><div class="seg" style="margin:8px 0 12px">' +
+  var h = agentSeg() + '<input data-inp="vfind" value="' + esc(VQ) + '" placeholder="Find a vendor or school" autocomplete="off"><div class="seg" style="margin:8px 0 12px">' +
     [['all', 'All'], ['debt', 'Everyone who owes'], ['owe4', 'Owes 4+ days'], ['owe', 'Owes 8+ days'], ['nobuy', 'Not bought this month'], ['out', 'Likely out']].map(function (f) { return '<button class="' + (VF === f[0] ? 'on' : '') + '" data-act="vf" data-f="' + f[0] + '">' + f[1] + '</button>'; }).join('') + '</div>';
   return h + '<div id="vlist">' + vlistHtml(vfilter()) + '</div>';
 }
+var AGF = ''; try { AGF = localStorage.getItem('cs_agf_' + TOKEN) || ''; } catch (x) { }
+function agOn() { return D && D.me.role === 'Supervisor' && AGF && (D.agents || []).some(function (a) { return a.id === AGF; }) ? AGF : ''; }
+function agName(id) { var a = (D.agents || []).filter(function (x) { return x.id === id; })[0]; return a ? a.name : ''; }
+function agentSeg() {
+  if (!D || D.me.role !== 'Supervisor' || !D.agents) return '';
+  return '<div class="seg" style="margin:6px 0 10px">' + [['', 'All agents']].concat(D.agents.map(function (a) { return [a.id, a.name]; })).map(function (a) { return '<button class="' + (agOn() === a[0] ? 'on' : '') + '" data-act="agf" data-a="' + a[0] + '">' + esc(a[1]) + '</button>'; }).join('') + '</div>';
+}
+ACT.agf = function (b) { AGF = b.dataset.a; try { localStorage.setItem('cs_agf_' + TOKEN, AGF); } catch (x) { } render(); };
 function vfilter() {
   var m1 = D.today.slice(0, 8) + '01', n = norm(VQ);
   var list = D.vendors.filter(function (v) {
+    if (agOn() && v.agent !== agOn()) return false;
     if (n && norm(v.name + v.school + v.phone).indexOf(n) < 0) return false;
     if (VF === 'debt') return v.debt > 0; if (VF === 'owe4') return v.debt > 0 && v.days >= 4; if (VF === 'owe') return v.debt > 0 && v.days > 7; if (VF === 'nobuy') return !v.last || v.last < m1; if (VF === 'out') return v.stock === 'Likely out'; return true;
   });
@@ -288,8 +316,11 @@ function vfilter() {
 }
 function vlistHtml(list) {
   var owe = /^(debt|owe4|owe)$/.test(VF), tot = list.reduce(function (t, v) { return t + (v.debt || 0); }, 0);
-  return (owe ? '<div class="tiles"><div class="tile red"><b>' + ghs(tot) + '</b><span>owed by ' + list.length + ' vendor(s)</span></div><div class="tile"><b>' + list.filter(function (v) { return v.days > 7; }).length + '</b><span>over 7 days</span></div><div class="tile"><b>' + list.filter(function (v) { return v.days >= 4 && v.days <= 7; }).length + '</b><span>4–7 days – visit before 7</span></div></div>' : '') +
-    '<p class="sub">' + list.length + ' vendor(s)' + (owe ? ' – oldest debt first' : '') + '</p>' + list.map(function (v) {
+  if (!owe && D.me.role === 'Supervisor') { var m1 = D.today.slice(0, 8) + '01'; return '<div class="tiles"><div class="tile"><b>' + list.length + '</b><span>vendors' + (agOn() ? ' – ' + esc(agName(agOn())) : '') + '</span></div><div class="tile green"><b>' + list.filter(function (v) { return v.last && v.last >= m1; }).length + '</b><span>bought this month</span></div><div class="tile red"><b>' + ghs(tot) + '</b><span>owed by ' + list.filter(function (v) { return v.debt > 0; }).length + '</span></div></div>' + vlistBody(list, owe); }
+  return (owe ? '<div class="tiles"><div class="tile red"><b>' + ghs(tot) + '</b><span>owed by ' + list.length + ' vendor(s)</span></div><div class="tile"><b>' + list.filter(function (v) { return v.days > 7; }).length + '</b><span>over 7 days</span></div><div class="tile"><b>' + list.filter(function (v) { return v.days >= 4 && v.days <= 7; }).length + '</b><span>4–7 days – visit before 7</span></div></div>' : '') + vlistBody(list, owe);
+}
+function vlistBody(list, owe) {
+  return '<p class="sub">' + list.length + ' vendor(s)' + (owe ? ' – oldest debt first' : '') + '</p>' + list.map(function (v) {
     return '<div class="card"><div class="row"><div class="grow"><h3>' + esc(v.name) + '</h3><div class="sub">' + esc(v.school || '') + '</div></div>' + (v.phone ? '<a href="tel:' + esc(v.phone) + '"><button>Call</button></a>' : '') + '<button data-act="orderV" data-v="' + v.id + '">Order</button></div><div>' + vInfo(v) + '</div></div>';
   }).join('');
 }
@@ -315,8 +346,8 @@ function toEnterHtml() {
 }
 ACT.agree = function (b) { b.disabled = true; call('agree', { oid: b.dataset.o }, 'ag-' + b.dataset.o, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); }); };
 ACT.dispute = function (b) {
-  var note = prompt('What is wrong with Prince\'s record? (for example: she paid 460 cash, not credit)', ''); if (note === null) return; if (!String(note).trim()) { alert('Write what is wrong.'); return; }
-  b.disabled = true; call('dispute', { oid: b.dataset.o, note: note }, 'dp-' + b.dataset.o, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); });
+  askIn('What is wrong with Prince\'s record? (for example: she paid 460 cash, not credit)', '', '', function (note) { if (!String(note).trim()) { say('Write what is wrong.'); return; }
+  b.disabled = true; call('dispute', { oid: b.dataset.o, note: note }, 'dp-' + b.dataset.o, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); }); }, 'SEND TO MANAGER');
 };
 var DEC = {};
 function decideHtml(x) {
@@ -330,7 +361,7 @@ function decideHtml(x) {
 ACT.decch = function (b) { DEC[b.dataset.e].choice = b.dataset.c; render(); };
 INP.deccash = function (el) { DEC[el.dataset.e].cash = el.value; }; INP.decnote = function (el) { DEC[el.dataset.e].note = el.value; }; CHG.dechold = function (el) { DEC[el.dataset.e].holder = el.value; };
 ACT.decsave = function (b) {
-  var st = DEC[b.dataset.e]; if (st.choice !== 'RIDER' && !(String(st.cash).trim() !== '' && num(st.cash) >= 0)) { alert('Type the cash she really paid for this order.'); return; }
+  var st = DEC[b.dataset.e]; if (st.choice !== 'RIDER' && !(String(st.cash).trim() !== '' && num(st.cash) >= 0)) { say('Type the cash she really paid for this order.'); return; }
   b.disabled = true; call('decide', { did: b.dataset.d, choice: st.choice, cash: st.choice === 'RIDER' ? '' : num(st.cash), holder: st.holder, note: st.note }, 'dc-' + b.dataset.d, function (r) { delete DEC[b.dataset.e]; load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); });
 };
 function needsHtml() {
@@ -340,8 +371,8 @@ function needsHtml() {
       (x.dec ? '' : '<button data-act="resolve" data-e="' + x.eid + '">DONE</button>') + '</div>' + (x.dec ? decideHtml(x) : '') + '</div>';
   }).join('') + '</div>';
 }
-ACT.resolve = function (b) { var note = prompt('What was done? (short)', 'Checked'); if (note === null) return; b.disabled = true; call('resolve', { eid: b.dataset.e, note: note }, 'rs-' + b.dataset.e, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); }); };
-ACT.entered = function (b) { var ids = [].slice.call(document.querySelectorAll('input[name=ent]:checked')).map(function (x) { return x.value; }); if (!ids.length) { alert('Tick the orders you have entered.'); return; } b.disabled = true; call('entered', { oids: ids }, uid(), function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); }); };
+ACT.resolve = function (b) { askIn('What was done? (short)', 'Checked', '', function (note) { b.disabled = true; call('resolve', { eid: b.dataset.e, note: note }, 'rs-' + b.dataset.e, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); }); }, 'DONE'); };
+ACT.entered = function (b) { var ids = [].slice.call(document.querySelectorAll('input[name=ent]:checked')).map(function (x) { return x.value; }); if (!ids.length) { say('Tick the orders you have entered.'); return; } b.disabled = true; call('entered', { oids: ids }, uid(), function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); }); };
 function confirmHtml() {
   if (!D.toConfirm || !D.toConfirm.length) return '';
   return '<div class="card"><h3>Cash handed to you – count it</h3><p class="sub">Each amount shows the payments it is made of. Check the list with the person, count the cash, then CONFIRM.</p>' + D.toConfirm.map(function (x) {
@@ -354,14 +385,16 @@ function partsHtml(parts, open) {
     return '<tr><td class="muted" style="white-space:nowrap">' + esc(p.when || '') + '</td><td>' + esc(p.text) + (p.of ? '<div class="muted">part of ' + ghs(p.of) + '</div>' : '') + '</td><td class="right"><b>' + ghs(p.amt) + '</b></td></tr>'; }).join('') + '</table></details>';
 }
 ACT.confirmC = function (b) {
-  var got = prompt('Count the cash. How much is it?\n(GHS ' + b.dataset.a + ' was sent' + (Number(b.dataset.n) ? ', made of the ' + b.dataset.n + ' payment(s) listed' : '') + ')', ''); if (got === null) return; if (!(num(got) >= 0) || String(got).trim() === '') { alert('Type a number, e.g. 620.'); return; }
-  b.disabled = true; call('confirm', { hid: b.dataset.h, received: num(got) }, 'cf-' + b.dataset.h, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); });
+  askIn('Count the cash. How much is it?\n(GHS ' + b.dataset.a + ' was sent' + (Number(b.dataset.n) ? ', made of the ' + b.dataset.n + ' payment(s) listed' : '') + ')', '', 'decimal', function (got) { if (!(num(got) >= 0) || String(got).trim() === '') { say('Type a number, e.g. 620.'); return; }
+  b.disabled = true; call('confirm', { hid: b.dataset.h, received: num(got) }, 'cf-' + b.dataset.h, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); }); }, 'CONFIRM');
 };
 function pgToday() {
   var h = needsHtml() + confirmHtml() + toEnterHtml();
   if (D.cash && D.cash.length) { h += '<div class="card"><h3>Cash with me</h3><p class="sub">Omini money goes to Frank; Clement/Bernice money to the HR office logbook.</p>' + cashTable(D.cash) + '</div>'; }
-  if (!D.myOrders.length) return h + '<p class="muted">No orders in the last 3 days.</p>';
-  D.myOrders.forEach(function (o) {
+  var mo = D.myOrders.filter(function (o) { return !agOn() || o.agent === agName(agOn()); });
+  if (D.me.role === 'Supervisor') h += '<h3 style="margin:14px 0 4px">Orders – last 3 days</h3>' + agentSeg();
+  if (!mo.length) return h + '<p class="muted">No orders in the last 3 days.</p>';
+  mo.forEach(function (o) {
     var s = STXT[o.status] || [o.status, ''];
     h += '<div class="card"><div class="row"><div class="grow"><h3>' + esc(o.vendor) + '</h3><div class="sub">' + esc(o.date) + ' · ' + esc(o.oid) + (o.parent ? ' · part of ' + esc(o.parent) : '') + (D.me.role === 'Supervisor' ? ' · ' + esc(o.agent) : '') + '</div></div><span class="pill ' + s[1] + '">' + esc(s[0]) + '</span></div>' +
       '<div class="small">' + o.lines.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') + ' · ' + esc(o.pay) + (o.prepaid ? ' · paid already ' + ghs(o.prepaid) : '') + (o.promised ? ' · promised old debt ' + ghs(o.promised) : '') + '</div>' + outcomeHtml(o);
@@ -379,21 +412,22 @@ function cashTable1(c) {
 }
 ACT.handover = function (b) {
   var to = /→ Frank/.test(b.dataset.r) ? 'Frank' : /→ Joshua/.test(b.dataset.r) ? 'the manager' : 'the HR office logbook';
-  var amt = prompt('Hand over to ' + to + '. Amount (GHS):', b.dataset.a); if (amt === null) return; if (!(num(amt) > 0)) { alert('Type the amount, e.g. 620.'); return; }
-  var lb = ''; if (to === 'the HR office logbook') { lb = prompt('HR logbook page or number where the office signed:', ''); if (lb === null) return; if (!String(lb).trim()) { alert('Write the logbook page or number.'); return; } }
-  b.disabled = true; call('handover', { src: b.dataset.src, amount: num(amt), logbook: lb }, 'ho-' + b.dataset.src + '-' + num(amt) + '-' + b.dataset.a + '-' + D.today, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); });
+  var go = function (amt, lb) { b.disabled = true; call('handover', { src: b.dataset.src, amount: num(amt), logbook: lb }, 'ho-' + b.dataset.src + '-' + num(amt) + '-' + b.dataset.a + '-' + D.today, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); }); };
+  askIn('Hand over to ' + to + '. Amount (GHS):', b.dataset.a, 'decimal', function (amt) { if (!(num(amt) > 0)) { say('Type the amount, e.g. 620.'); return; }
+    if (to !== 'the HR office logbook') { go(amt, ''); return; }
+    askIn('HR logbook page or number where the office signed:', '', '', function (lb) { if (!String(lb).trim()) { say('Write the logbook page or number.'); return; } go(amt, lb); }, 'SAVE'); }, 'HAND OVER');
 }
 ACT.editO = function (b) {
   var o = D.myOrders.filter(function (x) { return x.oid === b.dataset.o; })[0]; if (!o) return;
   var d = draft(); d.vendors = d.vendors.filter(function (x) { return x.vid; });
   var x = newV(); x.vid = o.vid; x.replaces = o.oid; x.lines = o.lines.map(function (l) { return { sku: l.sku, qty: l.qty }; }); x.pay = o.pay === 'Credit' ? 'CREDIT' : 'CASH'; x.prepaid = o.prepaid || 0; x.promised = o.promised ? String(o.promised) : '';
-  if (!vend(o.vid)) { alert('This vendor is not in your list any more.'); return; }
+  if (!vend(o.vid)) { say('This vendor is not in your list any more.'); return; }
   d.vendors.push(x); saveDraft(d); TAB = 'new'; MSG = { t: 'Change what is wrong, then CHECK & SEND. The old order ' + o.oid + ' is replaced.', k: 'info' }; render();
 };
 ACT.cancelO = function (b) {
   var o = D.myOrders.filter(function (x) { return x.oid === b.dataset.o; })[0]; if (!o) return;
-  if (!confirm('Cancel ' + o.vendor + ' (' + o.oid + ')?' + (o.status !== 'Submitted' ? '\nIt is already with Prince – Frank and Prince will be told.' : ''))) return;
-  call('cancel', { oid: o.oid }, 'c-' + o.oid, function (r) { load(function () { show(r.msg || 'Cancelled.'); }); });
+  ask('Cancel ' + o.vendor + ' (' + o.oid + ')?' + (o.status !== 'Submitted' ? '\nIt is already with Prince – Frank and Prince will be told.' : ''), function () {
+  call('cancel', { oid: o.oid }, 'c-' + o.oid, function (r) { load(function () { show(r.msg || 'Cancelled.'); }); }); }, 'YES, CANCEL IT');
 };
 // ---------------------------------------------------------------- warehouse
 function src(id) { for (var i = 0; i < D.sources.length; i++) if (D.sources[i].id === id) return D.sources[i]; return { id: id, name: id }; }
@@ -433,9 +467,10 @@ ACT.relgo = function (b) {
     var parts = lines.filter(function (l) { return l.main < o.lines.filter(function (x) { return x.sku === l.sku; })[0].qty; }).map(function (l) { var q = o.lines.filter(function (x) { return x.sku === l.sku; })[0].qty - l.main; return q + ' ' + l.sku + (l.otherSrc === 'NA' ? ' NOT available' : ' from ' + src(l.otherSrc).name); });
     txt.push(o.vendor + ': from ' + src(s.src).name + (parts.length ? ' – except ' + parts.join(', ') : ''));
   });
-  if (!confirm('Release ' + items.length + ' order(s)?\n\n' + txt.join('\n'))) return;
+  ask('Release ' + items.length + ' order(s)?\n\n' + txt.join('\n'), function () {
   b.disabled = true; b.textContent = 'Saving…';
   call('release', { items: items }, REL.__sid || (REL.__sid = uid()), function (r) { REL = {}; load(function () { show((r.dup ? r.msg : 'Released. ' + (r.msgs || []).join(' ')) + '\nPrince has his list.'); }); }, function (m) { b.disabled = false; show(m, 'err'); });
+  }, 'RELEASE');
 };
 function pgOut() {
   var o = D.out || { skus: [] };
@@ -457,8 +492,21 @@ function pgBook() {
   h += B.rows.length ? '<table>' + B.rows.map(function (r) { return '<tr><td>' + esc(r.time) + '</td><td><b>' + esc(r.vendor) + '</b><div class="small muted">' + esc(r.agent) + (r.omini ? '' : ' · from ' + esc(r.from)) + '</div><div class="small">' + r.lines.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') + '</div></td><td class="right">' + ghs(r.value) + '<div class="small">' + esc(r.pay) + '</div><div class="small ' + (r.owing > 0.004 ? '' : 'muted') + '">' + esc(r.status) + (r.paid ? ' · paid ' + ghs(r.paid) : '') + (r.delivered && r.owing > 0.004 ? ' · owes ' + ghs(r.owing) : '') + '</div></td></tr>'; }).join('') + '</table>' : '<p class="muted">Nothing released yet today.</p>';
   h += '</div>';
   var tot = B.owed.reduce(function (t, w) { return t + w.amount; }, 0);
-  h += '<div class="card"><h3>Owed to Omini: ' + ghs(tot) + '</h3><p class="sub">' + B.owed.length + ' vendor(s), oldest first. Cartons = orders not fully paid.</p><table>' + B.owed.map(function (w) { return '<tr><td><b>' + esc(w.vendor) + '</b><div class="small muted">' + esc(w.agent) + ' · ' + w.days + ' days</div><div class="small">' + w.skus.map(function (x) { return x.qty + ' ' + esc(x.sku); }).join(', ') + '</div></td><td class="right"><b>' + ghs(w.amount) + '</b></td></tr>'; }).join('') + '</table></div>';
+  h += owedByDayHtml(B);
   return h;
+}
+/** v2.4.4: what vendors owe Omini, one line per order, under the day it was sold (oldest first) – like Frank's book. */
+function dayLbl(ymd) { var d = String(ymd || '').split('-'); if (d.length < 3) return ymd || ''; var x = new Date(Date.UTC(+d[0], +d[1] - 1, +d[2])); return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][x.getUTCDay()] + ' ' + (+d[2]) + ' ' + ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+d[1] - 1]; }
+function owedByDayHtml(B) {
+  var list = (B.owedOrders || []).filter(function (x) { return !agOn() || x.agent === agName(agOn()); });
+  if (!B.owedOrders) { var tot0 = B.owed.reduce(function (t, w) { return t + w.amount; }, 0); return '<div class="card"><h3>Owed to Omini: ' + ghs(tot0) + '</h3></div>'; }
+  var tot = list.reduce(function (t, x) { return t + x.owing; }, 0); var h = '<div class="card"><h3>Owed to Omini: ' + ghs(tot) + '</h3>' + agentSeg() + '<p class="sub">' + list.length + ' unpaid order(s), by the day they were sold – oldest first. When an agent or Prince brings the money, the order leaves this list (or shows what is still owed).</p>';
+  var cur = null;
+  list.forEach(function (x) {
+    if (x.date !== cur) { cur = x.date; var dd = list.filter(function (y) { return y.date === cur; }); h += '<div style="margin:14px 0 4px;padding:6px 8px;background:var(--blue2);border-radius:8px"><b>' + esc(dayLbl(cur)) + '</b> · ' + x.days + ' day' + (x.days === 1 ? '' : 's') + ' ago <span class="right" style="float:right"><b>' + ghs(dd.reduce(function (t, y) { return t + y.owing; }, 0)) + '</b></span></div>'; }
+    h += '<div class="row" style="border-bottom:1px solid var(--line);padding:6px 2px"><div class="grow"><b>' + esc(x.vendor) + '</b> <span class="small muted">' + esc(x.agent) + '</span><div class="small">' + (x.lines.length ? x.lines.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') : '') + (x.paid > 0.004 ? ' · paid ' + ghs(x.paid) + ' of ' + ghs(x.value) : '') + '</div></div><div class="right"><b style="color:var(--red)">' + ghs(x.owing) + '</b></div></div>';
+  });
+  return h + '</div>';
 }
 function pgCash() {
   var B = D.book || { received: [] }; var tot = B.received.reduce(function (t, x) { return t + x.amount; }, 0);
@@ -515,18 +563,20 @@ INP.scamt = function (el) { STOP[el.dataset.v].camt = el.value; }; INP.scwhen = 
 CHG.sclaim = function (el) { STOP[el.dataset.v].claim = el.checked; render(); }; CHG.scagent = function (el) { STOP[el.dataset.v].cagent = el.value; };
 ACT.stopsave = function (b) {
   var s = stop(b.dataset.v), st = STOP[s.id];
-  if (st.what !== 'NONE' && st.cash.trim() === '') { alert('Type the cash she gave you (0 if nothing).'); return; }
-  if (st.what !== 'NONE' && !(num(st.cash) >= 0)) { alert('The cash must be a number, e.g. 1250.'); return; }
-  if (st.what === 'NONE' && !st.reason.trim()) { alert('Write why it was not delivered.'); return; }
-  if (st.what === 'LESS' && !Object.keys(st.ret).some(function (k) { return st.ret[k] > 0; })) { alert('Tap + next to what she returned (or choose Delivered all).'); return; }
-  if (st.claim && !(num(st.camt) > 0)) { alert('Write how much she says she paid the agent.'); return; }
+  if (st.what !== 'NONE' && st.cash.trim() === '') { say('Type the cash she gave you (0 if nothing).'); return; }
+  if (st.what !== 'NONE' && !(num(st.cash) >= 0)) { say('The cash must be a number, e.g. 1250.'); return; }
+  if (st.what === 'NONE' && !st.reason.trim()) { say('Write why it was not delivered.'); return; }
+  if (st.what === 'LESS' && !Object.keys(st.ret).some(function (k) { return st.ret[k] > 0; })) { say('Tap + next to what she returned (or choose Delivered all).'); return; }
+  if (st.claim && !(num(st.camt) > 0)) { say('Write how much she says she paid the agent.'); return; }
   var cash = num(st.cash) || 0;
-  if (st.what !== 'NONE' && !confirm(s.name + '\n' + (st.what === 'ALL' ? 'Delivered all' : 'Some returned') + '\nCash: ' + ghs(cash) + (st.claim ? '\nSays she paid ' + (st.cagent || s.orders[0].agent) + ' ' + ghs(num(st.camt)) : '') + '\n\nSave?')) return;
+  var doSave = function () {
   b.disabled = true; b.textContent = 'Saving…';
   var ret = Object.keys(st.ret).filter(function (k) { return st.ret[k] > 0; }).map(function (k) { var p = k.split('|'); return { oid: p[0], sku: p[1], n: st.ret[k] }; });
   call('stop', { vid: s.id, oids: s.orders.map(function (o) { return o.oid; }), what: st.what, returns: ret, cash: cash, reason: st.reason, note: st.note, claim: st.claim ? { agent: st.cagent || s.orders[0].agent, amount: num(st.camt), when: st.cwhen } : null }, st.sid,
     function (r) { delete STOP[s.id]; load(function () { show(r.msg || 'Saved.'); }); },
     function (m, e) { if (e && e.offline) { enqueue('stop', { vid: s.id, oids: s.orders.map(function (o) { return o.oid; }), what: st.what, returns: ret, cash: cash, reason: st.reason, note: st.note, claim: st.claim ? { agent: st.cagent || s.orders[0].agent, amount: num(st.camt), when: st.cwhen } : null }, st.sid, s.name); delete STOP[s.id]; show('No signal – ' + s.name + ' is saved on this phone. It is sent when you have signal and CupSales is open. Go on to the next stop.', 'info'); return; } b.disabled = false; b.textContent = 'SAVE'; show(m, 'err'); });
+  };
+  if (st.what === 'NONE') doSave(); else ask(s.name + '\n' + (st.what === 'ALL' ? 'Delivered all' : 'Some returned') + '\nCash: ' + ghs(cash) + (st.claim ? '\nSays she paid ' + (st.cagent || s.orders[0].agent) + ' ' + ghs(num(st.camt)) : '') , doSave, 'SAVE');
 };
 function pgDone() {
   var tot = D.done.reduce(function (t, x) { return t + x.cash; }, 0);
@@ -546,9 +596,9 @@ function pgHelpers() {
   return h + '<p><button class="main big" data-act="hmake">MAKE HELPER LINK</button></p></div>';
 }
 INP.hname = function (el) { HNAME = el.value; }; CHG.hsel = function (el) { HSEL[el.dataset.v] = el.checked; };
-ACT.hmake = function (b) { var v = Object.keys(HSEL).filter(function (k) { return HSEL[k]; }); if (!HNAME.trim() || !v.length) { alert('Write the name and tick at least one stop.'); return; } b.disabled = true; b.textContent = 'Making the link…'; call('helper', { name: HNAME, vids: v }, uid(), function (r) { if (!r || !r.url) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show('No link came back – try again. If it happens again, tell the manager.', 'err'); return; } HRES = r; HSEL = {}; HNAME = ''; MSG = null; render(); window.scrollTo(0, 0); }, function (m) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show(m, 'err'); }); };
+ACT.hmake = function (b) { var v = Object.keys(HSEL).filter(function (k) { return HSEL[k]; }); if (!HNAME.trim() || !v.length) { say('Write the name and tick at least one stop.'); return; } b.disabled = true; b.textContent = 'Making the link…'; call('helper', { name: HNAME, vids: v }, uid(), function (r) { if (!r || !r.url) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show('No link came back – try again. If it happens again, tell the manager.', 'err'); return; } HRES = r; HSEL = {}; HNAME = ''; MSG = null; render(); window.scrollTo(0, 0); }, function (m) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show(m, 'err'); }); };
 ACT.hnew = function () { HRES = null; render(); };
-ACT.hcopy = function () { var t = $('htext'); try { t.focus(); t.select(); document.execCommand('copy'); show('Copied – paste it to the helper.', 'ok'); } catch (e) { alert('Press and hold the message to copy it.'); } };
+ACT.hcopy = function () { var t = $('htext'); try { t.focus(); t.select(); document.execCommand('copy'); show('Copied – paste it to the helper.', 'ok'); } catch (e) { say('Press and hold the message to copy it.'); } };
 /** Buttons in emails: #cancel=ORD-… asks to cancel that order; #confirm / #decide open the right tab. */
 function goHash() {
   if (!D) return;
