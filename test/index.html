@@ -112,6 +112,25 @@ function dlgOpen(text, input, okLabel, cancelLabel, cb) {
   var el = $('dlgin'); if (el) { el.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); ACT.dlgYes(); } }; try { el.focus(); el.select(); } catch (x) { } }
 }
 function dlgClose() { $('dlg').innerHTML = ''; var cb = DLGCB; DLGCB = null; return cb; }
+/** v2.4.5: a save that the system may question first ("already recorded today – is this new money?") */
+function saveAsk(op, data, sid, b) {
+  if (b) b.disabled = true;
+  call(op, data, sid, function (r) {
+    if (r.ask) { if (b) b.disabled = false; ask(r.ask, function () { data.sure = (data.sure ? data.sure + ',' : '') + (r.code || 'yes'); saveAsk(op, data, sid, b); }, 'YES, SAVE'); return; }
+    if (b) delete b.dataset.sid; SIDS = {}; load(function () { show(r.msg || 'Saved.'); });
+  }, function (m) { if (b) b.disabled = false; show(m, 'err'); });
+}
+/** The same save number until it is saved: a second tap after a slow or lost answer never records the money twice. */
+var SIDS = {};
+function sidFor(key) { return SIDS[key] || (SIDS[key] = key + '-' + uid()); }
+var DLGSEL = '';
+function dlgPick(text, def, choices, okLabel, cb, hint) {
+  DLGSEL = '';
+  dlgOpen((hint ? hint + '\n\n' : '') + text, { value: def, mode: 'decimal' }, okLabel, 'Cancel', function (v) { if (!DLGSEL) { dlgPick(text, v, choices, okLabel, cb, '▶ First tap WHO gave you the money.'); return; } cb(v, DLGSEL); });
+  var box = document.querySelector('#dlg .sheet p'); var seg = document.createElement('div'); seg.className = 'seg'; seg.style.margin = '8px 0';
+  seg.innerHTML = '<div class="small muted" style="width:100%">Who gave you the money?</div>' + choices.map(function (c) { return '<button data-act="dlgSel" data-c="' + esc(c[0]) + '">' + esc(c[1]) + '</button>'; }).join('');
+  box.parentNode.insertBefore(seg, box.nextSibling);
+}
 function say(text) { dlgOpen(text, null, 'OK', null, null); }
 function ask(text, yes, okLabel) { dlgOpen(text, null, okLabel || 'YES', 'No', function () { yes(); }); }
 function askIn(text, def, mode, yes, okLabel) { dlgOpen(text, { value: def, mode: mode }, okLabel || 'OK', 'Cancel', yes); }
@@ -274,6 +293,7 @@ ACT.review = function () {
 };
 ACT.dlgYes = function () { var el = $('dlgin'); var v = el ? el.value : true; var cb = dlgClose(); if (cb) cb(v); };
 ACT.dlgNo = function () { dlgClose(); };
+ACT.dlgSel = function (b) { DLGSEL = b.dataset.c; [].slice.call(document.querySelectorAll('[data-act=dlgSel]')).forEach(function (x) { x.className = x === b ? 'on' : ''; }); };
 ACT.closeO = function () { $('over').innerHTML = ''; };
 ACT.send = function (b) {
   if (BUSY) return; BUSY = true; b.disabled = true; b.textContent = 'Sending…';
@@ -321,11 +341,18 @@ function vlistHtml(list) {
 }
 function vlistBody(list, owe) {
   return '<p class="sub">' + list.length + ' vendor(s)' + (owe ? ' – oldest debt first' : '') + '</p>' + list.map(function (v) {
-    return '<div class="card"><div class="row"><div class="grow"><h3>' + esc(v.name) + '</h3><div class="sub">' + esc(v.school || '') + '</div></div>' + (v.phone ? '<a href="tel:' + esc(v.phone) + '"><button>Call</button></a>' : '') + '<button data-act="orderV" data-v="' + v.id + '">Order</button></div><div>' + vInfo(v) + '</div></div>';
+    return '<div class="card"><div class="row"><div class="grow"><h3>' + esc(v.name) + '</h3><div class="sub">' + esc(v.school || '') + '</div></div>' + (v.phone ? '<a href="tel:' + esc(v.phone) + '"><button>Call</button></a>' : '') + '<button data-act="orderV" data-v="' + v.id + '">Order</button></div><div>' + vInfo(v) + '</div>' + (D.me.role === 'Agent' || D.me.role === 'Supervisor' ? '<div class="row" style="margin-top:8px"><button class="' + (v.debt > 0 ? 'main' : 'ghost') + '" data-act="rcv" data-v="' + v.id + '">RECEIVED CASH</button></div>' : '') + '</div>';
   }).join('');
 }
 INP.vfind = function (el) { VQ = el.value; $('vlist').innerHTML = vlistHtml(vfilter()); };
 ACT.vf = function (b) { VF = b.dataset.f; render(); };
+ACT.rcv = function (b) {
+  var v = vend(b.dataset.v); if (!v) return; var sid = sidFor('pay-' + v.id);
+  askIn('Cash received from ' + v.name + (v.debt > 0 ? '\nShe owes ' + ghs(v.debt) + ' (oldest ' + v.days + ' days).' : '\nShe owes nothing.') + '\nHow much did she give you (GHS)?', '', 'decimal', function (amt) {
+    if (!(num(amt) > 0)) { say('Type the amount, e.g. 300.'); return; }
+    saveAsk('payment', { vid: v.id, amount: num(amt) }, sid, b);
+  }, 'SAVE');
+};
 ACT.orderV = function (b) { var d = draft(); var x = d.vendors.filter(function (y) { return !y.vid; })[0]; if (!x) { x = newV(); d.vendors.push(x); } if (d.vendors.some(function (y) { return y.vid === b.dataset.v; })) { TAB = 'new'; render(); return; } x.vid = b.dataset.v; saveDraft(d); TAB = 'new'; render(); };
 var STXT = { Submitted: ['Waiting for Frank', 'amber'], Released: ['With Prince', ''], 'Partly released': ['With Prince (part)', ''], Delivered: ['Delivered', 'green'], Cancelled: ['Cancelled', 'red'], Failed: ['Returned', 'red'], Rejected: ['Not released', 'red'], 'Cancelled after release': ['Cancelled – bring back', 'red'] };
 function outcomeHtml(o) {
@@ -492,6 +519,8 @@ function pgBook() {
   h += B.rows.length ? '<table>' + B.rows.map(function (r) { return '<tr><td>' + esc(r.time) + '</td><td><b>' + esc(r.vendor) + '</b><div class="small muted">' + esc(r.agent) + (r.omini ? '' : ' · from ' + esc(r.from)) + '</div><div class="small">' + r.lines.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') + '</div></td><td class="right">' + ghs(r.value) + '<div class="small">' + esc(r.pay) + '</div><div class="small ' + (r.owing > 0.004 ? '' : 'muted') + '">' + esc(r.status) + (r.paid ? ' · paid ' + ghs(r.paid) : '') + (r.delivered && r.owing > 0.004 ? ' · owes ' + ghs(r.owing) : '') + '</div></td></tr>'; }).join('') + '</table>' : '<p class="muted">Nothing released yet today.</p>';
   h += '</div>';
   var tot = B.owed.reduce(function (t, w) { return t + w.amount; }, 0);
+  var wp = (B.withPeople || []).reduce(function (t, p) { return t + p.total; }, 0);
+  if (wp > 0.004) h += '<div class="msg info">' + ghs(wp) + ' already paid by vendors is still with ' + (B.withPeople || []).map(function (p) { return esc(p.name) + ' (' + ghs(p.total) + ')'; }).join(', ') + ' – see the Cash tab.</div>';
   h += owedByDayHtml(B);
   return h;
 }
@@ -504,13 +533,36 @@ function owedByDayHtml(B) {
   var cur = null;
   list.forEach(function (x) {
     if (x.date !== cur) { cur = x.date; var dd = list.filter(function (y) { return y.date === cur; }); h += '<div style="margin:14px 0 4px;padding:6px 8px;background:var(--blue2);border-radius:8px"><b>' + esc(dayLbl(cur)) + '</b> · ' + x.days + ' day' + (x.days === 1 ? '' : 's') + ' ago <span class="right" style="float:right"><b>' + ghs(dd.reduce(function (t, y) { return t + y.owing; }, 0)) + '</b></span></div>'; }
-    h += '<div class="row" style="border-bottom:1px solid var(--line);padding:6px 2px"><div class="grow"><b>' + esc(x.vendor) + '</b> <span class="small muted">' + esc(x.agent) + '</span><div class="small">' + (x.lines.length ? x.lines.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') : '') + (x.paid > 0.004 ? ' · paid ' + ghs(x.paid) + ' of ' + ghs(x.value) : '') + '</div></div><div class="right"><b style="color:var(--red)">' + ghs(x.owing) + '</b></div></div>';
+    h += '<div class="row" style="border-bottom:1px solid var(--line);padding:6px 2px"><div class="grow"><b>' + esc(x.vendor) + '</b> <span class="small muted">' + esc(x.agent) + '</span><div class="small">' + (x.lines.length ? x.lines.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') : '') + (x.paid > 0.004 ? ' · paid ' + ghs(x.paid) + ' of ' + ghs(x.value) : '') + '</div></div><div class="right"><b style="color:var(--red)">' + ghs(x.owing) + '</b>' + (D.me.role === 'Warehouse' ? '<div><button class="ghost small" style="padding:4px 10px" data-act="fpaid" data-v="' + esc(x.vid) + '" data-a="' + x.owing + '" data-n="' + esc(x.vendor) + '" data-g="' + esc(x.agent) + '" data-r="' + esc(x.ref) + '">PAID</button></div>' : '') + '</div></div>';
   });
   return h + '</div>';
 }
+ACT.fpaid = function (b) {
+  var sid = sidFor('fp-' + b.dataset.v); var who = [['VENDOR', b.dataset.n + ' herself']].concat((D.people || []).map(function (p) { return [p.id, p.name]; }));
+  dlgPick(b.dataset.n + ' owes Omini ' + ghs(+b.dataset.a) + ' on this order.\nCount the money. How much did you receive (GHS)?', '', who, 'SAVE', function (amt, by) {
+    if (!(num(amt) > 0)) { say('Type the amount you counted, e.g. 300.'); return; }
+    saveAsk('payment', { vid: b.dataset.v, amount: num(amt), by: by, ref: b.dataset.r }, sid, b);
+  });
+};
+/** v2.4.5: money vendors paid that an agent or Prince still has – Frank records it when it is brought to him. */
+function withPeopleHtml(B) {
+  var W = B.withPeople || []; if (!W.length) return '';
+  var lim = B.cashDays || 3;
+  return '<div class="card"><h3>Paid by vendors – cash still with…</h3><p class="sub">These vendors have paid; the money has not reached you yet.' + (D.me.role === 'Warehouse' ? ' When the person brings it, tap her name and type what you counted.' : '') + '</p>' + W.map(function (p) {
+    return '<div style="margin:10px 0;padding-bottom:8px;border-bottom:1px solid var(--line)"><div class="row"><div class="grow"><b>' + esc(p.name) + '</b> has <b>' + ghs(p.total) + '</b></div>' + (D.me.role === 'Warehouse' ? '<button class="main" data-act="frecv" data-u="' + p.uid + '" data-a="' + p.total + '" data-n="' + esc(p.name) + '">' + esc(p.name.toUpperCase()) + ' GAVE ME CASH</button>' : '') + '</div>' +
+      '<table class="small">' + p.items.map(function (x) { return '<tr><td class="muted" style="white-space:nowrap">' + esc(x.when) + '</td><td>' + esc(x.text) + '<div style="color:' + (x.days > lim ? 'var(--red)' : 'var(--mute)') + '">' + (x.days ? x.days + ' day' + (x.days === 1 ? '' : 's') + ' with ' + esc(p.name) : 'collected today') + '</div></td><td class="right"><b>' + ghs(x.amt) + '</b></td></tr>'; }).join('') + '</table></div>';
+  }).join('') + '</div>';
+}
+ACT.frecv = function (b) {
+  var sid = sidFor('fr-' + b.dataset.u);
+  askIn(b.dataset.n + ' has ' + ghs(+b.dataset.a) + ' of vendors\' money recorded.\nCount the cash ' + b.dataset.n + ' gave you. How much is it (GHS)?', '', 'decimal', function (amt) {
+    if (!(num(amt) > 0)) { say('Type the amount you counted, e.g. 620.'); return; }
+    saveAsk('receive', { from: b.dataset.u, amount: num(amt) }, sid, b);
+  }, 'RECORD');
+};
 function pgCash() {
   var B = D.book || { received: [] }; var tot = B.received.reduce(function (t, x) { return t + x.amount; }, 0);
-  return (confirmHtml() || '<div class="card"><p class="muted">No cash waiting for you to count.</p></div>') + '<div class="card"><h3>Received today: ' + ghs(tot) + '</h3><table>' + B.received.map(function (x) { return '<tr><td>' + esc(x.from) + (x.short ? ' <span class="pill red">short – manager told</span>' : '') + '</td><td class="right">' + ghs(x.amount) + '</td></tr>'; }).join('') + '</table></div>';
+  return (confirmHtml() || '<div class="card"><p class="muted">No cash waiting for you to count.</p></div>') + withPeopleHtml(B) + '<div class="card"><h3>Received today: ' + ghs(tot) + '</h3><table>' + B.received.map(function (x) { return '<tr><td>' + esc(x.from) + (x.short ? ' <span class="pill red">short – manager told</span>' : '') + '</td><td class="right">' + ghs(x.amount) + '</td></tr>'; }).join('') + '</table></div>';
 }
 function pgRToday() {
   if (!D.releasedToday.length) return '<p class="muted">Nothing released today yet.</p>';
