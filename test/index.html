@@ -415,8 +415,37 @@ ACT.confirmC = function (b) {
   askIn('Count the cash. How much is it?\n(GHS ' + b.dataset.a + ' was sent' + (Number(b.dataset.n) ? ', made of the ' + b.dataset.n + ' payment(s) listed' : '') + ')', '', 'decimal', function (got) { if (!(num(got) >= 0) || String(got).trim() === '') { say('Type a number, e.g. 620.'); return; }
   b.disabled = true; call('confirm', { hid: b.dataset.h, received: num(got) }, 'cf-' + b.dataset.h, function (r) { load(function () { show(r.msg); }); }, function (m) { b.disabled = false; show(m, 'err'); }); }, 'CONFIRM');
 };
+/** v2.4.6: the manager's Clement / Bernice card. */
+function suppliersHtml() {
+  if (!D.suppliers || !D.suppliers.length || D.me.role !== 'Supervisor') return '';
+  return '<div class="card"><h3>Suppliers</h3>' + D.suppliers.map(function (x) {
+    var fld = x.field.reduce(function (t, w) { return t + w.amt; }, 0);
+    return '<div style="margin:10px 0;padding-bottom:10px;border-bottom:1px solid var(--line)"><div class="row"><div class="grow"><b style="font-size:17px">' + esc(x.name) + '</b></div><div class="right">CupSales owes <b style="color:var(--red)">' + ghs(x.owed) + '</b></div></div>' +
+      '<table class="small"><tr><td>Vendors still owe for ' + esc(x.name) + ' goods</td><td class="right"><b>' + ghs(x.vendorsOwe) + '</b></td></tr>' +
+      '<tr><td>Paid by vendors, with ' + (x.field.length ? x.field.map(function (w) { return esc(w.name) + ' ' + ghs(w.amt); }).join(', ') : 'agents / Prince') + '</td><td class="right"><b>' + ghs(fld) + '</b></td></tr>' +
+      '<tr><td>Waiting at the HR office logbook</td><td class="right"><b>' + ghs(x.hr) + '</b></td></tr>' +
+      (x.frank > 0.004 ? '<tr><td style="color:var(--red)">With Frank (should go to the HR logbook)</td><td class="right"><b>' + ghs(x.frank) + '</b></td></tr>' : '') +
+      '<tr><td><b>With you – ready to pay ' + esc(x.name) + '</b></td><td class="right"><b>' + ghs(x.me) + '</b></td></tr>' +
+      (x.last.length ? '<tr><td class="muted" colspan="2">Last paid: ' + x.last.map(function (l) { return ghs(l.amt) + ' on ' + esc(dayLbl(l.at)); }).join(' · ') + '</td></tr>' : '') + '</table>' +
+      '<div class="row" style="margin-top:8px"><button data-act="suphr" data-s="' + x.src + '" data-n="' + esc(x.name) + '" data-a="' + x.hr + '"' + (x.hr > 0.004 ? ' class="main"' : '') + '>COLLECTED FROM HR</button><button data-act="suppay" data-s="' + x.src + '" data-n="' + esc(x.name) + '" data-a="' + x.me + '" data-o="' + x.owed + '"' + (x.me > 0.004 ? ' class="main"' : '') + '>PAID ' + esc(x.name.toUpperCase()) + '</button></div></div>';
+  }).join('') + '<p class="sub">Paying a supplier lowers what CupSales owes it. Vendors\' debts only go down when the vendor pays.</p></div>';
+}
+ACT.suphr = function (b) {
+  var sid = sidFor('sh-' + b.dataset.s);
+  askIn(b.dataset.n + ' money at the HR office: ' + ghs(+b.dataset.a) + '.\nCount what you collected. How much (GHS)?', '', 'decimal', function (amt) {
+    if (!(num(amt) > 0)) { say('Type the amount you counted.'); return; }
+    askIn('HR logbook page or number:', '', '', function (lb) { saveAsk('supplier', { kind: 'hr', src: b.dataset.s, amount: num(amt), logbook: lb }, sid, b); }, 'SAVE');
+  }, 'NEXT');
+};
+ACT.suppay = function (b) {
+  var sid = sidFor('sp-' + b.dataset.s);
+  askIn('Pay ' + b.dataset.n + '. CupSales owes ' + ghs(+b.dataset.o) + '; you hold ' + ghs(+b.dataset.a) + ' of ' + b.dataset.n + ' money.\nHow much did you pay (GHS)?', '', 'decimal', function (amt) {
+    if (!(num(amt) > 0)) { say('Type the amount you paid.'); return; }
+    askIn('Receipt number or who signed at ' + b.dataset.n + ' (optional):', '', '', function (note) { saveAsk('supplier', { kind: 'pay', src: b.dataset.s, amount: num(amt), note: note, ack: String(note).trim() ? 1 : 0 }, sid, b); }, 'SAVE');
+  }, 'NEXT');
+};
 function pgToday() {
-  var h = needsHtml() + confirmHtml() + toEnterHtml();
+  var h = needsHtml() + suppliersHtml() + confirmHtml() + toEnterHtml();
   if (D.cash && D.cash.length) { h += '<div class="card"><h3>Cash with me</h3><p class="sub">Omini money goes to Frank; Clement/Bernice money to the HR office logbook.</p>' + cashTable(D.cash) + '</div>'; }
   var mo = D.myOrders.filter(function (o) { return !agOn() || o.agent === agName(agOn()); });
   if (D.me.role === 'Supervisor') h += '<h3 style="margin:14px 0 4px">Orders – last 3 days</h3>' + agentSeg();
@@ -435,7 +464,7 @@ function cashTable(rows) {
   return rows.map(function (c) { return cashTable1(c); }).join('');
 }
 function cashTable1(c) {
-  return '<table>' + [c].map(function (c) { return '<tr><td>' + esc(c.money) + '</td><td class="right"><b>' + ghs(c.free) + '</b>' + (c.pending > 0 ? '<div class="small muted">+ ' + ghs(c.pending) + ' waiting for confirmation</div>' : '') + '</td><td class="right">' + (c.route && c.free > 0.004 ? '<button data-act="handover" data-src="' + esc(c.src) + '" data-a="' + c.free + '" data-r="' + esc(c.route) + '">HAND OVER</button>' : (c.free > 0.004 ? '<span class="small muted">keep apart – ask the manager</span>' : '')) + '</td></tr>'; }).join('') + '</table>' + partsHtml(c.items, false);
+  return '<table>' + [c].map(function (c) { return '<tr><td>' + esc(c.money) + '</td><td class="right"><b>' + ghs(c.free) + '</b>' + (c.pending > 0 ? '<div class="small muted">+ ' + ghs(c.pending) + ' waiting for confirmation</div>' : '') + '</td><td class="right">' + (c.route && c.free > 0.004 ? '<button data-act="handover" data-src="' + esc(c.src) + '" data-a="' + c.free + '" data-r="' + esc(c.route) + '">HAND OVER</button>' : (c.free > 0.004 ? '<span class="small muted">' + (D.me.role === 'Supervisor' ? ((D.suppliers || []).some(function (x) { return x.name === c.money; }) ? 'see Suppliers' : 'with you') : 'keep apart – ask the manager') + '</span>' : '')) + '</td></tr>'; }).join('') + '</table>' + partsHtml(c.items, false);
 }
 ACT.handover = function (b) {
   var to = /→ Frank/.test(b.dataset.r) ? 'Frank' : /→ Joshua/.test(b.dataset.r) ? 'the manager' : 'the HR office logbook';
