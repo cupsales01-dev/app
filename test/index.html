@@ -53,10 +53,16 @@ button.sent{background:var(--green2);color:var(--green);opacity:1}
 .menu button{display:block;width:100%;text-align:left;background:#fff;color:var(--ink);font-weight:normal;border-radius:0;padding:13px 16px;border-bottom:1px solid var(--line)}.menu button:last-child{border-bottom:0}.menu button.warn{color:var(--red)}.menu .no{padding:12px 16px;font-size:13px;color:var(--mute)}
 .dt td{padding:7px 4px}.dt .k{color:var(--mute);width:40%}
 .rcp{max-width:460px;margin:10px auto}.rcp .amt{font-size:34px;font-weight:bold;color:var(--green);margin:6px 0}
+.sec{margin:18px 2px 8px;font-size:13px;text-transform:uppercase;letter-spacing:.4px;color:var(--mute)}
+.dayh{margin:14px 0 6px;padding:7px 10px;background:var(--blue2);border-radius:8px;display:flex;justify-content:space-between;gap:8px}
+.lrow{display:flex;gap:8px;align-items:flex-start;border-bottom:1px solid var(--line);padding:9px 2px;position:relative}.lrow .grow b{font-size:15px}
+.tk{display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);padding:7px 0;font-size:14px}.tk .chk{flex:0 0 auto}
+.fgrid input[type=date]{padding:7px}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
 var API = "https://script.google.com/macros/s/AKfycbwfwQvxXKKKzOyVWyX7TLW8yRklo1nk8A-jSCmIHRlASAVWnLSRqYuqElmbGu_HCbBTTA/exec", TEST = "1", RK = (function () { var m = location.search.match(/[?&]r=([A-Za-z0-9]{16,24})/); return m ? m[1] : ""; })(), TOKEN = RK ? "" : (function () { var m = location.search.match(/[?&]t=([A-Za-z0-9]{20,40})/), t = m ? m[1] : ''; var k = 'cs_token_' + location.pathname; try { if (t) localStorage.setItem(k, t); else t = localStorage.getItem(k) || ''; } catch (e) { } return t; })();
+var STALE = false; // v2.4.9: showing the screen kept on this phone while the newest one loads
 var SESSION = '', QKEY = 'cs_q_' + TOKEN, CKEY = 'cs_d_' + TOKEN, OFFLINE = false, SKEY = 'cs_s_' + TOKEN, DKEY = 'cs_draft_' + TOKEN, D = null, SCREEN = '', TAB = '', MSG = null, BUSY = false, OPEN = {}, REL = {}, STOP = {};
 function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } }
 function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -65,11 +71,13 @@ function num(s) { var t = String(s == null ? '' : s).replace(/[,\s]/g, ''); retu
 function uid() { return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
 function $(id) { return document.getElementById(id); }
 function sku(id) { for (var i = 0; i < D.skus.length; i++) if (D.skus[i].id === id) return D.skus[i]; return { id: id, title: id, price: 0 }; }
+var SKN = { RCO: '70g OC', RCC: '70g CHK' }; // v2.4.9: the names used in the company (codes stay RCO / RCC)
+function skn(id) { return SKN[id] || id; }
 function isOut(id) { return D.out && D.out.skus && D.out.skus.indexOf(id) >= 0; }
-/** v2.4.7: where a product Omini does not have comes from: a source id, 'NONE' (nobody has it) or '' (the manager has not said yet). */
+/** v2.4.7: where a product Omni does not have comes from: a source id, 'NONE' (nobody has it) or '' (the manager has not said yet). */
 function routeOf(id) { return isOut(id) ? ((D.out.route || {})[id] || '') : ''; }
 function srcNm(id) { var x = (D.sources || []).filter(function (s) { return s.id === id; })[0]; return x ? x.name : (id === 'SRC-CLEMENT' ? 'Clement' : id === 'SRC-BERNICE' ? 'Bernice' : id); }
-function outText(id) { var r = routeOf(id); return r && r !== 'NONE' ? id + ' from ' + srcNm(r) : r === 'NONE' ? id + ' not available anywhere' : id + ' – manager is finding who has it'; }
+function outText(id) { var r = routeOf(id), n = skn(id); return r && r !== 'NONE' ? n + ' from ' + srcNm(r) : r === 'NONE' ? n + ' not available anywhere' : n + ' – manager is finding who has it'; }
 function rpc(req, ok, fail) {
   if (window.google && google.script && google.script.run) { google.script.run.withSuccessHandler(ok).withFailureHandler(function (e) { if (!navigator.onLine) e = { message: 'no signal', offline: true }; fail(e); }).appCall(req); return; }
   if (!API) { fail({ message: 'Open this page from your CupSales link.' }); return; }
@@ -194,6 +202,11 @@ function dlgPick(text, def, choices, okLabel, cb, hint) {
   box.parentNode.insertBefore(seg, box.nextSibling);
 }
 function say(text) { dlgOpen(text, null, 'OK', null, null); }
+var DLGCH = [];
+function dlgChoose(text, choices) {
+  DLGCB = null; DLGNO = null; DLGCH = choices;
+  $('dlg').innerHTML = '<div class="overlay" style="z-index:50"><div class="sheet"><p style="white-space:pre-line;font-size:16px;margin:0 0 6px">' + esc(text) + '</p>' + choices.map(function (c, i) { return '<button class="big ' + (c[2] || '') + '" style="margin-top:8px" data-act="dlgCh" data-i="' + i + '">' + esc(c[0]) + '</button>'; }).join('') + '</div></div>';
+}
 function ask(text, yes, okLabel) { dlgOpen(text, null, okLabel || 'YES', 'No', function () { yes(); }); }
 function askIn(text, def, mode, yes, okLabel) { dlgOpen(text, { value: def, mode: mode }, okLabel || 'OK', 'Cancel', yes); }
 function show(t, kind) { MSG = { t: t, k: kind || 'ok' }; render(); window.scrollTo(0, 0); }
@@ -203,8 +216,14 @@ function load(after) {
   (function (f) { f(); })(function () {
     if (NEXTD && !queue().length && Date.now() - (NEXTD.__at || 0) < 20000) { var r0 = NEXTD; NEXTD = null; D = r0; OFFLINE = false; ls(CKEY, JSON.stringify(r0)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })); if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB) TAB = firstTab(); render(); after && after(); return; }
     NEXTD = null;
-    call('init', {}, '', function (r) { D = r; OFFLINE = false; ls(CKEY, JSON.stringify(r)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })); if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB) TAB = firstTab(); render(); after && after(); },
-      function (m, e) { var c = null; try { c = JSON.parse(ls(CKEY) || 'null'); } catch (x) { } if (e && e.offline && c) { D = c; OFFLINE = true; if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB) TAB = firstTab(); render(); } else $('main').innerHTML = '<div class="msg err">' + esc(m) + '</div>'; });
+    // v2.4.9: the screen kept on this phone shows at once ("Updating…"); the newest one replaces it when it arrives
+    if (!D) { var c0 = null; try { c0 = JSON.parse(ls(CKEY) || 'null'); } catch (x) { } if (c0 && c0.screens && c0.me) { D = c0; STALE = true; if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB || !TABS[SCREEN].some(function (t) { return t[0] === TAB; })) TAB = firstTab(); render(); } }
+    call('init', {}, '', function (r) {
+      var put = function () {
+        if (STALE && ($('dlg').innerHTML || $('over').innerHTML || (document.activeElement && /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)))) { setTimeout(put, 1200); return; }
+        var was = STALE; STALE = false; D = r; OFFLINE = false; ls(CKEY, JSON.stringify(r)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })); if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB) TAB = firstTab(); var y = window.scrollY; render(); if (was) window.scrollTo(0, y); after && after();
+      }; put(); },
+      function (m, e) { var c = null; try { c = JSON.parse(ls(CKEY) || 'null'); } catch (x) { } if (STALE && !(e && e.offline)) { STALE = false; show(m, 'err'); return; } STALE = false; if (e && e.offline && c) { D = c; OFFLINE = true; if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB) TAB = firstTab(); render(); } else $('main').innerHTML = '<div class="msg err">' + esc(m) + '</div>'; });
   });
 }
 function bgRefresh(again) { rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: 'refresh' }, function () { }, function () { if (!again) setTimeout(function () { bgRefresh(true); }, 30000); }); }
@@ -225,7 +244,7 @@ function authScreen(r) {
   $('pin').focus();
 }
 // ---------------------------------------------------------------- layout
-var TABS = { order: [['new', 'New order'], ['vendors', 'My vendors'], ['today', 'Today']], release: [['release', 'Release'], ['book', 'My book'], ['cash', 'Cash'], ['out', 'Out of stock']], route: [['route', 'Route'], ['done', 'Done today'], ['helpers', 'Helpers']] };
+var TABS = { order: [['new', 'New order'], ['vendors', 'My vendors'], ['today', 'Orders & Payments']], release: [['release', 'Pending orders'], ['approved', 'Approved'], ['book', 'My book'], ['cash', 'Payments'], ['out', 'Out of stock']], route: [['route', 'Route'], ['done', 'Orders & Payments'], ['helpers', 'Helpers']] };
 var SNAME = { order: 'Orders', release: 'Warehouse', route: 'Deliveries' };
 function firstTab() { return TABS[SCREEN][0][0]; }
 function bar() {
@@ -237,7 +256,7 @@ function render() {
   var m = MSG ? '<div class="msg ' + MSG.k + '">' + MSG.t.split('\n').map(esc).join('<br>') + '</div>' : '';
   $('foot').innerHTML = '';
   pendView();
-  var body = ({ 'new': pgNew, vendors: pgVendors, today: pgToday, release: pgRelease, book: pgBook, cash: pgCash, out: pgOut, rtoday: pgRToday, route: pgRoute, done: pgDone, helpers: pgHelpers })[TAB]();
+  var body = ({ 'new': pgNew, vendors: pgVendors, today: pgToday, release: pgRelease, approved: pgApproved, book: pgBook, cash: pgCash, out: pgOut, rtoday: pgRToday, route: pgRoute, done: pgDone, helpers: pgHelpers })[TAB]();
   $('main').innerHTML = m + body;
   decorate();
 }
@@ -248,6 +267,7 @@ function topbar() {
   t += '</div><div class="tabs">';
   TABS[SCREEN].forEach(function (x) { if (x[0] === 'helpers' && D.me.role === 'Helper') return; t += '<button class="tab' + (x[0] === TAB ? ' on' : '') + '" data-tab="' + x[0] + '">' + x[1] + '</button>'; });
   var qn = queue().length;
+  if (STALE && !OFFLINE) t += '<div class="test" style="background:var(--blue2);color:var(--blue)">Updating…</div>';
   if (OFFLINE || qn) t += '<div class="test" style="background:var(--amber2);color:var(--amber)">' + (OFFLINE ? 'No signal – showing the list from ' + esc(ls(CKEY + '_at') || '') + '. ' : '') + (qn ? '⏳ ' + qn + ' save' + (qn > 1 ? 's' : '') + ' kept on this phone' + (noSig() ? ' – sent when there is signal (keep CupSales open, or open it again).' : ' – sending to the system. You can carry on.') : '') + '</div>';
   $('top').innerHTML = t + '</div>';
 }
@@ -261,9 +281,12 @@ function pendView() {
     if ((x.op === 'resolve' || x.op === 'decide') && D.needs) D.needs = D.needs.filter(function (n) { return n.eid !== d.eid && !(n.dec && n.dec.did === d.did); });
     if (x.op === 'entered' && D.toEnter) D.toEnter = D.toEnter.filter(function (e) { return (d.oids || []).indexOf(e.oid) < 0; });
     if (x.op === 'outstock' && D.out) D.out.skus = d.skus || [];
-    if (x.op === 'route' && D.out) { D.out.route = D.out.route || {}; D.out.route[d.sku] = d.src; }
+    if (x.op === 'route' && D.out) { D.out.route = D.out.route || {}; if (d.routes) Object.keys(d.routes).forEach(function (k) { D.out.route[k] = d.routes[k]; }); else D.out.route[d.sku] = d.src; }
+    if (x.op === 'decline') { if (D.waiting) D.waiting = D.waiting.filter(function (o) { return o.oid !== d.oid; }); if (D.myOrders) D.myOrders.forEach(function (o) { if (o.oid === d.oid) o.status = 'Rejected'; }); }
+    if (x.op === 'rreply' && D.receipts) D.receipts.forEach(function (r) { if (r.rk === d.rk) r.answer = (d.ans === 'yes' ? 'Confirmed' : 'Not correct') + (d.how === 'person' ? ' (in person)' : ' (text reply)'); });
+    if (x.op === 'receive' && d.items && D.book && D.book.withPeople) D.book.withPeople.forEach(function (p) { if (p.uid !== d.from) return; var ids = d.items.map(function (i) { return i.id; }); p.items = p.items.filter(function (i) { return ids.indexOf(i.id) < 0; }); p.total = Math.round(p.items.reduce(function (t, i) { return t + i.amt; }, 0) * 100) / 100; });
     if (x.op === 'vprofile') { var vv0 = vend(d.vid); if (vv0) { var bb = bdayParse(d.bday); vv0.bday = bb ? bb.key : ''; vv0.bdayTxt = bb ? bb.text : ''; } }
-    if (x.op === 'rsent' && D.receipts) D.receipts.forEach(function (r) { if (r.rk === d.rk || (d.rids || []).some(function (i) { return r.rids.indexOf(i) >= 0; })) { r.sent = true; r.rk = r.rk || d.rk; } });
+    if (x.op === 'rsent' && D.receipts) D.receipts.forEach(function (r) { if (r.rk === d.rk || (d.rids || []).some(function (i) { return r.rids.indexOf(i) >= 0; })) { r.sent = true; r.rk = r.rk || d.rk; r.via = d.via === 'SMS' ? 'Text message' : 'WhatsApp'; } });
     if (x.op === 'cancel' && D.myOrders) D.myOrders.forEach(function (o) { if (o.oid === d.oid) { o.status = 'Cancelling'; } });
     if ((x.op === 'agree' || x.op === 'dispute') && D.myOrders) D.myOrders.forEach(function (o) { if (o.oid === d.oid && o.outcome) { o.outcome.check = x.op === 'agree' ? 'Agrees' : 'Disagrees'; o.outcome.mismatch = false; o.outcome.sending = 1; } });
     if (x.op === 'orders' && D.myOrders && !D.myOrders.some(function (o) { return o.sid === x.sid; })) (d.vendors || []).slice().reverse().forEach(function (v) {
@@ -276,6 +299,7 @@ function decorate() {
   queue().forEach(function (x) { if (!x.mark) return; try { [].slice.call(document.querySelectorAll(x.mark)).forEach(function (el) { el.disabled = true; el.className = String(el.className || '').replace(/\bmain\b/, '') + ' sent'; el.textContent = '✓ Saved – sending…'; }); } catch (e) { } });
 }
 document.addEventListener('click', function (e) {
+  if (e.target.classList && e.target.classList.contains('overlay')) { if (e.target.parentNode && e.target.parentNode.id === 'dlg') ACT.dlgNo(); else $('over').innerHTML = ''; return; } // v2.4.9: tap outside = close
   var b = e.target.closest('[data-scr],[data-tab],[data-act]'); if (!b) return;
   if (b.dataset.scr) { SCREEN = b.dataset.scr; TAB = firstTab(); MSG = null; render(); return; }
   if (b.dataset.tab) { TAB = b.dataset.tab; MSG = null; render(); window.scrollTo(0, 0); return; }
@@ -284,6 +308,7 @@ document.addEventListener('click', function (e) {
 document.addEventListener('input', function (e) { var f = INP[e.target.dataset.inp]; if (f) f(e.target); });
 document.addEventListener('change', function (e) { var f = CHG[e.target.dataset.chg]; if (f) f(e.target); });
 var ACT = {}, INP = {}, CHG = {};
+ACT.dlgCh = function (b) { var c = DLGCH[+b.dataset.i]; DLGCH = []; dlgClose(); if (c && c[1]) c[1](); }; // v2.4.9
 // ---------------------------------------------------------------- agent: new order (draft is kept on the phone until sent)
 function draft() { var d = null; try { d = JSON.parse(ls(DKEY) || 'null'); } catch (e) { } if (!d || !d.vendors) { d = { sid: uid(), vendors: [newV()] }; saveDraft(d); } return d; }
 function saveDraft(d) { ls(DKEY, JSON.stringify(d)); }
@@ -304,18 +329,22 @@ function vInfo(v) {
 }
 function pgNew() {
   var d = draft(), h = '', tv = 0, tc = 0;
-  if (D.out && D.out.skus && D.out.skus.length) h += '<div class="msg info"><b>Out at Omini</b> (' + esc(D.out.at || '') + '):<br>' + D.out.skus.map(function (x) { return esc(outText(x)); }).join('<br>') + (D.out.skus.some(function (x) { var r = routeOf(x); return r && r !== 'NONE'; }) ? '<br><b>Money for Clement / Bernice goods goes to the HR office logbook, not to Frank.</b>' : '') + '</div>';
+  if (D.out && D.out.skus && D.out.skus.length) h += '<div class="msg info"><b>Out at Omni</b> (' + esc(D.out.at || '') + '):<br>' + D.out.skus.map(function (x) { return esc(outText(x)); }).join('<br>') + (D.out.skus.some(function (x) { var r = routeOf(x); return r && r !== 'NONE'; }) ? '<br><b>Money for Clement / Bernice goods goes to the HR office logbook, not to Frank.</b>' : '') + '</div>';
   d.vendors.forEach(function (x, i) {
     if (x.vid && !vend(x.vid)) { x.vid = ''; saveDraft(d); } // vendor moved to another agent since the draft was kept
     var v = x.vid ? vend(x.vid) : null; h += '<div class="card">';
     if (!v) {
-      h += '<label>Vendor ' + (i + 1) + ' – type 2–3 letters of her name or school</label><input data-inp="vq" data-k="' + x.k + '" value="' + esc(x.q) + '" placeholder="e.g. bor, brago, wesco" autocomplete="off" autocapitalize="off" spellcheck="false">';
+      h += '<div class="row" style="flex-wrap:nowrap"><label class="grow" style="margin:0 0 6px;color:var(--ink);font-size:16px"><b>Select Vendor</b></label>' + (d.vendors.length > 1 ? '<button class="ghost" data-act="delV" data-k="' + x.k + '" data-e="1">✕ Remove</button>' : '') + '</div><input data-inp="vq" data-k="' + x.k + '" value="' + esc(x.q) + '" placeholder="type 2–3 letters of her name, school or phone" autocomplete="off" autocapitalize="off" spellcheck="false">';
       h += '<div id="hits-' + x.k + '">' + hitsHtml(x) + '</div>';
+    } else if (x.c) { // v2.4.9: a finished vendor folds up to one line – tap it to open it again
+      var val0 = vValue(x); tv += val0; var ct0 = x.lines.reduce(function (t, l) { return t + (l.sku ? Number(l.qty) || 0 : 0); }, 0); tc += ct0; var miss = !x.lines.some(function (l) { return l.sku; });
+      h += '<div class="row ohead" data-act="nexp" data-k="' + x.k + '"><div class="grow"><b>' + esc(v.name) + '</b>' + (miss ? ' <span class="pill red">add a product</span>' : '') + '<div class="sub">' + x.lines.filter(function (l) { return l.sku; }).map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', ') + (ct0 ? ' · ' : '') + ghs(val0) + ' · ' + esc(PAYTXT[x.pay] || '') + '</div></div><span class="small muted">edit ▸</span></div>';
     } else {
       var val = vValue(x); tv += val;
       h += '<div class="row"><div class="grow"><h3>' + esc(v.name) + '</h3><div class="sub">' + esc(v.school || '') + (v.phone ? ' · ' + esc(v.phone) : '') + '</div></div><button class="ghost" data-act="chgV" data-k="' + x.k + '">change</button></div>';
       h += '<div>' + vInfo(v) + '</div>';
       if (x.replaces) h += '<div class="msg info small">Correcting ' + esc(x.replaces) + ' – the old order is replaced when you send.</div>';
+      if (!x.replaces && v.lastO && v.lastO.lines.length && !x.lines.some(function (l) { return l.sku; })) h += '<button class="ghost" style="margin:6px 0 2px;padding:6px 0" data-act="nrep" data-k="' + x.k + '">↻ Same as last time (' + esc(dayLbl(v.lastO.date)) + '): ' + v.lastO.lines.map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', ') + '</button>';
       x.lines.forEach(function (l, j) {
         tc += Number(l.qty) || 0;
         h += '<div class="line"><select data-chg="lsku" data-k="' + x.k + '" data-j="' + j + '"><option value="">– product –</option>' + D.skus.map(function (s) { return '<option value="' + s.id + '"' + (s.id === l.sku ? ' selected' : '') + '>' + esc(s.title) + ' · ' + s.price + (isOut(s.id) ? ' · OUT' : '') + '</option>'; }).join('') + '</select>' +
@@ -352,7 +381,9 @@ function hitsHtml(x) {
 function findV(d, k) { for (var i = 0; i < d.vendors.length; i++) if (d.vendors[i].k === k) return d.vendors[i]; return null; }
 function edit(el, fn, rerender) { var d = draft(); var x = findV(d, el.dataset.k); if (!x) return; fn(x, d); saveDraft(d); if (rerender) { render(); } }
 INP.vq = function (el) { var d = draft(), x = findV(d, el.dataset.k); if (!x) return; x.q = el.value; saveDraft(d); var box = $('hits-' + x.k); if (box) box.innerHTML = hitsHtml(x); }; // the box itself is not redrawn (no lost letters)
-ACT.pickV = function (b) { edit(b, function (x, d) { if (d.vendors.some(function (y) { return y.vid === b.dataset.v && y !== x; })) { say('This vendor is already in this order – add products to her card instead.'); return; } x.vid = b.dataset.v; x.q = ''; }, true); };
+ACT.pickV = function (b) { edit(b, function (x, d) { if (d.vendors.some(function (y) { return y.vid === b.dataset.v && y !== x; })) { say('This vendor is already in this order – add products to her card instead.'); return; } x.vid = b.dataset.v; x.q = ''; x.c = 0; d.vendors.forEach(function (y) { if (y !== x && y.vid) y.c = 1; }); }, true); };
+ACT.nexp = function (b) { var d = draft(); d.vendors.forEach(function (y) { y.c = y.k === b.dataset.k ? 0 : (y.vid ? 1 : y.c); }); saveDraft(d); render(); };
+ACT.nrep = function (b) { edit(b, function (x) { var v = vend(x.vid); if (!v || !v.lastO) return; x.lines = v.lastO.lines.filter(function (l) { return D.skus.some(function (s) { return s.id === l.sku; }); }).map(function (l) { return { sku: l.sku, qty: l.qty }; }); if (!x.lines.length) x.lines = [{ sku: '', qty: 1 }]; x.pay = v.lastO.pay === 'Credit' ? 'CREDIT' : 'CASH'; }, true); };
 ACT.chgV = function (b) { edit(b, function (x) { x.vid = ''; }, true); };
 ACT.addL = function (b) { edit(b, function (x) { x.lines.push({ sku: '', qty: 1 }); }, true); };
 ACT.delL = function (b) { edit(b, function (x) { x.lines.splice(Number(b.dataset.j), 1); }, true); };
@@ -364,8 +395,8 @@ CHG.pay = function (el) { edit(el, function (x) { x.pay = el.value; }, true); };
 INP.paid = function (el) { edit(el, function (x) { x.paid = el.value; }, false); };
 INP.prom = function (el) { edit(el, function (x) { x.promised = el.value; }, false); };
 INP.note = function (el) { edit(el, function (x) { x.note = el.value; }, false); };
-ACT.addV = function () { var d = draft(); d.vendors.push(newV()); saveDraft(d); render(); setTimeout(function () { var ins = document.querySelectorAll('[data-inp=vq]'); if (ins.length) ins[ins.length - 1].focus(); }, 50); };
-ACT.delV = function (b) { ask('Remove this vendor from the order?', function () { var d = draft(); d.vendors = d.vendors.filter(function (x) { return x.k !== b.dataset.k; }); if (!d.vendors.length) d.vendors.push(newV()); saveDraft(d); render(); }, 'REMOVE'); };
+ACT.addV = function () { var d = draft(); d.vendors.forEach(function (y) { if (y.vid) y.c = 1; }); d.vendors.push(newV()); saveDraft(d); render(); setTimeout(function () { var ins = document.querySelectorAll('[data-inp=vq]'); if (ins.length) ins[ins.length - 1].focus(); }, 50); };
+ACT.delV = function (b) { var go0 = function (f) { if (b.dataset.e) f(); else ask('Remove this vendor from the order?', f, 'REMOVE'); }; go0(function () { var d = draft(); d.vendors = d.vendors.filter(function (x) { return x.k !== b.dataset.k; }); if (!d.vendors.length) d.vendors.push(newV()); saveDraft(d); render(); }); };
 var PAYTXT = { CASH: 'Cash at delivery', CREDIT: 'Credit', PAID_ME: 'Paid now – cash with me', PAID_FRANK: 'Paid now – directly to Frank' };
 ACT.review = function () {
   var d = draft(), bad = [], h = '<h3>Check before sending</h3>';
@@ -392,7 +423,7 @@ ACT.closeO = function () { $('over').innerHTML = ''; };
 ACT.send = function (b) {
   var d = draft();
   var data = { vendors: d.vendors.filter(function (x) { return x.vid; }).map(function (x) { return { vid: x.vid, lines: x.lines.filter(function (l) { return l.sku && Number(l.qty) > 0; }), pay: x.prepaid ? 'CASH' : x.pay, paid: x.prepaid ? 0 : num(x.paid) || 0, promised: num(x.promised) || 0, note: x.note, replaces: x.replaces }; }) };
-  // v2.4.7: saved on the phone at once; the order(s) show on Today as "Saved – sending…" until the system has them
+  // v2.4.7: saved on the phone at once; the order(s) show on Orders & Payments as "Saved – sending…" until the system has them
   $('over').innerHTML = ''; ls(DKEY, null);
   var names = data.vendors.map(function (x) { return (vend(x.vid) || { name: x.vid }).name; });
   bgSave('orders', data, d.sid, (names.length === 1 ? 'order for ' + names[0] : names.length + ' orders (' + names.join(', ') + ')'), null, true);
@@ -409,8 +440,10 @@ var FDEF = {
     ['stock', 'Stock (estimate)', [['', 'Any'], ['has', 'Has stock'], ['out', 'Likely out']]],
     ['bday', 'Birthday', [['', 'Any'], ['today', 'Today'], ['week', 'Next 7 days'], ['month', 'This month'], ['missing', 'Not recorded']]],
     ['sort', 'Sort by', [['', 'Name A–Z'], ['old', 'Oldest debt first'], ['big', 'Biggest debt first'], ['since', 'Longest since buying']]]],
-  today: [['st', 'Status', [['', 'All'], ['act', 'Needs my answer'], ['wait', 'Waiting for Frank'], ['prince', 'With Prince'], ['del', 'Delivered'], ['prob', 'Returned / not released'], ['canc', 'Cancelled']]],
-    ['pay', 'Payment', [['', 'Any'], ['Cash', 'Cash'], ['Credit', 'Credit']]]],
+  today: [['st', 'Status', [['', 'All'], ['wait', 'Pending approval'], ['appr', 'Approved'], ['del', 'Delivered'], ['dec', 'Declined'], ['canc', 'Cancelled'], ['ret', 'Returned'], ['vno', 'Vendor says not right']]],
+    ['pay', 'Payment', [['', 'Any'], ['Cash', 'Cash'], ['Credit', 'Credit']]], ['day', 'Date', 'date']],
+  disp: [['st', 'Status', [['', 'All'], ['Dispatched', 'Dispatched (with the rider)'], ['Delivered', 'Delivered'], ['Returned', 'Returned'], ['Cancelled', 'Cancelled']]]],
+  hist: [['from', 'From', 'date'], ['to', 'To', 'date'], ['pay', 'Payment', [['', 'All'], ['owing', 'Owing'], ['paid', 'Paid'], ['part', 'Part paid'], ['wait', 'Waiting for the manager']]], ['sort', 'Sort', [['', 'Newest first'], ['old', 'Oldest first']]]],
   owed: [['age', 'Sold', [['', 'Any time'], ['0', '0–7 days ago'], ['8', '8–14 days ago'], ['15', '15+ days ago']]]],
   route: [['pay', 'To collect', [['', 'All stops'], ['collect', 'Cash to collect'], ['credit', 'Credit only'], ['debt', 'Has old debt']]]]
 };
@@ -418,12 +451,12 @@ function agFilterOk() { return !!(D && D.agents && D.agents.length > 1 && D.me.r
 function selHtml(k, f, label, opts, val) { return '<label><span>' + esc(label) + '</span><select data-chg="fset" data-k="' + k + '" data-f="' + f + '">' + opts.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (o[0] === val ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select></label>'; }
 function filterBar(k, ph) {
   var f = fl(k), defs = FDEF[k] || [], ag = agFilterOk();
-  var act = defs.filter(function (d) { return f[d[0]]; }).map(function (d) { var o = d[2].filter(function (x) { return x[0] === f[d[0]]; })[0]; return [d[0], (d[0] === 'sort' ? '' : d[1] + ': ') + (o ? o[1] : f[d[0]])]; });
+  var act = defs.filter(function (d) { return f[d[0]]; }).map(function (d) { if (d[2] === 'date') return [d[0], d[1] + ': ' + dayLbl(f[d[0]])]; var o = d[2].filter(function (x) { return x[0] === f[d[0]]; })[0]; return [d[0], (d[0] === 'sort' ? '' : d[1] + ': ') + (o ? o[1] : f[d[0]])]; });
   if (ag && agOn()) act.unshift(['ag', 'Agent: ' + agName(agOn())]);
   var n = act.filter(function (a) { return a[0] !== 'sort'; }).length;
   var h = '<div class="fbar"><div class="row" style="flex-wrap:nowrap"><input data-inp="flq" data-k="' + k + '" value="' + esc(f.q || '') + '" placeholder="' + esc(ph) + '" autocomplete="off" autocapitalize="off" spellcheck="false" style="flex:1 1 auto;min-width:0">' +
     '<button class="fbtn' + (FOPEN[k] ? ' on' : '') + '" data-act="fopen" data-k="' + k + '">Filter' + (n ? ' (' + n + ')' : '') + ' ▾</button></div>';
-  if (FOPEN[k]) h += '<div class="fgrid">' + (ag ? selHtml(k, 'ag', 'Agent', [['', 'All agents']].concat(D.agents.map(function (a) { return [a.id, a.name]; })), agOn()) : '') + defs.map(function (d) { return selHtml(k, d[0], d[1], d[2], f[d[0]] || ''); }).join('') + '</div>' +
+  if (FOPEN[k]) h += '<div class="fgrid">' + (ag ? selHtml(k, 'ag', 'Agent', [['', 'All agents']].concat(D.agents.map(function (a) { return [a.id, a.name]; })), agOn()) : '') + defs.map(function (d) { return d[2] === 'date' ? '<label><span>' + esc(d[1]) + '</span><input type="date" data-chg="fset" data-k="' + k + '" data-f="' + d[0] + '" value="' + esc(f[d[0]] || '') + '"></label>' : selHtml(k, d[0], d[1], d[2], f[d[0]] || ''); }).join('') + '</div>' +
     '<div class="row" style="justify-content:space-between;margin-top:6px"><button class="ghost" data-act="fclear" data-k="' + k + '">Clear all</button><button data-act="fopen" data-k="' + k + '">Done</button></div>';
   else if (act.length) h += '<div class="chips">' + act.map(function (a) { return '<span class="chip">' + esc(a[1]) + '<b data-act="fx" data-k="' + k + '" data-f="' + a[0] + '">×</b></span>'; }).join('') + '</div>';
   return h + '</div>';
@@ -487,7 +520,7 @@ function vlistBody(list) {
     var bi = bdayIn(v.bday);
     return '<div class="card"><div class="row"><div class="grow"><h3>' + esc(v.name) + '</h3><div class="sub">' + esc(v.school || '') + (agFilterOk() && !agOn() ? ' · ' + esc(agName(v.agent)) : '') + '</div></div>' + (v.phone ? '<a href="tel:' + esc(v.phone) + '"><button>Call</button></a>' : '') + '<button data-act="orderV" data-v="' + v.id + '">Order</button></div><div>' + vInfo(v) +
       (v.bdayTxt ? '<span class="pill ' + (bi >= 0 && bi <= 6 ? 'amber' : '') + '" data-act="bdayOpen" data-v="' + v.id + '" style="cursor:pointer">🎂 ' + esc(v.bdayTxt) + (bi === 0 ? ' – TODAY' : bi === 1 ? ' – tomorrow' : bi > 1 && bi <= 6 ? ' – in ' + bi + ' days' : '') + '</span>' : '') + '</div>' +
-      '<div class="row" style="margin-top:8px">' + (D.me.role === 'Agent' || D.me.role === 'Supervisor' ? '<button class="' + (v.debt > 0 ? 'main' : 'ghost') + '" data-act="rcv" data-v="' + v.id + '">RECEIVED CASH</button>' : '') + (v.bdayTxt ? '' : '<button class="ghost" data-act="bdayOpen" data-v="' + v.id + '">🎂 Add birthday</button>') + '</div></div>';
+      '<div class="row" style="margin-top:8px">' + ((D.me.role === 'Agent' || D.me.role === 'Supervisor') && v.debt > 0 ? '<button class="main" data-act="rcv" data-v="' + v.id + '">RECEIVED CASH</button>' : '') + (v.bdayTxt ? '' : '<button class="ghost" data-act="bdayOpen" data-v="' + v.id + '">🎂 Add birthday</button>') + '</div></div>';
   }).join('');
 }
 // ---------------------------------------------------------------- v2.4.8: birthdays
@@ -496,8 +529,8 @@ function bdayCard(todayOnly) {
   if (!list.length) return '';
   return '<div class="card" style="border-color:var(--amber)"><h3>🎂 Birthdays ' + (todayOnly ? 'today and tomorrow' : 'this week') + '</h3>' + list.map(function (v) {
     var bi = bdayIn(v.bday), wa = waNum(v.phone);
-    return '<div class="row" style="border-top:1px solid var(--line);padding:8px 0"><div class="grow"><b>' + esc(v.name) + '</b> <span class="pill ' + (bi === 0 ? 'red' : 'amber') + '">' + (bi === 0 ? 'TODAY' : bi === 1 ? 'tomorrow' : dayLbl(addDays(D.today, bi))) + '</span><div class="sub">' + esc(v.school || '') + (agFilterOk() ? ' · ' + esc(agName(v.agent)) : '') + '</div></div>' +
-      (v.phone ? '<a href="tel:' + esc(v.phone) + '"><button>Call</button></a>' : '') + (wa ? '<a href="https://wa.me/' + wa + '?text=' + encodeURIComponent('Happy birthday, ' + v.name + '! Wishing you a wonderful year. From all of us at CupSales.') + '" target="_blank"><button>WhatsApp</button></a>' : '') + '</div>';
+    return '<div class="row" style="border-top:1px solid var(--line);padding:6px 0;flex-wrap:nowrap;gap:6px"><div class="grow" style="min-width:0"><b>' + esc(v.name) + '</b> <span class="pill ' + (bi === 0 ? 'red' : 'amber') + '">' + (bi === 0 ? 'TODAY' : bi === 1 ? 'tomorrow' : dayLbl(addDays(D.today, bi))) + '</span><div class="sub">' + esc(v.school || '') + (agFilterOk() ? ' · ' + esc(agName(v.agent)) : '') + '</div></div>' +
+      (v.phone ? '<a href="tel:' + esc(v.phone) + '"><button class="ghost" style="padding:6px 10px">Call</button></a>' : '') + (wa ? '<a href="https://wa.me/' + wa + '?text=' + encodeURIComponent('Happy birthday, ' + v.name + '! Wishing you a wonderful year. From all of us at CupSales.') + '" target="_blank"><button class="ghost" style="padding:6px 10px">WhatsApp</button></a>' : '') + '</div>';
   }).join('') + '</div>';
 }
 function addDays(ymd, n) { var t = ymd.split('-'); return new Date(Date.UTC(+t[0], +t[1] - 1, +t[2] + n)).toISOString().slice(0, 10); }
@@ -525,41 +558,29 @@ ACT.rcv = function (b) {
     if (over) ask(v.name + ' owes ' + ghs(v.debt) + ' but you typed ' + ghs(num(amt)) + '. Record it? The extra is kept apart for the manager.', function () { go('over'); }, 'YES, SAVE'); else go('');
   }, 'SAVE');
 };
-ACT.orderV = function (b) { var d = draft(); var x = d.vendors.filter(function (y) { return !y.vid; })[0]; if (!x) { x = newV(); d.vendors.push(x); } if (d.vendors.some(function (y) { return y.vid === b.dataset.v; })) { TAB = 'new'; render(); return; } x.vid = b.dataset.v; saveDraft(d); TAB = 'new'; render(); };
-var STXT = { Sending: ['✓ Saved – sending…', 'green'], Cancelling: ['Cancel saved – sending…', 'red'], Submitted: ['Waiting for Frank', 'amber'], Released: ['With Prince', ''], 'Partly released': ['With Prince (part)', ''], Delivered: ['Delivered', 'green'], Cancelled: ['Cancelled', 'red'], Failed: ['Returned', 'red'], Rejected: ['Not released', 'red'], 'Cancelled after release': ['Cancelled – bring back', 'red'] };
-var CHK = {}, CHKN = {}; // v2.4.8: the agent's answer on each delivered order (drop-down) and her comment when it is wrong
-function needsCheck(o) { var c = o.outcome; return !!(c && c.delivered && c.delivered.length && c.mismatch && !c.check && !c.decision); }
+ACT.orderV = function (b) { var d = draft(); var x = d.vendors.filter(function (y) { return !y.vid; })[0]; if (!x) { x = newV(); d.vendors.push(x); } d.vendors.forEach(function (y) { if (y.vid && y !== x) y.c = 1; }); x.c = 0; if (d.vendors.some(function (y) { return y.vid === b.dataset.v; })) { TAB = 'new'; render(); return; } x.vid = b.dataset.v; saveDraft(d); TAB = 'new'; render(); };
+var STXT = { Sending: ['✓ Saved – sending…', 'green'], Cancelling: ['Cancel saved – sending…', 'red'], Submitted: ['Pending approval', 'amber'], Released: ['Approved', ''], 'Partly released': ['Part approved', ''], Delivered: ['Delivered', 'green'], Cancelled: ['Cancelled', 'red'], Failed: ['Returned', 'red'], Rejected: ['Declined', 'red'], 'Cancelled after release': ['Cancelled – bring back', 'red'] };
+function needsCheck(o) { return false; } // v2.4.9: the agent no longer checks Prince's record – the vendor confirms it on her receipt
+function qtyTxt(l) { return l.qty + ' ' + esc(skn(l.sku)); }
+/** v2.4.9: what the vendor said on her delivery receipt, and the manager's decision. */
+function vansHtml(c) {
+  if (c.decision) return '<span class="pill green">Manager decided: ' + esc(c.decision) + '</span>';
+  if (/^Not correct/.test(c.vans || '')) return '<span class="pill red">Vendor says NOT right – the manager decides</span>' + (c.vcom ? '<div class="small" style="color:var(--red)">"' + esc(c.vcom) + '"</div>' : '');
+  if (/^Confirmed/.test(c.vans || '')) return '<span class="pill green">✓ Vendor confirmed' + (/text/.test(c.vans) ? ' (by text)' : '') + '</span>';
+  if (c.check === 'Disagrees') return '<span class="pill red">Reported as wrong – the manager decides</span>';
+  return c.rsent ? '<span class="pill">Receipt sent – waiting for the vendor</span>' : '';
+}
 function outcomeHtml(o) {
   var c = o.outcome; if (!c) return '';
-  if (!c.delivered.length) return '<div class="ask">' + esc(c.status || 'Not delivered') + (c.time ? ' · ' + esc(c.time) : '') + '</div>';
-  var h = '<div class="ask">Delivered ' + esc(dayLbl(c.at)) + ' ' + esc(c.time) + ': ' + c.delivered.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') +
-    (c.returned.length ? ' · returned ' + c.returned.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') : '') + '<br>Value ' + ghs(c.value) + ' · paid <b>' + ghs(c.paid) + '</b> · ' +
-    (c.owing > 0.004 ? '<b style="color:var(--red)">owing ' + ghs(c.owing) + '</b>' : '<b style="color:var(--green)">fully paid</b>') + (c.by ? ' · ' + esc(c.by) : '') + '</div>';
-  if (c.decision) return h + '<span class="pill green">Manager decided: ' + esc(c.decision) + '</span>';
-  if (c.check === 'Disagrees') return h + '<span class="pill red">You reported this as wrong – the manager decides</span>';
-  if (c.check === 'Agrees') return h + '<span class="pill green">✓ You confirmed Prince\'s record</span>';
-  if (o.local || (D.me.role === 'Supervisor' && o.agent !== D.me.first)) return h; // the agent of the order answers
-  var mm = needsCheck(o), v = CHK[o.oid] || '';
-  h += '<div style="margin-top:6px;padding:10px;border-radius:8px;background:' + (mm ? 'var(--amber2)' : 'var(--bg)') + '">' + (mm ? '<div style="color:var(--amber);margin-bottom:6px">You said <b>' + esc(c.said || '?') + '</b>, Prince recorded <b>' + esc(c.prince || '?') + '</b>.</div>' : '') +
-    '<label style="margin:0 0 4px;color:var(--ink)"><b>Is Prince\'s record correct?</b></label><select data-chg="ochk" data-o="' + o.oid + '"><option value="">– choose –</option><option value="yes"' + (v === 'yes' ? ' selected' : '') + '>Yes, it is correct</option><option value="no"' + (v === 'no' ? ' selected' : '') + '>No – inform the manager</option></select>';
-  if (v === 'no') h += '<label style="color:var(--ink)">What is wrong? (for example: she paid 460 cash, not credit)</label><textarea rows="3" data-inp="ochkn" data-o="' + o.oid + '" id="ochkn-' + o.oid + '">' + esc(CHKN[o.oid] || '') + '</textarea><button class="warn big" style="margin-top:8px" data-act="ochksend" data-o="' + o.oid + '">SEND TO THE MANAGER</button>';
-  return h + '</div>';
+  if (!c.delivered.length) return '<div class="ask">' + esc(c.status || 'Not delivered') + (c.time ? ' · ' + esc(c.time) : '') + (c.rider ? ' · ' + esc(c.rider) : '') + '</div>';
+  return '<div class="ask">Delivered ' + esc(dayLbl(c.at)) + ' ' + esc(c.time) + ' by <b>' + esc(c.rider || 'Prince') + '</b>: ' + c.delivered.map(qtyTxt).join(', ') +
+    (c.returned.length ? ' · returned ' + c.returned.map(qtyTxt).join(', ') : '') + '<br>Value ' + ghs(c.value) + ' · paid <b>' + ghs(c.paid) + '</b> · ' +
+    (c.owing > 0.004 ? '<b style="color:var(--red)">owing ' + ghs(c.owing) + '</b>' : '<b style="color:var(--green)">fully paid</b>') + '</div>' + vansHtml(c);
 }
-CHG.ochk = function (el) {
-  var oid = el.dataset.o, v = el.value; CHK[oid] = v;
-  var oo = D.myOrders.filter(function (x) { return x.oid === oid; })[0];
-  if (v === 'yes') { delete CHK[oid]; if (oo && oo.outcome) oo.outcome.check = 'Agrees'; bgSave('agree', { oid: oid }, 'ag-' + oid, 'Prince is right (' + oid + ')', null, true); return; }
-  render(); if (v === 'no') setTimeout(function () { var t = $('ochkn-' + oid); if (t) t.focus(); }, 30);
-};
-INP.ochkn = function (el) { CHKN[el.dataset.o] = el.value; };
-ACT.ochksend = function (b) {
-  var oid = b.dataset.o, note = String(CHKN[oid] || '').trim(); if (!note) { say('Write what is wrong, then SEND.'); return; }
-  delete CHK[oid]; delete CHKN[oid]; var oo = D.myOrders.filter(function (x) { return x.oid === oid; })[0]; if (oo && oo.outcome) oo.outcome.check = 'Disagrees'; bgSave('dispute', { oid: oid, note: note }, 'dp-' + oid, 'report to the manager (' + oid + ')', null, true);
-};
 function toEnterHtml() {
   if (!D.toEnter || !D.toEnter.length) return '';
   return '<div class="card"><h3>Enter in the company app (' + D.toEnter.length + ')</h3><p class="sub">Delivered orders. Copy each one into the company app, tick it, then tap DONE.</p>' +
-    D.toEnter.map(function (x) { return '<label class="row" style="color:var(--ink);font-size:15px;margin:10px 0"><input type="checkbox" class="chk" name="ent" value="' + x.oid + '"> <span class="grow"><b>' + esc(x.vendor) + '</b>' + (D.me.role === 'Supervisor' ? ' · ' + esc(x.agent) : '') + '<br>' + x.lines.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') + ' · <b>' + esc(x.pay) + '</b> · ' + ghs(x.value) + ' <span class="muted">(' + esc(x.date.slice(5)) + ')</span></span></label>'; }).join('') +
+    D.toEnter.map(function (x) { return '<label class="row" style="color:var(--ink);font-size:15px;margin:10px 0"><input type="checkbox" class="chk" name="ent" value="' + x.oid + '"> <span class="grow"><b>' + esc(x.vendor) + '</b>' + (D.me.role === 'Supervisor' ? ' · ' + esc(x.agent) : '') + '<br>' + x.lines.map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', ') + ' · <b>' + esc(x.pay) + '</b> · ' + ghs(x.value) + ' <span class="muted">(' + esc(x.date.slice(5)) + ')</span></span></label>'; }).join('') +
     '<button class="main big" data-act="entered">DONE – TICKED ONES ARE ENTERED</button></div>';
 }
 ACT.agree = function (b) { bgSave('agree', { oid: b.dataset.o }, 'ag-' + b.dataset.o, 'Prince is right (' + b.dataset.o + ')', b); };
@@ -571,8 +592,8 @@ var DEC = {};
 function decideHtml(x) {
   var st = DEC[x.eid] || (DEC[x.eid] = { choice: '', cash: '', holder: 'Prince', note: '' });
   var h = '<div class="ask small">' + esc(x.dec.summary) + '<br><b>' + esc(x.dec.agent) + ' says:</b> ' + esc(x.dec.agentSays || '—') + '</div><div class="seg">' +
-    [['RIDER', 'Prince is right'], ['AGENT', esc(x.dec.agent) + ' is right'], ['OTHER', 'Something else']].map(function (c) { return '<button class="' + (st.choice === c[0] ? 'on' : '') + '" data-act="decch" data-e="' + x.eid + '" data-c="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
-  if (st.choice && st.choice !== 'RIDER') h += '<label>Cash she really paid for THIS order (GHS)</label><input inputmode="decimal" data-inp="deccash" data-e="' + x.eid + '" value="' + esc(st.cash) + '"><label>Who has that cash?</label><select data-chg="dechold" data-e="' + x.eid + '">' + ['Prince', x.dec.agent].map(function (p) { return '<option' + (st.holder === p ? ' selected' : '') + '>' + esc(p) + '</option>'; }).join('') + '</select>';
+    (x.dec.vendorCase ? [['RIDER', 'Prince is right'], ['OTHER', 'The vendor is right – correct it']] : [['RIDER', 'Prince is right'], ['AGENT', esc(x.dec.agent) + ' is right'], ['OTHER', 'Something else']]).map(function (c) { return '<button class="' + (st.choice === c[0] ? 'on' : '') + '" data-act="decch" data-e="' + x.eid + '" data-c="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
+  if (st.choice && st.choice !== 'RIDER') h += '<label>Cash she really paid for THIS order (GHS)</label><input inputmode="decimal" data-inp="deccash" data-e="' + x.eid + '" value="' + esc(st.cash) + '"><label>Who has that cash?</label><select data-chg="dechold" data-e="' + x.eid + '">' + ['Prince', x.dec.agentName || x.dec.agent].map(function (p) { return '<option' + (st.holder === p ? ' selected' : '') + '>' + esc(p) + '</option>'; }).join('') + '</select>';
   if (st.choice) h += '<label>Note (optional)</label><input data-inp="decnote" data-e="' + x.eid + '" value="' + esc(st.note) + '"><p><button class="main big" data-act="decsave" data-e="' + x.eid + '" data-d="' + x.dec.did + '">SAVE DECISION</button></p>';
   return h;
 }
@@ -582,31 +603,42 @@ ACT.decsave = function (b) {
   var st = DEC[b.dataset.e]; if (st.choice !== 'RIDER' && !(String(st.cash).trim() !== '' && num(st.cash) >= 0)) { say('Type the cash she really paid for this order.'); return; }
   bgSave('decide', { did: b.dataset.d, eid: b.dataset.e, choice: st.choice, cash: st.choice === 'RIDER' ? '' : num(st.cash), holder: st.holder, note: st.note }, 'dc-' + b.dataset.d, 'decision (' + b.dataset.d + ')', b); delete DEC[b.dataset.e];
 };
-function needsHtml() {
-  if (!D.needs || !D.needs.length) return '';
-  return '<div class="card" style="border-color:var(--red)"><h3>Needs you (' + D.needs.length + ')</h3>' + D.needs.map(function (x) {
+function needsHtml(list, title) {
+  list = list || D.needs || []; if (!list.length) return '';
+  return '<div class="card" style="border-color:var(--red)"><h3>' + esc(title || 'Needs you') + ' (' + list.length + ')</h3>' + list.map(function (x) {
     return '<div style="border-top:1px solid var(--line);padding:8px 0"><span class="pill ' + (x.sev === 'High' ? 'red' : 'amber') + '">' + esc(x.type) + '</span> <span class="small muted">' + esc(x.at) + (x.vendor ? ' · ' + esc(x.vendor) : '') + '</span><div class="small" style="margin:4px 0">' + esc(x.text) + '</div><div class="row">' +
       (x.dec ? '' : '<button data-act="resolve" data-e="' + x.eid + '">DONE</button>') + '</div>' + (x.dec ? decideHtml(x) : '') + '</div>';
   }).join('') + '</div>';
 }
 ACT.resolve = function (b) { askIn('What was done? (short)', 'Checked', '', function (note) { bgSave('resolve', { eid: b.dataset.e, note: note }, 'rs-' + b.dataset.e, 'problem closed', b); }, 'DONE'); };
 ACT.entered = function (b) { var ids = [].slice.call(document.querySelectorAll('input[name=ent]:checked')).map(function (x) { return x.value; }); if (!ids.length) { say('Tick the orders you have entered.'); return; } bgSave('entered', { oids: ids }, 'en-' + uid(), ids.length + ' order(s) entered in the company app', null); };
+var CTK = {}; // v2.4.9: the payments ticked as received, per hand-over
 function confirmHtml() {
   if (!D.toConfirm || !D.toConfirm.length) return '';
-  return '<div class="card"><h3>Cash handed to you – count it</h3><p class="sub">Each amount shows the payments it is made of. Check the list with the person, count the cash, then CONFIRM.</p>' + D.toConfirm.map(function (x) {
-    return '<div style="margin:10px 0;padding-bottom:8px;border-bottom:1px solid var(--line)"><div class="row"><div class="grow"><b>' + ghs(x.amount) + '</b> from ' + esc(x.from) + '<div class="small muted">' + esc(x.money) + ' money · ' + esc(x.at) + (x.time ? ' ' + esc(x.time) : '') + ' · ' + esc(x.hid) + '</div></div><button class="main" data-act="confirmC" data-h="' + x.hid + '" data-a="' + x.amount + '" data-n="' + ((x.parts || []).length) + '">CONFIRM</button></div>' + partsHtml(x.parts, true) + (x.note ? '<div class="small muted">Note: ' + esc(x.note) + '</div>' : '') + '</div>';
+  return '<div class="card"><h3>Cash handed to you – tick what you received</h3><p class="sub">Every payment is ticked. Untick any payment you did NOT get, then CONFIRM. What you untick stays counted with the person who sent it.</p>' + D.toConfirm.map(function (x) {
+    var p = x.parts || []; var t = CTK[x.hid] || (CTK[x.hid] = p.map(function () { return true; }));
+    var sum = p.length ? Math.round(p.reduce(function (s, q, i) { return s + (t[i] ? q.amt : 0); }, 0) * 100) / 100 : x.amount;
+    return '<div style="margin:10px 0;padding-bottom:8px;border-bottom:1px solid var(--line)"><div><b>' + ghs(x.amount) + '</b> from ' + esc(x.from) + '<div class="small muted">' + esc(x.money) + ' money · ' + esc(x.at) + (x.time ? ' ' + esc(x.time) : '') + ' · ' + esc(x.hid) + '</div></div>' +
+      p.map(function (q, i) { return '<label class="tk"><input type="checkbox" class="chk" data-chg="ctk" data-h="' + x.hid + '" data-i="' + i + '"' + (t[i] ? ' checked' : '') + '><span class="grow">' + esc(q.text) + '<div class="small muted">' + esc(q.when || '') + (q.of ? ' · part of ' + ghs(q.of) : '') + '</div></span><b>' + ghs(q.amt) + '</b></label>'; }).join('') +
+      (x.note ? '<div class="small muted">Note: ' + esc(x.note) + '</div>' : '') +
+      '<div class="row" style="margin-top:8px"><div class="grow small">' + (p.length ? 'Ticked: <b>' + ghs(sum) + '</b>' + (sum + 0.004 < x.amount ? ' <span style="color:var(--red)">· ' + ghs(x.amount - sum) + ' not received</span>' : '') : '') + '</div><button class="main" data-act="confirmC" data-h="' + x.hid + '" data-a="' + x.amount + '" data-n="' + p.length + '">CONFIRM' + (p.length ? ' ' + ghs(sum) : '') + '</button></div></div>';
   }).join('') + '</div>';
 }
+CHG.ctk = function (el) { CTK[el.dataset.h][+el.dataset.i] = el.checked; render(); };
 function partsHtml(parts, open) {
   if (!parts || !parts.length) return '';
   return '<details' + (open ? ' open' : '') + ' style="margin-top:6px"><summary class="small">Made of ' + parts.length + ' payment' + (parts.length > 1 ? 's' : '') + '</summary><table class="small">' + parts.map(function (p) {
     return '<tr><td class="muted" style="white-space:nowrap">' + esc(p.when || '') + '</td><td>' + esc(p.text) + (p.of ? '<div class="muted">part of ' + ghs(p.of) + '</div>' : '') + '</td><td class="right"><b>' + ghs(p.amt) + '</b></td></tr>'; }).join('') + '</table></details>';
 }
 ACT.confirmC = function (b) {
-  askIn('Count the cash. How much is it?\n(GHS ' + b.dataset.a + ' was sent' + (Number(b.dataset.n) ? ', made of the ' + b.dataset.n + ' payment(s) listed' : '') + ')', '', 'decimal', function (got) { if (!(num(got) >= 0) || String(got).trim() === '') { say('Type a number, e.g. 620.'); return; }
-  bgSave('confirm', { hid: b.dataset.h, received: num(got) }, 'cf-' + b.dataset.h, 'you counted ' + ghs(num(got)) + ' (' + b.dataset.h + ')', b); }, 'CONFIRM');
-};
-/** v2.4.6: the manager's Clement / Bernice card. */
+  var x = (D.toConfirm || []).filter(function (h) { return h.hid === b.dataset.h; })[0]; if (!x) return; var p = x.parts || [], t = CTK[x.hid] || [];
+  if (!p.length) { askIn('Count the cash. How much is it?\n(GHS ' + b.dataset.a + ' was sent)', '', 'decimal', function (got) { if (!(num(got) >= 0) || String(got).trim() === '') { say('Type a number, e.g. 620.'); return; }
+    bgSave('confirm', { hid: b.dataset.h, received: num(got) }, 'cf-' + b.dataset.h, 'you counted ' + ghs(num(got)) + ' (' + b.dataset.h + ')', b); }, 'CONFIRM'); return; }
+  var idx = [], sum = 0; p.forEach(function (q, i) { if (t[i]) { idx.push(String(i)); sum += q.amt; } }); sum = Math.round(sum * 100) / 100;
+  ask('You received ' + ghs(sum) + ' from ' + x.from + ' (' + idx.length + ' of ' + p.length + ' payments)?' + (sum + 0.004 < x.amount ? '\n' + ghs(x.amount - sum) + ' NOT received stays counted with ' + x.from + ' – the manager is told.' : ''), function () {
+    bgSave('confirm', { hid: x.hid, received: sum, items: idx, parts: 1 }, 'cf-' + x.hid, 'you received ' + ghs(sum) + ' from ' + x.from, b); delete CTK[x.hid];
+  }, 'CONFIRM');
+};/** v2.4.6: the manager's Clement / Bernice card. */
 function suppliersHtml() {
   if (!D.suppliers || !D.suppliers.length || D.me.role !== 'Supervisor') return '';
   return '<div class="card"><h3>Suppliers</h3>' + D.suppliers.map(function (x) {
@@ -635,86 +667,112 @@ ACT.suppay = function (b) {
     askIn('Receipt number or who signed at ' + b.dataset.n + ' (optional):', '', '', function (note) { saveAsk('supplier', { kind: 'pay', src: b.dataset.s, amount: num(amt), note: note, ack: String(note).trim() ? 1 : 0 }, sid, b, 'paid ' + b.dataset.n + ' ' + ghs(num(amt))); }, 'SAVE');
   }, 'NEXT');
 };
-/** v2.4.7: the manager says who sends what Omini does not have. */
+/** v2.4.7: the manager says who sends what Omni does not have. */
 function outCardHtml() {
   if (D.me.role !== 'Supervisor' || !D.out || !D.out.skus || !D.out.skus.length) return '';
   var parts = (D.sources || []).filter(function (x) { return x.id !== 'SRC-OMINI'; });
   var open = D.out.skus.filter(function (x) { return !routeOf(x); }).length;
-  return '<div class="card" style="border-color:' + (open ? 'var(--red)' : 'var(--line)') + '" id="outcard"><h3>Out of stock at Omini' + (open ? ' – ' + open + ' need you' : '') + '</h3><p class="sub">' + esc(D.out.by || 'Frank') + ' marked these out (' + esc(D.out.at || '') + '). Check with Clement / Bernice who has it, then tap. Waiting and new orders for it are set to come from there; the agents are told the money goes to the HR logbook.</p>' +
+  return '<div class="card" style="border-color:' + (open ? 'var(--red)' : 'var(--line)') + '" id="outcard"><h3>Out of stock at Omni' + (open ? ' – ' + open + ' need you' : '') + '</h3><p class="sub">' + esc(D.out.by || 'Frank') + ' marked these out (' + esc(D.out.at || '') + '). Check with Clement / Bernice who has it, then tap. Waiting and new orders for it are set to come from there; the agents are told the money goes to the HR logbook.</p>' +
     D.out.skus.map(function (x) {
-      var r = routeOf(x); var w = (D.waiting || []).filter(function (o) { return o.lines.some(function (l) { return l.sku === x; }); });
+      var r = RTS[x] !== undefined ? RTS[x] : routeOf(x); var w = (D.waiting || []).filter(function (o) { return o.lines.some(function (l) { return l.sku === x; }); });
       var q = w.reduce(function (t, o) { return t + o.lines.filter(function (l) { return l.sku === x; }).reduce(function (a, l) { return a + l.qty; }, 0); }, 0);
-      return '<div style="border-top:1px solid var(--line);padding:8px 0"><div class="row"><div class="grow"><b style="font-size:17px">' + esc(x) + '</b> <span class="small muted">' + (w.length ? w.length + ' waiting order(s), ' + q + ' carton(s)' : 'no order waiting') + '</span></div>' +
-        (r ? '<span class="pill ' + (r === 'NONE' ? 'red' : 'green') + '">' + (r === 'NONE' ? 'nobody has it' : 'from ' + esc(srcNm(r))) + '</span>' : '<span class="pill red">who has it?</span>') + '</div>' +
+      return '<div style="border-top:1px solid var(--line);padding:8px 0"><div class="row"><div class="grow"><b style="font-size:17px">' + esc(skn(x)) + '</b> <span class="small muted">' + (w.length ? w.length + ' waiting order(s), ' + q + ' carton(s)' : 'no order waiting') + '</span></div>' +
+        (r ? '<span class="pill ' + (r === 'NONE' ? 'red' : 'green') + '">' + (r === 'NONE' ? 'nobody has it' : 'from ' + esc(srcNm(r))) + '</span>' : '<span class="pill red">who has it?</span>') + (RTS[x] !== undefined ? ' <span class="pill amber">not saved</span>' : '') + '</div>' +
         '<div class="seg" style="margin-top:6px">' + parts.map(function (p2) { return '<button class="' + (r === p2.id ? 'on' : '') + '" data-act="route" data-k="' + esc(x) + '" data-s="' + p2.id + '">' + esc(p2.name) + '</button>'; }).join('') + '<button class="' + (r === 'NONE' ? 'on' : '') + '" data-act="route" data-k="' + esc(x) + '" data-s="NONE">Nobody</button></div></div>';
-    }).join('') + '</div>';
+    }).join('') + (Object.keys(RTS).length ? '<button class="main big" style="margin-top:8px" data-act="routesave">SAVE AND TELL AGENTS (' + Object.keys(RTS).length + ')</button><p class="sub">Each agent and Frank get ONE message listing all products.</p>' : '') + '</div>';
 }
-ACT.route = function (b) {
-  var k = b.dataset.k, sv = b.dataset.s; if (routeOf(k) === sv) return;
-  bgSave('route', { sku: k, src: sv }, 'rt-' + k + '-' + uid(), sv === 'NONE' ? k + ': nobody has it' : k + ' from ' + srcNm(sv), null, true);
+var RTS = {}; // v2.4.9: choices not saved yet
+ACT.route = function (b) { var k = b.dataset.k, sv = b.dataset.s; if (routeOf(k) === sv) delete RTS[k]; else RTS[k] = sv; render(); };
+ACT.routesave = function () {
+  var m = {}; Object.keys(RTS).forEach(function (k) { m[k] = RTS[k]; }); RTS = {};
+  bgSave('route', { routes: m }, 'rt-' + uid(), 'out of stock: ' + Object.keys(m).map(function (k) { return m[k] === 'NONE' ? skn(k) + ' – nobody' : skn(k) + ' from ' + srcNm(m[k]); }).join(', '), null, true);
 };
 var OPENO = {}, OMENU = '';
 function oValue(o) { return o.lines.reduce(function (t, l) { return t + (Number(l.qty) || 0) * (l.price != null ? Number(l.price) : sku(l.sku).price); }, 0); }
 function oCtn(o) { return o.lines.reduce(function (t, l) { return t + (Number(l.qty) || 0); }, 0); }
 function oCanChange(o) { return !o.local && o.status === 'Submitted' && !o.parent; }
 function oCanCancel(o) { return !o.local && (o.status === 'Submitted' || /Released/.test(o.status) || o.status === 'Partly released'); }
+var SUB = { today: 'orders', done: 'orders' }; // v2.4.9: Orders | Payments inside "Orders & Payments"
+function subTabs(k, payN) { return '<div class="seg" style="margin:0 0 12px">' + [['orders', 'Orders'], ['pay', 'Payments' + (payN ? ' (' + payN + ')' : '')]].map(function (x) { return '<button class="' + (SUB[k] === x[0] ? 'on' : '') + '" data-act="sub" data-k="' + k + '" data-s="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>'; }
+ACT.sub = function (b) { SUB[b.dataset.k] = b.dataset.s; MSG = null; render(); window.scrollTo(0, 0); };
+function payNeeds() { return (D.needs || []).filter(function (x) { return x.dec || x.pay; }); }
+function payCount() { return (D.toConfirm || []).length + payNeeds().length + (D.receipts || []).filter(function (r) { return !r.sent && !r.answer; }).length; }
 function pgToday() {
-  var h = needsHtml() + outCardHtml() + suppliersHtml() + confirmHtml() + bdayCard(true) + toEnterHtml() + receiptsHtml();
-  if (D.cash && D.cash.length) { h += '<div class="card"><h3>Cash with me</h3><p class="sub">Omini money goes to Frank; Clement/Bernice money to the HR office logbook.</p>' + cashTable(D.cash) + '</div>'; }
-  h += '<h3 style="margin:16px 2px 8px">Orders</h3>' + filterBar('today', 'Find a vendor or order number');
+  var h = subTabs('today', payCount());
+  if (SUB.today === 'pay') return h + paymentsHtml();
+  h += outCardHtml() + bdayCard(true) + toEnterHtml();
+  var other = (D.needs || []).filter(function (x) { return !x.dec && !x.pay; }); if (other.length) h += needsHtml(other, 'Other problems');
+  h += filterBar('today', 'Find a vendor or order number');
   return h + '<div id="flist">' + LISTR.today() + '</div>';
+}
+function paymentsHtml() {
+  var h = '';
+  if (D.me.role === 'Supervisor') { var pn = payNeeds(); if (pn.length) h += needsHtml(pn, 'To decide – who is right?'); }
+  h += confirmHtml() + suppliersHtml();
+  if (D.cash && D.cash.length) h += '<div class="card"><h3>Cash with me</h3><p class="sub">Omni money goes to Frank; Clement/Bernice money to the HR office logbook.</p>' + cashTable(D.cash) + '</div>';
+  else if (D.me.role === 'Agent' || D.me.role === 'Rider') h += '<div class="card"><h3>Cash with me</h3><p class="muted">No vendor money with you.</p></div>';
+  h += receiptsHtml() + handoversHtml();
+  return h || '<p class="muted">Nothing to do here now.</p>';
+}
+/** v2.4.9: hand-overs of the last 14 days, with their state. */
+function handoversHtml() {
+  var H = D.handovers || []; if (!H.length) return D.me.role === 'Warehouse' || D.me.role === 'Helper' ? '' : '<div class="card"><h3>Handed over – last 14 days</h3><p class="muted">Nothing handed over in the last 14 days.</p></div>';
+  var stc = function (x) { return x.status === 'Confirmed' ? ['green', 'Confirmed'] : /^Signed/.test(x.status) ? ['green', 'Signed at HR'] : x.status === 'Sent' ? ['amber', 'Waiting for ' + x.to] : x.status === 'Disputed' ? ['red', 'Counted ' + ghs(x.received)] : ['', x.status]; };
+  return '<div class="card"><h3>Handed over – last 14 days</h3>' + H.slice(0, 30).map(function (x) { var s = stc(x); return '<div class="row" style="border-top:1px solid var(--line);padding:8px 0;flex-wrap:nowrap"><div class="grow"><b>' + ghs(x.amount) + '</b> ' + (x.out ? 'to ' + esc(x.to) : 'from ' + esc(x.from)) + '<div class="small muted">' + esc(x.at) + ' · ' + esc(x.money) + ' money</div></div><span class="pill ' + s[0] + '" style="white-space:nowrap">' + esc(s[1]) + '</span></div>'; }).join('') + '</div>';
 }
 LISTR.today = function () {
   var f = fl('today');
-  var mo = D.myOrders.filter(function (o) {
+  var mo = (D.myOrders || []).filter(function (o) {
     if (agOn() && o.agent !== agName(agOn())) return false;
     if (!hasQ('today', o.vendor + ' ' + o.oid + ' ' + (o.school || ''))) return false;
-    if (f.pay && o.pay !== f.pay) return false;
-    var st = f.st;
-    if (st === 'act' && !needsCheck(o)) return false; if (st === 'wait' && !/^(Submitted|Sending)$/.test(o.status)) return false; if (st === 'prince' && !(/Released/.test(o.status) || o.status === 'Partly released')) return false;
-    if (st === 'del' && o.status !== 'Delivered') return false; if (st === 'prob' && !/^(Failed|Rejected)$/.test(o.status)) return false; if (st === 'canc' && !/Cancel/.test(o.status)) return false;
+    if (f.pay && o.pay !== f.pay) return false; if (f.day && o.date !== f.day) return false;
+    var st = f.st, c = o.outcome || {};
+    if (st === 'wait' && !/^(Submitted|Sending)$/.test(o.status)) return false; if (st === 'appr' && !(/Released/.test(o.status) || o.status === 'Partly released')) return false;
+    if (st === 'del' && o.status !== 'Delivered') return false; if (st === 'dec' && o.status !== 'Rejected') return false; if (st === 'canc' && !/Cancel/.test(o.status)) return false;
+    if (st === 'ret' && o.status !== 'Failed') return false; if (st === 'vno' && !/^Not correct/.test(c.vans || '')) return false;
     return true;
   });
-  mo = mo.filter(needsCheck).concat(mo.filter(function (o) { return !needsCheck(o); })); // what needs her answer first
-  if (!mo.length) return '<p class="muted">' + (D.myOrders.length ? 'No order matches. Change the filter or the search.' : 'No orders in the last 3 days.') + '</p>';
+  if (!mo.length) return '<p class="muted">' + ((D.myOrders || []).length ? 'No order matches. Change the filter or the search.' : 'No orders yet.') + '</p>';
+  mo = mo.slice().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
   var tv = 0, tc = 0; mo.forEach(function (o) { tv += oValue(o); tc += oCtn(o); });
-  var h = '<div class="sumline"><b>' + mo.length + '</b> order' + (mo.length === 1 ? '' : 's') + ' · <b>' + tc + '</b> cartons · <b>' + ghs(tv) + '</b> · tap an order to open it</div>';
+  var h = '<div class="sumline"><b>' + mo.length + '</b> order' + (mo.length === 1 ? '' : 's') + ' · <b>' + tc + '</b> cartons · <b>' + ghs(tv) + '</b> · tap an order to open it</div>', cur = null;
   mo.forEach(function (o) {
-    var s = STXT[o.status] || [o.status, ''], act = needsCheck(o), open = OPENO[o.oid] || act;
-    h += '<div class="card oc' + (act ? ' act' : '') + '"><div class="row ohead" data-act="otog" data-o="' + esc(o.oid) + '"><div class="grow"><b>' + esc(o.vendor) + '</b>' + (act ? ' <span class="pill amber">Answer needed</span>' : '') +
-      '<div class="sub">' + esc(dayLbl(o.date)) + ' · ' + oCtn(o) + ' ctn · ' + ghs(oValue(o)) + ' · ' + esc(o.pay) + (agFilterOk() ? ' · ' + esc(o.agent) : '') + '</div></div><span class="pill ' + s[1] + '" style="white-space:nowrap">' + esc(s[0]) + '</span>' +
+    if (o.date !== cur) { cur = o.date; var dd = mo.filter(function (y) { return y.date === cur; }); h += '<div class="dayh"><b>' + esc(dayLbl(cur)) + (cur === D.today ? ' – today' : '') + '</b><span>' + dd.length + ' order' + (dd.length === 1 ? '' : 's') + ' · <b>' + ghs(dd.reduce(function (t, y) { return t + oValue(y); }, 0)) + '</b></span></div>'; }
+    var s = STXT[o.status] || [o.status, ''], open = OPENO[o.oid];
+    h += '<div class="card oc"><div class="row ohead" data-act="otog" data-o="' + esc(o.oid) + '"><div class="grow"><b>' + esc(o.vendor) + '</b>' +
+      '<div class="sub">' + oCtn(o) + ' ctn · ' + ghs(oValue(o)) + ' · ' + esc(o.pay) + (agFilterOk() ? ' · ' + esc(o.agent) : '') + (o.outcome && o.outcome.delivered && o.outcome.delivered.length ? ' · by ' + esc(o.outcome.rider || 'Prince') : '') + '</div>' + (o.outcome ? vansHtml(o.outcome) : '') + '</div><span class="pill ' + s[1] + '" style="white-space:nowrap">' + esc(s[0]) + '</span>' +
       (o.local ? '' : '<button class="kebab" data-act="omenu" data-o="' + esc(o.oid) + '" aria-label="More">⋮</button>') + '</div>';
     if (OMENU === o.oid) h += '<div class="mback" data-act="mclose"></div><div class="menu"><button data-act="odet" data-o="' + esc(o.oid) + '">View details</button>' +
-      (oCanChange(o) ? '<button data-act="editO" data-o="' + esc(o.oid) + '">Change order</button>' : '') + (oCanCancel(o) ? '<button class="warn" data-act="cancelO" data-o="' + esc(o.oid) + '">Cancel order' + (o.status === 'Submitted' ? '' : ' (already with Prince)') + '</button>' : '') +
+      (oCanChange(o) ? '<button data-act="editO" data-o="' + esc(o.oid) + '">Change order</button>' : '') + (oCanCancel(o) ? '<button class="warn" data-act="cancelO" data-o="' + esc(o.oid) + '">Cancel order' + (o.status === 'Submitted' ? '' : ' (already approved)') + '</button>' : '') +
       (!oCanChange(o) && !oCanCancel(o) ? '<div class="no">' + esc(s[0]) + ' – it can no longer be changed or cancelled.</div>' : '') + '</div>';
     if (open) h += oBody(o);
     h += '</div>';
   });
   return h;
-};
-function oBody(o) {
-  return '<div style="margin-top:8px"><div class="small">' + o.lines.map(function (l) { var r = /^(Submitted|Sending)$/.test(o.status) ? routeOf(l.sku) : ''; return '<span class="pill">' + l.qty + ' ' + esc(l.sku) + '</span>' + (r ? '<span class="pill ' + (r === 'NONE' ? 'red' : 'amber') + '">' + (r === 'NONE' ? 'not available' : 'from ' + esc(srcNm(r))) + '</span>' : isOut(l.sku) && /^(Submitted|Sending)$/.test(o.status) ? '<span class="pill red">out at Omini</span>' : ''); }).join('') +
+};function oBody(o) {
+  return '<div style="margin-top:8px"><div class="small">' + o.lines.map(function (l) { var r = /^(Submitted|Sending)$/.test(o.status) ? routeOf(l.sku) : ''; return '<span class="pill">' + l.qty + ' ' + esc(skn(l.sku)) + '</span>' + (r ? '<span class="pill ' + (r === 'NONE' ? 'red' : 'amber') + '">' + (r === 'NONE' ? 'not available' : 'from ' + esc(srcNm(r))) + '</span>' : isOut(l.sku) && /^(Submitted|Sending)$/.test(o.status) ? '<span class="pill red">out at Omni</span>' : ''); }).join('') +
     (o.prepaid ? ' · paid already ' + ghs(o.prepaid) : '') + (o.promised ? ' · promised old debt ' + ghs(o.promised) : '') + '</div>' +
-    (/^(Submitted|Sending)$/.test(o.status) && o.lines.some(function (l) { var r = routeOf(l.sku); return r && r !== 'NONE'; }) ? '<div class="small" style="color:var(--amber)">Money for the ' + o.lines.filter(function (l) { var r = routeOf(l.sku); return r && r !== 'NONE'; }).map(function (l) { return l.sku + ' (' + srcNm(routeOf(l.sku)) + ')'; }).join(', ') + ' goes to the HR office logbook, not Frank.</div>' : '') +
-    outcomeHtml(o) + '</div>';
+    (/^(Submitted|Sending)$/.test(o.status) && o.lines.some(function (l) { var r = routeOf(l.sku); return r && r !== 'NONE'; }) ? '<div class="small" style="color:var(--amber)">Money for the ' + o.lines.filter(function (l) { var r = routeOf(l.sku); return r && r !== 'NONE'; }).map(function (l) { return skn(l.sku) + ' (' + srcNm(routeOf(l.sku)) + ')'; }).join(', ') + ' goes to the HR office logbook, not Frank.</div>' : '') +
+    (o.status === 'Rejected' && o.why ? '<div class="small" style="color:var(--red)">Declined: ' + esc(o.why) + '</div>' : '') + outcomeHtml(o) + '</div>';
 }
-ACT.otog = function (b) { if (needsCheck(D.myOrders.filter(function (x) { return x.oid === b.dataset.o; })[0] || {})) return; OPENO[b.dataset.o] = !OPENO[b.dataset.o]; OMENU = ''; rerenderList(); };
+ACT.otog = function (b) { OPENO[b.dataset.o] = !OPENO[b.dataset.o]; OMENU = ''; rerenderList(); };
 ACT.omenu = function (b, e) { if (e) e.stopPropagation(); OMENU = OMENU === b.dataset.o ? '' : b.dataset.o; rerenderList(); };
 ACT.mclose = function () { OMENU = ''; rerenderList(); };
-function rerenderList() { var box = $('flist'); if (box && TAB === 'today' && LISTR.today) box.innerHTML = LISTR.today(); else render(); }
+var LKEY = { today: 'today', approved: 'disp', book: 'BOOK' }; // v2.4.9: which list is on the screen
+function rerenderList() { var k = LKEY[TAB] === 'BOOK' ? BOOKSUB : LKEY[TAB]; var box = $('flist'); if (box && k && LISTR[k]) box.innerHTML = LISTR[k](); else render(); }
 ACT.odet = function (b) {
   var o = D.myOrders.filter(function (x) { return x.oid === b.dataset.o; })[0]; OMENU = ''; rerenderList(); if (!o) return;
   var c = o.outcome, s = STXT[o.status] || [o.status, ''], tr = function (k, v) { return v === '' || v == null ? '' : '<tr><td class="k">' + esc(k) + '</td><td>' + v + '</td></tr>'; };
   var h = '<div class="overlay"><div class="sheet"><div class="row"><div class="grow"><h3 style="margin:0">' + esc(o.vendor) + '</h3><div class="sub">' + esc(o.school || '') + '</div></div><span class="pill ' + s[1] + '">' + esc(s[0]) + '</span></div>' +
     '<table class="dt" style="margin-top:8px">' + tr('Order number', esc(o.oid)) + tr('Ordered', esc(o.sent || dayLbl(o.date))) + tr('Agent', esc(o.agent)) + tr('Payment asked', esc(o.pay === 'Cash' ? 'Cash at delivery' : o.pay)) + (o.parent ? tr('Part of', esc(o.parent)) : '') + '</table>' +
     '<h3 style="margin:14px 0 4px">Products</h3><table><tr class="small muted"><td>Product</td><td class="right">Cartons</td><td class="right">Price</td><td class="right">Total</td></tr>' +
-    o.lines.map(function (l) { var p = l.price != null ? Number(l.price) : sku(l.sku).price; return '<tr><td><b>' + esc(l.sku) + '</b><div class="small muted">' + esc(sku(l.sku).title) + '</div></td><td class="right">' + l.qty + '</td><td class="right">' + ghs(p) + '</td><td class="right"><b>' + ghs(p * l.qty) + '</b></td></tr>'; }).join('') +
+    o.lines.map(function (l) { var p = l.price != null ? Number(l.price) : sku(l.sku).price; return '<tr><td><b>' + esc(skn(l.sku)) + '</b><div class="small muted">' + esc(sku(l.sku).title) + '</div></td><td class="right">' + l.qty + '</td><td class="right">' + ghs(p) + '</td><td class="right"><b>' + ghs(p * l.qty) + '</b></td></tr>'; }).join('') +
     '<tr><td><b>Total</b></td><td class="right"><b>' + oCtn(o) + '</b></td><td></td><td class="right"><b>' + ghs(oValue(o)) + '</b></td></tr></table>' +
     '<table class="dt" style="margin-top:8px">' + (o.prepaid ? tr('Paid with the order', ghs(o.prepaid)) : '') + (o.promised ? tr('Old debt promised at delivery', ghs(o.promised)) : '') +
-    (o.rel ? tr('Released', esc(o.rel.at) + ' from ' + esc(o.rel.from) + (o.rel.status && o.rel.status !== 'Released' ? ' (' + esc(o.rel.status) + ')' : '')) : '') +
-    (c ? (c.delivered.length ? tr('Delivered', esc(dayLbl(c.at)) + ' ' + esc(c.time) + ' – ' + c.delivered.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') + (c.by ? ' (' + esc(c.by) + ')' : '')) + (c.returned.length ? tr('Returned', c.returned.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ')) : '') +
+    (o.rel ? tr('Approved', esc(o.rel.at) + ' from ' + esc(o.rel.from) + (o.rel.status === 'Partly released' ? ' (part)' : '')) : '') + (o.why ? tr('Declined', esc(o.why)) : '') +
+    (c ? (c.delivered.length ? tr('Delivered', esc(dayLbl(c.at)) + ' ' + esc(c.time) + ' – ' + c.delivered.map(qtyTxt).join(', ')) + tr('Delivered by', esc(c.rider || 'Prince') + (c.helper ? ' (helper)' : '')) + (c.returned.length ? tr('Returned', c.returned.map(qtyTxt).join(', ')) : '') +
       tr('Value delivered', ghs(c.value)) + tr('Paid', '<b>' + ghs(c.paid) + '</b>') + tr('Still owing', c.owing > 0.004 ? '<b style="color:var(--red)">' + ghs(c.owing) + '</b>' : '<b style="color:var(--green)">nothing – fully paid</b>') +
-      tr('You said / Prince recorded', esc(c.said || '?') + ' / ' + esc(c.prince || '?')) + tr('Your answer', esc(c.check === 'Agrees' ? 'Yes – correct' : c.check === 'Disagrees' ? 'No – sent to the manager' : /^Not needed/.test(c.check) ? 'Matched what you said' : 'not yet')) + (c.decision ? tr('Manager decided', esc(c.decision)) : '')
+      tr('Asked / recorded', esc(c.said || '?') + ' / ' + esc(c.prince || '?')) + tr('Vendor', /^Confirmed/.test(c.vans || '') ? '✓ confirmed' + (/text/.test(c.vans) ? ' by text' : '') : /^Not correct/.test(c.vans || '') ? '<b style="color:var(--red)">says NOT right</b>' + (c.vcom ? ': ' + esc(c.vcom) : '') : c.rsent ? 'receipt sent – no answer yet' : 'receipt not sent yet') + (c.decision ? tr('Manager decided', esc(c.decision)) : '')
       : tr('Delivery', esc(c.status || 'Not delivered'))) : '') + (o.note ? tr('Note', esc(o.note)) : '') + '</table>' +
     '<div class="row" style="margin-top:14px">' + (oCanChange(o) ? '<button class="grow" data-act="editO" data-o="' + esc(o.oid) + '">Change</button>' : '') + (oCanCancel(o) ? '<button class="warn grow" data-act="cancelO" data-o="' + esc(o.oid) + '">Cancel order</button>' : '') + '<button class="main grow" data-act="closeO">Close</button></div></div></div>';
   $('over').innerHTML = h;
@@ -723,7 +781,7 @@ function pgTodayOld_() { var h = '', mo = [];
   mo.forEach(function (o) {
     var s = STXT[o.status] || [o.status, ''];
     h += '<div class="card"><div class="row"><div class="grow"><h3>' + esc(o.vendor) + '</h3><div class="sub">' + esc(o.date) + ' · ' + esc(o.oid) + (o.parent ? ' · part of ' + esc(o.parent) : '') + (D.me.role === 'Supervisor' ? ' · ' + esc(o.agent) : '') + '</div></div><span class="pill ' + s[1] + '">' + esc(s[0]) + '</span></div>' +
-      '<div class="small">' + o.lines.map(function (l) { var r = /^(Submitted|Sending)$/.test(o.status) ? routeOf(l.sku) : ''; return l.qty + ' ' + esc(l.sku) + (r ? ' <span class="pill ' + (r === 'NONE' ? 'red' : 'amber') + '">' + (r === 'NONE' ? 'not available' : 'from ' + esc(srcNm(r))) + '</span>' : isOut(l.sku) && /^(Submitted|Sending)$/.test(o.status) ? ' <span class="pill red">out at Omini</span>' : ''); }).join(', ') + ' · ' + esc(o.pay) + (o.prepaid ? ' · paid already ' + ghs(o.prepaid) : '') + (o.promised ? ' · promised old debt ' + ghs(o.promised) : '') + '</div>' + (/^(Submitted|Sending)$/.test(o.status) && o.lines.some(function (l) { var r = routeOf(l.sku); return r && r !== 'NONE'; }) ? '<div class="small" style="color:var(--amber)">Money for the ' + o.lines.filter(function (l) { var r = routeOf(l.sku); return r && r !== 'NONE'; }).map(function (l) { return l.sku + ' (' + srcNm(routeOf(l.sku)) + ')'; }).join(', ') + ' goes to the HR office logbook, not Frank.</div>' : '') + outcomeHtml(o);
+      '<div class="small">' + o.lines.map(function (l) { var r = /^(Submitted|Sending)$/.test(o.status) ? routeOf(l.sku) : ''; return l.qty + ' ' + esc(skn(l.sku)) + (r ? ' <span class="pill ' + (r === 'NONE' ? 'red' : 'amber') + '">' + (r === 'NONE' ? 'not available' : 'from ' + esc(srcNm(r))) + '</span>' : isOut(l.sku) && /^(Submitted|Sending)$/.test(o.status) ? ' <span class="pill red">out at Omni</span>' : ''); }).join(', ') + ' · ' + esc(o.pay) + (o.prepaid ? ' · paid already ' + ghs(o.prepaid) : '') + (o.promised ? ' · promised old debt ' + ghs(o.promised) : '') + '</div>' + (/^(Submitted|Sending)$/.test(o.status) && o.lines.some(function (l) { var r = routeOf(l.sku); return r && r !== 'NONE'; }) ? '<div class="small" style="color:var(--amber)">Money for the ' + o.lines.filter(function (l) { var r = routeOf(l.sku); return r && r !== 'NONE'; }).map(function (l) { return skn(l.sku) + ' (' + srcNm(routeOf(l.sku)) + ')'; }).join(', ') + ' goes to the HR office logbook, not Frank.</div>' : '') + outcomeHtml(o);
     if (o.status === 'Submitted' && !o.parent) h += '<div class="row" style="margin-top:8px"><button data-act="editO" data-o="' + o.oid + '">Change</button><button class="warn" data-act="cancelO" data-o="' + o.oid + '">Cancel</button></div>';
     else if (/Released/.test(o.status) || o.status === 'Partly released') h += '<div class="row" style="margin-top:8px"><button class="warn" data-act="cancelO" data-o="' + o.oid + '">Cancel (already with Prince)</button></div>';
     h += '</div>';
@@ -760,27 +818,49 @@ function rkNew() { var c = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz2345
 function waNum(p) { var d = String(p || '').replace(/\D/g, ''); if (/^0\d{9}$/.test(d)) return '233' + d.slice(1); if (/^233\d{9}$/.test(d)) return d; if (/^\d{9}$/.test(d)) return '233' + d; return ''; }
 function pageBase() { var u = String(D && D.pageUrl || ''); if (!u || /script\.google\.com/.test(u)) u = /^https?:/.test(location.protocol) && !/googleusercontent/.test(location.host) ? location.origin + location.pathname : u; return u; }
 function rcptUrl(rk) { var u = pageBase(); return u + (u.indexOf('?') >= 0 ? '&' : '?') + 'r=' + rk; }
-function rcptText(r) { return 'CupSales receipt\n' + r.vendor + ': ' + ghs(r.amount) + ' received by ' + r.by + (r.at ? ' (' + r.at + ')' : '') + '.\nPlease open the link, check it and tap YES if it is correct:\n' + rcptUrl(r.rk); }
-function rcptSend(r) {
-  var wa = waNum(r.phone); r.sent = true; (D.receipts || []).forEach(function (x) { if (x.key === r.key) x.sent = true; }); window.open('https://wa.me/' + (wa || '') + '?text=' + encodeURIComponent(rcptText(r)), '_blank');
-  bgSave('rsent', { rk: r.rk, rids: r.rids || [] }, 'rs-' + r.rk, 'receipt sent to ' + r.vendor, null, true);
+function rcptText(r, sms) {
+  var u = rcptUrl(r.rk);
+  if (r.kind === 'delivery') return 'CupSales delivery receipt\n' + r.vendor + ': ' + (r.goodsTxt || (r.ctn ? r.ctn + ' carton(s)' : 'delivery')) + ' delivered' + (r.amount > 0 ? ', cash paid ' + ghs(r.amount) : ', nothing paid now') + ' (' + r.by + (r.at ? ', ' + r.at : '') + ').\nPlease check and tap YES if it is correct:\n' + u + (sms ? '\nThis link works for 24 hours. No internet? Reply YES if it is correct, or NO and what is wrong.' : '');
+  return 'CupSales receipt\n' + r.vendor + ': ' + ghs(r.amount) + ' received by ' + r.by + (r.at ? ' (' + r.at + ')' : '') + '.\nPlease open the link, check it and tap YES if it is correct:\n' + u + (sms ? '\nThis link works for 24 hours. No internet? Reply YES if it is correct, or NO and what is wrong.' : '');
 }
-/** Right after cash is saved: offer to send the vendor her receipt on WhatsApp (never sent without a tap). */
+function rcptSend(r, via) {
+  var wa = waNum(r.phone); r.sent = true; r.via = via === 'SMS' ? 'Text message' : 'WhatsApp'; (D.receipts || []).forEach(function (x) { if (x.key === r.key) { x.sent = true; x.via = r.via; } });
+  if (via === 'SMS') { try { location.href = 'sms:' + (wa ? '+' + wa : '') + '?&body=' + encodeURIComponent(rcptText(r, true)); } catch (e) { } }
+  else window.open('https://wa.me/' + (wa || '') + '?text=' + encodeURIComponent(rcptText(r)), '_blank');
+  bgSave('rsent', { rk: r.rk, rids: r.rids || [], via: via === 'SMS' ? 'SMS' : 'WA' }, 'rs-' + r.rk + '-' + (via || 'WA'), 'receipt sent to ' + r.vendor, null, true);
+}
+/** Right after cash or a delivery is saved: offer to send the vendor her receipt (never sent without a tap). */
 function rcptOffer(r) {
-  whenFree(function () { dlgOpen('Send ' + r.vendor + ' a receipt for ' + ghs(r.amount) + ' on WhatsApp?\nShe opens the link, checks it and taps YES if it is correct.', null, 'SEND RECEIPT', 'Not now', function () { rcptSend(r); }); });
+  whenFree(function () { dlgChoose('Send ' + r.vendor + ' a ' + (r.kind === 'delivery' ? 'delivery receipt' : 'receipt for ' + ghs(r.amount)) + '?\nShe checks it and answers YES or NO.', [['SEND BY WHATSAPP', function () { rcptSend(r, 'WA'); }, 'main'], ['SEND BY TEXT MESSAGE', function () { rcptSend(r, 'SMS'); }], ['NO PHONE WITH HER – SHE CHECKS IT WITH ME', function () { rcptPerson(r); }], ['Not now', null, 'ghost']]); });
+}
+/** v2.4.9: she has no phone with her – show her what was recorded and record her answer there and then. */
+function rcptWhat(r) { return r.kind === 'delivery' ? (r.goodsTxt || (r.ctn ? r.ctn + ' carton(s)' : 'the goods')) + ' delivered · cash paid ' + ghs(r.amount || 0) : ghs(r.amount) + ' received by ' + r.by; }
+function rcptPerson(r) {
+  var mark = function (a) { (D.receipts || []).forEach(function (x) { if (x.rk === r.rk) x.answer = a; }); };
+  dlgChoose('Show ' + r.vendor + ' what you recorded:\n\n' + rcptWhat(r) + '\n\nDoes she agree it is correct?', [
+    ['YES – SHE AGREES', function () { mark('Confirmed (in person)'); bgSave('rreply', { rk: r.rk, ans: 'yes', how: 'person' }, 'rr-' + r.rk, r.vendor + ' agreed in person', null, true); }, 'main'],
+    ['NO – SHE SAYS IT IS WRONG', function () { askIn('What does ' + r.vendor + ' say is wrong?', '', '', function (n) { if (!String(n).trim()) { say('Write what she says is wrong.'); return; } mark('Not correct (in person)'); bgSave('rreply', { rk: r.rk, ans: 'no', note: n, how: 'person' }, 'rr-' + r.rk, r.vendor + ' says it is not right', null, true); }, 'SEND TO MANAGER'); }, 'warn'],
+    ['Back', function () { rcptOffer(r); }, 'ghost']]);
 }
 var RCPALL = false;
 function receiptsHtml() {
   var R = (D.receipts || []).filter(function (r) { return !agOn() || r.by === agName(agOn()) || D.me.role !== 'Supervisor'; }); if (!R.length) return '';
-  var show = RCPALL ? R : R.slice(0, 6);
-  return '<div class="card"><h3>Receipts for vendors</h3><p class="sub">Payments of the last 3 days. Send each vendor her receipt – she confirms it on her phone.</p>' + show.map(function (r) {
-    var st = r.answer === 'Confirmed' ? '<span class="pill green">✓ Vendor confirmed</span>' : r.answer ? '<span class="pill red">Vendor says NOT right</span><div class="small" style="color:var(--red)">' + esc(r.comment) + '</div>' : r.sent ? '<span class="pill">Sent – waiting for her</span>' : '<span class="pill amber">Not sent</span>';
-    return '<div class="row" style="border-top:1px solid var(--line);padding:8px 0"><div class="grow"><b>' + esc(r.vendor) + '</b> · <b>' + ghs(r.amount) + '</b><div class="small muted">' + esc(r.at) + (D.me.role === 'Supervisor' ? ' · ' + esc(r.by) : '') + '</div>' + st + '</div>' +
-      (r.answer ? '' : '<button class="' + (r.sent ? 'ghost' : '') + '" data-act="rsend" data-k="' + esc(r.key) + '">' + (r.sent ? 'Send again' : 'SEND') + '</button>') + '</div>';
-  }).join('') + (R.length > 6 && !RCPALL ? '<button class="ghost" data-act="rall">Show all ' + R.length + '</button>' : '') + '</div>';
+  var show = RCPALL ? R : R.slice(0, 8);
+  return '<div class="card"><h3>Receipts for vendors</h3><p class="sub">Last 3 days. Send each vendor her receipt – she answers YES or NO on her phone. No internet? She replies by text and you record her answer.</p>' + show.map(function (r) {
+    var st = /^Confirmed/.test(r.answer) ? '<span class="pill green">✓ Vendor confirmed' + (/text/.test(r.answer) ? ' (by text)' : /person/.test(r.answer) ? ' (in person)' : '') + '</span>' : r.answer ? '<span class="pill red">Vendor says NOT right</span><div class="small" style="color:var(--red)">' + esc(r.comment) + '</div>' : r.sent ? '<span class="pill">Sent' + (r.via ? ' by ' + esc(r.via) : '') + ' – waiting for her</span>' : '<span class="pill amber">Not sent</span>';
+    var what = r.kind === 'delivery' ? (r.ctn ? r.ctn + ' ctn delivered' : 'delivery') + ' · cash ' + ghs(r.amount) : ghs(r.amount);
+    return '<div style="border-top:1px solid var(--line);padding:8px 0"><div class="row" style="flex-wrap:nowrap"><div class="grow"><b>' + esc(r.vendor) + '</b> · ' + what + '<div class="small muted">' + esc(r.at) + (D.me.role === 'Supervisor' ? ' · ' + esc(r.by) : '') + '</div>' + st + '</div>' +
+      (r.answer ? '' : '<button class="' + (r.sent ? 'ghost' : '') + '" data-act="rsend" data-k="' + esc(r.key) + '">' + (r.sent ? 'Send again' : 'SEND') + '</button>') + '</div>' +
+      (!r.answer && r.sent && r.rk ? '<div class="row small" style="margin-top:4px"><span class="muted">Her answer (by text or in person):</span><button class="ghost" data-act="rrep" data-k="' + esc(r.key) + '" data-a="yes">YES</button><button class="ghost" style="color:var(--red)" data-act="rrep" data-k="' + esc(r.key) + '" data-a="no">NO</button></div>' : '') + '</div>';
+  }).join('') + (R.length > 8 && !RCPALL ? '<button class="ghost" data-act="rall">Show all ' + R.length + '</button>' : '') + '</div>';
 }
 ACT.rall = function () { RCPALL = true; render(); };
-ACT.rsend = function (b) { var r = (D.receipts || []).filter(function (x) { return x.key === b.dataset.k; })[0]; if (!r) return; if (!r.rk) r.rk = rkNew(); rcptSend(r); };
+ACT.rrep = function (b) {
+  var r = (D.receipts || []).filter(function (x) { return x.key === b.dataset.k; })[0]; if (!r) return;
+  if (b.dataset.a === 'yes') { ask(r.vendor + ' replied YES by text – the receipt is correct?', function () { bgSave('rreply', { rk: r.rk, ans: 'yes' }, 'rr-' + r.rk, r.vendor + ' replied YES', null, true); }, 'YES, RECORD'); return; }
+  askIn(r.vendor + ' replied that it is NOT right. What does she say?', '', '', function (n) { if (!String(n).trim()) { say('Write what she says is wrong.'); return; } bgSave('rreply', { rk: r.rk, ans: 'no', note: n }, 'rr-' + r.rk, r.vendor + ' replied NO', null, true); }, 'SEND TO MANAGER');
+};
+ACT.rsend = function (b) { var r0 = (D.receipts || []).filter(function (x) { return x.key === b.dataset.k; })[0]; if (!r0) return; if (!r0.rk) r0.rk = rkNew(); rcptOffer(r0); };
 // ---------------------------------------------------------------- warehouse
 function src(id) { for (var i = 0; i < D.sources.length; i++) if (D.sources[i].id === id) return D.sources[i]; return { id: id, name: id }; }
 function relState(o) {
@@ -799,25 +879,25 @@ function relState(o) {
   return s;
 }
 function pgRelease() {
-  if (!D.waiting.length) return '<p class="muted">No orders waiting. New orders appear here as soon as agents send them.</p>';
-  var h = '<p class="sub">Every order is ticked and "from Omini Haven". Change only what is different, then RELEASE.</p>', n = 0;
+  if (!D.waiting.length) return '<p class="muted">No orders pending. New orders appear here as soon as agents send them.</p>';
+  var h = '<p class="sub">Every order is ticked and "from Omni Haven". Change only what is different, then APPROVE. An order you cannot supply: DECLINE (the agent is told why).</p>', n = 0;
   D.waiting.forEach(function (o) {
     var s = relState(o); if (s.on) n++;
-    h += '<div class="card"><div class="row"><input type="checkbox" class="chk" data-chg="relon" data-o="' + o.oid + '"' + (s.on ? ' checked' : '') + '><div class="grow"><h3>' + esc(o.vendor) + '</h3><div class="sub">' + esc(o.school) + ' · ' + esc(o.agent) + ' · ' + esc(o.pay) + ' · ' + esc(o.oid) + '</div></div></div>' +
-      '<div style="margin:6px 0">' + o.lines.map(function (l) { return '<span class="pill' + (isOut(l.sku) ? ' red' : '') + '">' + l.qty + ' ' + esc(l.sku) + '</span>'; }).join('') + '</div>' +
-      (s.auto ? '<div class="small" style="color:var(--amber);margin-bottom:4px">Set by the manager: ' + esc(s.auto) + '</div>' : o.lines.some(function (l) { return isOut(l.sku); }) ? '<div class="small" style="color:var(--red);margin-bottom:4px">Out at Omini – the manager has not said who has it yet.</div>' : '');
+    h += '<div class="card"><div class="row"><input type="checkbox" class="chk" data-chg="relon" data-o="' + o.oid + '"' + (s.on ? ' checked' : '') + '><div class="grow"><h3>' + esc(o.vendor) + '</h3><div class="sub">' + esc(o.school) + ' · ' + esc(o.agent) + ' · ' + esc(o.pay) + ' · ' + esc(o.oid) + '</div>' + (o.mins !== undefined && o.sent ? '<div class="small" style="color:' + (o.mins > 180 ? 'var(--red)' : 'var(--mute)') + '">sent ' + esc(o.sent) + ' · waiting ' + (o.mins < 60 ? o.mins + ' min' : Math.floor(o.mins / 60) + ' h ' + (o.mins % 60) + ' min') + '</div>' : '') + '</div>' + (o.parent ? '' : '<button class="warn" data-act="decl" data-o="' + o.oid + '">DECLINE</button>') + '</div>' +
+      '<div style="margin:6px 0">' + o.lines.map(function (l) { return '<span class="pill' + (isOut(l.sku) ? ' red' : '') + '">' + l.qty + ' ' + esc(skn(l.sku)) + '</span>'; }).join('') + '</div>' +
+      (s.auto ? '<div class="small" style="color:var(--amber);margin-bottom:4px">Set by the manager: ' + esc(s.auto) + '</div>' : o.lines.some(function (l) { return isOut(l.sku); }) ? '<div class="small" style="color:var(--red);margin-bottom:4px">Out at Omni – the manager has not said who has it yet.</div>' : '');
     if (s.on) {
       h += '<div class="seg">' + D.sources.map(function (x) { return '<button class="' + (s.src === x.id ? 'on' : '') + '" data-act="relsrc" data-o="' + o.oid + '" data-s="' + x.id + '">' + esc(x.name) + '</button>'; }).join('') + '</div>';
       h += '<button class="ghost" data-act="relopen" data-o="' + o.oid + '">' + (s.open ? '▾ Products' : '▸ Not all of it from ' + esc(src(s.src).name) + '?') + '</button>';
       if (s.open) o.lines.forEach(function (l) {
         var ln = s.lines[l.sku], rest = l.qty - ln.main;
-        h += '<div class="card" style="margin:6px 0;padding:8px"><div class="row"><div class="grow"><b>' + esc(l.sku) + '</b> <span class="sub">ordered ' + l.qty + ' – from ' + esc(src(s.src).name) + ':</span></div><div class="step"><button data-act="relq" data-o="' + o.oid + '" data-sku="' + l.sku + '" data-d="-1">−</button><input readonly value="' + ln.main + '"><button data-act="relq" data-o="' + o.oid + '" data-sku="' + l.sku + '" data-d="1">+</button></div></div>' +
+        h += '<div class="card" style="margin:6px 0;padding:8px"><div class="row"><div class="grow"><b>' + esc(skn(l.sku)) + '</b> <span class="sub">ordered ' + l.qty + ' – from ' + esc(src(s.src).name) + ':</span></div><div class="step"><button data-act="relq" data-o="' + o.oid + '" data-sku="' + l.sku + '" data-d="-1">−</button><input readonly value="' + ln.main + '"><button data-act="relq" data-o="' + o.oid + '" data-sku="' + l.sku + '" data-d="1">+</button></div></div>' +
           (rest > 0 ? '<label>The other ' + rest + ':</label><select data-chg="relother" data-o="' + o.oid + '" data-sku="' + l.sku + '"><option value="NA"' + (ln.other === 'NA' ? ' selected' : '') + '>Not available</option>' + D.sources.filter(function (x) { return x.id !== s.src; }).map(function (x) { return '<option value="' + x.id + '"' + (ln.other === x.id ? ' selected' : '') + '>From ' + esc(x.name) + '</option>'; }).join('') + '</select>' : '') + '</div>';
       });
-    } else h += '<div class="sub">Not now – stays waiting.</div>';
+    } else h += '<div class="sub">Not now – stays pending.</div>';
     h += '</div>';
   });
-  setTimeout(function () { $('foot').innerHTML = '<div class="foot"><div class="in"><div class="grow small"><b>' + n + '</b> of ' + D.waiting.length + ' ticked</div><button class="main" data-act="relgo"' + (n ? '' : ' disabled') + '>RELEASE ' + n + '</button></div></div>'; }, 0);
+  setTimeout(function () { $('foot').innerHTML = '<div class="foot"><div class="in"><div class="grow small"><b>' + n + '</b> of ' + D.waiting.length + ' ticked</div><button class="main" data-act="relgo"' + (n ? '' : ' disabled') + '>APPROVE ' + n + '</button></div></div>'; }, 0);
   return h;
 }
 CHG.relon = function (el) { REL[el.dataset.o].on = el.checked; REL[el.dataset.o].touched = 1; render(); };
@@ -834,41 +914,119 @@ ACT.relgo = function (b) {
     var parts = lines.filter(function (l) { return l.main < o.lines.filter(function (x) { return x.sku === l.sku; })[0].qty; }).map(function (l) { var q = o.lines.filter(function (x) { return x.sku === l.sku; })[0].qty - l.main; return q + ' ' + l.sku + (l.otherSrc === 'NA' ? ' NOT available' : ' from ' + src(l.otherSrc).name); });
     txt.push(o.vendor + ': from ' + src(s.src).name + (parts.length ? ' – except ' + parts.join(', ') : ''));
   });
-  ask('Release ' + items.length + ' order(s)?\n\n' + txt.join('\n'), function () {
+  ask('Approve ' + items.length + ' order(s)?\n\n' + txt.join('\n'), function () {
   var sid = REL.__sid || (REL.__sid = uid()); REL = {};
-  bgSave('release', { items: items }, sid, 'release of ' + items.length + ' order(s)', null, true);
-  }, 'RELEASE');
+  bgSave('release', { items: items }, sid, 'approval of ' + items.length + ' order(s)', null, true);
+  }, 'APPROVE');
+};
+var DECL = { why: '', note: '' };
+ACT.decl = function (b) {
+  var o = D.waiting.filter(function (x) { return x.oid === b.dataset.o; })[0]; if (!o) return; DECL = { oid: o.oid, why: '', note: '' };
+  var R = [['STOCK', 'Out of stock'], ['SHORT', 'Not enough stock'], ['DUP', 'Duplicate order'], ['VENDOR', 'Vendor cancelled'], ['OTHER', 'Other']];
+  $('over').innerHTML = '<div class="overlay"><div class="sheet"><h3>Decline ' + esc(o.vendor) + '?</h3><div class="sub">' + o.lines.map(qtyTxt).join(', ') + ' · ' + esc(o.agent) + '</div><label>Why?</label><div class="seg" id="declseg">' + R.map(function (r) { return '<button data-act="declwhy" data-w="' + r[0] + '">' + esc(r[1]) + '</button>'; }).join('') + '</div><label>Note for the agent (optional)</label><input id="declnote" autocomplete="off"><div class="row" style="margin-top:14px"><button class="grow" data-act="closeO">Cancel</button><button class="warn grow" data-act="declgo">DECLINE</button></div></div></div>';
+};
+ACT.declwhy = function (b) { DECL.why = b.dataset.w; [].slice.call(document.querySelectorAll('#declseg button')).forEach(function (x) { x.className = x === b ? 'on' : ''; }); };
+ACT.declgo = function () {
+  var note = String(($('declnote') || {}).value || '').trim(); if (!DECL.why) { say('Tap why the order is declined.'); return; } if (DECL.why === 'OTHER' && !note) { say('Write why the order is declined.'); return; }
+  var o = D.waiting.filter(function (x) { return x.oid === DECL.oid; })[0]; $('over').innerHTML = '';
+  bgSave('decline', { oid: DECL.oid, why: DECL.why, note: note }, 'dl-' + DECL.oid, 'declined ' + (o ? o.vendor : DECL.oid), null, true);
 };
 function pgOut() {
   var o = D.out || { skus: [] };
-  return '<div class="card"><h3>Out of stock at Omini</h3><p class="sub">Tick what is finished and SAVE – the manager is told at once and says who sends it (Clement / Bernice). Agents see it while ordering. Untick when it is back.' + (o.at ? ' Last changed ' + esc(o.at) + (o.by ? ' by ' + esc(o.by) : '') + '.' : '') + '</p>' +
+  return '<div class="card"><h3>Out of stock at Omni</h3><p class="sub">Tick what is finished and SAVE – the manager is told at once and says who sends it (Clement / Bernice). Agents see it while ordering. Untick when it is back.' + (o.at ? ' Last changed ' + esc(o.at) + (o.by ? ' by ' + esc(o.by) : '') + '.' : '') + '</p>' +
     D.skus.map(function (s) { var r = o.skus.indexOf(s.id) >= 0 ? routeOf(s.id) : ''; return '<label class="row" style="color:var(--ink);font-size:16px"><input type="checkbox" class="chk" name="out" value="' + s.id + '"' + (o.skus.indexOf(s.id) >= 0 ? ' checked' : '') + '> ' + esc(s.title) + (o.skus.indexOf(s.id) >= 0 ? ' <span class="pill ' + (r && r !== 'NONE' ? 'green' : 'red') + '">' + (r && r !== 'NONE' ? 'manager: from ' + esc(srcNm(r)) : r === 'NONE' ? 'manager: nobody has it' : 'manager told') + '</span>' : '') + '</label>'; }).join('') +
     '<p><button class="main big" data-act="outsave">SAVE</button></p></div>';
 }
 ACT.outsave = function (b) { var skus = [].slice.call(document.querySelectorAll('input[name=out]:checked')).map(function (x) { return x.value; }); bgSave('outstock', { skus: skus }, 'os-' + uid(), skus.length ? 'out of stock: ' + skus.join(', ') : 'nothing out of stock', null, true); };
+var BOOKSUB = 'hist'; // v2.4.9: today's dispatched orders are on the Approved tab
 function pgBook() {
   var B = D.book; if (!B) return '<p class="muted">No book.</p>'; B.today = B.today || { omini: [], other: [] }; B.owedSkus = B.owedSkus || [];
-  var skl = function (l) { return l && l.length ? l.map(function (x) { return '<span class="pill">' + x.qty + ' ' + esc(x.sku) + '</span>'; }).join('') : '<span class="muted small">none</span>'; };
+  var skl = function (l) { return l && l.length ? l.map(function (x) { return '<span class="pill">' + x.qty + ' ' + esc(skn(x.sku)) + '</span>'; }).join('') : '<span class="muted small">none</span>'; };
   var om = B.rows.filter(function (r) { return r.omini; }), ctn = 0, val = 0; om.forEach(function (r) { val += r.value; r.lines.forEach(function (l) { ctn += l.qty; }); });
   var owedTot = B.owed.reduce(function (t, w) { return t + w.amount; }, 0);
-  var h = '<div class="tiles"><div class="tile"><b>' + om.length + '</b><span>orders released</span></div><div class="tile"><b>' + ctn + '</b><span>cartons from Omini</span></div><div class="tile"><b>' + ghs(val) + '</b><span>value</span></div></div>' +
-    '<div class="card"><h3>Given out today</h3><div class="sub">From Omini Haven</div><div style="margin:6px 0">' + skl(B.today.omini) + '</div>' + (B.today.other.length ? '<div class="sub">Sent from Clement / Bernice</div><div style="margin:6px 0">' + skl(B.today.other) + '</div>' : '') +
-    '<div class="sub" style="margin-top:8px">Cartons on orders not fully paid – owed to Omini ' + ghs(owedTot) + '</div><div style="margin:6px 0">' + skl(B.owedSkus) + '</div>' +
-    '<a href="https://wa.me/?text=' + encodeURIComponent(B.report) + '" target="_blank"><button class="main big" style="margin-top:6px">SEND TODAY\'S REPORT ON WHATSAPP</button></a></div>' +
-    '<div class="card"><div class="row"><div class="grow"><h3>Today ' + esc(B.day) + '</h3><div class="sub">' + B.rows.length + ' release(s)</div></div></div>';
-  h += B.rows.length ? '<table>' + B.rows.map(function (r) { return '<tr><td>' + esc(r.time) + '</td><td><b>' + esc(r.vendor) + '</b><div class="small muted">' + esc(r.agent) + (r.omini ? '' : ' · from ' + esc(r.from)) + '</div><div class="small">' + r.lines.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') + '</div></td><td class="right">' + ghs(r.value) + '<div class="small">' + esc(r.pay) + '</div><div class="small ' + (r.owing > 0.004 ? '' : 'muted') + '">' + esc(r.status) + (r.paid ? ' · paid ' + ghs(r.paid) : '') + (r.delivered && r.owing > 0.004 ? ' · owes ' + ghs(r.owing) : '') + '</div></td></tr>'; }).join('') + '</table>' : '<p class="muted">Nothing released yet today.</p>';
-  h += '</div>';
-  var tot = B.owed.reduce(function (t, w) { return t + w.amount; }, 0);
+  var h = '<h3 class="sec">Today summary – ' + esc(dayLbl(B.day)) + '</h3><div class="tiles"><div class="tile"><b>' + om.length + '</b><span>orders approved</span></div><div class="tile"><b>' + ctn + '</b><span>cartons from Omni</span></div><div class="tile"><b>' + ghs(val) + '</b><span>value</span></div></div>' +
+    '<h3 class="sec">Summary breakdown</h3><div class="card"><h3>Products given out today</h3><div class="sub">From Omni Haven</div><div style="margin:6px 0">' + skl(B.today.omini) + '</div>' + (B.today.other.length ? '<div class="sub">Sent from Clement / Bernice</div><div style="margin:6px 0">' + skl(B.today.other) + '</div>' : '') +
+    '<h3 style="margin-top:14px">Debt in cartons – all unpaid orders</h3><div class="sub">Owed to Omni: <b style="color:var(--red)">' + ghs(owedTot) + '</b> by ' + B.owed.length + ' vendor' + (B.owed.length === 1 ? '' : 's') + '</div><div style="margin:6px 0">' + skl(B.owedSkus) + '</div>' +
+    '<a href="https://wa.me/?text=' + encodeURIComponent(B.report) + '" target="_blank"><button class="main big" style="margin-top:6px">SEND TODAY\'S REPORT ON WHATSAPP</button></a></div>';
   var wp = (B.withPeople || []).reduce(function (t, p) { return t + p.total; }, 0);
-  if (wp > 0.004) h += '<div class="msg info">' + ghs(wp) + ' already paid by vendors is still with ' + (B.withPeople || []).map(function (p) { return esc(p.name) + ' (' + ghs(p.total) + ')'; }).join(', ') + ' – see the Cash tab.</div>';
-  h += owedByDayHtml(B);
+  if (wp > 0.004) h += '<div class="msg info">' + ghs(wp) + ' already paid by vendors is still with ' + (B.withPeople || []).map(function (p) { return esc(p.name) + ' (' + ghs(p.total) + ')'; }).join(', ') + ' – see Payments.</div>';
+  h += '<h3 class="sec">Order details – order history</h3><p class="sub">Delivered orders by day – choose dates, agent, customer or payment in Filter. Today\'s approved orders are on the Approved tab.</p>' + filterBar('hist', 'Find a customer or school') + '<div id="flist">' + LISTR.hist() + '</div>';
   return h;
 }
-/** v2.4.4: what vendors owe Omini, one line per order, under the day it was sold (oldest first) – like Frank's book. */
+ACT.booksub = function (b) { BOOKSUB = b.dataset.s; OMENU = ''; render(); };
+function pgApproved() { return '<h3 style="margin:2px 2px 8px">Approved today</h3><p class="sub">Today\'s approved orders and what happened to each. As Prince delivers, record the money here. Earlier days: My book → Order history.</p>' + filterBar('disp', 'Find a vendor, school or agent') + '<div id="flist">' + LISTR.disp() + '</div>'; }
+var DSTC = { Dispatched: '', Delivered: 'green', Returned: 'red', Cancelled: 'red' };
+LISTR.disp = function () {
+  var f = fl('disp'), day = D.today, fr = D.me.role === 'Warehouse'; // v2.4.9: today only
+  var L = (D.dispatched || []).filter(function (x) { return x.day === day && (!agOn() || x.agent === agName(agOn())) && hasQ('disp', x.vendor + ' ' + x.school + ' ' + x.agent + ' ' + x.oid) && (!f.st || x.status === f.st); });
+  if (!L.length) return '<p class="muted">Nothing approved on ' + esc(dayLbl(day)) + (f.st || f.q || agOn() ? ' that matches the filter' : '') + '.</p>';
+  var ctn = 0, val = 0; L.forEach(function (x) { val += x.value; x.lines.forEach(function (l) { ctn += l.qty; }); });
+  var h = '<div class="sumline"><b>' + esc(dayLbl(day)) + '</b> · <b>' + L.length + '</b> order' + (L.length === 1 ? '' : 's') + ' · <b>' + ctn + '</b> cartons · <b>' + ghs(val) + '</b> · ' + L.filter(function (x) { return x.status === 'Delivered'; }).length + ' delivered</div>';
+  L.forEach(function (x) {
+    var key = 'd:' + x.oid, wc = cashFor(x.oid);
+    h += '<div class="lrow"><div class="grow"><b>' + esc(x.vendor) + '</b> <span class="small muted">' + esc(x.agent) + '</span><div class="small">' + x.lines.map(qtyTxt).join(', ') + ' · ' + ghs(x.value) + (x.omni ? '' : ' · from ' + esc(x.from)) + '</div>' + (x.tried ? '<div class="small" style="color:var(--amber)">Not delivered yet: ' + esc(x.tried) + '</div>' : '') +
+      (x.status === 'Delivered' ? '<div class="small">' + (x.owing > 0.004 ? '<b style="color:var(--red)">owes ' + ghs(x.owing) + '</b>' + (x.paid > 0.004 ? ' (paid ' + ghs(x.paid) + ')' : '') : '<b style="color:var(--green)">paid</b>') + (wc ? ' · <b style="color:var(--amber)">' + ghs(wc.amt) + ' still with ' + esc(wc.name) + '</b>' : '') + '</div>' : '') + '</div>' +
+      '<span class="pill ' + (DSTC[x.status] || '') + '" style="white-space:nowrap">' + esc(x.status) + '</span><button class="kebab" data-act="lmenu" data-o="' + esc(key) + '">⋮</button>' +
+      (OMENU === key ? '<div class="mback" data-act="mclose"></div><div class="menu" style="top:40px"><button data-act="ddet" data-o="' + esc(x.oid) + '">View details</button>' +
+        (wc && fr ? '<button data-act="dgave" data-o="' + esc(x.oid) + '">' + esc(wc.name) + ' gave me ' + ghs(wc.amt) + '</button>' : '') +
+        (fr && x.status === 'Delivered' && x.owing > 0.004 && x.omni ? '<button data-act="fpaid" data-v="' + esc(x.vid) + '" data-a="' + x.owing + '" data-n="' + esc(x.vendor) + '" data-g="' + esc(x.agent) + '" data-r="' + esc(x.oid) + '">Record cash payment</button>' : '') + '</div>' : '') + '</div>';
+  });
+  return h;
+};
+/** v2.4.9: cash a vendor paid for this order that an agent or Prince still has (Frank ticks it when it is brought). */
+function cashFor(oid) { var r = null; ((D.book || {}).withPeople || []).forEach(function (p) { (p.items || []).forEach(function (i) { if (!r && i.id && (i.refs || []).indexOf(oid) >= 0) r = { uid: p.uid, name: p.name, id: i.id, amt: i.amt, n: (i.refs || []).length, text: i.text }; }); }); return r; }
+ACT.dgave = function (b) {
+  var x = cashFor(b.dataset.o); OMENU = ''; rerenderList(); if (!x) return;
+  ask(x.name + ' gave you ' + ghs(x.amt) + '?\n' + x.text + (x.n > 1 ? '\n(This payment covers ' + x.n + ' orders.)' : '') + '\nCount the cash first.', function () {
+    bgSave('receive', { from: x.uid, amount: x.amt, items: [{ id: x.id, amt: x.amt }] }, sidFor('dg-' + x.id), ghs(x.amt) + ' from ' + x.name, null, true); }, 'YES, RECORD');
+};
+ACT.lmenu = function (b, e) { if (e) e.stopPropagation(); OMENU = OMENU === b.dataset.o ? '' : b.dataset.o; rerenderList(); };
+function detSheet(title, sub, pill, rows, btns) {
+  $('over').innerHTML = '<div class="overlay"><div class="sheet"><div class="row"><div class="grow"><h3 style="margin:0">' + esc(title) + '</h3><div class="sub">' + esc(sub || '') + '</div></div>' + (pill || '') + '</div><table class="dt" style="margin-top:8px">' + rows.filter(function (r) { return r[1] !== '' && r[1] != null; }).map(function (r) { return '<tr><td class="k">' + esc(r[0]) + '</td><td>' + r[1] + '</td></tr>'; }).join('') + '</table><div class="row" style="margin-top:14px">' + (btns || '') + '<button class="main grow" data-act="closeO">Close</button></div></div></div>';
+}
+ACT.ddet = function (b) {
+  var x = (D.dispatched || []).filter(function (y) { return y.oid === b.dataset.o; })[0]; OMENU = ''; rerenderList(); if (!x) return;
+  detSheet(x.vendor, x.school, '<span class="pill ' + (DSTC[x.status] || '') + '">' + esc(x.status) + '</span>', [['Order', esc(x.oid)], ['Agent', esc(x.agent)], ['Approved', esc(dayLbl(x.day)) + ' ' + esc(x.time) + ' from ' + esc(x.from) + (x.part ? ' (part of the order)' : '')], ['Products', x.lines.map(qtyTxt).join(', ')], ['Value', ghs(x.value)], ['Payment asked', esc(x.pay)],
+    ['Delivered by', x.rider ? esc(x.rider) : ''], ['Delivered', x.delivered ? esc(dayLbl(x.at)) + ' – ' + x.delivered.map(qtyTxt).join(', ') : (x.tried ? 'not yet – ' + esc(x.tried) : 'not yet')], ['Paid', x.delivered ? '<b>' + ghs(x.paid) + '</b>' : ''], ['Still owing', x.delivered ? (x.owing > 0.004 ? '<b style="color:var(--red)">' + ghs(x.owing) + '</b>' : '<b style="color:var(--green)">nothing</b>') : '']]);
+};
+LISTR.hist = function () {
+  var B = D.book || {}, f = fl('hist');
+  var L = (B.history || []).filter(function (x) {
+    if (agOn() && x.agent !== agName(agOn())) return false;
+    if (!hasQ('hist', x.vendor + ' ' + (x.school || '') + ' ' + x.agent)) return false;
+    if (f.from && x.date < f.from) return false; if (f.to && x.date > f.to) return false;
+    var paid = x.owing < 0.005, part = !paid && x.paid > 0.004;
+    if (f.pay === 'owing' && paid) return false; if (f.pay === 'paid' && !paid) return false; if (f.pay === 'part' && !part) return false; if (f.pay === 'wait' && !x.wait) return false;
+    return true;
+  });
+  if (f.sort === 'old') L = L.slice().reverse();
+  if (!L.length) return '<p class="muted">No delivered order matches. Change the filter or the search.</p>';
+  var owe = L.reduce(function (t, x) { return t + x.owing; }, 0), val = L.reduce(function (t, x) { return t + x.value; }, 0);
+  var h = '<div class="sumline"><b>' + L.length + '</b> order' + (L.length === 1 ? '' : 's') + ' · value <b>' + ghs(val) + '</b> · owing <b style="color:var(--red)">' + ghs(owe) + '</b></div>', cur = null, shown = 0;
+  L.forEach(function (x) {
+    if (shown >= 300) return; shown++;
+    if (x.date !== cur) { cur = x.date; var dd = L.filter(function (y) { return y.date === cur; }); var ago = Math.round((Date.UTC(+D.today.slice(0, 4), +D.today.slice(5, 7) - 1, +D.today.slice(8, 10)) - Date.UTC(+cur.slice(0, 4), +cur.slice(5, 7) - 1, +cur.slice(8, 10))) / 86400000);
+      h += '<div class="dayh"><b>' + esc(dayLbl(cur)) + '</b><span>' + (ago === 0 ? 'today' : ago + ' day' + (ago === 1 ? '' : 's') + ' ago') + ' · ' + dd.length + ' · owing <b>' + ghs(dd.reduce(function (t, y) { return t + y.owing; }, 0)) + '</b></span></div>'; }
+    var key = 'h:' + x.ref, paid = x.owing < 0.005;
+    var pill = x.wait ? '<span class="pill amber">Waiting for the manager</span>' : paid ? '<span class="pill green">Paid</span>' : x.paid > 0.004 ? '<span class="pill amber">Owes ' + ghs(x.owing) + '</span>' : '<span class="pill red">Owes ' + ghs(x.owing) + '</span>';
+    h += '<div class="lrow"><div class="grow"><b>' + esc(x.vendor) + '</b> <span class="small muted">' + esc(x.agent) + '</span><div class="small">' + (x.lines.length ? x.lines.map(qtyTxt).join(', ') + ' · ' : '') + ghs(x.value) + (x.paid > 0.004 && !paid ? ' · paid ' + ghs(x.paid) : '') + (x.omni ? '' : ' · from ' + esc(x.from)) + (x.old ? ' · September book' : '') + '</div></div>' + pill +
+      '<button class="kebab" data-act="lmenu" data-o="' + esc(key) + '">⋮</button>' +
+      (OMENU === key ? '<div class="mback" data-act="mclose"></div><div class="menu" style="top:40px"><button data-act="hdet" data-o="' + esc(x.ref) + '">View details</button>' + (!paid && x.omni && D.me.role === 'Warehouse' ? '<button data-act="fpaid" data-v="' + esc(x.vid) + '" data-a="' + x.owing + '" data-n="' + esc(x.vendor) + '" data-g="' + esc(x.agent) + '" data-r="' + esc(x.ref) + '">Record cash payment</button>' : '') + '</div>' : '') + '</div>';
+  });
+  if (L.length > shown) h += '<p class="muted small">… ' + (L.length - shown) + ' more – narrow the dates in Filter.</p>';
+  return h;
+};
+ACT.hdet = function (b) {
+  var x = ((D.book || {}).history || []).filter(function (y) { return y.ref === b.dataset.o; })[0]; OMENU = ''; rerenderList(); if (!x) return; var paid = x.owing < 0.005;
+  detSheet(x.vendor, x.school, x.wait ? '<span class="pill amber">Waiting for the manager</span>' : paid ? '<span class="pill green">Paid</span>' : '<span class="pill red">Owes ' + ghs(x.owing) + '</span>',
+    [['Order', esc(x.ref) + (x.old ? ' (September book)' : '')], ['Delivered', esc(dayLbl(x.date)) + (x.time ? ' ' + esc(x.time) : '')], ['Agent', esc(x.agent)], ['Delivered by', x.rider ? esc(x.rider) : ''], ['Products', x.lines.length ? x.lines.map(qtyTxt).join(', ') : ''], ['From', esc(x.from)], ['Payment asked', esc(x.pay || '')], ['Value', ghs(x.value)], ['Paid', '<b>' + ghs(x.paid) + '</b>'], ['Still owing', paid ? '<b style="color:var(--green)">nothing</b>' : '<b style="color:var(--red)">' + ghs(x.owing) + '</b>'],
+      ['Vendor', /^Confirmed/.test(x.vans || '') ? '✓ confirmed the delivery' : /^Not correct/.test(x.vans || '') ? '<b style="color:var(--red)">says the record is NOT right</b>' : ''], ['Manager', x.wait ? 'has to decide – who is right about the payment' : '']],
+    !paid && x.omni && D.me.role === 'Warehouse' ? '<button class="grow" data-act="fpaid" data-v="' + esc(x.vid) + '" data-a="' + x.owing + '" data-n="' + esc(x.vendor) + '" data-g="' + esc(x.agent) + '" data-r="' + esc(x.ref) + '">RECORD CASH</button>' : '');
+};/** v2.4.4: what vendors owe Omni, one line per order, under the day it was sold (oldest first) – like Frank's book. */
 function dayLbl(ymd) { var d = String(ymd || '').split('-'); if (d.length < 3) return ymd || ''; var x = new Date(Date.UTC(+d[0], +d[1] - 1, +d[2])); return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][x.getUTCDay()] + ' ' + (+d[2]) + ' ' + ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+d[1] - 1]; }
 function owedByDayHtml(B) {
-  if (!B.owedOrders) { var tot0 = B.owed.reduce(function (t, w) { return t + w.amount; }, 0); return '<div class="card"><h3>Owed to Omini: ' + ghs(tot0) + '</h3></div>'; }
-  return '<div class="card"><h3>Owed to Omini</h3><p class="sub">Unpaid orders by the day they were sold – oldest first. When an agent or Prince brings the money, the order leaves this list (or shows what is still owed).</p>' + filterBar('owed', 'Find a vendor or agent') + '<div id="flist">' + LISTR.owed() + '</div></div>';
+  if (!B.owedOrders) { var tot0 = B.owed.reduce(function (t, w) { return t + w.amount; }, 0); return '<div class="card"><h3>Owed to Omni: ' + ghs(tot0) + '</h3></div>'; }
+  return '<div class="card"><h3>Owed to Omni</h3><p class="sub">Unpaid orders by the day they were sold – oldest first. When an agent or Prince brings the money, the order leaves this list (or shows what is still owed).</p>' + filterBar('owed', 'Find a vendor or agent') + '<div id="flist">' + LISTR.owed() + '</div></div>';
 }
 LISTR.owed = function () {
   var B = D.book || {}, f = fl('owed');
@@ -877,37 +1035,42 @@ LISTR.owed = function () {
   var cur = null;
   list.forEach(function (x) {
     if (x.date !== cur) { cur = x.date; var dd = list.filter(function (y) { return y.date === cur; }); h += '<div style="margin:14px 0 4px;padding:6px 8px;background:var(--blue2);border-radius:8px"><b>' + esc(dayLbl(cur)) + '</b> · ' + x.days + ' day' + (x.days === 1 ? '' : 's') + ' ago <span class="right" style="float:right"><b>' + ghs(dd.reduce(function (t, y) { return t + y.owing; }, 0)) + '</b></span></div>'; }
-    h += '<div class="row" style="border-bottom:1px solid var(--line);padding:6px 2px"><div class="grow"><b>' + esc(x.vendor) + '</b> <span class="small muted">' + esc(x.agent) + '</span><div class="small">' + (x.lines.length ? x.lines.map(function (l) { return l.qty + ' ' + esc(l.sku); }).join(', ') : '') + (x.paid > 0.004 ? ' · paid ' + ghs(x.paid) + ' of ' + ghs(x.value) : '') + '</div></div><div class="right"><b style="color:var(--red)">' + ghs(x.owing) + '</b>' + (D.me.role === 'Warehouse' ? '<div><button class="ghost small" style="padding:4px 10px" data-act="fpaid" data-v="' + esc(x.vid) + '" data-a="' + x.owing + '" data-n="' + esc(x.vendor) + '" data-g="' + esc(x.agent) + '" data-r="' + esc(x.ref) + '">PAID</button></div>' : '') + '</div></div>';
+    h += '<div class="row" style="border-bottom:1px solid var(--line);padding:6px 2px"><div class="grow"><b>' + esc(x.vendor) + '</b> <span class="small muted">' + esc(x.agent) + '</span><div class="small">' + (x.lines.length ? x.lines.map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', ') : '') + (x.paid > 0.004 ? ' · paid ' + ghs(x.paid) + ' of ' + ghs(x.value) : '') + '</div></div><div class="right"><b style="color:var(--red)">' + ghs(x.owing) + '</b>' + (D.me.role === 'Warehouse' ? '<div><button class="ghost small" style="padding:4px 10px" data-act="fpaid" data-v="' + esc(x.vid) + '" data-a="' + x.owing + '" data-n="' + esc(x.vendor) + '" data-g="' + esc(x.agent) + '" data-r="' + esc(x.ref) + '">PAID</button></div>' : '') + '</div></div>';
   });
   return list.length ? h : '<p class="muted">Nothing owed matches. Change the filter or the search.</p>';
 };
 ACT.fpaid = function (b) {
+  $('over').innerHTML = ''; if (OMENU) { OMENU = ''; rerenderList(); }
   var sid = sidFor('fp-' + b.dataset.v); var who = [['VENDOR', b.dataset.n + ' herself']].concat((D.people || []).map(function (p) { return [p.id, p.name]; }));
-  dlgPick(b.dataset.n + ' owes Omini ' + ghs(+b.dataset.a) + ' on this order.\nCount the money. How much did you receive (GHS)?', '', who, 'SAVE', function (amt, by) {
+  dlgPick(b.dataset.n + ' owes Omni ' + ghs(+b.dataset.a) + ' on this order.\nCount the money. How much did you receive (GHS)?', '', who, 'SAVE', function (amt, by) {
     if (!(num(amt) > 0)) { say('Type the amount you counted, e.g. 300.'); return; }
     var rk = rkNew(); saveAsk('payment', { vid: b.dataset.v, amount: num(amt), by: by, ref: b.dataset.r, rk: rk }, sid, b, ghs(num(amt)) + ' for ' + b.dataset.n);
     if (by === 'VENDOR') rcptOffer({ rk: rk, rids: [], vendor: b.dataset.n, phone: '', amount: num(amt), by: D.me.first });
   });
 };
 /** v2.4.5: money vendors paid that an agent or Prince still has – Frank records it when it is brought to him. */
+var WTK = {}; // v2.4.9: payments ticked as brought, per person
 function withPeopleHtml(B) {
   var W = B.withPeople || []; if (!W.length) return '';
-  var lim = B.cashDays || 3;
-  return '<div class="card"><h3>Paid by vendors – cash still with…</h3><p class="sub">These vendors have paid; the money has not reached you yet.' + (D.me.role === 'Warehouse' ? ' When the person brings it, tap her name and type what you counted.' : '') + '</p>' + W.map(function (p) {
-    return '<div style="margin:10px 0;padding-bottom:8px;border-bottom:1px solid var(--line)"><div class="row"><div class="grow"><b>' + esc(p.name) + '</b> has <b>' + ghs(p.total) + '</b></div>' + (D.me.role === 'Warehouse' ? '<button class="main" data-act="frecv" data-u="' + p.uid + '" data-a="' + p.total + '" data-n="' + esc(p.name) + '">' + esc(p.name.toUpperCase()) + ' GAVE ME CASH</button>' : '') + '</div>' +
-      '<table class="small">' + p.items.map(function (x) { return '<tr><td class="muted" style="white-space:nowrap">' + esc(x.when) + '</td><td>' + esc(x.text) + '<div style="color:' + (x.days > lim ? 'var(--red)' : 'var(--mute)') + '">' + (x.days ? x.days + ' day' + (x.days === 1 ? '' : 's') + ' with ' + esc(p.name) : 'collected today') + '</div></td><td class="right"><b>' + ghs(x.amt) + '</b></td></tr>'; }).join('') + '</table></div>';
+  var lim = B.cashDays || 3, fr = D.me.role === 'Warehouse';
+  return '<div class="card"><h3>Paid by vendors – cash still with…</h3><p class="sub">These vendors have paid; the money has not reached you yet.' + (fr ? ' When the person brings it, tick each payment you received and tap GAVE ME CASH.' : '') + '</p>' + W.map(function (p) {
+    var t = WTK[p.uid] || (WTK[p.uid] = p.items.map(function () { return true; })); var sum = Math.round(p.items.reduce(function (s, x, i) { return s + (t[i] ? x.amt : 0); }, 0) * 100) / 100;
+    return '<div style="margin:10px 0;padding-bottom:8px;border-bottom:1px solid var(--line)"><div class="row"><div class="grow"><b>' + esc(p.name) + '</b> has <b>' + ghs(p.total) + '</b></div></div>' +
+      p.items.map(function (x, i) { return '<label class="tk">' + (fr ? '<input type="checkbox" class="chk" data-chg="wtk" data-u="' + p.uid + '" data-i="' + i + '"' + (t[i] ? ' checked' : '') + '>' : '') + '<span class="grow">' + esc(x.text) + '<div class="small" style="color:' + (x.days > lim ? 'var(--red)' : 'var(--mute)') + '">' + esc(x.when) + ' · ' + (x.days ? x.days + ' day' + (x.days === 1 ? '' : 's') + ' with ' + esc(p.name) : 'collected today') + '</div></span><b>' + ghs(x.amt) + '</b></label>'; }).join('') +
+      (fr ? '<button class="main big" style="margin-top:8px" data-act="frecv" data-u="' + p.uid + '" data-n="' + esc(p.name) + '"' + (sum > 0.004 ? '' : ' disabled') + '>' + esc(p.name.toUpperCase()) + ' GAVE ME ' + ghs(sum) + '</button>' : '') + '</div>';
   }).join('') + '</div>';
 }
+CHG.wtk = function (el) { WTK[el.dataset.u][+el.dataset.i] = el.checked; render(); };
 ACT.frecv = function (b) {
-  var sid = sidFor('fr-' + b.dataset.u);
-  askIn(b.dataset.n + ' has ' + ghs(+b.dataset.a) + ' of vendors\' money recorded.\nCount the cash ' + b.dataset.n + ' gave you. How much is it (GHS)?', '', 'decimal', function (amt) {
-    if (!(num(amt) > 0)) { say('Type the amount you counted, e.g. 620.'); return; }
-    saveAsk('receive', { from: b.dataset.u, amount: num(amt) }, sid, b, ghs(num(amt)) + ' from ' + b.dataset.n);
-  }, 'RECORD');
-};
-function pgCash() {
+  var p = ((D.book || {}).withPeople || []).filter(function (x) { return x.uid === b.dataset.u; })[0]; if (!p) return; var t = WTK[p.uid] || [];
+  var items = [], sum = 0; p.items.forEach(function (x, i) { if (t[i] && x.id) { items.push({ id: x.id, amt: x.amt }); sum += x.amt; } }); sum = Math.round(sum * 100) / 100;
+  if (!items.length) { say('Tick the payments ' + p.name + ' gave you.'); return; }
+  ask(p.name + ' gave you ' + ghs(sum) + ' (' + items.length + ' of ' + p.items.length + ' payments)?\nCount the cash first.', function () {
+    bgSave('receive', { from: p.uid, amount: sum, items: items }, sidFor('fr-' + p.uid), ghs(sum) + ' from ' + p.name, b); delete WTK[p.uid];
+  }, 'YES, RECORD');
+};function pgCash() {
   var B = D.book || { received: [] }; var tot = B.received.reduce(function (t, x) { return t + x.amount; }, 0);
-  return (confirmHtml() || '<div class="card"><p class="muted">No cash waiting for you to count.</p></div>') + withPeopleHtml(B) + receiptsHtml() + '<div class="card"><h3>Received today: ' + ghs(tot) + '</h3><table>' + B.received.map(function (x) { return '<tr><td>' + esc(x.from) + (x.short ? ' <span class="pill red">short – manager told</span>' : '') + '</td><td class="right">' + ghs(x.amount) + '</td></tr>'; }).join('') + '</table></div>';
+  return (confirmHtml() || '<div class="card"><p class="muted">No cash waiting for you to count.</p></div>') + withPeopleHtml(B) + receiptsHtml() + handoversHtml() + '<div class="card"><h3>Received today: ' + ghs(tot) + '</h3><table>' + B.received.map(function (x) { return '<tr><td>' + esc(x.from) + (x.short ? ' <span class="pill red">short – manager told</span>' : '') + '</td><td class="right">' + ghs(x.amount) + '</td></tr>'; }).join('') + '</table></div>';
 }
 function pgRToday() {
   if (!D.releasedToday.length) return '<p class="muted">Nothing released today yet.</p>';
@@ -925,7 +1088,8 @@ function stopAsk(s) {
 }
 function pgRoute() {
   if (!D.stops.length) return '<p class="muted">Nothing to deliver right now.</p>';
-  return (D.me.role === 'Helper' ? '<div class="msg info">Helper link for ' + esc(D.me.first) + ' – works today only.</div>' : '') + filterBar('route', 'Find a vendor or school') + '<div id="flist">' + LISTR.route() + '</div>';
+  var dn = D.done || [], dc = dn.reduce(function (t, x) { return t + x.cash; }, 0);
+  return (D.me.role === 'Helper' ? '<div class="msg info">Helper link for ' + esc(D.me.first) + ' – works today only.</div>' : '') + '<div class="sumline">Today: <b>' + dn.length + '</b> stop' + (dn.length === 1 ? '' : 's') + ' done · cash taken <b>' + ghs(dc) + '</b> · <b>' + D.stops.length + '</b> to go</div>' + filterBar('route', 'Find a vendor or school') + '<div id="flist">' + LISTR.route() + '</div>';
 }
 LISTR.route = function () {
   var f = fl('route'), h = '', zone = null;
@@ -937,13 +1101,13 @@ LISTR.route = function () {
     var z = s.school || 'No school recorded'; if (z !== zone) { zone = z; h += '<div class="zone">' + esc(z) + '</div>'; }
     var st = STOP[s.id] || (STOP[s.id] = { open: false, what: '', ret: {}, cash: '', claim: false, cagent: '', camt: '', cwhen: '', reason: '', note: '', sid: uid() });
     h += '<div class="card"><div class="row"><div class="grow"><h3>' + esc(s.name) + '</h3><div class="sub">agent ' + esc(s.orders[0].agent) + (s.phone ? ' · <a href="tel:' + esc(s.phone) + '">' + esc(s.phone) + '</a>' : '') + (s.orders.some(function (o) { return o.tries; }) ? ' · <span class="pill amber">tried before</span>' : '') + '</div></div></div>';
-    s.orders.forEach(function (o) { h += '<div class="small" style="margin-top:4px">' + o.lines.map(function (l) { return '<span class="pill">' + l.qty + ' ' + esc(l.sku) + '</span>'; }).join('') + ' <span class="muted">from ' + esc(o.from) + ' · ' + esc(o.pay) + ' · ' + esc(o.oid) + '</span></div>'; });
+    s.orders.forEach(function (o) { h += '<div class="small" style="margin-top:4px">' + o.lines.map(function (l) { return '<span class="pill">' + l.qty + ' ' + esc(skn(l.sku)) + '</span>'; }).join('') + ' <span class="muted">from ' + esc(o.from) + ' · ' + esc(o.pay) + ' · ' + esc(o.oid) + '</span></div>'; });
     h += stopAsk(s);
     if (queue().some(function (x) { return x.op === 'stop' && x.data.vid === s.id; })) h += '<div class="msg" style="background:var(--green2);color:var(--green)">✓ Saved on this phone – ' + (noSig() ? 'sent when there is signal. Go on to the next stop.' : 'sending to the system. Go on to the next stop.') + '</div>';
     else if (!st.open) h += '<button class="main big" data-act="stopopen" data-v="' + s.id + '">RECORD</button>';
     else {
       h += '<div class="seg">' + [['ALL', 'Delivered all'], ['LESS', 'Some returned'], ['NONE', 'Not delivered']].map(function (w) { return '<button class="' + (st.what === w[0] ? 'on' : '') + '" data-act="stopwhat" data-v="' + s.id + '" data-w="' + w[0] + '">' + w[1] + '</button>'; }).join('') + '</div>';
-      if (st.what === 'LESS') s.orders.forEach(function (o) { o.lines.forEach(function (l) { var k = o.oid + '|' + l.sku; var n = st.ret[k] || 0; h += '<div class="row" style="margin-top:6px"><div class="grow"><b>' + esc(l.sku) + '</b>' + (s.orders.length > 1 ? ' <span class="sub">from ' + esc(o.from) + '</span>' : '') + ' <span class="sub">(' + l.qty + ' brought) – returned:</span></div><div class="step"><button data-act="ret" data-v="' + s.id + '" data-k="' + k + '" data-max="' + l.qty + '" data-d="-1">−</button><input readonly value="' + n + '"><button data-act="ret" data-v="' + s.id + '" data-k="' + k + '" data-max="' + l.qty + '" data-d="1">+</button></div></div>'; }); });
+      if (st.what === 'LESS') s.orders.forEach(function (o) { o.lines.forEach(function (l) { var k = o.oid + '|' + l.sku; var n = st.ret[k] || 0; h += '<div class="row" style="margin-top:6px"><div class="grow"><b>' + esc(skn(l.sku)) + '</b>' + (s.orders.length > 1 ? ' <span class="sub">from ' + esc(o.from) + '</span>' : '') + ' <span class="sub">(' + l.qty + ' brought) – returned:</span></div><div class="step"><button data-act="ret" data-v="' + s.id + '" data-k="' + k + '" data-max="' + l.qty + '" data-d="-1">−</button><input readonly value="' + n + '"><button data-act="ret" data-v="' + s.id + '" data-k="' + k + '" data-max="' + l.qty + '" data-d="1">+</button></div></div>'; }); });
       if (st.what === 'NONE') h += '<label>Why? (school closed, vendor absent, refused…)</label><input data-inp="sreason" data-v="' + s.id + '" value="' + esc(st.reason) + '">';
       if (st.what === 'ALL' || st.what === 'LESS') {
         h += '<label>ALL the cash she gave you now (GHS) – orders and old debt together</label><input inputmode="decimal" data-inp="scash" data-v="' + s.id + '" value="' + esc(st.cash) + '" placeholder="0 if she gave nothing">';
@@ -975,17 +1139,19 @@ ACT.stopsave = function (b) {
   var cash = num(st.cash) || 0;
   var doSave = function () {
   var ret = Object.keys(st.ret).filter(function (k) { return st.ret[k] > 0; }).map(function (k) { var p = k.split('|'); return { oid: p[0], sku: p[1], n: st.ret[k] }; });
-  var rk = cash > 0 ? rkNew() : '';
+  var rk = st.what !== 'NONE' ? rkNew() : ''; // v2.4.9: every delivery gets a receipt the vendor confirms
   bgSave('stop', { vid: s.id, oids: s.orders.map(function (o) { return o.oid; }), what: st.what, returns: ret, cash: cash, reason: st.reason, note: st.note, claim: st.claim ? { agent: st.cagent || s.orders[0].agent, amount: num(st.camt), when: st.cwhen } : null, rk: rk }, st.sid, s.name + ' – ' + (st.what === 'NONE' ? 'not delivered' : 'cash ' + ghs(cash)), null, true);
-  delete STOP[s.id]; if (rk) rcptOffer({ rk: rk, rids: [], vendor: s.name, phone: s.phone, amount: cash, by: D.me.first }); return;
+  var kept = []; s.orders.forEach(function (o) { o.lines.forEach(function (l) { var n = l.qty - (st.ret[o.oid + '|' + l.sku] || 0); if (n > 0) kept.push(n + ' ' + skn(l.sku)); }); });
+  delete STOP[s.id]; if (rk) rcptOffer({ kind: 'delivery', key: 'new-' + rk, rk: rk, rids: [], vendor: s.name, phone: s.phone, amount: cash, goodsTxt: kept.join(', '), by: D.me.first }); return;
   };
   if (st.what === 'NONE') doSave(); else ask(s.name + '\n' + (st.what === 'ALL' ? 'Delivered all' : 'Some returned') + '\nCash: ' + ghs(cash) + (st.claim ? '\nSays she paid ' + (st.cagent || s.orders[0].agent) + ' ' + ghs(num(st.camt)) : '') , doSave, 'SAVE');
 };
 function pgDone() {
+  var top = D.me.role === 'Helper' ? '' : subTabs('done', (D.toConfirm || []).length + (D.receipts || []).filter(function (r) { return !r.sent && !r.answer; }).length);
+  if (SUB.done === 'pay' && D.me.role !== 'Helper') return top + paymentsHtml();
   var tot = D.done.reduce(function (t, x) { return t + x.cash; }, 0);
-  var h = '<div class="card"><h3>Cash taken today: ' + ghs(tot) + '</h3><p class="sub">Should match the cash from deliveries in your pocket.</p><table>' + D.done.map(function (x) { return '<tr><td>' + esc(x.time) + '</td><td><b>' + esc(x.vendor) + '</b>' + (x.n > 1 ? ' <span class="small muted">(' + x.n + ' orders)</span>' : '') + '<div class="small muted">' + esc(x.status) + ' · ' + esc(x.pay) + (x.by ? ' · ' + esc(x.by) : '') + '</div></td><td class="right">' + ghs(x.cash) + '</td></tr>'; }).join('') + '</table></div>';
-  if (D.cash && D.cash.length) h += '<div class="card"><h3>Cash with me</h3><p class="sub">Omini money to Frank; Clement/Bernice money to the HR office logbook.</p>' + cashTable(D.cash) + '</div>';
-  h += receiptsHtml();
+  var h = top + '<div class="card"><h3>Delivered today – cash taken ' + ghs(tot) + '</h3><p class="sub">Should match the cash from deliveries in your pocket.</p><table>' + D.done.map(function (x) { return '<tr><td>' + esc(x.time) + '</td><td><b>' + esc(x.vendor) + '</b>' + (x.n > 1 ? ' <span class="small muted">(' + x.n + ' orders)</span>' : '') + '<div class="small muted">' + esc(x.status) + ' · ' + esc(x.pay) + (x.by ? ' · ' + esc(x.by) : '') + '</div></td><td class="right">' + ghs(x.cash) + '</td></tr>'; }).join('') + '</table></div>';
+  if (D.me.role === 'Helper') { if (D.cash && D.cash.length) h += '<div class="card"><h3>Cash with me</h3>' + cashTable(D.cash) + '</div>'; h += receiptsHtml(); }
   if (D.decisions && D.decisions.length) h += '<div class="card"><h3>Manager decisions (last 7 days)</h3>' + D.decisions.map(function (x) { return '<div style="border-top:1px solid var(--line);padding:8px 0"><b>' + esc(x.vendor) + '</b> <span class="small muted">' + esc(x.at) + ' · agent ' + esc(x.agent) + '</span><div class="small">' + esc(x.decision) + '</div><div class="small">Now: paid ' + ghs(x.paid) + ' · owing ' + ghs(x.owing) + '</div></div>'; }).join('') + '</div>';
   return h;
 }
@@ -1014,14 +1180,14 @@ function goHash() {
 function goHash2(h) {
   h = String(h || '').replace(/^#/, ''); if (!h || !D || goHash2.done === h) return; goHash2.done = h;
   if (h.indexOf('cancel=') === 0 && D.screens.indexOf('order') >= 0) {
-    SCREEN = 'order'; TAB = 'today'; render(); var oid = decodeURIComponent(h.slice(7));
+    SCREEN = 'order'; TAB = 'today'; SUB.today = 'orders'; render(); var oid = decodeURIComponent(h.slice(7));
     var o = (D.myOrders || []).filter(function (x) { return x.oid === oid; })[0];
     if (!o) { show('Order ' + oid + ' is not in your list – it may already be delivered or cancelled.', 'info'); return; }
     if (!oCanCancel(o)) { show(o.vendor + ' (' + oid + ') is already ' + o.status + ' – it cannot be cancelled.', 'info'); return; }
     setTimeout(function () { ACT.cancelO({ dataset: { o: oid } }); }, 60);
-  } else if (h === 'confirm') { if (D.me.role === 'Warehouse') { SCREEN = 'release'; TAB = 'cash'; } else if (D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; } render(); }
-  else if (h === 'decide' && D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; render(); }
-  else if (h === 'out' && D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; render(); var c = $('outcard'); if (c) try { c.scrollIntoView(); } catch (x) { } }
+  } else if (h === 'confirm') { if (D.me.role === 'Warehouse') { SCREEN = 'release'; TAB = 'cash'; } else if (D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'pay'; } else if (D.screens.indexOf('route') >= 0) { SCREEN = 'route'; TAB = 'done'; SUB.done = 'pay'; } render(); }
+  else if (h === 'decide' && D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'pay'; render(); }
+  else if (h === 'out' && D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'orders'; render(); var c = $('outcard'); if (c) try { c.scrollIntoView(); } catch (x) { } }
 }
 function rcpBoot() {
   $('top').innerHTML = (TEST ? '<div class="test">TEST – practice only, nothing here is real</div>' : '') + '<div class="bar"><b>CupSales</b><span class="who">Payment receipt</span></div>';
@@ -1035,10 +1201,12 @@ function rcpShow(r) {
   if (r.error) { $('main').innerHTML = '<div class="rcp"><div class="msg err">' + esc(r.error) + '</div></div>'; return; }
   if (r.pending) { $('main').innerHTML = '<div class="rcp card"><h3>Your payment is still being recorded</h3><p class="sub">Please open this link again in a few minutes.</p><button class="main big" data-act="rcpre">TRY AGAIN</button></div>'; return; }
   var h = '<div class="rcp">' + (r.msg ? '<div class="msg ok">' + esc(r.msg) + '</div>' : '') + '<div class="card"><div class="sub">Receipt ' + esc(r.no) + '</div><h2 style="margin:4px 0">' + esc(r.vendor) + '</h2>' + (r.school ? '<div class="sub">' + esc(r.school) + '</div>' : '') +
-    '<div class="amt">' + ghs(r.amount) + '</div><div>paid on <b>' + esc(r.at) + '</b></div><div>received by <b>' + esc(r.by) + '</b>' + (r.byRole ? ' (' + esc(r.byRole) + ')' : '') + '</div>' +
+    ((r.goods || []).length ? '<h3 style="margin:12px 0 4px">Delivered to you</h3><table>' + r.goods.map(function (g) { return '<tr><td>' + esc(g.text) + (g.back ? '<div class="small muted">returned: ' + esc(g.back) + '</div>' : '') + (g.date ? '<div class="small muted">order of ' + esc(g.date) + (g.credit ? ' · on credit' : '') + '</div>' : '') + '</td><td class="right"><b>' + ghs(g.value) + '</b></td></tr>'; }).join('') + '</table><div style="margin-top:8px">delivered on <b>' + esc(r.at) + '</b> by <b>' + esc(r.by) + '</b>' + (r.byRole ? ' (' + esc(r.byRole) + ')' : '') + '</div><div style="margin-top:8px">Cash you paid now:</div>' : '') +
+    '<div class="amt">' + ghs(r.amount) + '</div>' + ((r.goods || []).length ? '' : '<div>paid on <b>' + esc(r.at) + '</b></div><div>received by <b>' + esc(r.by) + '</b>' + (r.byRole ? ' (' + esc(r.byRole) + ')' : '') + '</div>') +
     (r.parts.length ? '<h3 style="margin:14px 0 4px">What it paid for</h3><table>' + r.parts.map(function (p) { return '<tr><td>' + esc(p.text) + '</td><td class="right"><b>' + ghs(p.amt) + '</b></td></tr>'; }).join('') + '</table>' : '') +
     '<div class="ask" style="margin-top:12px">' + (r.owesNow > 0.004 ? 'You still owe <b>' + ghs(r.owesNow) + '</b>' : '<b style="color:var(--green)">You owe nothing now.</b>') + ' <span class="small muted">(as at ' + esc(r.asOf) + ')</span></div></div>';
-  if (r.answer) h += '<div class="card" style="border-color:' + (r.answer === 'Confirmed' ? 'var(--green)' : 'var(--red)') + '"><b>' + (r.answer === 'Confirmed' ? '✓ You confirmed this payment' : 'You said this is not right') + '</b>' + (r.answerAt ? ' <span class="small muted">' + esc(r.answerAt) + '</span>' : '') + (r.comment ? '<div class="small">"' + esc(r.comment) + '"</div>' : '') + '</div>';
+  if (!r.answer && r.expired) h += '<div class="card" style="border-color:var(--amber)"><h3>This link has expired</h3><p class="sub">Links sent by text message work for 24 hours. If something is not right, please tell your agent or the rider.</p></div>';
+  else if (r.answer) h += '<div class="card" style="border-color:' + (/^Confirmed/.test(r.answer) ? 'var(--green)' : 'var(--red)') + '"><b>' + (/^Confirmed/.test(r.answer) ? '✓ You confirmed this' + (/text/.test(r.answer) ? ' (by text)' : /person/.test(r.answer) ? ' (in person)' : '') : 'You said this is not right') + '</b>' + (r.answerAt ? ' <span class="small muted">' + esc(r.answerAt) + '</span>' : '') + (r.comment ? '<div class="small">"' + esc(r.comment) + '"</div>' : '') + '</div>';
   else if (!RCPNO) h += '<div class="card"><h3>Is this correct?</h3><button class="main big" data-act="rcpyes">YES, THIS IS CORRECT</button><button class="warn big" style="margin-top:10px" data-act="rcpno">NO, IT IS NOT RIGHT</button></div>';
   else h += '<div class="card"><h3>What is not right?</h3><textarea id="rcpnote" rows="3" placeholder="for example: I paid 500, not 300"></textarea><button class="warn big" style="margin-top:10px" data-act="rcpsend">SEND</button><button class="ghost" data-act="rcpback">back</button></div>';
   $('main').innerHTML = h + '<p class="small muted" style="text-align:center">CupSales · keep this link as your receipt</p></div>';
