@@ -2,8 +2,8 @@
  "name": "TEST \u2013 CupSales",
  "short_name": "TEST \u2013 CupSales",
  "display": "standalone",
- "background_color": "#f4f6f8",
- "theme_color": "#1a73e8",
+ "background_color": "#F7F3EE",
+ "theme_color": "#D7141A",
  "icons": [
   {
    "src": "icon-192.png",

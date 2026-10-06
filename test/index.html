@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>TEST – CupSales</title><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1a73e8"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="TEST – CupSales"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" href="icon-192.png">
+<html><head><meta charset="utf-8"><title>TEST – CupSales</title><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#D7141A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="TEST – CupSales"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" href="icon-192.png"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f4f6f8;--card:#fff;--ink:#1d2330;--mute:#5f6b7a;--line:#dde3ea;--blue:#1a73e8;--blue2:#e8f0fe;--red:#c5221f;--red2:#fce8e6;--green:#137333;--green2:#e6f4ea;--amber:#8a5a00;--amber2:#fef7e0}
+:root{--bg:#F7F3EE;--card:#fff;--ink:#231B16;--mute:#6E645C;--line:#ECE4DA;--blue:#D7141A;--blue2:#FDEDEC;--red:#B3261E;--red2:#FCE8E6;--green:#1E7B3A;--green2:#E5F4EA;--amber:#8A5A00;--amber2:#FFF4D1;--yel:#FFC400;--yel2:#FFF1C2;--dark:#3A2A00}
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 Arial,Helvetica,sans-serif}
 #top{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line)}
 .bar{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--blue);color:#fff}
 .bar b{font-size:19px;letter-spacing:.3px}.who{color:#e8f0fe;font-size:14px}
 .tiles{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}.tile{flex:1 1 30%;min-width:96px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}.tile b{display:block;font-size:20px}.tile span{font-size:13px;color:var(--mute)}.tile.red b{color:var(--red)}.tile.green b{color:var(--green)}.tile.amber b{color:var(--amber)}
 .test{background:var(--red2);color:var(--red);font-weight:bold;font-size:13px;padding:4px 14px}
-.tabs{display:flex;overflow-x:auto;gap:6px;padding:8px 10px 8px}
-.tab{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:18px;padding:7px 14px;font-size:15px;color:var(--ink)}
+.tabs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 10px}
+.tab{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:18px;padding:7px 11px;font-size:14px;line-height:1.2;color:var(--ink);white-space:nowrap}
 .tab.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:bold}
 main{padding:12px 12px 110px;max-width:640px;margin:0 auto}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:0 0 12px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
@@ -39,7 +39,7 @@ button:disabled{opacity:.5}
 .sheet{background:#fff;border-radius:14px 14px 0 0;padding:16px;max-height:88vh;overflow:auto;width:100%;max-width:640px}
 .pin{max-width:320px;margin:60px auto;text-align:center}.pin input{font-size:28px;letter-spacing:12px;text-align:center}
 a{color:var(--blue)}table{border-collapse:collapse;width:100%;font-size:14px}td{padding:6px 4px;border-bottom:1px solid var(--line)}
-.toast{position:fixed;left:10px;right:10px;bottom:84px;max-width:620px;margin:0 auto;background:#137333;color:#fff;padding:12px 14px;border-radius:12px;z-index:40;font-size:15px;box-shadow:0 4px 14px rgba(0,0,0,.25);white-space:pre-line}.toast.err{background:var(--red)}
+.toast{position:fixed;left:10px;right:10px;top:8px;max-width:620px;margin:0 auto;background:#137333;color:#fff;padding:12px 14px;border-radius:12px;z-index:40;font-size:15px;box-shadow:0 4px 14px rgba(0,0,0,.25);white-space:pre-line}.toast.err{background:var(--red)}
 button.sent{background:var(--green2);color:var(--green);opacity:1}
 .right{text-align:right}.muted{color:var(--mute)}.small{font-size:13px}.chk{width:22px;height:22px}
 .fbar{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;margin:0 0 10px}.fbar input{padding:9px}
@@ -56,12 +56,64 @@ button.sent{background:var(--green2);color:var(--green);opacity:1}
 .sec{margin:18px 2px 8px;font-size:13px;text-transform:uppercase;letter-spacing:.4px;color:var(--mute)}
 .dayh{margin:14px 0 6px;padding:7px 10px;background:var(--blue2);border-radius:8px;display:flex;justify-content:space-between;gap:8px}
 .lrow{display:flex;gap:8px;align-items:flex-start;border-bottom:1px solid var(--line);padding:9px 2px;position:relative}.lrow .grow b{font-size:15px}
-.pchips{display:flex;gap:6px;overflow-x:auto;margin:0 0 10px;padding-bottom:2px;-webkit-overflow-scrolling:touch}.pchips button{flex:0 0 auto;white-space:nowrap;background:#fff;border:1px solid var(--line);color:var(--ink);font-weight:normal;border-radius:999px;padding:8px 14px}.pchips button.on{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:bold}
+.pchips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}.pchips button{flex:0 0 auto;white-space:nowrap;background:#fff;border:1px solid var(--line);color:var(--ink);font-weight:normal;border-radius:999px;padding:8px 14px}.pchips button.on{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:bold}
 .fold{padding:0;overflow:hidden}.fold>.fh{display:flex;align-items:center;gap:8px;padding:12px 14px;cursor:pointer}.fold>.fh .grow{min-width:0}.fold>.fb{padding:0 14px 12px}.fold.warnf{border-color:var(--amber)}.fold.redf{border-color:var(--red)}.ar{color:var(--blue);font-size:13px;white-space:nowrap}
 .srow{display:flex;align-items:center;gap:8px;padding:10px 2px;border-top:1px solid var(--line)}.srow .grow{min-width:0}.srow .tap{cursor:pointer}.srow.first{border-top:0}.dets{background:var(--blue2);border-radius:10px;padding:8px 10px;margin:0 0 8px;font-size:14px}
 .hint{display:flex;align-items:center;gap:8px;background:var(--amber2);border-radius:10px;padding:10px 12px;margin:0 0 10px;cursor:pointer}
 .tk{display:flex;gap:8px;align-items:center;border-top:1px solid var(--line);padding:7px 0;font-size:14px}.tk .chk{flex:0 0 auto}
 .fgrid input[type=date]{padding:7px}
+/* v2.5.0 look: warm background, red primary, yellow accents, soft cards */
+html,body{font:15.5px/1.45 'Inter','Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+#top{background:var(--bg);border-bottom:0;box-shadow:0 2px 10px rgba(80,30,0,.08)}
+.bar{background:linear-gradient(135deg,#E31B23 0%,#B80F17 100%);padding:10px 14px;border-bottom:4px solid var(--yel);gap:10px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}.brand .logo{width:34px;height:34px;flex:0 0 auto;filter:drop-shadow(0 1px 2px rgba(0,0,0,.25))}
+.brand b{font-size:20px;font-weight:800;letter-spacing:.2px;display:block;line-height:1.1}.brand i{display:block;font-style:normal;font-size:10.5px;color:#FFE8A3;letter-spacing:.7px;text-transform:uppercase}
+.who{background:rgba(255,255,255,.16);color:#fff;border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600;white-space:nowrap}
+.test{background:var(--yel);color:var(--dark);font-size:12px;letter-spacing:.3px;text-align:center;padding:3px 10px}
+.tabs{padding:8px 10px 6px;gap:6px}
+.tab{display:inline-flex;align-items:center;gap:6px;border:0;background:#fff;box-shadow:0 1px 3px rgba(60,30,0,.14);border-radius:999px;padding:8px 12px;font-weight:600;color:#4a3f37}
+.tab svg{width:17px;height:17px;flex:0 0 auto}
+.tab.on{background:var(--blue);color:#fff;box-shadow:0 3px 8px rgba(215,20,26,.35)}
+.tabs.scr{padding:8px 10px 0}.tabs.scr .tab{background:transparent;box-shadow:none;border:1.5px solid #E2D8CC;padding:6px 11px;font-size:13px}.tabs.scr .tab.on{background:var(--dark);border-color:var(--dark);color:var(--yel)}
+.card{border:0;border-radius:16px;box-shadow:0 1px 2px rgba(60,30,0,.06),0 4px 14px rgba(60,30,0,.06)}
+.card h3{font-weight:700}
+button{border-radius:12px;font-weight:700}
+button.main{background:linear-gradient(180deg,#E31B23,#C4111A);box-shadow:0 3px 8px rgba(215,20,26,.28)}button.main:active{transform:translateY(1px)}
+button.warn{background:var(--red2);color:var(--red)}
+.big{padding:15px;font-size:16.5px;letter-spacing:.2px}
+input,select,textarea{border:1.5px solid #E2D8CC;border-radius:12px;background:#fff}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--blue);box-shadow:0 0 0 3px rgba(215,20,26,.14)}
+.pill{background:#F3EDE6;color:#4A3F37;font-weight:600;border-radius:999px}
+.dayh{background:var(--yel2);color:var(--dark)}.dayh span{color:#6b5300}
+.hint{background:var(--yel2);color:var(--dark);box-shadow:inset 4px 0 0 var(--yel)}
+.ask{background:#FFF6D6;border-left:4px solid var(--yel);border-radius:10px}
+.msg.info{background:#FFF6D6;color:#5c4100}
+.fbar{border:0;border-radius:14px;box-shadow:0 1px 3px rgba(60,30,0,.08)}
+.fbtn{background:var(--yel2);color:var(--dark)}.fbtn.on{background:var(--dark);color:var(--yel)}
+.chip{background:var(--yel2);color:var(--dark)}
+.seg button{border-radius:12px;border:1.5px solid var(--line)}
+.pchips button{border:0;box-shadow:0 1px 3px rgba(60,30,0,.14);font-weight:600;color:#4a3f37}.pchips button.on{box-shadow:0 3px 8px rgba(215,20,26,.3)}
+.sheet{border-radius:22px 22px 0 0;padding-top:24px;position:relative}.sheet:before{content:'';position:absolute;top:9px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:4px;background:#E2D8CC}
+.foot{border-top:0;box-shadow:0 -4px 16px rgba(60,30,0,.1)}
+.tile{border:0;border-radius:14px;box-shadow:0 1px 3px rgba(60,30,0,.08);border-top:4px solid var(--yel)}.tile b{font-weight:800}
+.zone,.sec{color:#8a6a00;font-weight:700}
+.empty{text-align:center;padding:30px 10px;color:var(--mute)}.empty svg{width:88px;height:88px}.empty p{margin:10px 0 0;font-size:15px}
+.pin{margin:36px auto}.pin .logo{width:88px;height:88px;margin:0 auto 10px;display:block;filter:drop-shadow(0 3px 6px rgba(0,0,0,.15))}
+.toast{background:#2B2420;border-left:5px solid var(--yel);border-radius:14px}.toast.err{background:var(--red);border-left-color:#fff}
+.menu{border:0;border-radius:14px;box-shadow:0 10px 30px rgba(40,20,0,.22)}
+.kebab{color:#6b625b}.ar{font-weight:600}
+.fold.warnf,.fold.redf{border:0}.fold.warnf{box-shadow:inset 4px 0 0 var(--yel),0 1px 2px rgba(60,30,0,.06),0 4px 14px rgba(60,30,0,.06)}.fold.redf{box-shadow:inset 4px 0 0 var(--blue),0 1px 2px rgba(60,30,0,.06),0 4px 14px rgba(60,30,0,.06)}
+.oc.act{border:2px solid var(--yel)}
+.dets{background:#FBF6EF}
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:7;background:#fff;display:flex;gap:2px;box-shadow:0 -2px 14px rgba(60,30,0,.12);padding:6px 6px calc(6px + env(safe-area-inset-bottom));max-width:100%}
+.bnav button{flex:1 1 0;min-width:0;background:none;color:#7a6f66;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11.5px;line-height:1.15;font-weight:600;padding:6px 2px;border-radius:12px;text-align:center}
+.bnav button svg{width:24px;height:24px}.bnav button.on{color:var(--blue);background:var(--blue2)}
+.foot{bottom:var(--bnh,66px)}main{padding-bottom:170px}
+.pill.pk{display:inline-flex;align-items:center;gap:4px;padding:2px 9px 2px 4px}.pill.pk svg{width:20px;height:20px;flex:0 0 auto}
+.pkb{display:inline-flex;align-items:center;justify-content:center;width:30px;flex:0 0 auto}.pkb svg{width:30px;height:30px}.line select{min-width:0;font-size:15px}
+.av{width:42px;height:42px;border-radius:50%;color:#fff;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin-right:10px;box-shadow:0 2px 5px rgba(60,30,0,.18)}
+.seg button.on{background:#fff;color:var(--blue);border:2px solid var(--blue)}
+input[type=checkbox]{accent-color:var(--blue)}.tk b{white-space:nowrap}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -146,7 +198,7 @@ function flush(after) {
         var d = draft(); r.problems.forEach(function (p) { var v = (x.data.vendors || []).filter(function (y) { return y.vid === p.vid; })[0]; if (v && !d.vendors.some(function (y) { return y.vid === v.vid; })) { var n = newV(); n.vid = v.vid; n.lines = v.lines; n.pay = v.pay; n.paid = v.paid ? String(v.paid) : ''; n.promised = v.promised ? String(v.promised) : ''; n.note = v.note || ''; n.replaces = v.replaces || ''; d.vendors = d.vendors.filter(function (y) { return y.vid; }).concat([n]); } }); saveDraft(d);
         whenFree(function () { dlgOpen('NOT SAVED – back on your New order screen:\n' + r.problems.map(function (p) { return p.msg; }).join('\n'), null, 'OK', null, null); });
       }
-      OKS.push('✓ ' + m); toast('✓ In the system: ' + m);
+      toast('✓ ' + m);
     }
     if (r.init && !r.error && !r.ask) { NEXTD = r.init; NEXTD.__at = Date.now(); }
     if (!r.error && !r.ask) bgRefreshSoon();
@@ -209,7 +261,7 @@ function dlgPick(text, def, choices, okLabel, cb, hint) {
   DLGSEL = '';
   dlgOpen((hint ? hint + '\n\n' : '') + text, { value: def, mode: 'decimal' }, okLabel, 'Cancel', function (v) { if (!DLGSEL) { dlgPick(text, v, choices, okLabel, cb, '▶ First tap WHO gave you the money.'); return; } cb(v, DLGSEL); });
   var box = document.querySelector('#dlg .sheet p'); var seg = document.createElement('div'); seg.className = 'seg'; seg.style.margin = '8px 0';
-  seg.innerHTML = '<div class="small muted" style="width:100%">Who gave you the money?</div>' + choices.map(function (c) { return '<button data-act="dlgSel" data-c="' + esc(c[0]) + '">' + esc(c[1]) + '</button>'; }).join('');
+  seg.innerHTML = '<div class="small muted" style="width:100%">Who brought it?</div>' + choices.map(function (c) { return '<button data-act="dlgSel" data-c="' + esc(c[0]) + '">' + esc(c[1]) + '</button>'; }).join('');
   box.parentNode.insertBefore(seg, box.nextSibling);
 }
 function say(text) { dlgOpen(text, null, 'OK', null, null); }
@@ -243,7 +295,7 @@ function authScreen(r) {
   $('top').innerHTML = bar(); $('foot').innerHTML = '';
   if (r.auth === 'bad' || r.auth === 'expired') { $('main').innerHTML = '<div class="pin"><h2>Link not valid</h2><p class="muted">' + (r.auth === 'expired' ? 'This helper link was for one day only.' : 'Ask the manager for your personal CupSales link.') + '</p></div>'; return; }
   var set = r.auth === 'setpin';
-  $('main').innerHTML = '<div class="pin"><h2>Hello ' + esc(r.name || '') + '</h2><p class="muted">' + (set ? 'Choose a 4-digit PIN. You need it when you open CupSales on a new phone.' : 'Enter your 4-digit PIN.') + '</p>' +
+  $('main').innerHTML = '<div class="pin">' + LOGO + '<h2>Hello ' + esc(r.name || '') + '</h2><p class="muted">' + (set ? 'Choose a 4-digit PIN. You need it when you open CupSales on a new phone.' : 'Enter your 4-digit PIN.') + '</p>' +
     (r.msg ? '<div class="msg err">' + esc(r.msg) + '</div>' : '') + '<input id="pin" type="password" inputmode="numeric" maxlength="4" autocomplete="off">' +
     (set ? '<label>Type it again</label><input id="pin2" type="password" inputmode="numeric" maxlength="4">' : '') + '<p><button class="main big" id="go">' + (set ? 'SAVE MY PIN' : 'OPEN') + '</button></p></div>';
   $('go').onclick = function () {
@@ -256,10 +308,30 @@ function authScreen(r) {
 }
 // ---------------------------------------------------------------- layout
 var TABS = { order: [['new', 'New order'], ['vendors', 'My vendors'], ['today', 'Orders & Payments']], release: [['release', 'Pending orders'], ['approved', 'Approved'], ['book', 'My book'], ['cash', 'Payments'], ['out', 'Out of stock']], route: [['route', 'Route'], ['done', 'Orders & Payments'], ['helpers', 'Helpers']] };
-var SNAME = { order: 'Orders', release: 'Warehouse', route: 'Deliveries' };
+var SNAME = { order: 'Sales', release: 'Warehouse', route: 'Deliveries' };
 function firstTab() { return TABS[SCREEN][0][0]; }
+var LOGO = '<svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#FFC400"/><path d="M8.5 24h31a15.5 15.5 0 0 1-31 0z" fill="#fff"/><path d="M11.5 23.5c2-4.2 4 4.2 6 0s4 4.2 6 0 4 4.2 6 0 4 4.2 6 0" stroke="#D7141A" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M27 5.5l-5.5 15.5M33.5 7.5l-7.5 13.5" stroke="#7A3E00" stroke-width="2.6" stroke-linecap="round"/><rect x="16" y="37.5" width="16" height="3" rx="1.5" fill="#fff"/></svg>';
+function ico(p) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>'; }
+var ICO = {
+  'new': '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
+  vendors: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.9.7 3.1 2.4 3.5 5.2"/>',
+  today: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+  release: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  approved: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/>',
+  book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h7"/>',
+  cash: '<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/>',
+  out: '<path d="M3 7.5L12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5l9 4.5 9-4.5M12 12v9"/>',
+  route: '<path d="M2 6h11v10H2zM13 9h4l3 3v4h-7z"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>',
+  done: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M3.5 6l1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/>',
+  helpers: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M19 8v6M16 11h6"/>',
+  rtoday: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M3.5 6l1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/>',
+  s_order: '<path d="M5 8h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+  s_release: '<path d="M3 10l9-6 9 6v10H3z"/><path d="M8 20v-6h8v6"/>',
+  s_route: '<path d="M2 6h11v10H2zM13 9h4l3 3v4h-7z"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>'
+};
+function emptyHtml(t) { return '<div class="empty"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#FFF1C2"/><path d="M12 33h40a20 20 0 0 1-40 0z" fill="#fff" stroke="#E2D8CC" stroke-width="2"/><path d="M16 32c2.5-5 5 5 7.5 0s5 5 7.5 0 5 5 7.5 0 5 5 7.5 0" stroke="#D7141A" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M36 8l-7 21M44 11l-10 18" stroke="#B9874C" stroke-width="3" stroke-linecap="round"/></svg><p>' + t + '</p></div>'; }
 function bar() {
-  return (TEST || (D && D.test) ? '<div class="test">TEST – practice only, nothing here is real</div>' : '') + '<div class="bar"><b>CupSales</b><span class="who">' + (D ? esc(D.me.first) + ' · ' + esc(D.me.role) : '') + '</span></div>';
+  return (TEST || (D && D.test) ? '<div class="test">TEST – practice only, nothing here is real</div>' : '') + '<div class="bar"><div class="brand">' + LOGO + '<div><b>CupSales</b><i>' + (D ? esc(SNAME[SCREEN] || '') : 'Sales app') + '</i></div></div><span class="who">' + (D ? esc(D.me.first) + ' · ' + esc(D.me.role) : '') + '</span></div>';
 }
 function render() {
   if (!D) return;
@@ -273,14 +345,11 @@ function render() {
 }
 function topbar() {
   if (!D) return;
-  var t = bar() + '<div class="tabs">';
-  if (D.screens.length > 1) D.screens.forEach(function (s) { t += '<button class="tab' + (s === SCREEN ? ' on' : '') + '" data-scr="' + s + '">' + SNAME[s] + '</button>'; });
-  t += '</div><div class="tabs">';
-  TABS[SCREEN].forEach(function (x) { if (x[0] === 'helpers' && D.me.role === 'Helper') return; t += '<button class="tab' + (x[0] === TAB ? ' on' : '') + '" data-tab="' + x[0] + '">' + x[1] + '</button>'; });
-  var qn = queue().length;
-  if (STALE && !OFFLINE) t += '<div class="test" style="background:var(--blue2);color:var(--blue)">Updating…</div>';
-  if (OFFLINE || qn) t += '<div class="test" style="background:var(--amber2);color:var(--amber)">' + (OFFLINE ? 'No signal – showing the list from ' + esc(ls(CKEY + '_at') || '') + '. ' : '') + (qn ? '⏳ ' + qn + ' save' + (qn > 1 ? 's' : '') + ' kept on this phone' + (noSig() ? ' – sent when there is signal (keep CupSales open, or open it again).' : ' – sending to the system. You can carry on.') : '') + '</div>';
-  $('top').innerHTML = t + '</div>';
+  var t = bar();
+  if (D.screens.length > 1) { t += '<div class="tabs scr">'; D.screens.forEach(function (s) { t += '<button class="tab' + (s === SCREEN ? ' on' : '') + '" data-scr="' + s + '">' + (ICO['s_' + s] ? ico(ICO['s_' + s]) : '') + SNAME[s] + '</button>'; }); t += '</div>'; }
+  t += '<nav class="bnav">'; // v2.5.0: the screens of this role at the bottom, like a phone app
+  TABS[SCREEN].forEach(function (x) { if (x[0] === 'helpers' && D.me.role === 'Helper') return; t += '<button class="' + (x[0] === TAB ? 'on' : '') + '" data-tab="' + x[0] + '">' + (ICO[x[0]] ? ico(ICO[x[0]]) : '') + '<span>' + x[1] + '</span></button>'; });
+  $('top').innerHTML = t + '</nav>'; try { var bn = document.querySelector('.bnav'); if (bn) document.documentElement.style.setProperty('--bnh', bn.offsetHeight + 'px'); } catch (e) { } // v2.5.0: no status box beside the tabs; the order footer sits just above the bottom bar – saves wait on the phone quietly and are sent when there is signal
 }
 /** v2.4.7: what is saved on the phone but not yet in the system is shown as done already. */
 function pendView() {
@@ -335,21 +404,21 @@ function hitsFor(q, vid) {
 function vInfo(v) {
   var p = [];
   p.push(v.debt > 0 ? '<span class="pill ' + (v.days > 7 ? 'red' : v.days >= 4 ? 'amber' : '') + '">Owes ' + ghs(v.debt) + ' · ' + v.days + ' days</span>' : '<span class="pill green">Owes nothing</span>');
-  if (v.last) p.push('<span class="pill">Last bought ' + esc(v.last.slice(5)) + (v.since !== '' ? ' (' + v.since + ' d)' : '') + '</span>');
+  if (v.last) p.push('<span class="pill">Last bought ' + esc(dayLbl(v.last)) + (v.since !== '' ? ' (' + (v.since === 0 ? 'today' : v.since + ' day' + (v.since === 1 ? '' : 's') + ' ago') + ')' : '') + '</span>');
   if (v.stock) p.push('<span class="pill ' + (v.stock === 'Has stock' ? 'green' : 'amber') + '">' + esc(v.stock) + '</span>');
-  if (v.pace && v.pace.slow) p.push('<span class="pill red">Pays in ~' + v.pace.avg + ' days</span>'); else if (v.pace && v.pace.ontime) p.push('<span class="pill green">Pays on time</span>'); // v2.5.0
-  if (v.lad && v.lad.need) p.push('<span class="pill amber">Target ' + v.lad.need + '% before delivery</span>'); else if (v.lad && v.lad.ready) p.push('<span class="pill green">Ready for part payment upfront</span>');
+  if (v.pace && v.pace.slow) p.push('<span class="pill red">Slow payer</span>'); else if (v.pace && v.pace.ontime) p.push('<span class="pill green">Good payer</span>'); // v2.5.0
+  if (v.lad && v.lad.need) p.push('<span class="pill amber">Ask ' + v.lad.need + '% before delivery</span>');
   return p.join('');
 }
 /** v2.5.0: suggestions on New order – never a rule. */
 function habitTips(v, x) {
   var h = '', tq = x.lines.reduce(function (t, l) { return t + (l.sku ? Number(l.qty) || 0 : 0); }, 0), val = vValue(x);
-  if (v.pace && v.pace.slow) h += '<div class="msg info small">⏱ She took about <b>' + v.pace.avg + ' days</b> to pay ' + (v.pace.n > 1 ? 'her last ' + v.pace.n + ' credit orders' : 'her last credit order') + ' (term 7 days) – she may be selling only about half. <b>Suggestion:</b> give about half' + (tq > 1 ? ' (' + Math.max(1, Math.round(tq / 2)) + ' ctn instead of ' + tq + ')' : '') + '. Your choice.' + (tq > 1 && !x.halved ? '<br><button class="ghost" style="padding:6px 0" data-act="nhalf" data-k="' + x.k + '">Use the suggestion – halve the cartons</button>' : '') + '</div>';
+  if (v.pace && v.pace.slow && x.pay === 'CREDIT') h += '<div class="msg info small">⏱ She took about <b>' + v.pace.avg + ' days</b> to pay ' + (v.pace.n > 1 ? 'her last ' + v.pace.n + ' credit orders' : 'her last credit order') + ' (term 7 days) – she may be selling only about half. <b>Suggestion:</b> give about half the cartons on credit. Your choice.' + (x.lines.some(function (l) { return l.sku && Number(l.qty) > 1; }) && !x.halved ? '<br><button class="ghost" style="padding:6px 0" data-act="nhalf" data-k="' + x.k + '">Use the suggestion – halve the cartons</button>' : '') + '</div>';
   if (v.lad && v.lad.need) h += '<div class="msg info small">💳 Month ' + v.lad.m + ' with us: target <b>' + v.lad.need + '% paid before delivery</b>' + (val > 0 ? ' = ' + ghs(Math.round(val * v.lad.need) / 100) : '') + (v.lad.last !== null ? ' (last order: ' + v.lad.last + '%)' : '') + '. A suggestion – agree it with her.</div>';
-  else if (v.lad && v.lad.ready) h += '<div class="msg info small">💳 She pays on time – a good moment to suggest paying part before delivery.</div>';
+  else if (v.lad && v.lad.ready && x.pay === 'CREDIT') h += '<div class="msg info small">💳 She pays on time – a good moment to ask her to pay part before delivery.</div>';
   return h;
 }
-ACT.nhalf = function (b) { edit(b, function (x) { x.lines.forEach(function (l) { if (l.sku) l.qty = Math.max(1, Math.round((Number(l.qty) || 1) / 2)); }); x.halved = true; }, true); };
+ACT.nhalf = function (b) { edit(b, function (x) { x.lines.forEach(function (l) { if (l.sku && Number(l.qty) > 1) l.qty = Math.ceil(Number(l.qty) / 2); }); x.halved = true; }, true); };
 function pgNew() {
   var d = draft(), h = '', tv = 0, tc = 0;
   h += outNotice(); if (0) h += '<div class="msg info"><b>Out at Omni</b> (' + esc(D.out.at || '') + '):<br>' + D.out.skus.map(function (x) { return esc(outText(x)); }).join('<br>') + (D.out.skus.some(function (x) { var r = routeOf(x); return r && r !== 'NONE'; }) ? '<br><b>Money for Clement / Bernice goods goes to the HR office logbook, not to Frank.</b>' : '') + '</div>';
@@ -364,15 +433,16 @@ function pgNew() {
       h += '<div class="row ohead" data-act="nexp" data-k="' + x.k + '"><div class="grow"><b>' + esc(v.name) + '</b>' + (miss ? ' <span class="pill red">add a product</span>' : '') + '<div class="sub">' + x.lines.filter(function (l) { return l.sku; }).map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', ') + (ct0 ? ' · ' : '') + ghs(val0) + ' · ' + esc(PAYTXT[x.pay] || '') + '</div></div><span class="small muted">edit ▸</span></div>';
     } else {
       var val = vValue(x); tv += val;
-      h += '<div class="row"><div class="grow"><h3>' + esc(v.name) + '</h3><div class="sub">' + esc(v.school || '') + (v.phone ? ' · ' + esc(v.phone) : '') + '</div></div><button class="ghost" data-act="chgV" data-k="' + x.k + '">change</button></div>';
+      h += '<div class="row" style="flex-wrap:nowrap">' + avatar(v.name) + '<div class="grow"><h3>' + esc(v.name) + '</h3><div class="sub">' + esc(v.school || '') + (v.phone ? ' · ' + esc(v.phone) : '') + '</div></div><button class="ghost" data-act="chgV" data-k="' + x.k + '">change</button></div>';
       h += '<div>' + vInfo(v) + '</div>' + habitTips(v, x);
       if (x.replaces) h += '<div class="msg info small">Correcting ' + esc(x.replaces) + ' – the old order is replaced when you send.</div>';
       if (!x.replaces && v.lastO && v.lastO.lines.length && !x.lines.some(function (l) { return l.sku; })) h += '<button class="ghost" style="margin:6px 0 2px;padding:6px 0" data-act="nrep" data-k="' + x.k + '">↻ Same as last time (' + esc(dayLbl(v.lastO.date)) + '): ' + v.lastO.lines.map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', ') + '</button>';
       x.lines.forEach(function (l, j) {
         tc += Number(l.qty) || 0;
-        h += '<div class="line"><select data-chg="lsku" data-k="' + x.k + '" data-j="' + j + '"><option value="">– product –</option>' + D.skus.map(function (s) { return '<option value="' + s.id + '"' + (s.id === l.sku ? ' selected' : '') + '>' + esc(s.title) + ' · ' + s.price + (isOut(s.id) ? ' · OUT' : '') + '</option>'; }).join('') + '</select>' +
+        h += '<div class="line">' + (l.sku ? '<span class="pkb">' + pk(l.sku) + '</span>' : '') + '<select data-chg="lsku" data-k="' + x.k + '" data-j="' + j + '"><option value="">– product –</option>' + D.skus.map(function (s) { return '<option value="' + s.id + '"' + (s.id === l.sku ? ' selected' : '') + '>' + esc(s.title) + ' – ' + s.price + (routeOf(s.id) === 'NONE' ? ' (Stockout)' : isOut(s.id) ? ' (out)' : '') + '</option>'; }).join('') + '</select>' +
           '<div class="step"><button data-act="qty" data-k="' + x.k + '" data-j="' + j + '" data-d="-1">−</button><input inputmode="numeric" data-inp="lqty" data-k="' + x.k + '" data-j="' + j + '" value="' + esc(l.qty) + '"><button data-act="qty" data-k="' + x.k + '" data-j="' + j + '" data-d="1">+</button></div>' +
-          (x.lines.length > 1 ? '<button class="ghost" data-act="delL" data-k="' + x.k + '" data-j="' + j + '">✕</button>' : '') + '</div>';
+          (x.lines.length > 1 ? '<button class="ghost" data-act="delL" data-k="' + x.k + '" data-j="' + j + '">✕</button>' : '') + '</div>' +
+          (l.sku && routeOf(l.sku) === 'NONE' ? '<div class="small" style="color:var(--red);margin:-4px 0 6px">⚠ ' + esc(skn(l.sku)) + ' is Stockout – cannot be supplied' + (outMsg(l.sku) ? ' (' + esc(outMsg(l.sku)) + ')' : '') + '</div>' : '');
       });
       h += '<button data-act="addL" data-k="' + x.k + '">+ PRODUCT</button>';
       h += '<label>Payment</label>';
@@ -391,7 +461,7 @@ function pgNew() {
   h += '<button class="big" data-act="addV">+ ANOTHER VENDOR</button>';
   setTimeout(function () {
     var n = d.vendors.filter(function (x) { return x.vid; }).length;
-    $('foot').innerHTML = '<div class="foot"><div class="in"><div class="grow small"><b>' + n + ' vendor(s)</b> · ' + tc + ' cartons · ' + ghs(tv) + '</div><button class="main" data-act="review"' + (n ? '' : ' disabled') + '>CHECK &amp; SEND</button></div></div>';
+    $('foot').innerHTML = '<div class="foot"><div class="in"><div class="grow small"><b>' + n + ' vendor' + (n === 1 ? '' : 's') + '</b> · ' + tc + ' carton' + (tc === 1 ? '' : 's') + ' · ' + ghs(tv) + '</div><button class="main" data-act="review"' + (n ? '' : ' disabled') + '>CHECK &amp; SEND</button></div></div>';
   }, 0);
   return h;
 }
@@ -422,7 +492,7 @@ ACT.addV = function () { var d = draft(); d.vendors.forEach(function (y) { if (y
 ACT.delV = function (b) { var go0 = function (f) { if (b.dataset.e) f(); else ask('Remove this vendor from the order?', f, 'REMOVE'); }; go0(function () { var d = draft(); d.vendors = d.vendors.filter(function (x) { return x.k !== b.dataset.k; }); if (!d.vendors.length) d.vendors.push(newV()); saveDraft(d); render(); }); };
 var PAYTXT = { CASH: 'Cash at delivery', CREDIT: 'Credit', PAID_ME: 'Paid now – cash with me', PAID_FRANK: 'Paid now – directly to Frank' };
 ACT.review = function () {
-  var d = draft(), bad = [], h = '<h3>Check before sending</h3>';
+  var d = draft(), bad = [], h = '<h3>Check before sending</h3>', so = false;
   var list = d.vendors.filter(function (x) { return x.vid; });
   list.forEach(function (x) {
     var v = vend(x.vid), ls2 = x.lines.filter(function (l) { return l.sku && Number(l.qty) > 0; });
@@ -432,11 +502,15 @@ ACT.review = function () {
     if ((x.pay === 'PAID_ME' || x.pay === 'PAID_FRANK') && !x.prepaid && !(num(x.paid) > 0)) bad.push(v.name + ': the amount paid now must be a number (e.g. 620).');
     if (String(x.promised).trim() !== '' && !(num(x.promised) >= 0)) bad.push(v.name + ': the promised old debt must be a number.');
     h += '<div class="card"><b>' + esc(v.name) + '</b>' + (x.replaces ? ' <span class="pill amber">replaces ' + esc(x.replaces) + '</span>' : '') + '<div class="sub">' + ls2.map(function (l) { return l.qty + ' ' + esc(sku(l.sku).title); }).join(', ') + '</div>' +
-      '<div class="small">' + (x.prepaid ? 'Paid already ' + ghs(x.prepaid) : esc(PAYTXT[x.pay]) + (x.paid && x.pay.indexOf('PAID') === 0 ? ' ' + ghs(num(x.paid)) : '')) + (num(x.promised) > 0 ? ' · promised old debt ' + ghs(num(x.promised)) : '') + ' · <b>' + ghs(vValue(x)) + '</b></div></div>';
+      '<div class="small">' + (x.prepaid ? 'Paid already ' + ghs(x.prepaid) : x.pay.indexOf('PAID') === 0 ? 'Paid now ' + ghs(num(x.paid)) + (x.pay === 'PAID_ME' ? ' – cash with you' : ' – to Frank') : esc(PAYTXT[x.pay])) + (num(x.promised) > 0 ? ' · promised old debt ' + ghs(num(x.promised)) : '') + ' · <b>' + ghs(vValue(x)) + '</b></div>' +
+      (ls2.some(function (l) { return routeOf(l.sku) === 'NONE'; }) ? '<div class="small" style="color:var(--red)">⚠ ' + ls2.filter(function (l) { return routeOf(l.sku) === 'NONE'; }).map(function (l) { return esc(skn(l.sku)); }).join(', ') + ' is Stockout – Frank will not be able to supply it.</div>' : '') + '</div>';
+    if (ls2.some(function (l) { return routeOf(l.sku) === 'NONE'; })) so = true;
   });
   saveDraft(d);
   if (bad.length) { say(bad.join('\n')); return; }
-  $('over').innerHTML = '<div class="overlay"><div class="sheet">' + h + '<div class="row"><button class="grow" data-act="closeO">Back</button><button class="main grow" data-act="send">SEND ' + list.length + ' ORDER(S)</button></div></div></div>';
+  $('over').innerHTML = '<div class="overlay"><div class="sheet">' + h + (so ? '<button class="warn big" style="margin-bottom:8px" data-act="nrmso">REMOVE THE STOCKOUT PRODUCTS</button>' : '') + '<div class="row"><button class="grow" data-act="closeO">Back</button><button class="main grow" data-act="send">SEND ' + (list.length === 1 ? 'THE ORDER' : list.length + ' ORDERS') + (so ? ' ANYWAY' : '') + '</button></div></div></div>';
+};
+ACT.nrmso = function () { var d = draft(); d.vendors.forEach(function (x) { x.lines = x.lines.filter(function (l) { return !(l.sku && routeOf(l.sku) === 'NONE'); }); }); d.vendors = d.vendors.filter(function (x) { return x.vid && x.lines.some(function (l) { return l.sku; }); }); var left = d.vendors.length; if (!left) d.vendors.push(newV()); saveDraft(d); $('over').innerHTML = ''; render(); if (left) ACT.review(); else toast('Stockout products removed – nothing left to send.');
 };
 ACT.dlgYes = function () { var el = $('dlgin'); var v = el ? el.value : true; var cb = dlgClose(); if (cb) cb(v); };
 ACT.dlgNo = function () { var no = DLGNO; dlgClose(); if (no) no(); };
@@ -445,11 +519,12 @@ ACT.dlgSel = function (b) { DLGSEL = b.dataset.c; [].slice.call(document.querySe
 ACT.closeO = function () { $('over').innerHTML = ''; };
 ACT.send = function (b) {
   var d = draft();
-  var data = { vendors: d.vendors.filter(function (x) { return x.vid; }).map(function (x) { return { vid: x.vid, lines: x.lines.filter(function (l) { return l.sku && Number(l.qty) > 0; }), pay: x.prepaid ? 'CASH' : x.pay, paid: x.prepaid ? 0 : num(x.paid) || 0, promised: num(x.promised) || 0, note: x.note, replaces: x.replaces }; }) };
+  var data = { vendors: d.vendors.filter(function (x) { return x.vid; }).map(function (x) { var paid = x.prepaid ? 0 : num(x.paid) || 0; return { vid: x.vid, lines: x.lines.filter(function (l) { return l.sku && Number(l.qty) > 0; }), pay: x.prepaid ? 'CASH' : x.pay, paid: paid, promised: num(x.promised) || 0, note: x.note, replaces: x.replaces, rk: !x.prepaid && x.pay === 'PAID_ME' && paid > 0 ? rkNew() : '' }; }) };
   // v2.4.7: saved on the phone at once; the order(s) show on Orders & Payments as "Saved – sending…" until the system has them
   $('over').innerHTML = ''; ls(DKEY, null);
   var names = data.vendors.map(function (x) { return (vend(x.vid) || { name: x.vid }).name; });
   bgSave('orders', data, d.sid, (names.length === 1 ? 'order for ' + names[0] : names.length + ' orders (' + names.join(', ') + ')'), null, true);
+  data.vendors.forEach(function (x) { if (x.rk) { var v = vend(x.vid) || {}; rcptOffer({ rk: x.rk, rids: [], vendor: v.name || x.vid, phone: v.phone || '', amount: x.paid, by: D.me.first }); } }); // v2.5.0: she paid with the order – offer her receipt
 };
 // ---------------------------------------------------------------- agent: vendors and today
 // v2.4.8: one filter panel (drop-downs) on every list – the same on every screen. Choices are kept on this phone.
@@ -470,7 +545,7 @@ var FDEF = {
   prcpt: [['day', 'Date', 'date'], ['st', 'Status', [['', 'All'], ['not', 'Not sent'], ['wait', 'Sent – no answer yet'], ['yes', 'Vendor confirmed'], ['no', 'Vendor says not right']]], ['kind', 'Kind', [['', 'All'], ['payment', 'Cash payments'], ['delivery', 'Deliveries']]]],
   phist: [['day', 'Date', 'date'], ['to', 'Given to', [['', 'Everyone'], ['frank', 'Frank (Omni Haven)'], ['other', 'HR logbook / Clement / Bernice'], ['mgr', 'The manager']]], ['st', 'Status', [['', 'All'], ['wait', 'Waiting for confirmation'], ['ok', 'Confirmed'], ['diff', 'Counted different']]]],
   rdone: [['day', 'Date', 'date'], ['st', 'Status', [['', 'All'], ['Delivered', 'Delivered'], ['Some returned', 'Some returned'], ['Not delivered', 'Not delivered'], ['Cancelled', 'Cancelled']]], ['mgr', 'Manager', [['', 'Any'], ['dec', 'Manager decided'], ['wait', 'Waiting for the manager'], ['vno', 'Vendor says not right']]]],
-  disp: [['st', 'Status', [['', 'All'], ['Dispatched', 'Dispatched (with the rider)'], ['Delivered', 'Delivered'], ['Returned', 'Returned'], ['Cancelled', 'Cancelled']]]],
+  disp: [['st', 'Status', [['', 'All'], ['Dispatched', 'With Prince (not delivered yet)'], ['Delivered', 'Delivered'], ['Returned', 'Returned'], ['Cancelled', 'Cancelled']]]],
   hist: [['from', 'From', 'date'], ['to', 'To', 'date'], ['pay', 'Payment', [['', 'All'], ['owing', 'Owing'], ['paid', 'Paid'], ['part', 'Part paid'], ['wait', 'Waiting for the manager']]], ['sort', 'Sort', [['', 'Newest first'], ['old', 'Oldest first']]]],
   owed: [['age', 'Sold', [['', 'Any time'], ['0', '0–7 days ago'], ['8', '8–14 days ago'], ['15', '15+ days ago']]]],
   route: [['pay', 'To collect', [['', 'All stops'], ['collect', 'Cash to collect'], ['credit', 'Credit only'], ['debt', 'Has old debt']]]]
@@ -505,7 +580,8 @@ function bdayFold() {
   var list = (D.vendors || []).filter(function (v) { var bi = bdayIn(v.bday); return bi >= 0 && bi <= 1 && (!agOn() || v.agent === agOn()); }).sort(function (a, b) { return bdayIn(a.bday) - bdayIn(b.bday); });
   if (!list.length) return '';
   var t = list.filter(function (v) { return bdayIn(v.bday) === 0; }).length;
-  return fold('bday', '🎂 <b>' + list.length + ' birthday' + (list.length === 1 ? '' : 's') + '</b> ' + (t ? '<span class="pill red">' + t + ' today</span>' : '') + (list.length - t ? '<span class="pill amber">' + (list.length - t) + ' tomorrow</span>' : '') + '<div class="small muted">' + list.slice(0, 3).map(function (v) { return esc(v.name); }).join(', ') + (list.length > 3 ? ' …' : '') + '</div>', function () {
+  var bh = list.length === 1 ? '🎂 <b>' + esc(list[0].name) + '</b> – birthday ' + (t ? '<b style="color:var(--red)">today</b>' : 'tomorrow') : '🎂 <b>' + list.length + ' birthdays</b> – ' + (t ? t + ' today' : '') + (t && list.length - t ? ', ' : '') + (list.length - t ? (list.length - t) + ' tomorrow' : '') + '<div class="small muted">' + list.slice(0, 3).map(function (v) { return esc(v.name); }).join(', ') + (list.length > 3 ? ' …' : '') + '</div>';
+  return fold('bday', bh, function () {
     return list.map(function (v, i) { var bi = bdayIn(v.bday), wa = waNum(v.phone);
       return '<div class="srow' + (i ? '' : ' first') + '" style="flex-wrap:nowrap"><div class="grow"><b>' + esc(v.name) + '</b> <span class="pill ' + (bi === 0 ? 'red' : 'amber') + '">' + (bi === 0 ? 'TODAY' : 'tomorrow') + '</span><div class="sub">' + esc(v.school || '') + (agFilterOk() ? ' · ' + esc(agName(v.agent)) : '') + '</div></div>' +
         (v.phone ? '<a href="tel:' + esc(v.phone) + '"><button class="ghost" style="padding:6px 10px">Call</button></a>' : '') + (wa ? '<a href="https://wa.me/' + wa + '?text=' + encodeURIComponent('Happy birthday, ' + v.name + '! Wishing you a wonderful year. From all of us at CupSales.') + '" target="_blank"><button class="ghost" style="padding:6px 10px">WhatsApp</button></a>' : '') + '</div>'; }).join('') + '<p class="small muted" style="margin:8px 0 0">Other birthdays: Filter → Birthday.</p>';
@@ -514,21 +590,20 @@ function bdayFold() {
 /** v2.5.0: payment habits – slow payers and the steps to paying before delivery (suggestions; the manager sees it per agent). */
 function habitsFold() {
   var V = (D.vendors || []).filter(function (v) { return !agOn() || v.agent === agOn(); }); if (!V.length || !V.some(function (v) { return v.lad || v.pace; })) return '';
-  var slow = V.filter(function (v) { return v.pace && v.pace.slow; }), ready = V.filter(function (v) { return v.lad && v.lad.ready; }), behind = V.filter(function (v) { return v.lad && v.lad.need && v.lad.last !== null && v.lad.last < v.lad.need; });
-  var st = { 0: 0, 50: 0, 100: 0 }; V.forEach(function (v) { if (v.lad) st[v.lad.need] = (st[v.lad.need] || 0) + 1; });
-  var nx = V.map(function (v) { return v.lad && v.lad.next; }).filter(Boolean).sort()[0] || '';
-  var head = '💳 <b>Payment habits</b> <span class="pill ' + (slow.length ? 'red' : 'green') + '">' + slow.length + ' slow payer' + (slow.length === 1 ? '' : 's') + '</span>' + (ready.length ? '<span class="pill green">' + ready.length + ' ready for upfront</span>' : '') + (behind.length ? '<span class="pill amber">' + behind.length + ' behind target</span>' : '');
+  var slow = V.filter(function (v) { return v.pace && v.pace.slow; }), good = V.filter(function (v) { return v.pace && v.pace.ontime; }), asked = V.filter(function (v) { return v.lad && v.lad.need; });
+  var head = '💳 <b>Payment habits</b> <span class="pill ' + (slow.length ? 'red' : 'green') + '">' + slow.length + ' slow payer' + (slow.length === 1 ? '' : 's') + '</span>' + (good.length ? '<span class="pill green">' + good.length + ' good payer' + (good.length === 1 ? '' : 's') + '</span>' : '');
   return fold('habits', head, function () {
-    var h = '<p class="sub" style="margin-top:0">Suggestions only – the agent decides. A slow payer (more than 14 days to pay) gets the tip "give about half" on New order. Payment terms grow from credit to <b>50% before delivery after 4 months</b> and <b>100% after 8 months</b>, counted from 1 Oct 2026 (new vendors: from registration).</p>';
-    h += '<div class="tiles"><div class="tile"><b>' + st[0] + '</b><span>on credit terms</span></div><div class="tile"><b>' + st[50] + '</b><span>target 50% upfront</span></div><div class="tile"><b>' + st[100] + '</b><span>target 100% upfront</span></div></div>';
-    if (nx) { var p = nx.split('|'); h += '<div class="small" style="margin-bottom:8px">Next step: from <b>' + esc(dayLbl(p[0])) + ' ' + p[0].slice(0, 4) + '</b> the app suggests ' + p[1] + '% before delivery for the first vendors.</div>'; }
-    if (agFilterOk() && !agOn()) { var by = {}; V.forEach(function (v) { var a = by[v.agent] = by[v.agent] || { n: 0, s: 0, r: 0, m: 0, l: 0 }; a.n++; if (v.pace && v.pace.slow) a.s++; if (v.lad && v.lad.ready) a.r++; a.m += v.ctnM || 0; a.l += v.ctnL || 0; });
-      h += '<table class="small"><tr><th style="text-align:left">Agent</th><th>Vendors</th><th>Slow</th><th>Ready</th><th>Ctn this month / last</th></tr>' + Object.keys(by).map(function (a) { var x = by[a]; return '<tr><td>' + esc(agName(a)) + '</td><td class="right">' + x.n + '</td><td class="right">' + x.s + '</td><td class="right">' + x.r + '</td><td class="right">' + x.m + ' / ' + x.l + '</td></tr>'; }).join('') + '</table>'; }
-    if (slow.length) h += '<h3 style="margin:12px 0 4px">Slow payers</h3>' + slow.sort(function (a, b) { return b.pace.avg - a.pace.avg; }).map(function (v) { return '<div class="srow"><div class="grow"><b>' + esc(v.name) + '</b>' + (agFilterOk() ? ' <span class="small muted">' + esc(agName(v.agent)) + '</span>' : '') + '<div class="small muted">about ' + v.pace.avg + ' days to pay · cartons this month ' + (v.ctnM || 0) + ', last month ' + (v.ctnL || 0) + '</div></div><span class="pill red">' + v.pace.avg + ' d</span></div>'; }).join('');
-    return h + '<div class="row" style="margin-top:8px"><button class="ghost" data-act="vpace" data-p="slow">Show slow payers</button><button class="ghost" data-act="vpace" data-p="ready">Show ready for upfront</button></div>';
+    var h = '';
+    if (agFilterOk() && !agOn()) { var by = {}; V.forEach(function (v) { var a = by[v.agent] = by[v.agent] || { s: 0, g: 0, m: 0 }; if (v.pace && v.pace.slow) a.s++; if (v.pace && v.pace.ontime) a.g++; a.m += v.ctnM || 0; });
+      h += Object.keys(by).map(function (a) { var x = by[a]; return '<div class="srow"><div class="grow"><b>' + esc(agName(a)) + '</b><div class="small muted">' + x.s + ' slow · ' + x.g + ' good · ' + x.m + ' ctn this month in the app</div></div>' + (x.s ? '<button class="ghost" style="padding:4px 8px" data-act="vpace" data-p="slow" data-a="' + esc(a) + '">Show slow</button>' : '') + '</div>'; }).join(''); }
+    else if (slow.length) h += slow.sort(function (a, b) { return b.pace.avg - a.pace.avg; }).map(function (v) { return '<div class="srow"><div class="grow"><b>' + esc(v.name) + '</b><div class="small muted">took about ' + v.pace.avg + ' days to pay</div></div></div>'; }).join('');
+    else h += '<p class="muted" style="margin:0">No slow payer – well done.</p>';
+    if (asked.length) h += '<div class="small" style="margin-top:8px"><b>' + asked.length + '</b> vendor(s) are now asked to pay part before delivery.</div>';
+    h += '<details style="margin-top:8px"><summary class="small">How it works</summary><div class="small muted">Suggestions only – the agent decides. A slow payer (more than 14 days to pay her credit) gets the tip "give about half" on New order. From February 2027 vendors are asked to pay 50% before delivery after 4 months with us and 100% after 8 months (counted from 1 Oct 2026; new vendors from registration). Good payers can be asked earlier. Cartons count only orders made in the app (since 28 Sep).</div></details>';
+    return h;
   });
 }
-ACT.vpace = function (b) { fl('vendors').pace = b.dataset.p; flSave(); OPN.habits = false; render(); };
+ACT.vpace = function (b) { fl('vendors').pace = b.dataset.p; flSave(); if (b.dataset.a) setAg(b.dataset.a); OPN.habits = false; render(); };
 LISTR.vendors = function () {
   var list = vfilter(), m1 = D.today.slice(0, 8) + '01', own = list.filter(function (v) { return v.debt > 0; });
   return '<div class="sumline"><b>' + list.length + '</b> vendor' + (list.length === 1 ? '' : 's') + ' · <b>' + own.length + '</b> owe <b>' + ghs(own.reduce(function (t, v) { return t + v.debt; }, 0)) + '</b> · <b>' + list.filter(function (v) { return !v.last || v.last < m1; }).length + '</b> yet to buy this month</div>' + vlistBody(list);
@@ -563,7 +638,7 @@ function vlistBody(list) {
   if (!list.length) return '<p class="muted">No vendor matches. Change the filter or the search.</p>';
   return list.map(function (v) {
     var bi = bdayIn(v.bday);
-    return '<div class="card"><div class="row"><div class="grow"><h3>' + esc(v.name) + '</h3><div class="sub">' + esc(v.school || '') + (agFilterOk() && !agOn() ? ' · ' + esc(agName(v.agent)) : '') + '</div></div>' + (v.phone ? '<a href="tel:' + esc(v.phone) + '"><button>Call</button></a>' : '') + '<button data-act="orderV" data-v="' + v.id + '">Order</button></div><div>' + vInfo(v) +
+    return '<div class="card"><div class="row" style="flex-wrap:nowrap">' + avatar(v.name) + '<div class="grow"><h3>' + esc(v.name) + '</h3><div class="sub">' + esc(v.school || '') + (agFilterOk() && !agOn() ? ' · ' + esc(agName(v.agent)) : '') + '</div></div>' + (v.phone ? '<a href="tel:' + esc(v.phone) + '"><button>Call</button></a>' : '') + '<button data-act="orderV" data-v="' + v.id + '">Order</button></div><div>' + vInfo(v) +
       (v.bdayTxt ? '<span class="pill ' + (bi >= 0 && bi <= 6 ? 'amber' : '') + '" data-act="bdayOpen" data-v="' + v.id + '" style="cursor:pointer">🎂 ' + esc(v.bdayTxt) + (bi === 0 ? ' – TODAY' : bi === 1 ? ' – tomorrow' : bi > 1 && bi <= 6 ? ' – in ' + bi + ' days' : '') + '</span>' : '') + '</div>' +
       '<div class="row" style="margin-top:8px">' + ((D.me.role === 'Agent' || D.me.role === 'Supervisor') && v.debt > 0 ? '<button class="main" data-act="rcv" data-v="' + v.id + '">RECEIVED CASH</button>' : '') + (v.bdayTxt ? '' : '<button class="ghost" data-act="bdayOpen" data-v="' + v.id + '">🎂 Add birthday</button>') + '</div></div>';
   }).join('');
@@ -604,7 +679,7 @@ ACT.rcv = function (b) {
   }, 'SAVE');
 };
 ACT.orderV = function (b) { var d = draft(); var x = d.vendors.filter(function (y) { return !y.vid; })[0]; if (!x) { x = newV(); d.vendors.push(x); } d.vendors.forEach(function (y) { if (y.vid && y !== x) y.c = 1; }); x.c = 0; if (d.vendors.some(function (y) { return y.vid === b.dataset.v; })) { TAB = 'new'; render(); return; } x.vid = b.dataset.v; saveDraft(d); TAB = 'new'; render(); };
-var STXT = { Sending: ['✓ Saved – sending…', 'green'], Cancelling: ['Cancel saved – sending…', 'red'], Submitted: ['Pending approval', 'amber'], Released: ['Approved', ''], 'Partly released': ['Part approved', ''], Delivered: ['Delivered', 'green'], Cancelled: ['Cancelled', 'red'], Failed: ['Returned', 'red'], Rejected: ['Declined', 'red'], 'Cancelled after release': ['Cancelled – bring back', 'red'] };
+var STXT = { Sending: ['✓ Saved – sending…', 'green'], Cancelling: ['Cancel saved – sending…', 'red'], Submitted: ['Pending approval', 'amber'], Released: ['With Prince', ''], 'Partly released': ['Part with Prince', ''], Delivered: ['Delivered', 'green'], Cancelled: ['Cancelled', 'red'], Failed: ['Returned', 'red'], Rejected: ['Declined', 'red'], 'Cancelled after release': ['Cancelled – bring back', 'red'] };
 function needsCheck(o) { return false; } // v2.4.9: the agent no longer checks Prince's record – the vendor confirms it on her receipt
 function qtyTxt(l) { return l.qty + ' ' + esc(skn(l.sku)); }
 /** v2.4.9: what the vendor said on her delivery receipt, and the manager's decision. */
@@ -636,13 +711,15 @@ ACT.dispute = function (b) {
 var DEC = {};
 function decideHtml(x) {
   var st = DEC[x.eid] || (DEC[x.eid] = { choice: '', cash: '', holder: 'Prince', note: '' });
-  var h = '<div class="ask small">' + esc(x.dec.summary) + '<br><b>' + esc(x.dec.agent) + ' says:</b> ' + esc(x.dec.agentSays || '—') + '</div><div class="seg">' +
+  var h = '<div class="ask small">' + esc(x.dec.summary) + '<br><b>' + esc(x.dec.agent) + ' says:</b> ' + (x.dec.agentSays ? '“' + esc(x.dec.agentSays) + '”' : '<span class="muted">gave no reason</span>') + '</div><div class="seg">' +
     (x.dec.vendorCase ? [['RIDER', 'Prince is right'], ['OTHER', 'The vendor is right – correct it']] : [['RIDER', 'Prince is right'], ['AGENT', esc(x.dec.agent) + ' is right'], ['OTHER', 'Something else']]).map(function (c) { return '<button class="' + (st.choice === c[0] ? 'on' : '') + '" data-act="decch" data-e="' + x.eid + '" data-c="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
   if (st.choice && st.choice !== 'RIDER') h += '<label>Cash she really paid for THIS order (GHS)</label><input inputmode="decimal" data-inp="deccash" data-e="' + x.eid + '" value="' + esc(st.cash) + '"><label>Who has that cash?</label><select data-chg="dechold" data-e="' + x.eid + '">' + ['Prince', x.dec.agentName || x.dec.agent].map(function (p) { return '<option' + (st.holder === p ? ' selected' : '') + '>' + esc(p) + '</option>'; }).join('') + '</select>';
   if (st.choice) h += '<label>Note (optional)</label><input data-inp="decnote" data-e="' + x.eid + '" value="' + esc(st.note) + '"><p><button class="main big" data-act="decsave" data-e="' + x.eid + '" data-d="' + x.dec.did + '">SAVE DECISION</button></p>';
   return h;
 }
-ACT.decch = function (b) { DEC[b.dataset.e].choice = b.dataset.c; render(); };
+ACT.decch = function (b) { var st = DEC[b.dataset.e]; st.choice = b.dataset.c; var x = (D.needs || []).filter(function (n) { return n.eid === b.dataset.e; })[0];
+  if (x && x.dec && b.dataset.c !== 'RIDER') { if (b.dataset.c === 'AGENT' && x.dec.agentName) st.holder = x.dec.agentName; var m = String(x.dec.agentSays || '').replace(/,/g, '').match(/(\d+(?:\.\d+)?)/); if (m && String(st.cash).trim() === '') st.cash = m[1]; }
+  render(); };
 INP.deccash = function (el) { DEC[el.dataset.e].cash = el.value; }; INP.decnote = function (el) { DEC[el.dataset.e].note = el.value; }; CHG.dechold = function (el) { DEC[el.dataset.e].holder = el.value; };
 ACT.decsave = function (b) {
   var st = DEC[b.dataset.e]; if (st.choice !== 'RIDER' && !(String(st.cash).trim() !== '' && num(st.cash) >= 0)) { say('Type the cash she really paid for this order.'); return; }
@@ -652,8 +729,8 @@ function needsHtml(list, title) { list = list || D.needs || []; if (!list.length
 function needsList(list) {
   return list.map(function (x, i) {
     var k = 'n:' + x.eid, o = isOpen(k);
-    return '<div class="srow' + (i ? '' : ' first') + '" style="align-items:flex-start;flex-wrap:wrap"><div class="grow tap" data-act="tog" data-o="' + esc(k) + '" data-s="' + (o ? 1 : 0) + '"><span class="pill ' + (x.sev === 'High' ? 'red' : 'amber') + '">' + esc(x.type) + '</span> <span class="small muted">' + esc(dayLbl(x.at)) + '</span>' + (x.vendor ? '<div><b>' + esc(x.vendor) + '</b></div>' : '') + (o ? '' : '<div class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(x.text) + '</div>') + '</div><span class="ar" data-act="tog" data-o="' + esc(k) + '" data-s="' + (o ? 1 : 0) + '">' + (o ? '▴' : '▾') + '</span>' +
-      (o ? '<div style="flex:1 1 100%"><div class="small" style="margin:4px 0">' + esc(x.text) + '</div>' + (x.dec ? decideHtml(x) : '<button data-act="resolve" data-e="' + x.eid + '">DONE</button>') + '</div>' : '') + '</div>';
+    return '<div class="srow' + (i ? '' : ' first') + '" style="align-items:flex-start;flex-wrap:wrap"><div class="grow tap" data-act="tog" data-o="' + esc(k) + '" data-s="' + (o ? 1 : 0) + '"><span class="pill ' + (x.sev === 'High' ? 'red' : 'amber') + '">' + esc(x.type) + '</span> <span class="small muted">' + esc(dayLbl(x.at)) + '</span>' + (x.vendor ? '<div><b>' + esc(x.vendor) + '</b></div>' : '') + (o ? '' : '<div class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(x.dec ? x.dec.summary : x.text) + '</div>') + '</div><span class="ar" data-act="tog" data-o="' + esc(k) + '" data-s="' + (o ? 1 : 0) + '">' + (o ? '▴' : '▾') + '</span>' +
+      (o ? '<div style="flex:1 1 100%">' + (x.dec ? '' : '<div class="small" style="margin:4px 0">' + esc(x.text) + '</div>') + (x.dec ? decideHtml(x) : '<button data-act="resolve" data-e="' + x.eid + '">DONE</button>') + '</div>' : '') + '</div>';
   }).join('');
 }
 ACT.resolve = function (b) { askIn('What was done? (short)', 'Checked', '', function (note) { bgSave('resolve', { eid: b.dataset.e, note: note }, 'rs-' + b.dataset.e, 'problem closed', b); }, 'DONE'); };
@@ -664,7 +741,7 @@ function confirmHtml() {
   return '<div class="card"><h3>Cash handed to you – tick what you received</h3><p class="sub">Every payment is ticked. Untick any payment you did NOT get, then CONFIRM. What you untick stays counted with the person who sent it.</p>' + D.toConfirm.map(function (x) {
     var p = x.parts || []; var t = CTK[x.hid] || (CTK[x.hid] = p.map(function () { return true; }));
     var sum = p.length ? Math.round(p.reduce(function (s, q, i) { return s + (t[i] ? q.amt : 0); }, 0) * 100) / 100 : x.amount;
-    return '<div style="margin:10px 0;padding-bottom:8px;border-bottom:1px solid var(--line)"><div><b>' + ghs(x.amount) + '</b> from ' + esc(x.from) + '<div class="small muted">' + esc(x.money) + ' money · ' + esc(x.at) + (x.time ? ' ' + esc(x.time) : '') + ' · ' + esc(x.hid) + '</div></div>' +
+    return '<div style="margin:10px 0;padding-bottom:8px;border-bottom:1px solid var(--line)"><div><b>' + ghs(x.amount) + '</b> from ' + esc(x.from) + '<div class="small muted">' + esc(x.money) + ' money · ' + esc(dayLbl(x.at)) + (x.time ? ' ' + esc(x.time) : '') + '</div></div>' +
       p.map(function (q, i) { return '<label class="tk"><input type="checkbox" class="chk" data-chg="ctk" data-h="' + x.hid + '" data-i="' + i + '"' + (t[i] ? ' checked' : '') + '><span class="grow">' + esc(q.text) + '<div class="small muted">' + esc(q.when || '') + (q.of ? ' · part of ' + ghs(q.of) : '') + '</div></span><b>' + ghs(q.amt) + '</b></label>'; }).join('') +
       (x.note ? '<div class="small muted">Note: ' + esc(x.note) + '</div>' : '') +
       '<div class="row" style="margin-top:8px"><div class="grow small">' + (p.length ? 'Ticked: <b>' + ghs(sum) + '</b>' + (sum + 0.004 < x.amount ? ' <span style="color:var(--red)">· ' + ghs(x.amount - sum) + ' not received</span>' : '') : '') + '</div><button class="main" data-act="confirmC" data-h="' + x.hid + '" data-a="' + x.amount + '" data-n="' + p.length + '">CONFIRM' + (p.length ? ' ' + ghs(sum) : '') + '</button></div></div>';
@@ -741,12 +818,24 @@ ACT.routesave = function () {
   bgSave('route', { routes: m, msgs: ms }, 'rt-' + uid(), 'out of stock: ' + ks.map(function (k) { var r = m[k] !== undefined ? m[k] : routeOf(k); return skn(k) + (r === 'NONE' ? ' – Stockout' : ' from ' + srcNm(r)); }).join(', '), null, true);
 };
 var OPENO = {}, OMENU = '';
+/** v2.5.0: a small drawing of the product – a noodle pack, bigger for the heavier packs; red = chicken, orange = onion. */
+function pk(id) {
+  var s = String(id || ''), w = { RC: 0.72, SP: 0.82, HM: 0.91, BF: 1 }[s.slice(0, 2)] || 0.85, chick = s.slice(-1) === 'C';
+  var c1 = chick ? '#E31B23' : '#F08A00', c2 = chick ? '#B80F17' : '#C46A00', g = (skn(s).match(/\d+g/) || [''])[0];
+  var W = 30 * w, H = 22 * w, x = (32 - W) / 2, y = (32 - H) / 2;
+  return '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M' + x + ' ' + (y + 2) + 'q' + W / 2 + ' -3 ' + W + ' 0v' + (H - 4) + 'q-' + W / 2 + ' 3 -' + W + ' 0z" fill="' + c1 + '" stroke="' + c2 + '" stroke-width="1"/>' +
+    '<rect x="' + x + '" y="' + (y + H * 0.36) + '" width="' + W + '" height="' + H * 0.3 + '" fill="#FFC400"/><path d="M' + (x + 3) + ' ' + (y + H * 0.52) + 'c1.5 -2 3 2 4.5 0s3 2 4.5 0" stroke="' + c2 + '" stroke-width="1.1" fill="none"/>' +
+    (g ? '<text x="' + (x + W - 2) + '" y="' + (y + H * 0.58) + '" font-size="' + (6.2 * w).toFixed(1) + '" font-weight="800" text-anchor="end" fill="#3A2A00" font-family="Arial">' + g + '</text>' : '') + '</svg>';
+}
+/** v2.5.0: the vendor's initials in a warm colour (the same colour every time). */
+function avatar(n) { var t = String(n || '?').replace(/[^A-Za-z ]/g, ' ').trim().split(/\s+/), i = ((t[0] || '?')[0] + (t.length > 1 ? t[t.length - 1][0] : '')).toUpperCase(), h = 0; for (var k = 0; k < n.length; k++) h = (h * 31 + n.charCodeAt(k)) >>> 0;
+  var C = ['#E31B23', '#F08A00', '#B80F17', '#C46A00', '#8A5A00', '#D7141A', '#E65100', '#9C2A00']; return '<span class="av" style="background:' + C[h % C.length] + '">' + esc(i) + '</span>'; }
 /** v2.5.0: a card that shows one summary line; tapping it shows the details (and tapping again hides them). */
 var OPN = {}, PSEC = {}, CURL = '';
 function isOpen(key, def) { return OPN[key] !== undefined ? OPN[key] : !!def; }
 function fold(key, head, body, cls, def) {
   var o = isOpen(key, def);
-  return '<div class="card fold' + (cls ? ' ' + cls : '') + '"><div class="fh" data-act="tog" data-o="' + esc(key) + '" data-s="' + (o ? 1 : 0) + '"><div class="grow">' + head + '</div><span class="ar">' + (o ? 'Hide ▴' : 'Details ▾') + '</span></div>' + (o ? '<div class="fb">' + (typeof body === 'function' ? body() : body) + '</div>' : '') + '</div>';
+  return '<div class="card fold' + (cls ? ' ' + cls : '') + '" id="f-' + esc(key) + '"><div class="fh" data-act="tog" data-o="' + esc(key) + '" data-s="' + (o ? 1 : 0) + '"><div class="grow">' + head + '</div><span class="ar">' + (o ? 'Hide ▴' : 'Details ▾') + '</span></div>' + (o ? '<div class="fb">' + (typeof body === 'function' ? body() : body) + '</div>' : '') + '</div>';
 }
 ACT.tog = function (b) { OPN[b.dataset.o] = b.dataset.s !== '1'; if (b.dataset.l) rerenderList(); else render(); };
 function chips(k, list, cur) { return '<div class="pchips">' + list.map(function (x) { return '<button class="' + (cur === x[0] ? 'on' : '') + '" data-act="psec" data-k="' + k + '" data-s="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>'; }
@@ -760,19 +849,22 @@ function oCanCancel(o) { return !o.local && (o.status === 'Submitted' || /Releas
 var SUB = { today: 'orders', done: 'orders' }; // v2.4.9: Orders | Payments inside "Orders & Payments"
 function subTabs(k, payN) { return '<div class="seg" style="margin:0 0 12px">' + [['orders', 'Orders'], ['pay', 'Payments' + (payN ? ' (' + payN + ')' : '')]].map(function (x) { return '<button class="' + (SUB[k] === x[0] ? 'on' : '') + '" data-act="sub" data-k="' + k + '" data-s="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>'; }
 ACT.sub = function (b) { SUB[b.dataset.k] = b.dataset.s; MSG = null; render(); window.scrollTo(0, 0); };
-function payNeeds() { return (D.needs || []).filter(function (x) { return x.dec || x.pay; }); }
+function payNeeds() { return (D.needs || []).filter(function (x) { return x.dec; }); }
 function rcptToSend() { var d3 = addDays(D.today, -3); return (D.receipts || []).filter(function (r) { return !r.sent && !r.answer && (!r.day || r.day >= d3); }).length; }
 function payCount() { return (D.toConfirm || []).length + payNeeds().length + rcptToSend(); }
 function pgToday() {
   var h = subTabs('today', payCount());
   if (SUB.today === 'pay') return h + paymentsHtml();
   h += outCardHtml();
-  var other = (D.needs || []).filter(function (x) { return !x.dec && !x.pay; });
+  var other = (D.needs || []).filter(function (x) { return !x.dec && !x.pay && !x.tech; }), tech = (D.needs || []).filter(function (x) { return x.tech; });
+  if (tech.length) h += '<div class="small muted" style="margin:0 2px 8px">⚙ ' + tech.length + ' technical message' + (tech.length === 1 ? '' : 's') + ' for the app owner (nothing for you to do).</div>';
   if (other.length) h += fold('needs-other', '<b>Other problems: ' + other.length + '</b><div class="small muted">' + other.slice(0, 3).map(function (x) { return esc(x.type); }).join(' · ') + (other.length > 3 ? ' …' : '') + '</div>', function () { return needsList(other); }, 'redf');
+  var f0 = fl('today'); if (f0.ent === 'yes' && !(D.toEnter || []).length) { delete f0.ent; flSave(); }
   var ne = (D.toEnter || []).length; if (ne && fl('today').ent !== 'yes') h += '<div class="hint" data-act="entgo">📋 <span class="grow"><b>' + ne + '</b> delivered order' + (ne === 1 ? '' : 's') + ' to enter in the company app</span><span class="ar">Show ▾</span></div>';
   h += filterBar('today', 'Find a vendor or order number');
   return h + '<div id="flist">' + LISTR.today() + '</div>';
 }
+ACT.stq = function (b) { var f = fl('today'); if (f.st === b.dataset.s) delete f.st; else f.st = b.dataset.s; flSave(); render(); };
 ACT.entgo = function () { fl('today').ent = 'yes'; flSave(); render(); };
 function toEnterList() {
   var L = (D.toEnter || []).filter(function (x) { return (!agOn() || x.agent === agName(agOn())) && hasQ('today', x.vendor + ' ' + x.oid); });
@@ -780,26 +872,32 @@ function toEnterList() {
   return '<div class="sumline"><b>' + L.length + '</b> delivered order' + (L.length === 1 ? '' : 's') + ' to copy into the company app – tick each one you have entered, then DONE.</div>' + L.map(function (x) { return '<label class="tk"><input type="checkbox" class="chk" name="ent" value="' + x.oid + '"><span class="grow"><b>' + esc(x.vendor) + '</b>' + (D.me.role === 'Supervisor' ? ' · ' + esc(x.agent) : '') + '<div class="small">' + x.lines.map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', ') + ' · ' + esc(x.pay) + ' · ' + ghs(x.value) + ' <span class="muted">(' + esc(dayLbl(x.date)) + ')</span></div></span></label>'; }).join('') +
     '<button class="main big" style="margin-top:8px" data-act="entered">DONE – TICKED ONES ARE ENTERED</button>';
 }
+function decNeeds() { return (D.needs || []).filter(function (x) { return x.dec; }); }
+function remNeeds() { return (D.needs || []).filter(function (x) { return !x.dec && x.pay && !x.tech; }); }
 function paySecs() {
-  var r = D.me.role, n = payNeeds().length, nr = rcptToSend();
-  var rc = ['rcpt', 'Receipts for vendors' + (nr ? ' (' + nr + ')' : '')];
-  if (r === 'Supervisor') return [['dec', 'To decide' + (n ? ' (' + n + ')' : '')], ['cash', 'Cash & suppliers'], rc, ['hist', 'Payment history']];
+  var r = D.me.role, n = decNeeds().length, nr = rcptToSend();
+  var rc = ['rcpt', 'Receipts' + (nr ? ' (' + nr + ')' : '')];
+  if (r === 'Supervisor') return [['dec', 'To decide' + (n ? ' (' + n + ')' : '')], ['cash', 'Cash & suppliers'], rc, ['hist', 'History']];
   if (r === 'Helper') return [['cash', 'Cash with me'], rc];
-  return [['cash', 'Cash with me'], rc, ['hist', 'Payment history']];
+  return [['cash', 'Cash with me'], rc, ['hist', 'History']];
 }
 function paymentsHtml() {
-  var secs = paySecs(), cur = PSEC.pay || (D.me.role === 'Supervisor' && payNeeds().length ? 'dec' : 'cash'); if (!secs.some(function (s) { return s[0] === cur; })) cur = secs[0][0];
+  var secs = paySecs(), cur = PSEC.pay || (D.me.role === 'Supervisor' && decNeeds().length ? 'dec' : 'cash'); if (!secs.some(function (s) { return s[0] === cur; })) cur = secs[0][0];
   var h = confirmHtml() + chips('pay', secs, cur);
-  if (cur === 'dec') { var pn = payNeeds(); h += pn.length ? '<div class="card">' + '<p class="sub" style="margin-top:0">Tap a case to see both sides and decide who is right.</p>' + needsList(pn) + '</div>' : '<p class="muted">Nothing to decide now.</p>'; }
+  if (cur === 'dec') { var pn = decNeeds(), rm = remNeeds(); h += pn.length ? '<div class="card"><p class="sub" style="margin-top:0">Tap a case to see both sides and decide who is right.</p>' + needsList(pn) + '</div>' : '<p class="muted">No dispute to decide now.</p>';
+    if (rm.length) h += fold('rem', '<b>Reminders: ' + rm.length + '</b><div class="small muted">' + remSum(rm) + '</div>', function () { return needsList(rm); }); }
   else if (cur === 'cash') h += (D.me.role === 'Supervisor' ? supFold() : '') + cashSecHtml();
   else if (cur === 'rcpt') h += filterBar('prcpt', 'Find a vendor') + '<div id="flist">' + LISTR.prcpt() + '</div>';
   else h += filterBar('phist', 'Find a vendor or amount') + '<div id="flist">' + LISTR.phist() + '</div>';
   return h;
 }
+function remSum(L) { var c = {}; L.forEach(function (x) { c[x.type] = (c[x.type] || 0) + 1; }); return Object.keys(c).map(function (k) { return c[k] + ' ' + esc(k.toLowerCase()); }).join(' · '); }
 function supFold() { var S = D.suppliers || []; if (!S.length) return ''; var owe = S.reduce(function (t, s) { return t + (Number(s.owed) || 0); }, 0); return fold('sup', '<b>Suppliers</b> <span class="small muted">' + S.map(function (s) { return esc(s.name); }).join(' · ') + '</span>' + (owe > 0 ? '<div class="small">CupSales owes <b style="color:var(--red)">' + ghs(owe) + '</b></div>' : ''), function () { return suppliersHtml().replace(/^<div class="card"><h3>Suppliers<\/h3>/, '<div>'); }); }
 var HTK = {}; // v2.5.0: the payments ticked to hand over, per kind of money
 function cashSecHtml() {
-  var h = filterBar('pcash', 'Find a vendor or order');
+  var v = PSEC.cashv || 'now', h = '<div class="seg" style="margin:0 0 10px">' + [['now', 'With me now'], ['day', 'By day']].map(function (x) { return '<button class="' + (v === x[0] ? 'on' : '') + '" data-act="psec" data-k="cashv" data-s="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
+  if (v === 'day' && !fl('pcash').day) { fl('pcash').day = D.today; flSave(); } if (v === 'now' && fl('pcash').day) { delete fl('pcash').day; flSave(); }
+  h += filterBar('pcash', 'Find a vendor or order');
   return h + '<div id="flist">' + LISTR.pcash() + '</div>';
 }
 function cashTo(c) { return /→ Frank/.test(c.route || '') ? 'Frank' : /→ Joshua/.test(c.route || '') ? 'the manager' : 'the HR office logbook'; }
@@ -817,35 +915,39 @@ LISTR.pcash = function () {
     }).join('') + '</div>';
   }
   var C = (D.cash || []).filter(function (c) { return c.free > 0.004 || c.pending > 0.004; });
-  if (!C.length) return '<div class="card"><p class="muted" style="margin:0">No vendor money with you.</p></div><p class="small muted">Pick a date in Filter to see what you collected that day and where it is now.</p>';
+  if (!C.length) return emptyHtml('No vendor money with you.');
   return C.map(function (c) {
     var items = (c.items || []).filter(function (x) { return hasQ('pcash', x.text); }), t = HTK[c.src] || (HTK[c.src] = {});
     var sel = items.filter(function (x) { return t[x.id] !== false; }), sum = Math.round(sel.reduce(function (s, x) { return s + x.amt; }, 0) * 100) / 100;
-    var h = '<div class="card"><div class="row"><div class="grow"><b style="font-size:17px">' + ghs(c.free) + '</b> ' + esc(c.money) + ' money with you</div></div>' + (c.pending > 0.004 ? '<div class="small muted">+ ' + ghs(c.pending) + ' handed over, waiting for ' + esc(cashTo(c)) + ' to confirm</div>' : '');
+    var h = '<div class="card"><div class="row"><div class="grow">' + (c.free <= 0.004 ? '<b style="font-size:17px">Nothing with you</b> – ' + esc(c.money) + ' money' : '<b style="font-size:17px">' + ghs(c.free) + '</b> ') + (c.free <= 0.004 ? '' : c.src === 'Unallocated' ? 'extra cash (a vendor paid too much) – keep it apart, the manager will decide' : esc(c.money) + ' money with you') + '</div></div>' + (c.pending > 0.004 ? '<div class="small muted">+ ' + ghs(c.pending) + ' handed over, waiting for ' + esc(cashTo(c)) + ' to confirm</div>' : '');
     if (items.length) h += '<div class="small muted" style="margin:6px 0 2px">' + (c.route ? 'Tick the payments you are handing over (each order):' : 'Made of:') + '</div>' + items.map(function (x) {
       return '<label class="tk">' + (c.route ? '<input type="checkbox" class="chk" data-chg="htk" data-s="' + esc(c.src) + '" data-i="' + esc(x.id) + '"' + (t[x.id] !== false ? ' checked' : '') + '>' : '') + '<span class="grow"><b>' + esc(vnOf(x.text)) + '</b><div class="small muted">' + esc(String(x.text).split(' – ').slice(1).join(' – ')) + ' · ' + esc(x.when || '') + (x.day ? ' · ' + (x.day === D.today ? 'today' : Math.round((Date.parse(D.today) - Date.parse(x.day)) / 86400000) + ' d ago') : '') + '</div></span><b>' + ghs(x.amt) + '</b></label>'; }).join('');
-    if (c.route && c.free > 0.004) h += '<button class="main big" style="margin-top:8px" data-act="hsel" data-src="' + esc(c.src) + '"' + (sum > 0.004 || !items.length ? '' : ' disabled') + '>HAND OVER ' + ghs(items.length ? sum : c.free) + (items.length && sel.length < items.length ? ' (' + sel.length + ' of ' + items.length + ')' : '') + ' TO ' + esc(cashTo(c).toUpperCase()) + '</button>';
-    else if (c.free > 0.004) h += '<div class="small muted" style="margin-top:6px">' + (D.me.role === 'Supervisor' ? 'With you' + ((D.suppliers || []).some(function (x) { return x.name === c.money; }) ? ' – see Suppliers' : '') : 'Keep it apart – ask the manager') + '</div>';
+    if (c.route && c.free > 0.004 && (c.items || []).length && !items.length) h += '<p class="small muted">No payment matches the search.</p>';
+    else if (c.route && c.free > 0.004) h += '<button class="main big" style="margin-top:8px" data-act="hsel" data-src="' + esc(c.src) + '"' + (sum > 0.004 || !items.length ? '' : ' disabled') + '>HAND OVER ' + ghs(items.length ? sum : c.free) + (items.length && sel.length < items.length ? ' (' + sel.length + ' of ' + items.length + ')' : '') + ' TO ' + esc(cashTo(c).toUpperCase()) + '</button>';
+    else if (c.free > 0.004 && c.src !== 'Unallocated') h += '<div class="small muted" style="margin-top:6px">' + (D.me.role === 'Supervisor' ? 'With you' + ((D.suppliers || []).some(function (x) { return x.name === c.money; }) ? ' – see Suppliers' : '') : 'Keep it apart – ask the manager') + '</div>';
     return h + '</div>';
-  }).join('') + '<p class="small muted">Pick a date in Filter to see what you collected that day and where it is now.</p>';
+  }).join('');
 };
 CHG.htk = function (el) { (HTK[el.dataset.s] = HTK[el.dataset.s] || {})[el.dataset.i] = el.checked; rerenderList(); };
 ACT.hsel = function (b) {
-  var c = (D.cash || []).filter(function (x) { return x.src === b.dataset.src; })[0]; if (!c) return; var t = HTK[c.src] || {}, items = (c.items || []).filter(function (x) { return t[x.id] !== false && x.id; });
+  var c = (D.cash || []).filter(function (x) { return x.src === b.dataset.src; })[0]; if (!c) return; var t = HTK[c.src] || {}, items = (c.items || []).filter(function (x) { return t[x.id] !== false && x.id && hasQ('pcash', x.text); });
+  if ((c.items || []).length && !items.length) { say('No payment ticked – clear the search or tick a payment.'); return; }
   var amt = items.length ? Math.round(items.reduce(function (s, x) { return s + x.amt; }, 0) * 100) / 100 : c.free, to = cashTo(c);
-  var go = function (lb) { bgSave('handover', { src: c.src, amount: amt, logbook: lb, items: items.map(function (x) { return { id: x.id, amt: x.amt }; }) }, 'ho-' + c.src + '-' + amt + '-' + items.length + '-' + D.today, 'hand over ' + ghs(amt) + ' to ' + to, b); HTK[c.src] = {}; };
+  var go = function (lb) { var hk = 'ho-' + c.src + '-' + items.map(function (x) { return x.id; }).join(',') + '-' + amt; bgSave('handover', { src: c.src, amount: amt, logbook: lb, items: items.map(function (x) { return { id: x.id, amt: x.amt }; }) }, SIDS[hk] || (SIDS[hk] = 'ho-' + uid()), 'hand over ' + ghs(amt) + ' to ' + to, b); HTK[c.src] = {}; };
   ask('Hand over ' + ghs(amt) + ' to ' + to + '?' + (items.length ? '\n' + items.map(function (x) { return vnOf(x.text) + ' ' + ghs(x.amt); }).join('\n') : ''), function () {
     if (to !== 'the HR office logbook') { go(''); return; }
     askIn('HR logbook page or number where the office signed:', '', '', function (lb) { if (!String(lb).trim()) { say('Write the logbook page or number.'); return; } go(lb); }, 'SAVE'); }, 'HAND OVER');
 };
+var RCOLD = false; ACT.rcold = function () { RCOLD = true; rerenderList(); };
 LISTR.prcpt = function () {
   var f = fl('prcpt'), sup = D.me.role === 'Supervisor';
   var R = (D.receipts || []).filter(function (r) {
-    if (sup && agOn() && r.by !== agName(agOn())) return false; if (f.day && r.day !== f.day) return false; if (f.kind && (r.kind || 'payment') !== f.kind) return false;
+    if (sup && agOn() && r.by !== agName(agOn())) return false; if (f.day && r.day !== f.day) return false; if (!f.day && !RCOLD && r.day && r.day < addDays(D.today, -3)) return false; if (f.kind && (r.kind || 'payment') !== f.kind) return false;
     var s = /^Confirmed/.test(r.answer) ? 'yes' : r.answer ? 'no' : r.sent ? 'wait' : 'not'; if (f.st && f.st !== s) return false;
     return hasQ('prcpt', r.vendor + ' ' + r.by);
   });
-  if (!R.length) return '<p class="muted">No receipt matches' + (f.day ? ' on ' + esc(dayLbl(f.day)) : '') + '. Receipts of the last 30 days are here.</p>';
+  var more = !f.day && !RCOLD && (D.receipts || []).some(function (r) { return r.day && r.day < addDays(D.today, -3); }) ? '<button class="ghost" data-act="rcold">Show older receipts (30 days)</button>' : '';
+  if (!R.length) return '<p class="muted">No receipt matches' + (f.day ? ' on ' + esc(dayLbl(f.day)) : ' in the last 3 days') + '.</p>' + more;
   var cnt = function (fn2) { return R.filter(fn2).length; };
   var h = '<div class="sumline"><b>' + R.length + '</b> receipt' + (R.length === 1 ? '' : 's') + ' · <b>' + cnt(function (r) { return !r.sent && !r.answer; }) + '</b> not sent · <b>' + cnt(function (r) { return r.sent && !r.answer; }) + '</b> waiting · <b>' + cnt(function (r) { return /^Confirmed/.test(r.answer); }) + '</b> confirmed</div><div class="card" style="padding:4px 12px">', cur = null;
   R.slice(0, 80).forEach(function (r, i) {
@@ -858,7 +960,7 @@ LISTR.prcpt = function () {
       (o ? '<div class="dets" style="flex:1 1 100%">' + (r.kind === 'delivery' ? 'Delivery receipt' : 'Cash receipt') + ' · ' + esc(r.at) + ' · by ' + esc(r.by) + (r.comment ? '<br><b style="color:var(--red)">She says:</b> ' + esc(r.comment) : '') + (r.answer ? '<br>Answer: ' + esc(r.answer) : '') +
         (!r.answer ? '<div class="row" style="margin-top:6px">' + (r.sent ? '<button class="ghost" data-act="rsend" data-k="' + esc(r.key) + '">Send again</button>' : '') + (r.sent && r.rk ? '<span class="small muted">Her answer (text / in person):</span><button class="ghost" data-act="rrep" data-k="' + esc(r.key) + '" data-a="yes">YES</button><button class="ghost" style="color:var(--red)" data-act="rrep" data-k="' + esc(r.key) + '" data-a="no">NO</button>' : '') + '</div>' : '') + '</div>' : '') + '</div>';
   });
-  return h + '</div>' + (R.length > 80 ? '<p class="small muted">… ' + (R.length - 80) + ' more – pick a date in Filter.</p>' : '');
+  return h + '</div>' + (R.length > 80 ? '<p class="small muted">… ' + (R.length - 80) + ' more – pick a date in Filter.</p>' : '') + more;
 };
 LISTR.phist = function () {
   var f = fl('phist');
@@ -869,13 +971,13 @@ LISTR.phist = function () {
   });
   if (!H.length) return '<p class="muted">No hand-over matches. The last 60 days are here.</p>';
   var out = H.filter(function (x) { return x.out; }).reduce(function (t, x) { return t + x.amount; }, 0), inn = H.filter(function (x) { return !x.out; }).reduce(function (t, x) { return t + x.received; }, 0);
-  var stc = function (x) { return x.status === 'Confirmed' ? ['green', 'Confirmed'] : /^Signed/.test(x.status) ? ['green', 'Signed at HR'] : x.status === 'Sent' ? ['amber', 'Waiting for ' + x.to] : x.status === 'Disputed' ? ['red', 'Counted ' + ghs(x.received)] : ['', x.status]; };
+  var stc = function (x) { return x.status === 'Confirmed' ? ['green', 'Confirmed'] : /^Signed/.test(x.status) ? ['green', 'Signed at HR'] : x.status === 'Sent' ? ['amber', x.out ? 'Waiting for ' + x.to : 'To count'] : x.status === 'Disputed' ? ['red', 'Counted ' + ghs(x.received)] : ['', x.status]; };
   var h = '<div class="sumline"><b>' + H.length + '</b> hand-over' + (H.length === 1 ? '' : 's') + (out ? ' · given <b>' + ghs(out) + '</b>' : '') + (inn ? ' · received <b>' + ghs(inn) + '</b>' : '') + '</div><div class="card" style="padding:4px 12px">', cur = null;
   H.forEach(function (x) {
     if (x.day !== cur) { cur = x.day; h += dayHead(cur); }
     var k = 'h:' + x.hid, o = isOpen(k), s = stc(x), P = x.parts || [];
     h += '<div class="srow" style="flex-wrap:wrap"><div class="grow tap"' + rowTap(k) + '><b>' + ghs(x.amount) + '</b> ' + (x.out ? 'to ' + esc(x.to) : 'from ' + esc(x.from)) + '<div class="small muted">' + esc(String(x.at).slice(-5)) + ' · ' + esc(x.money) + (P.length ? ' · ' + P.length + ' payment' + (P.length === 1 ? '' : 's') : '') + '</div></div><span class="pill ' + s[0] + '" style="white-space:nowrap">' + esc(s[1]) + '</span>' +
-      (o ? '<div class="dets" style="flex:1 1 100%">' + (P.length ? P.map(function (p) { return esc(p.text) + ' – <b>' + ghs(p.amt) + '</b>'; }).join('<br>') : 'No payment list for this one.') + (x.note ? '<br><span class="muted">' + esc(x.note) + '</span>' : '') + '</div>' : '') + '</div>';
+      (o ? '<div class="dets" style="flex:1 1 100%">' + (P.length ? P.map(function (p) { return esc(p.text) + ' – <b>' + ghs(p.amt) + '</b>'; }).join('<br>') : 'No payment list for this one.') + (x.note && !/payment\(s\) ticked|^Recorded by Frank/.test(x.note) ? '<br><span class="muted">' + esc(x.note) + '</span>' : '') + '</div>' : '') + '</div>';
   });
   return h + '</div>';
 };
@@ -886,7 +988,7 @@ function handoversHtml() {
   return '<div class="card"><h3>Handed over – last 14 days</h3>' + H.slice(0, 30).map(function (x) { var s = stc(x); return '<div class="row" style="border-top:1px solid var(--line);padding:8px 0;flex-wrap:nowrap"><div class="grow"><b>' + ghs(x.amount) + '</b> ' + (x.out ? 'to ' + esc(x.to) : 'from ' + esc(x.from)) + '<div class="small muted">' + esc(x.at) + ' · ' + esc(x.money) + ' money</div></div><span class="pill ' + s[0] + '" style="white-space:nowrap">' + esc(s[1]) + '</span></div>'; }).join('') + '</div>';
 }
 LISTR.today = function () {
-  var f = fl('today'); if (f.ent === 'yes') return toEnterList(); // v2.5.0: the company-app list is a filter
+  var f = fl('today'); if (f.ent === 'yes' && (D.toEnter || []).length) return toEnterList(); // v2.5.0: the company-app list is a filter (it lets go once all are entered)
   var mo = (D.myOrders || []).filter(function (o) {
     if (agOn() && o.agent !== agName(agOn())) return false;
     if (!hasQ('today', o.vendor + ' ' + o.oid + ' ' + (o.school || ''))) return false;
@@ -899,13 +1001,16 @@ LISTR.today = function () {
   });
   if (!mo.length) return '<p class="muted">' + ((D.myOrders || []).length ? 'No order matches. Change the filter or the search.' : 'No orders yet.') + '</p>';
   mo = mo.slice().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
-  var tv = 0, tc = 0; mo.forEach(function (o) { tv += oValue(o); tc += oCtn(o); });
-  var h = '<div class="sumline"><b>' + mo.length + '</b> order' + (mo.length === 1 ? '' : 's') + ' · <b>' + tc + '</b> cartons · <b>' + ghs(tv) + '</b> · tap an order to open it</div>', cur = null;
+  var live = function (o) { return !/Cancel|Rejected/.test(o.status); }, nl = mo.filter(live), tv = 0, tc = 0; nl.forEach(function (o) { tv += oValue(o); tc += oCtn(o); });
+  var A = (D.myOrders || []).filter(function (o) { return !agOn() || o.agent === agName(agOn()); }), cnt = function (fn) { return A.filter(fn).length; };
+  var q = [['wait', 'Pending', cnt(function (o) { return /^(Submitted|Sending)$/.test(o.status); })], ['appr', 'With Prince', cnt(function (o) { return /Released/.test(o.status) || o.status === 'Partly released'; })], ['vno', 'Vendor says not right', cnt(function (o) { return o.outcome && /^Not correct/.test(o.outcome.vans || ''); })]].filter(function (x) { return x[2]; });
+  var h = (q.length ? '<div class="pchips">' + q.map(function (x) { return '<button class="' + (f.st === x[0] ? 'on' : '') + '" data-act="stq" data-s="' + x[0] + '">' + x[1] + ' <b>' + x[2] + '</b></button>'; }).join('') + '</div>' : '') +
+    '<div class="sumline"><b>' + nl.length + '</b> order' + (nl.length === 1 ? '' : 's') + ' · <b>' + tc + '</b> cartons · <b>' + ghs(tv) + '</b>' + (mo.length > nl.length ? ' <span class="muted">(' + (mo.length - nl.length) + ' cancelled/declined not counted)</span>' : '') + '</div>', cur = null;
   mo.forEach(function (o) {
-    if (o.date !== cur) { cur = o.date; var dd = mo.filter(function (y) { return y.date === cur; }); h += '<div class="dayh"><b>' + esc(dayLbl(cur)) + (cur === D.today ? ' – today' : '') + '</b><span>' + dd.length + ' order' + (dd.length === 1 ? '' : 's') + ' · <b>' + ghs(dd.reduce(function (t, y) { return t + oValue(y); }, 0)) + '</b></span></div>'; }
+    if (o.date !== cur) { cur = o.date; var dd = mo.filter(function (y) { return y.date === cur; }); dd = dd.filter(live); h += '<div class="dayh"><b>' + esc(dayLbl(cur)) + (cur === D.today ? ' – today' : '') + '</b><span>' + dd.length + ' order' + (dd.length === 1 ? '' : 's') + ' · <b>' + ghs(dd.reduce(function (t, y) { return t + oValue(y); }, 0)) + '</b></span></div>'; }
     var s = STXT[o.status] || [o.status, ''], open = OPENO[o.oid];
     h += '<div class="card oc"><div class="row ohead" data-act="otog" data-o="' + esc(o.oid) + '"><div class="grow"><b>' + esc(o.vendor) + '</b>' +
-      '<div class="sub">' + oCtn(o) + ' ctn · ' + ghs(oValue(o)) + ' · ' + esc(o.pay) + (agFilterOk() ? ' · ' + esc(o.agent) : '') + (o.outcome && o.outcome.delivered && o.outcome.delivered.length ? ' · by ' + esc(o.outcome.rider || 'Prince') : '') + '</div>' + (o.outcome ? vansHtml(o.outcome) : '') + '</div><span class="pill ' + s[1] + '" style="white-space:nowrap">' + esc(s[0]) + '</span>' +
+      '<div class="sub">' + oCtn(o) + ' ctn · ' + ghs(oValue(o)) + ' · ' + (o.prepaid ? 'Paid upfront ' + ghs(o.prepaid) : esc(o.pay)) + (agFilterOk() ? ' · ' + esc(o.agent) : '') + (o.outcome && o.outcome.delivered && o.outcome.delivered.length ? ' · by ' + esc(o.outcome.rider || 'Prince') : '') + '</div>' + (o.outcome ? vansHtml(o.outcome) : '') + (o.status === 'Submitted' && o.date < D.today ? '<div class="small" style="color:var(--red)">waiting ' + (function (n) { return n + ' day' + (n === 1 ? '' : 's'); })(Math.round((Date.parse(D.today) - Date.parse(o.date)) / 86400000)) + ' – call Frank</div>' : '') + '</div><span class="pill ' + s[1] + '" style="white-space:nowrap">' + esc(s[0]) + '</span>' +
       (o.local ? '' : '<button class="kebab" data-act="omenu" data-o="' + esc(o.oid) + '" aria-label="More">⋮</button>') + '</div>';
     if (OMENU === o.oid) h += '<div class="mback" data-act="mclose"></div><div class="menu"><button data-act="odet" data-o="' + esc(o.oid) + '">View details</button>' +
       (oCanChange(o) ? '<button data-act="editO" data-o="' + esc(o.oid) + '">Change order</button>' : '') + (oCanCancel(o) ? '<button class="warn" data-act="cancelO" data-o="' + esc(o.oid) + '">Cancel order' + (o.status === 'Submitted' ? '' : ' (already approved)') + '</button>' : '') +
@@ -916,7 +1021,7 @@ LISTR.today = function () {
   return h;
 };
 function oBody(o) {
-  return '<div style="margin-top:8px"><div class="small">' + o.lines.map(function (l) { var r = /^(Submitted|Sending)$/.test(o.status) ? routeOf(l.sku) : ''; return '<span class="pill">' + l.qty + ' ' + esc(skn(l.sku)) + '</span>' + (r ? '<span class="pill ' + (r === 'NONE' ? 'red' : 'amber') + '">' + (r === 'NONE' ? 'not available' : 'from ' + esc(srcNm(r))) + '</span>' : isOut(l.sku) && /^(Submitted|Sending)$/.test(o.status) ? '<span class="pill red">out at Omni</span>' : ''); }).join('') +
+  return '<div style="margin-top:8px"><div class="small">' + o.lines.map(function (l) { var r = /^(Submitted|Sending)$/.test(o.status) ? routeOf(l.sku) : ''; return '<span class="pill pk">' + pk(l.sku) + l.qty + ' ' + esc(skn(l.sku)) + '</span>' + (r ? '<span class="pill ' + (r === 'NONE' ? 'red' : 'amber') + '">' + (r === 'NONE' ? 'not available' : 'from ' + esc(srcNm(r))) + '</span>' : isOut(l.sku) && /^(Submitted|Sending)$/.test(o.status) ? '<span class="pill red">out at Omni</span>' : ''); }).join('') +
     (o.prepaid ? ' · paid already ' + ghs(o.prepaid) : '') + (o.promised ? ' · promised old debt ' + ghs(o.promised) : '') + '</div>' +
     (/^(Submitted|Sending)$/.test(o.status) && o.lines.some(function (l) { var r = routeOf(l.sku); return r && r !== 'NONE'; }) ? '<div class="small" style="color:var(--amber)">Money for the ' + o.lines.filter(function (l) { var r = routeOf(l.sku); return r && r !== 'NONE'; }).map(function (l) { return skn(l.sku) + ' (' + srcNm(routeOf(l.sku)) + ')'; }).join(', ') + ' goes to the HR office logbook, not Frank.</div>' : '') +
     (o.status === 'Rejected' && o.why ? '<div class="small" style="color:var(--red)">Declined: ' + esc(o.why) + '</div>' : '') + outcomeHtml(o) + '</div>';
@@ -976,7 +1081,7 @@ function pageBase() { var u = String(D && D.pageUrl || ''); if (!u || /script\.g
 function rcptUrl(rk) { var u = pageBase(); return u + (u.indexOf('?') >= 0 ? '&' : '?') + 'r=' + rk; }
 function rcptText(r, sms) {
   var u = rcptUrl(r.rk);
-  if (r.kind === 'delivery') return 'CupSales delivery receipt\n' + r.vendor + ': ' + (r.goodsTxt || (r.ctn ? r.ctn + ' carton(s)' : 'delivery')) + ' delivered' + (r.amount > 0 ? ', cash paid ' + ghs(r.amount) : ', nothing paid now') + ' (' + r.by + (r.at ? ', ' + r.at : '') + ').\nPlease check and tap YES if it is correct:\n' + u + (sms ? '\nThis link works for 24 hours. No internet? Reply YES if it is correct, or NO and what is wrong.' : '');
+  if (r.kind === 'delivery') return 'CupSales delivery receipt\n' + r.vendor + ': ' + (r.goodsTxt || (r.ctn ? r.ctn + ' carton(s)' : 'delivery')) + ' delivered' + (r.retTxt ? '; returned ' + r.retTxt : '') + (r.amount > 0 ? ', cash paid ' + ghs(r.amount) : ', nothing paid now') + ' (' + r.by + (r.at ? ', ' + r.at : '') + ').\nPlease check and tap YES if it is correct:\n' + u + (sms ? '\nThis link works for 24 hours. No internet? Reply YES if it is correct, or NO and what is wrong.' : '');
   return 'CupSales receipt\n' + r.vendor + ': ' + ghs(r.amount) + ' received by ' + r.by + (r.at ? ' (' + r.at + ')' : '') + '.\nPlease open the link, check it and tap YES if it is correct:\n' + u + (sms ? '\nThis link works for 24 hours. No internet? Reply YES if it is correct, or NO and what is wrong.' : '');
 }
 function rcptSend(r, via) {
@@ -990,7 +1095,7 @@ function rcptOffer(r) {
   whenFree(function () { dlgChoose('Send ' + r.vendor + ' a ' + (r.kind === 'delivery' ? 'delivery receipt' : 'receipt for ' + ghs(r.amount)) + '?\nShe checks it and answers YES or NO.', [['SEND BY WHATSAPP', function () { rcptSend(r, 'WA'); }, 'main'], ['SEND BY TEXT MESSAGE', function () { rcptSend(r, 'SMS'); }], ['NO PHONE WITH HER – SHE CHECKS IT WITH ME', function () { rcptPerson(r); }], ['Not now', null, 'ghost']]); });
 }
 /** v2.4.9: she has no phone with her – show her what was recorded and record her answer there and then. */
-function rcptWhat(r) { return r.kind === 'delivery' ? (r.goodsTxt || (r.ctn ? r.ctn + ' carton(s)' : 'the goods')) + ' delivered · cash paid ' + ghs(r.amount || 0) : ghs(r.amount) + ' received by ' + r.by; }
+function rcptWhat(r) { return r.kind === 'delivery' ? (r.goodsTxt || (r.ctn ? r.ctn + ' carton(s)' : 'the goods')) + ' delivered' + (r.retTxt ? ' · returned ' + r.retTxt : '') + ' · cash paid ' + ghs(r.amount || 0) : ghs(r.amount) + ' received by ' + r.by; }
 function rcptPerson(r) {
   var mark = function (a) { (D.receipts || []).forEach(function (x) { if (x.rk === r.rk) x.answer = a; }); };
   dlgChoose('Show ' + r.vendor + ' what you recorded:\n\n' + rcptWhat(r) + '\n\nDoes she agree it is correct?', [
@@ -1035,11 +1140,11 @@ function relState(o) {
   return s;
 }
 function pgRelease() {
-  if (!D.waiting.length) return '<p class="muted">No orders pending. New orders appear here as soon as agents send them.</p>';
+  if (!D.waiting.length) return emptyHtml('No orders pending. New orders appear here as soon as agents send them.');
   var h = '<p class="sub">Every order is ticked and "from Omni Haven". Change only what is different, then APPROVE. An order you cannot supply: DECLINE (the agent is told why).</p>', n = 0;
   D.waiting.forEach(function (o) {
     var s = relState(o); if (s.on) n++;
-    h += '<div class="card"><div class="row"><input type="checkbox" class="chk" data-chg="relon" data-o="' + o.oid + '"' + (s.on ? ' checked' : '') + '><div class="grow"><h3>' + esc(o.vendor) + '</h3><div class="sub">' + esc(o.school) + ' · ' + esc(o.agent) + ' · ' + esc(o.pay) + ' · ' + esc(o.oid) + '</div>' + (o.mins !== undefined && o.sent ? '<div class="small" style="color:' + (o.mins > 180 ? 'var(--red)' : 'var(--mute)') + '">sent ' + esc(o.sent) + ' · waiting ' + (o.mins < 60 ? o.mins + ' min' : Math.floor(o.mins / 60) + ' h ' + (o.mins % 60) + ' min') + '</div>' : '') + '</div>' + (o.parent ? '' : '<button class="warn" data-act="decl" data-o="' + o.oid + '">DECLINE</button>') + '</div>' +
+    h += '<div class="card"><div class="row"><input type="checkbox" class="chk" data-chg="relon" data-o="' + o.oid + '"' + (s.on ? ' checked' : '') + '><div class="grow"><h3>' + esc(o.vendor) + '</h3><div class="sub">' + esc(o.school) + ' · ' + esc(o.agent) + ' · ' + esc(o.pay) + ' · ' + esc(o.oid) + '</div>' + (o.mins !== undefined && o.sent ? '<div class="small" style="color:' + (o.mins > 180 ? 'var(--red)' : 'var(--mute)') + '">sent ' + esc(o.sent) + ' · waiting ' + (o.mins < 60 ? o.mins + ' min' : o.mins < 1440 ? Math.floor(o.mins / 60) + ' h' : Math.floor(o.mins / 1440) + ' day' + (o.mins >= 2880 ? 's' : '')) + '</div>' : '') + '</div>' + (o.parent ? '' : '<button class="ghost" style="color:var(--red);padding:4px 8px" data-act="decl" data-o="' + o.oid + '">Decline</button>') + '</div>' +
       '<div style="margin:6px 0">' + o.lines.map(function (l) { return '<span class="pill' + (isOut(l.sku) ? ' red' : '') + '">' + l.qty + ' ' + esc(skn(l.sku)) + '</span>'; }).join('') + '</div>' +
       (s.auto ? '<div class="small" style="color:var(--amber);margin-bottom:4px">Set by the manager: ' + esc(s.auto) + '</div>' : o.lines.some(function (l) { return isOut(l.sku); }) ? '<div class="small" style="color:var(--red);margin-bottom:4px">Out at Omni – the manager has not said who has it yet.</div>' : '');
     if (s.on) {
@@ -1090,7 +1195,7 @@ ACT.declgo = function () {
 function pgOut() {
   var o = D.out || { skus: [] };
   return '<div class="card"><h3>Out of stock at Omni</h3><p class="sub">Tick what is finished and SAVE – the manager is told at once and says who sends it (Clement / Bernice). Agents see it while ordering. Untick when it is back.' + (o.at ? ' Last changed ' + esc(o.at) + (o.by ? ' by ' + esc(o.by) : '') + '.' : '') + '</p>' +
-    D.skus.map(function (s) { var r = o.skus.indexOf(s.id) >= 0 ? routeOf(s.id) : ''; return '<label class="row" style="color:var(--ink);font-size:16px"><input type="checkbox" class="chk" name="out" value="' + s.id + '"' + (o.skus.indexOf(s.id) >= 0 ? ' checked' : '') + '> ' + esc(s.title) + (o.skus.indexOf(s.id) >= 0 ? ' <span class="pill ' + (r && r !== 'NONE' ? 'green' : 'red') + '">' + (r && r !== 'NONE' ? 'manager: from ' + esc(srcNm(r)) : r === 'NONE' ? 'manager: nobody has it' : 'manager told') + '</span>' : '') + '</label>'; }).join('') +
+    D.skus.map(function (s) { var r = o.skus.indexOf(s.id) >= 0 ? routeOf(s.id) : ''; return '<label class="row" style="color:var(--ink);font-size:16px"><input type="checkbox" class="chk" name="out" value="' + s.id + '"' + (o.skus.indexOf(s.id) >= 0 ? ' checked' : '') + '> ' + esc(s.title) + (o.skus.indexOf(s.id) >= 0 ? ' <span class="pill ' + (r && r !== 'NONE' ? 'green' : 'red') + '">' + (r && r !== 'NONE' ? 'manager: from ' + esc(srcNm(r)) : r === 'NONE' ? 'Stockout (manager)' : 'waiting for the manager') + '</span>' : '') + '</label>'; }).join('') +
     '<p><button class="main big" data-act="outsave">SAVE</button></p></div>';
 }
 ACT.outsave = function (b) { var skus = [].slice.call(document.querySelectorAll('input[name=out]:checked')).map(function (x) { return x.value; }); bgSave('outstock', { skus: skus }, 'os-' + uid(), skus.length ? 'out of stock: ' + skus.join(', ') : 'nothing out of stock', null, true); };
@@ -1121,11 +1226,12 @@ LISTR.disp = function () {
   L.forEach(function (x) {
     var key = 'd:' + x.oid, wc = cashFor(x.oid);
     h += '<div class="lrow"><div class="grow"><b>' + esc(x.vendor) + '</b> <span class="small muted">' + esc(x.agent) + '</span><div class="small">' + x.lines.map(qtyTxt).join(', ') + ' · ' + ghs(x.value) + (x.omni ? '' : ' · from ' + esc(x.from)) + '</div>' + (x.tried ? '<div class="small" style="color:var(--amber)">Not delivered yet: ' + esc(x.tried) + '</div>' : '') +
-      (x.status === 'Delivered' ? '<div class="small">' + (x.owing > 0.004 ? '<b style="color:var(--red)">owes ' + ghs(x.owing) + '</b>' + (x.paid > 0.004 ? ' (paid ' + ghs(x.paid) + ')' : '') : '<b style="color:var(--green)">paid</b>') + (wc ? ' · <b style="color:var(--amber)">' + ghs(wc.amt) + ' still with ' + esc(wc.name) + '</b>' : '') + '</div>' : '') + '</div>' +
-      '<span class="pill ' + (DSTC[x.status] || '') + '" style="white-space:nowrap">' + esc(x.status) + '</span><button class="kebab" data-act="lmenu" data-o="' + esc(key) + '">⋮</button>' +
+      (x.status === 'Delivered' ? '<div class="small">' + (x.owing > 0.004 ? (/credit/i.test(x.pay || '') ? '<b>on credit ' + ghs(x.owing) + '</b> – due ' + esc(dayLbl(addDays(x.at || x.day, 7))) : '<b style="color:var(--red)">owes ' + ghs(x.owing) + '</b>') + (x.paid > 0.004 ? ' (paid ' + ghs(x.paid) + ')' : '') : '<b style="color:var(--green)">paid</b>') + (wc ? ' · <b style="color:var(--amber)">' + ghs(wc.amt) + ' still with ' + esc(wc.name) + '</b>' : '') + '</div>' : '') +
+      (wc && fr ? '<button class="ghost" style="padding:4px 2px" data-act="dgave" data-o="' + esc(x.oid) + '">✓ ' + esc(wc.name) + ' gave me ' + ghs(wc.amt) + '</button>' : '') + '</div>' +
+      '<span class="pill ' + (DSTC[x.status] || '') + '" style="white-space:nowrap">' + esc(x.status === 'Dispatched' ? 'With Prince' : x.status) + '</span><button class="kebab" data-act="lmenu" data-o="' + esc(key) + '">⋮</button>' +
       (OMENU === key ? '<div class="mback" data-act="mclose"></div><div class="menu" style="top:40px"><button data-act="ddet" data-o="' + esc(x.oid) + '">View details</button>' +
         (wc && fr ? '<button data-act="dgave" data-o="' + esc(x.oid) + '">' + esc(wc.name) + ' gave me ' + ghs(wc.amt) + '</button>' : '') +
-        (fr && x.status === 'Delivered' && x.owing > 0.004 && x.omni ? '<button data-act="fpaid" data-v="' + esc(x.vid) + '" data-a="' + x.owing + '" data-n="' + esc(x.vendor) + '" data-g="' + esc(x.agent) + '" data-r="' + esc(x.oid) + '">Record cash payment</button>' : '') + '</div>' : '') + '</div>';
+        (fr && x.status === 'Delivered' && x.owing > 0.004 && x.omni && !wc ? '<button data-act="fpaid" data-v="' + esc(x.vid) + '" data-a="' + x.owing + '" data-n="' + esc(x.vendor) + '" data-g="' + esc(x.agent) + '" data-r="' + esc(x.oid) + '">Record cash payment</button>' : '') + '</div>' : '') + '</div>';
   });
   return h;
 };
@@ -1198,8 +1304,9 @@ LISTR.owed = function () {
 };
 ACT.fpaid = function (b) {
   $('over').innerHTML = ''; if (OMENU) { OMENU = ''; rerenderList(); }
-  var sid = sidFor('fp-' + b.dataset.v); var who = [['VENDOR', b.dataset.n + ' herself']].concat((D.people || []).map(function (p) { return [p.id, p.name]; }));
-  dlgPick(b.dataset.n + ' owes Omni ' + ghs(+b.dataset.a) + ' on this order.\nCount the money. How much did you receive (GHS)?', '', who, 'SAVE', function (amt, by) {
+  var sid = sidFor('fp-' + b.dataset.v); var who = [['VENDOR', 'The vendor']].concat((D.people || []).map(function (p) { return [p.id, p.name]; }));
+  setTimeout(function () { DLGSEL = 'VENDOR'; var f0 = document.querySelector('#dlg [data-act=dlgSel]'); if (f0) f0.className = 'on'; }, 0);
+  dlgPick(b.dataset.n + ' owes Omni ' + ghs(+b.dataset.a) + ' on this order.\nTap who brought it, then type the amount you counted (GHS):', '', who, 'SAVE', function (amt, by) {
     if (!(num(amt) > 0)) { say('Type the amount you counted, e.g. 300.'); return; }
     var rk = rkNew(); saveAsk('payment', { vid: b.dataset.v, amount: num(amt), by: by, ref: b.dataset.r, rk: rk }, sid, b, ghs(num(amt)) + ' for ' + b.dataset.n);
     if (by === 'VENDOR') rcptOffer({ rk: rk, rids: [], vendor: b.dataset.n, phone: '', amount: num(amt), by: D.me.first });
@@ -1211,7 +1318,7 @@ function withPeopleHtml(B) {
   var W = B.withPeople || []; if (!W.length) return '';
   var lim = B.cashDays || 3, fr = D.me.role === 'Warehouse';
   return W.map(function (p) {
-    var t = WTK[p.uid] || (WTK[p.uid] = p.items.map(function () { return true; })); var sum = Math.round(p.items.reduce(function (s, x, i) { return s + (t[i] ? x.amt : 0); }, 0) * 100) / 100;
+    var tk = WTK[p.uid] || (WTK[p.uid] = {}), t = p.items.map(function (x) { return tk[x.id] !== false; }); var sum = Math.round(p.items.reduce(function (s, x, i) { return s + (t[i] ? x.amt : 0); }, 0) * 100) / 100;
     var old = p.items.filter(function (x) { return x.days > lim; }).length;
     return fold('wp:' + p.uid, '<b>' + esc(p.name) + '</b> has <b>' + ghs(p.total) + '</b> <span class="small muted">· ' + p.items.length + ' payment' + (p.items.length === 1 ? '' : 's') + '</span>' + (old ? ' <span class="pill red">' + old + ' over ' + lim + ' days</span>' : ''), function () {
       return '<p class="sub" style="margin-top:0">' + (fr ? 'When ' + esc(p.name) + ' brings the money, tick each payment you received and tap GAVE ME.' : 'Paid by vendors – not yet with Frank.') + '</p>' + p.items.map(function (x, i) { return '<label class="tk">' + (fr ? '<input type="checkbox" class="chk" data-chg="wtk" data-u="' + p.uid + '" data-i="' + i + '"' + (t[i] ? ' checked' : '') + '>' : '') + '<span class="grow">' + esc(x.text) + '<div class="small" style="color:' + (x.days > lim ? 'var(--red)' : 'var(--mute)') + '">' + esc(x.when) + ' · ' + (x.days ? x.days + ' day' + (x.days === 1 ? '' : 's') + ' with ' + esc(p.name) : 'collected today') + '</div></span><b>' + ghs(x.amt) + '</b></label>'; }).join('') +
@@ -1219,10 +1326,10 @@ function withPeopleHtml(B) {
     }, '', W.length === 1);
   }).join('');
 }
-CHG.wtk = function (el) { WTK[el.dataset.u][+el.dataset.i] = el.checked; render(); };
+CHG.wtk = function (el) { var p = ((D.book || {}).withPeople || []).filter(function (x) { return x.uid === el.dataset.u; })[0]; if (!p) return; var it = p.items[+el.dataset.i]; if (it) (WTK[p.uid] = WTK[p.uid] || {})[it.id] = el.checked; render(); };
 ACT.frecv = function (b) {
-  var p = ((D.book || {}).withPeople || []).filter(function (x) { return x.uid === b.dataset.u; })[0]; if (!p) return; var t = WTK[p.uid] || [];
-  var items = [], sum = 0; p.items.forEach(function (x, i) { if (t[i] && x.id) { items.push({ id: x.id, amt: x.amt }); sum += x.amt; } }); sum = Math.round(sum * 100) / 100;
+  var p = ((D.book || {}).withPeople || []).filter(function (x) { return x.uid === b.dataset.u; })[0]; if (!p) return; var tk = WTK[p.uid] || {};
+  var items = [], sum = 0; p.items.forEach(function (x) { if (tk[x.id] !== false && x.id) { items.push({ id: x.id, amt: x.amt }); sum += x.amt; } }); sum = Math.round(sum * 100) / 100;
   if (!items.length) { say('Tick the payments ' + p.name + ' gave you.'); return; }
   ask(p.name + ' gave you ' + ghs(sum) + ' (' + items.length + ' of ' + p.items.length + ' payments)?\nCount the cash first.', function () {
     bgSave('receive', { from: p.uid, amount: sum, items: items }, sidFor('fr-' + p.uid), ghs(sum) + ' from ' + p.name, b); delete WTK[p.uid];
@@ -1230,7 +1337,7 @@ ACT.frecv = function (b) {
 };
 function pgCash() {
   var B = D.book || { received: [] }, W = B.withPeople || [], wp = W.reduce(function (t, p) { return t + p.total; }, 0), n = (D.toConfirm || []).length;
-  var secs = [['count', 'To count' + (n ? ' (' + n + ')' : '')], ['with', 'With people' + (wp > 0.004 ? ' (' + ghs(wp) + ')' : '')], ['rcpt', 'Receipts'], ['hist', 'Received history']];
+  var secs = [['count', 'To count' + (n ? ' (' + n + ')' : '')], ['with', 'With people' + (wp > 0.004 ? ' (' + ghs(wp) + ')' : '')], ['rcpt', 'Receipts'], ['hist', 'History']];
   var cur = PSEC.cash || (n ? 'count' : 'with'), h = chips('cash', secs, cur);
   if (cur === 'count') { var tot = B.received.reduce(function (t, x) { return t + x.amount; }, 0); return h + (confirmHtml() || '<div class="card"><p class="muted" style="margin:0">No cash waiting for you to count.</p></div>') + fold('rcvd', '<b>Received today: ' + ghs(tot) + '</b>', function () { return B.received.length ? '<table>' + B.received.map(function (x) { return '<tr><td>' + esc(x.from) + (x.short ? ' <span class="pill red">short – manager told</span>' : '') + '</td><td class="right">' + ghs(x.amount) + '</td></tr>'; }).join('') + '</table>' : '<p class="muted">Nothing yet today.</p>'; }); }
   if (cur === 'with') return h + (withPeopleHtml(B) || '<p class="muted">All money vendors paid has reached you.</p>');
@@ -1242,19 +1349,34 @@ function pgRToday() {
   return '<div class="card"><table>' + D.releasedToday.map(function (r) { return '<tr><td><b>' + esc(r.vendor) + '</b><div class="small muted">' + esc(r.agent) + ' · ' + esc(r.oid) + '</div></td><td>' + esc(r.from) + '</td><td>' + esc(r.status) + '</td></tr>'; }).join('') + '</table></div>';
 }
 // ---------------------------------------------------------------- rider
-function stopAsk(s) {
-  var p = [];
-  if (s.collect > 0) p.push('COLLECT <b>' + ghs(s.collect) + '</b> for the order' + (s.orders.length > 1 ? 's' : ''));
+function stopAsk(s, st) {
+  var p = [], due = stopDue(s, st), base = stopDue(s, null);
+  if (s.collect > 0 || base > 0) p.push('COLLECT <b>' + ghs(s.collect) + '</b> for the order' + (s.orders.length > 1 ? 's' : ''));
+  if (st && st.what === 'LESS' && Math.abs(due - base) > 0.004) p.push('After the returns: collect <b>' + ghs(Math.max(0, s.collect - (base - due))) + '</b>');
   if (s.credit > 0) p.push('On credit ' + ghs(s.credit) + ' – collect nothing for it');
-  s.orders.forEach(function (o) { if (o.prepaid > 0) p.push('Paid already ' + ghs(o.prepaid) + ' (' + o.oid + ')'); });
+  var pre = s.orders.reduce(function (t, o) { return t + (o.prepaid || 0); }, 0); if (pre > 0) p.push('Paid already ' + ghs(pre));
+  if (!(s.collect > 0) && !(s.credit > 0) && pre > 0) p.push('<b style="color:var(--green)">Nothing to collect – fully paid</b>');
   if (s.debt > 0) p.push('Old debt ' + ghs(s.debt) + ' (' + s.days + ' days)' + (s.promised > 0 ? ' – she PROMISED ' + ghs(s.promised) + ' today' : ' – ask her to pay'));
-  if (s.ask > 0 && (s.promised > 0 || s.orders.length > 1)) p.push('TOTAL TO ASK <b>' + ghs(s.ask) + '</b>' + (s.debt > 0 && !(s.promised > 0) ? ' + as much of the old debt as she can' : ''));
+  if (s.ask > 0 && Math.abs(s.ask - (s.collect || 0)) > 0.004 && (s.promised > 0 || s.orders.length > 1)) p.push('TOTAL TO ASK <b>' + ghs(s.ask) + '</b>' + (s.debt > 0 && !(s.promised > 0) ? ' + as much of the old debt as she can' : ''));
+  var src = {}; s.orders.forEach(function (o) { if (/credit/i.test(o.pay)) return; var v = Math.max(0, (o.value || 0) - (o.prepaid || 0)); if (v > 0) src[o.from] = (src[o.from] || 0) + v; });
+  if (Object.keys(src).length > 1) p.push('<span class="small">Money: ' + Object.keys(src).map(function (k) { return ghs(src[k]) + ' → ' + (/Omni/.test(k) ? 'Frank' : 'HR logbook (' + esc(k) + ')'); }).join(' · ') + '</span>');
   return '<div class="ask">' + p.join('<br>') + '</div>';
 }
+/** v2.5.0: what is due for the cash orders after the returns typed so far (null = nothing returned). */
+function stopDue(s, st) {
+  return s.orders.reduce(function (t, o) { if (/credit/i.test(o.pay)) return t; var back = 0; if (st && st.what === 'LESS') o.lines.forEach(function (l) { back += (o.retn && o.retn[l.sku] || 0) * (l.price || 0); }); return t + Math.max(0, (o.value || 0) - back - (o.prepaid || 0)); }, 0);
+}
+/** v2.5.0: returns are typed once per product; they are shared over the orders from the last one back. */
+function spreadRet(s, st) {
+  s.orders.forEach(function (o) { o.retn = {}; });
+  var ord = s.orders.filter(function (o) { return !/credit/i.test(o.pay); }).reverse().concat(s.orders.filter(function (o) { return /credit/i.test(o.pay); }).reverse()); // cash orders first: she gives back what she cannot pay for now
+  Object.keys(st.retp || {}).forEach(function (sk) { var n = st.retp[sk] || 0; for (var i = 0; i < ord.length && n > 0; i++) { var o = ord[i]; o.lines.forEach(function (l) { if (l.sku !== sk || n <= 0) return; var k = Math.min(n, l.qty); o.retn[sk] = (o.retn[sk] || 0) + k; n -= k; }); } });
+  st.ret = {}; s.orders.forEach(function (o) { Object.keys(o.retn).forEach(function (sk) { if (o.retn[sk] > 0) st.ret[o.oid + '|' + sk] = o.retn[sk]; }); });
+}
 function pgRoute() {
-  if (!D.stops.length) return '<p class="muted">Nothing to deliver right now.</p>';
-  var dn = D.done || [], dc = dn.reduce(function (t, x) { return t + x.cash; }, 0);
-  return (D.me.role === 'Helper' ? '<div class="msg info">Helper link for ' + esc(D.me.first) + ' – works today only.</div>' : '') + '<div class="sumline">Today: <b>' + dn.length + '</b> stop' + (dn.length === 1 ? '' : 's') + ' done · cash taken <b>' + ghs(dc) + '</b> · <b>' + D.stops.length + '</b> to go</div>' + filterBar('route', 'Find a vendor or school') + '<div id="flist">' + LISTR.route() + '</div>';
+  if (!D.stops.length) return emptyHtml('Nothing to deliver right now.');
+  var dn = D.done || [], dc = dn.reduce(function (t, x) { return t + x.cash; }, 0), nd = dn.filter(function (x) { return /^(Not delivered|Refused)/.test(x.status); }).length;
+  return (D.me.role === 'Helper' ? '<div class="msg info">Helper link for ' + esc(D.me.first) + ' – works today only.</div>' : '') + '<div class="sumline">Today: <b>' + (dn.length - nd) + '</b> delivered' + (nd ? ' · <b>' + nd + '</b> not delivered (still on your list)' : '') + ' · cash <b>' + ghs(dc) + '</b> · <b>' + D.stops.length + '</b> to go</div>' + filterBar('route', 'Find a vendor or school') + '<div id="flist">' + LISTR.route() + '</div>';
 }
 LISTR.route = function () {
   var f = fl('route'), h = '', zone = null;
@@ -1266,13 +1388,15 @@ LISTR.route = function () {
     var z = s.school || 'No school recorded'; if (z !== zone) { zone = z; h += '<div class="zone">' + esc(z) + '</div>'; }
     var st = STOP[s.id] || (STOP[s.id] = { open: false, what: '', ret: {}, cash: '', claim: false, cagent: '', camt: '', cwhen: '', reason: '', note: '', sid: uid() });
     h += '<div class="card"><div class="row"><div class="grow"><h3>' + esc(s.name) + '</h3><div class="sub">agent ' + esc(s.orders[0].agent) + (s.phone ? ' · <a href="tel:' + esc(s.phone) + '">' + esc(s.phone) + '</a>' : '') + (s.orders.some(function (o) { return o.tries; }) ? ' · <span class="pill amber">tried before</span>' : '') + '</div></div></div>';
-    s.orders.forEach(function (o) { h += '<div class="small" style="margin-top:4px">' + o.lines.map(function (l) { return '<span class="pill">' + l.qty + ' ' + esc(skn(l.sku)) + '</span>'; }).join('') + ' <span class="muted">from ' + esc(o.from) + ' · ' + esc(o.pay) + ' · ' + esc(o.oid) + '</span></div>'; });
-    h += stopAsk(s);
+    s.orders.forEach(function (o) { h += '<div class="small" style="margin-top:4px">' + o.lines.map(function (l) { return '<span class="pill pk">' + pk(l.sku) + l.qty + ' ' + esc(skn(l.sku)) + '</span>'; }).join('') + ' <span class="muted">from ' + esc(o.from) + ' · ' + esc(o.pay) + '</span></div>'; });
+    if (st.what === 'LESS') spreadRet(s, st); h += stopAsk(s, st);
     if (queue().some(function (x) { return x.op === 'stop' && x.data.vid === s.id; })) h += '<div class="msg" style="background:var(--green2);color:var(--green)">✓ Saved on this phone – ' + (noSig() ? 'sent when there is signal. Go on to the next stop.' : 'sending to the system. Go on to the next stop.') + '</div>';
     else if (!st.open) h += '<button class="main big" data-act="stopopen" data-v="' + s.id + '">RECORD</button>';
     else {
       h += '<div class="seg">' + [['ALL', 'Delivered all'], ['LESS', 'Some returned'], ['NONE', 'Not delivered']].map(function (w) { return '<button class="' + (st.what === w[0] ? 'on' : '') + '" data-act="stopwhat" data-v="' + s.id + '" data-w="' + w[0] + '">' + w[1] + '</button>'; }).join('') + '</div>';
-      if (st.what === 'LESS') s.orders.forEach(function (o) { o.lines.forEach(function (l) { var k = o.oid + '|' + l.sku; var n = st.ret[k] || 0; h += '<div class="row" style="margin-top:6px"><div class="grow"><b>' + esc(skn(l.sku)) + '</b>' + (s.orders.length > 1 ? ' <span class="sub">from ' + esc(o.from) + '</span>' : '') + ' <span class="sub">(' + l.qty + ' brought) – returned:</span></div><div class="step"><button data-act="ret" data-v="' + s.id + '" data-k="' + k + '" data-max="' + l.qty + '" data-d="-1">−</button><input readonly value="' + n + '"><button data-act="ret" data-v="' + s.id + '" data-k="' + k + '" data-max="' + l.qty + '" data-d="1">+</button></div></div>'; }); });
+      if (st.what === 'LESS') { var tot = {}; s.orders.forEach(function (o) { o.lines.forEach(function (l) { tot[l.sku] = (tot[l.sku] || 0) + l.qty; }); }); st.retp = st.retp || {};
+        Object.keys(tot).forEach(function (sk) { var n = st.retp[sk] || 0; h += '<div class="row" style="margin-top:6px"><div class="grow"><b>' + esc(skn(sk)) + '</b> <span class="sub">(' + tot[sk] + ' brought) – returned:</span></div><div class="step"><button data-act="retp" data-v="' + s.id + '" data-k="' + esc(sk) + '" data-max="' + tot[sk] + '" data-d="-1">−</button><input readonly value="' + n + '"><button data-act="retp" data-v="' + s.id + '" data-k="' + esc(sk) + '" data-max="' + tot[sk] + '" data-d="1">+</button></div></div>'; }); }
+      if (0) s.orders.forEach(function (o) { o.lines.forEach(function (l) { var k = o.oid + '|' + l.sku; var n = st.ret[k] || 0; h += '<div class="row" style="margin-top:6px"><div class="grow"><b>' + esc(skn(l.sku)) + '</b>' + (s.orders.length > 1 ? ' <span class="sub">from ' + esc(o.from) + '</span>' : '') + ' <span class="sub">(' + l.qty + ' brought) – returned:</span></div><div class="step"><button data-act="ret" data-v="' + s.id + '" data-k="' + k + '" data-max="' + l.qty + '" data-d="-1">−</button><input readonly value="' + n + '"><button data-act="ret" data-v="' + s.id + '" data-k="' + k + '" data-max="' + l.qty + '" data-d="1">+</button></div></div>'; }); });
       if (st.what === 'NONE') h += '<label>Why? (school closed, vendor absent, refused…)</label><input data-inp="sreason" data-v="' + s.id + '" value="' + esc(st.reason) + '">';
       if (st.what === 'ALL' || st.what === 'LESS') {
         h += '<label>ALL the cash she gave you now (GHS) – orders and old debt together</label><input inputmode="decimal" data-inp="scash" data-v="' + s.id + '" value="' + esc(st.cash) + '" placeholder="0 if she gave nothing">';
@@ -1290,6 +1414,7 @@ function stop(id) { for (var i = 0; i < D.stops.length; i++) if (D.stops[i].id =
 ACT.stopopen = function (b) { STOP[b.dataset.v].open = true; render(); };
 ACT.stopclose = function (b) { STOP[b.dataset.v].open = false; render(); };
 ACT.stopwhat = function (b) { STOP[b.dataset.v].what = b.dataset.w; render(); };
+ACT.retp = function (b) { var st = STOP[b.dataset.v]; st.retp = st.retp || {}; st.retp[b.dataset.k] = Math.max(0, Math.min(Number(b.dataset.max), (st.retp[b.dataset.k] || 0) + Number(b.dataset.d))); render(); };
 ACT.ret = function (b) { var st = STOP[b.dataset.v]; st.ret[b.dataset.k] = Math.max(0, Math.min(Number(b.dataset.max), (st.ret[b.dataset.k] || 0) + Number(b.dataset.d))); render(); };
 INP.scash = function (el) { STOP[el.dataset.v].cash = el.value; }; INP.sreason = function (el) { STOP[el.dataset.v].reason = el.value; }; INP.snote = function (el) { STOP[el.dataset.v].note = el.value; };
 INP.scamt = function (el) { STOP[el.dataset.v].camt = el.value; }; INP.scwhen = function (el) { STOP[el.dataset.v].cwhen = el.value; };
@@ -1299,6 +1424,7 @@ ACT.stopsave = function (b) {
   if (st.what !== 'NONE' && st.cash.trim() === '') { say('Type the cash she gave you (0 if nothing).'); return; }
   if (st.what !== 'NONE' && !(num(st.cash) >= 0)) { say('The cash must be a number, e.g. 1250.'); return; }
   if (st.what === 'NONE' && !st.reason.trim()) { say('Write why it was not delivered.'); return; }
+  if (st.what === 'LESS') spreadRet(s, st);
   if (st.what === 'LESS' && !Object.keys(st.ret).some(function (k) { return st.ret[k] > 0; })) { say('Tap + next to what she returned (or choose Delivered all).'); return; }
   if (st.claim && !(num(st.camt) > 0)) { say('Write how much she says she paid the agent.'); return; }
   var cash = num(st.cash) || 0;
@@ -1306,10 +1432,14 @@ ACT.stopsave = function (b) {
   var ret = Object.keys(st.ret).filter(function (k) { return st.ret[k] > 0; }).map(function (k) { var p = k.split('|'); return { oid: p[0], sku: p[1], n: st.ret[k] }; });
   var rk = st.what !== 'NONE' ? rkNew() : ''; // v2.4.9: every delivery gets a receipt the vendor confirms
   bgSave('stop', { vid: s.id, oids: s.orders.map(function (o) { return o.oid; }), what: st.what, returns: ret, cash: cash, reason: st.reason, note: st.note, claim: st.claim ? { agent: st.cagent || s.orders[0].agent, amount: num(st.camt), when: st.cwhen } : null, rk: rk }, st.sid, s.name + ' – ' + (st.what === 'NONE' ? 'not delivered' : 'cash ' + ghs(cash)), null, true);
-  var kept = []; s.orders.forEach(function (o) { o.lines.forEach(function (l) { var n = l.qty - (st.ret[o.oid + '|' + l.sku] || 0); if (n > 0) kept.push(n + ' ' + skn(l.sku)); }); });
-  delete STOP[s.id]; if (rk) rcptOffer({ kind: 'delivery', key: 'new-' + rk, rk: rk, rids: [], vendor: s.name, phone: s.phone, amount: cash, goodsTxt: kept.join(', '), by: D.me.first }); return;
+  var km = {}, bk = {}; s.orders.forEach(function (o) { o.lines.forEach(function (l) { var r = st.ret[o.oid + '|' + l.sku] || 0, n = l.qty - r; if (n > 0) km[skn(l.sku)] = (km[skn(l.sku)] || 0) + n; if (r > 0) bk[skn(l.sku)] = (bk[skn(l.sku)] || 0) + r; }); });
+  var kept = Object.keys(km).map(function (k) { return km[k] + ' ' + k; }), retTxt = Object.keys(bk).map(function (k) { return bk[k] + ' ' + k; }).join(', ');
+  delete STOP[s.id]; if (rk) rcptOffer({ kind: 'delivery', key: 'new-' + rk, rk: rk, rids: [], vendor: s.name, phone: s.phone, amount: cash, goodsTxt: kept.join(', '), retTxt: retTxt, by: D.me.first }); return;
   };
-  if (st.what === 'NONE') doSave(); else ask(s.name + '\n' + (st.what === 'ALL' ? 'Delivered all' : 'Some returned') + '\nCash: ' + ghs(cash) + (st.claim ? '\nSays she paid ' + (st.cagent || s.orders[0].agent) + ' ' + ghs(num(st.camt)) : '') , doSave, 'SAVE');
+  var due = Math.max(0, s.collect - (stopDue(s, null) - stopDue(s, st)));
+  var low = cash + 0.004 < due && !st.claim ? '\n\nYou were to collect ' + ghs(due) + ' but typed ' + ghs(cash) + '. She will owe ' + ghs(due - cash) + ' more. Is that right?' : '';
+  var kept2 = {}; s.orders.forEach(function (o) { o.lines.forEach(function (l) { var n = l.qty - (st.ret[o.oid + '|' + l.sku] || 0); if (n > 0) kept2[skn(l.sku)] = (kept2[skn(l.sku)] || 0) + n; }); });
+  if (st.what === 'NONE') doSave(); else ask(s.name + '\n' + (st.what === 'ALL' ? 'Delivered all' : 'Some returned') + ': ' + Object.keys(kept2).map(function (k) { return kept2[k] + ' ' + k; }).join(', ') + '\nCash: ' + ghs(cash) + (st.claim ? '\nSays she paid ' + (st.cagent || s.orders[0].agent) + ' ' + ghs(num(st.camt)) : '') + low, doSave, low ? 'YES, SAVE' : 'SAVE');
 };
 function pgDone() {
   var top = D.me.role === 'Helper' ? '' : subTabs('done', (D.toConfirm || []).length + rcptToSend());
@@ -1317,22 +1447,24 @@ function pgDone() {
   var tot = D.done.reduce(function (t, x) { return t + x.cash; }, 0);
   var h = top + '<div class="sumline">Today: <b>' + D.done.length + '</b> stop' + (D.done.length === 1 ? '' : 's') + ' · cash taken <b>' + ghs(tot) + '</b> – should match the delivery cash in your pocket.</div>';
   if (D.me.role === 'Helper') { if (D.cash && D.cash.length) h += '<div class="card"><h3>Cash with me</h3>' + cashTable(D.cash) + '</div>'; h += receiptsHtml(); }
+  var nd = (D.decisions || []).length; if (nd && D.me.role !== 'Helper' && fl('rdone').mgr !== 'dec') h += '<div class="hint" data-act="rdec">⚖ <span class="grow"><b>' + nd + '</b> manager decision' + (nd === 1 ? '' : 's') + ' this week</span><span class="ar">Show ▾</span></div>';
   return h + filterBar('rdone', 'Find a vendor or agent') + '<div id="flist">' + LISTR.rdone() + '</div>';
 }
+ACT.rdec = function () { fl('rdone').mgr = 'dec'; flSave(); render(); };
 LISTR.rdone = function () {
   var f = fl('rdone'), L = (D.rdone || D.done.map(function (x) { return Object.assign({ day: D.today, oids: [] }, x); })).filter(function (x) {
     if (f.day && x.day !== f.day) return false; if (f.st && x.status !== f.st) return false;
     if (f.mgr === 'dec' && !x.dec) return false; if (f.mgr === 'wait' && !x.wait) return false; if (f.mgr === 'vno' && !x.vno) return false;
     return hasQ('rdone', x.vendor + ' ' + (x.agent || '') + ' ' + (x.oids || []).join(' '));
   });
-  if (!L.length) return '<p class="muted">Nothing matches. Deliveries of the last 14 days are here.</p>';
+  if (!L.length) return emptyHtml(Object.keys(f).some(function (k) { return f[k] && k !== 'q'; }) || f.q ? 'Nothing matches. Deliveries of the last 14 days are here.' : 'No deliveries yet.');
   var cash = L.reduce(function (t, x) { return t + (x.cash || 0); }, 0), h = '<div class="sumline"><b>' + L.length + '</b> stop' + (L.length === 1 ? '' : 's') + ' · cash <b>' + ghs(cash) + '</b> · ' + L.filter(function (x) { return x.wait; }).length + ' waiting for the manager</div><div class="card" style="padding:4px 12px">', cur = null;
   var stc = { Delivered: 'green', 'Some returned': 'amber', 'Not delivered': 'red', Cancelled: 'red' };
   L.forEach(function (x) {
     if (x.day !== cur) { cur = x.day; var dd = L.filter(function (y) { return y.day === cur; }); h += dayHead(cur, dd.length + ' · ' + ghs(dd.reduce(function (t, y) { return t + (y.cash || 0); }, 0))); }
     var k = 'd:' + x.day + (x.oids || []).join(''), o = isOpen(k);
-    h += '<div class="srow" style="flex-wrap:wrap"><div class="grow tap"' + rowTap(k) + '><b>' + esc(x.vendor) + '</b>' + (x.n > 1 ? ' <span class="small muted">(' + x.n + ' orders)</span>' : '') + '<div class="small muted">' + (x.time ? esc(x.time) + ' · ' : '') + esc(x.pay || '') + (x.agent ? ' · ' + esc(x.agent) : '') + '</div>' +
-      (x.wait ? '<span class="pill amber">waiting for the manager</span>' : x.dec ? '<span class="pill">manager decided</span>' : '') + (x.vno && !x.dec ? '<span class="pill red">vendor says not right</span>' : '') + '</div><div class="right"><span class="pill ' + (stc[x.status] || '') + '">' + esc(x.status) + '</span><div><b>' + ghs(x.cash || 0) + '</b></div></div>' +
+    h += '<div class="srow" style="flex-wrap:wrap"><div class="grow tap"' + rowTap(k) + '><b>' + esc(x.vendor) + '</b>' + (x.n > 1 ? ' <span class="small muted">(' + x.n + ' orders)</span>' : '') + '<div class="small muted">' + (x.time ? esc(x.time) + ' · ' : '') + (x.status === 'Not delivered' || x.status === 'Cancelled' ? '' : esc(x.pay || '') + ' · ') + (x.agent ? esc(x.agent) : '') + '</div>' +
+      (x.wait ? '<span class="pill amber">waiting for the manager</span>' : x.dec ? '<span class="pill">manager decided</span>' : '') + (x.vno && !x.dec ? '<span class="pill red">vendor says not right</span>' : '') + '</div><div class="right"><span class="pill ' + (stc[x.status] || '') + '">' + esc(x.status) + '</span><div><b>' + ghs(x.cash || 0) + '</b>' + (x.status === 'Not delivered' && x.cash > 0 ? '<div class="small muted">old debt</div>' : '') + '</div></div>' +
       (o ? '<div class="dets" style="flex:1 1 100%">' + esc((x.oids || []).join(', ')) + (x.by ? ' · ' + esc(x.by) : '') + (x.dec ? '<br><b>Manager:</b> ' + esc(x.dec) : '') + (x.note ? '<br>' + esc(x.note) : '') + '</div>' : '') + '</div>';
   });
   return h + '</div>';
@@ -1369,7 +1501,7 @@ function goHash2(h) {
     setTimeout(function () { ACT.cancelO({ dataset: { o: oid } }); }, 60);
   } else if (h === 'confirm') { if (D.me.role === 'Warehouse') { SCREEN = 'release'; TAB = 'cash'; } else if (D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'pay'; } else if (D.screens.indexOf('route') >= 0) { SCREEN = 'route'; TAB = 'done'; SUB.done = 'pay'; } render(); }
   else if (h === 'decide' && D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'pay'; render(); }
-  else if (h === 'out' && D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'orders'; render(); var c = $('outcard'); if (c) try { c.scrollIntoView(); } catch (x) { } }
+  else if (h === 'out' && D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'orders'; OPN.outcard = true; render(); var c = $('f-outcard'); if (c) try { c.scrollIntoView(); } catch (x) { } }
 }
 function rcpBoot() {
   $('top').innerHTML = (TEST ? '<div class="test">TEST – practice only, nothing here is real</div>' : '') + '<div class="bar"><b>CupSales</b><span class="who">Payment receipt</span></div>';
