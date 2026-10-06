@@ -114,6 +114,26 @@ input:focus,select:focus,textarea:focus{outline:0;border-color:var(--blue);box-s
 .av{width:42px;height:42px;border-radius:50%;color:#fff;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;margin-right:10px;box-shadow:0 2px 5px rgba(60,30,0,.18)}
 .seg button.on{background:#fff;color:var(--blue);border:2px solid var(--blue)}
 input[type=checkbox]{accent-color:var(--blue)}.tk b{white-space:nowrap}
+/* v2.5.2: symbols instead of words for call / order / filter / WhatsApp / details; quieter, more consistent cards */
+:root{--info:#1F5FBF;--info2:#E8F0FC}
+.bar{background:linear-gradient(180deg,#D7141A 0%,#C1121A 100%);border-bottom:3px solid var(--yel)}
+.test{border-bottom:1px solid #E8B800}
+.ib{width:42px;height:42px;padding:0;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;background:var(--blue2);color:var(--blue);box-shadow:none;border:0;cursor:pointer}
+.ib svg{width:21px;height:21px}.ib.call{background:var(--green2);color:var(--green)}.ib.wa{background:#E2F5E9;color:#128C4A}.ib.sm{width:36px;height:36px}.ib.sm svg{width:18px;height:18px}.ib.gh{background:transparent;color:var(--mute)}
+.ib:active{transform:scale(.94)}a.ibl{display:inline-flex;text-decoration:none;flex:0 0 auto}.ibs{display:flex;gap:8px;align-items:center;flex:0 0 auto;margin-left:6px}
+.fbtn{position:relative;width:46px;height:44px;padding:0;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto}.fbtn svg{width:21px;height:21px}
+.fbtn .bdg{position:absolute;top:-6px;right:-6px;background:var(--blue);color:#fff;border-radius:999px;font-size:11px;font-weight:800;min-width:19px;height:19px;line-height:19px;padding:0 5px;box-shadow:0 0 0 2px #fff}
+.pill .si{width:14px;height:14px;vertical-align:-2px;margin-right:4px;flex:0 0 auto}.pill.blue{background:var(--info2);color:var(--info)}.pill.green{background:var(--green2);color:var(--green)}.pill.red{background:var(--red2);color:var(--red)}.pill.amber{background:var(--amber2);color:var(--amber)}
+.ar{display:inline-flex;align-items:center;color:var(--mute)}.ar svg{width:20px;height:20px}
+.actbar{display:flex;align-items:center;gap:10px;background:#fff;border-radius:14px;padding:10px 12px;margin:0 0 12px;box-shadow:inset 4px 0 0 var(--info),0 1px 3px rgba(60,30,0,.08)}.actbar>svg{width:24px;height:24px;color:var(--info);flex:0 0 auto}.actbar.on{box-shadow:inset 4px 0 0 var(--yel),0 1px 3px rgba(60,30,0,.08);background:#FFFBEA}.actbar.on>svg{color:#8a6a00}.actbar button{white-space:nowrap;padding:9px 12px;font-size:14px}
+.fh .hi{display:inline-flex;width:30px;height:30px;border-radius:50%;align-items:center;justify-content:center;background:var(--yel2);color:var(--dark);flex:0 0 auto}.fh .hi svg{width:17px;height:17px}.fh .hi.r{background:var(--red2);color:var(--red)}.fh .hi.b{background:var(--info2);color:var(--info)}
+.pk-o{display:flex;gap:10px;align-items:flex-start;border-top:1px solid var(--line);padding:10px 0}.pk-o:first-child{border-top:0}.pk-o .chk{margin-top:2px}
+.ndc{border-top:1px solid var(--line);padding:12px 0}.ndc:first-child{border-top:0;padding-top:4px}.ndc .why{background:var(--red2);color:var(--red);border-radius:10px;padding:8px 10px;margin:6px 0;font-size:14.5px}
+.psec{display:flex;align-items:center;gap:6px;margin:16px 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.4px;color:#8a6a00}.psec svg{width:17px;height:17px}
+.psr{border:1px solid var(--line);border-radius:12px;margin-top:6px;max-height:240px;overflow:auto}.psr .hit{display:flex;justify-content:space-between;gap:8px}
+.chipq{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}.chipq button{background:#fff;border:1.5px solid var(--line);color:var(--ink);font-weight:600;font-size:13px;padding:6px 10px;border-radius:999px}.chipq button.on{border-color:var(--blue);color:var(--blue);background:var(--blue2)}
+.card h3{letter-spacing:-.1px}.sub{line-height:1.35}
+button:focus-visible,a:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -132,14 +152,14 @@ function skn(id) { return SKN[id] || id; }
 function isOut(id) { return D.out && D.out.skus && D.out.skus.indexOf(id) >= 0; }
 /** v2.4.7: where a product Omni does not have comes from: a source id, 'NONE' (nobody has it) or '' (the manager has not said yet). */
 function routeOf(id) { return isOut(id) ? ((D.out.route || {})[id] || '') : ''; }
-function srcNm(id) { var x = (D.sources || []).filter(function (s) { return s.id === id; })[0]; return x ? x.name : (id === 'SRC-CLEMENT' ? 'Clement' : id === 'SRC-BERNICE' ? 'Bernice' : id); }
+function srcNm(id) { var x = (D.sources || []).filter(function (s) { return s.id === id; })[0]; return x ? x.name : (id === 'SRC-CLEMENT' ? 'Clement' : id === 'SRC-BERNICE' ? 'Bernice' : id === 'SRC-MARKET' ? 'Open market purchase' : id); }
 function outText(id) { var r = routeOf(id), n = skn(id); return r && r !== 'NONE' ? n + ' from ' + srcNm(r) : r === 'NONE' ? n + ' – Stockout: finished, cannot be got anywhere' : n + ' – the manager is finding who has it'; }
 function outMsg(id) { return ((D.out || {}).msg || {})[id] || ''; }
 function outNotice() {
   if (!D.out || !D.out.skus || !D.out.skus.length) return '';
-  var S = D.out.skus, stock = S.filter(function (x) { return routeOf(x) === 'NONE'; }), other = S.filter(function (x) { var r = routeOf(x); return r && r !== 'NONE'; });
-  var head = '⚠ <b>' + (stock.length === S.length ? 'Stockout' : 'Out of stock at Omni') + ':</b> ' + S.map(function (x) { return esc(skn(x)); }).join(', ') + (other.length ? '<div class="small muted">' + other.map(function (x) { return esc(skn(x)) + ' from ' + esc(srcNm(routeOf(x))); }).join(' · ') + '</div>' : '');
-  return fold('out-new', head, function () { return '<div class="small muted">Marked ' + esc(D.out.at || '') + '</div>' + S.map(function (x) { var m = outMsg(x); return '<div style="border-top:1px solid var(--line);padding:8px 0"><b>' + esc(outText(x)) + '</b>' + (m ? '<div class="small" style="margin-top:2px">Manager: “' + esc(m) + '”</div>' : '') + '</div>'; }).join('') + (other.length ? '<div class="small"><b>Money for Clement / Bernice goods goes to the HR office logbook, not to Frank.</b></div>' : ''); }, 'warnf');
+  var S = D.out.skus.filter(function (x) { return routeOf(x) === 'NONE'; }); if (!S.length) return ''; // v2.5.2: only what cannot be got anywhere
+  var head = '⚠ <b>Stockout:</b> ' + S.map(function (x) { return esc(skn(x)); }).join(', ');
+  return fold('out-new', head, function () { return '<div class="small muted">Cannot be got anywhere now – it is not in the product list until it is back. Marked ' + esc(D.out.at || '') + '</div>' + S.map(function (x) { var m = outMsg(x); return '<div style="border-top:1px solid var(--line);padding:8px 0"><b>' + esc(skn(x)) + '</b>' + (m ? '<div class="small" style="margin-top:2px">Manager: “' + esc(m) + '”</div>' : '') + '</div>'; }).join(''); }, 'warnf');
 }
 function rpc(req, ok, fail) {
   if (window.google && google.script && google.script.run) { google.script.run.withSuccessHandler(ok).withFailureHandler(function (e) { if (!navigator.onLine) e = { message: 'no signal', offline: true }; fail(e); }).appCall(req); return; }
@@ -165,6 +185,7 @@ function enqueue(op, data, sid, label) { var q = queue(); if (!q.some(function (
 var RECENT = []; // saves sent in the last minutes (a second identical tap is questioned)
 function dupKey(op, data) { var c = {}; Object.keys(data || {}).forEach(function (k) { if (k !== 'sure' && k !== 'note' && k !== 'logbook' && k !== 'rk') c[k] = data[k]; }); return op + '|' + JSON.stringify(c); }
 function bgSave(op, data, sid, label, b, noDupAsk) {
+  data = actTag(op, data || {}); // v2.5.2
   var q = queue(); if (q.some(function (x) { return x.sid === sid; })) { toast('Already saved on this phone – ' + label + ' is being sent.'); return; }
   var k = dupKey(op, data);
   var same = q.filter(function (x) { return x.key === k; })[0] || RECENT.filter(function (x) { return x.key === k && Date.now() - x.at < 10 * 60000; })[0];
@@ -310,6 +331,7 @@ function authScreen(r) {
 var TABS = { order: [['new', 'New order'], ['vendors', 'My vendors'], ['today', 'Orders & Payments']], release: [['release', 'Pending orders'], ['approved', 'Approved'], ['book', 'My book'], ['cash', 'Payments'], ['out', 'Out of stock']], route: [['route', 'Route'], ['done', 'Orders & Payments'], ['helpers', 'Helpers']] };
 var SNAME = { order: 'Sales', release: 'Warehouse', route: 'Deliveries' };
 function firstTab() { return TABS[SCREEN][0][0]; }
+var TABS0 = null;
 var LOGO = '<svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#FFC400"/><path d="M8.5 24h31a15.5 15.5 0 0 1-31 0z" fill="#fff"/><path d="M11.5 23.5c2-4.2 4 4.2 6 0s4 4.2 6 0 4 4.2 6 0 4 4.2 6 0" stroke="#D7141A" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M27 5.5l-5.5 15.5M33.5 7.5l-7.5 13.5" stroke="#7A3E00" stroke-width="2.6" stroke-linecap="round"/><rect x="16" y="37.5" width="16" height="3" rx="1.5" fill="#fff"/></svg>';
 function ico(p) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>'; }
 var ICO = {
@@ -327,11 +349,30 @@ var ICO = {
   rtoday: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M3.5 6l1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/>',
   s_order: '<path d="M5 8h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
   s_release: '<path d="M3 10l9-6 9 6v10H3z"/><path d="M8 20v-6h8v6"/>',
-  s_route: '<path d="M2 6h11v10H2zM13 9h4l3 3v4h-7z"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>'
+  s_route: '<path d="M2 6h11v10H2zM13 9h4l3 3v4h-7z"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>',
+  // v2.5.2: symbols used in the lists
+  phone: '<path d="M5 3.5h3.5l2 5-2.4 1.5a11.5 11.5 0 0 0 5.4 5.4l1.5-2.4 5 2V18.5a2 2 0 0 1-2 2A17 17 0 0 1 3 5.5a2 2 0 0 1 2-2z"/>',
+  cart: '<circle cx="9" cy="20" r="1.5"/><circle cx="17.5" cy="20" r="1.5"/><path d="M2.5 3.5H5l2.4 12h11.2l2-8.5H6.2"/><path d="M13 8.5v4M11 10.5h4"/>',
+  filter: '<path d="M3.5 5h17l-6.5 8v5.5l-4 2V13z"/>',
+  wa: '<path d="M20.5 11.6a8.5 8.5 0 0 1-12.4 7.5L3.5 20.5l1.4-4.4a8.5 8.5 0 1 1 15.6-4.5z"/><path d="M9 8.6c-.4 2.9 3.1 6.6 6.2 6.5l1-1.6-2.2-1.1-1 .9c-.8-.4-1.7-1.3-2.1-2.1l.9-1-1.1-2.2z"/>',
+  down: '<path d="M6 9.5l6 6 6-6"/>', up: '<path d="M6 14.5l6-6 6 6"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>', clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  box: '<path d="M3.5 7.5L12 3.5l8.5 4v9L12 20.5l-8.5-4z"/><path d="M3.5 7.5L12 11.5l8.5-4M12 11.5v9"/>',
+  x: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>', alert: '<path d="M12 3.5l9 16h-18z"/><path d="M12 10v4.2M12 17.2v.01"/>',
+  back: '<path d="M9 14.5L4 9.5l5-5"/><path d="M4 9.5h10a6 6 0 0 1 0 12h-3"/>', eye: '<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  swap: '<path d="M7 7.5h12l-3.5-3.5M17 16.5H5l3.5 3.5"/>', idcard: '<rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="11" r="2.3"/><path d="M5.6 16.2c.6-1.6 1.9-2.4 3.4-2.4s2.8.8 3.4 2.4M14.5 10h4M14.5 13.5h3"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>', pen: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M14 6l4 4"/>',
+  school: '<path d="M2 9.5l10-5 10 5-10 5z"/><path d="M6 11.5v5c3.5 2.2 8.5 2.2 12 0v-5M22 9.5v5"/>', truck: '<path d="M2 6h11v10H2zM13 9h4l3 3v4h-7z"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>'
 };
+/** v2.5.2: a status label with its symbol; round symbol buttons to call, WhatsApp and order. */
+function sico(p) { return ico(p).replace('<svg ', '<svg class="si" '); }
+function stPill(s) { return '<span class="pill ' + (s[1] || '') + '" style="white-space:nowrap;display:inline-flex;align-items:center">' + (s[2] && ICO[s[2]] ? sico(ICO[s[2]]) : '') + esc(s[0]) + '</span>'; }
+function callBtn(phone, sm) { return phone ? '<a class="ibl" href="tel:' + esc(phone) + '" aria-label="Call ' + esc(phone) + '" title="Call ' + esc(phone) + '"><span class="ib call' + (sm ? ' sm' : '') + '">' + ico(ICO.phone) + '</span></a>' : ''; }
+function waBtn(num, text, sm) { return num ? '<a class="ibl" href="https://wa.me/' + num + (text ? '?text=' + encodeURIComponent(text) : '') + '" target="_blank" aria-label="WhatsApp" title="WhatsApp"><span class="ib wa' + (sm ? ' sm' : '') + '">' + ico(ICO.wa) + '</span></a>' : ''; }
+function chev(o) { return ico(o ? ICO.up : ICO.down); }
 function emptyHtml(t) { return '<div class="empty"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#FFF1C2"/><path d="M12 33h40a20 20 0 0 1-40 0z" fill="#fff" stroke="#E2D8CC" stroke-width="2"/><path d="M16 32c2.5-5 5 5 7.5 0s5 5 7.5 0 5 5 7.5 0 5 5 7.5 0" stroke="#D7141A" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M36 8l-7 21M44 11l-10 18" stroke="#B9874C" stroke-width="3" stroke-linecap="round"/></svg><p>' + t + '</p></div>'; }
 function bar() {
-  return (TEST || (D && D.test) ? '<div class="test">TEST – practice only, nothing here is real</div>' : '') + '<div class="bar"><div class="brand">' + LOGO + '<div><b>CupSales</b><i>' + (D ? esc(SNAME[SCREEN] || '') : 'Sales app') + '</i></div></div><span class="who">' + (D ? esc(D.me.first) + ' · ' + esc(D.me.role) : '') + '</span></div>';
+  return '<div class="bar"><div class="brand">' + LOGO + '<div><b>CupSales</b><i>' + (D ? esc(SNAME[SCREEN] || '') : 'Sales app') + '</i></div></div><span class="who">' + (D ? esc(D.me.first) + ' · ' + esc(D.me.role) : '') + '</span></div>' + (TEST || (D && D.test) ? '<div class="test">TEST – practice only, nothing here is real</div>' : '');
 }
 function render() {
   if (!D) return;
@@ -339,9 +380,23 @@ function render() {
   var m = MSG ? '<div class="msg ' + MSG.k + '">' + MSG.t.split('\n').map(esc).join('<br>') + '</div>' : '';
   $('foot').innerHTML = '';
   pendView();
-  var body = ({ 'new': pgNew, vendors: pgVendors, today: pgToday, release: pgRelease, approved: pgApproved, book: pgBook, cash: pgCash, out: pgOut, rtoday: pgRToday, route: pgRoute, done: pgDone, helpers: pgHelpers })[TAB]();
+  var body = actBar() + ({ 'new': pgNew, vendors: pgVendors, today: pgToday, release: pgRelease, approved: pgApproved, book: pgBook, cash: pgCash, out: pgOut, rtoday: pgRToday, route: pgRoute, done: pgDone, helpers: pgHelpers })[TAB]();
   $('main').innerHTML = m + body;
-  decorate();
+  decorate(); setTimeout(decorate, 0); // v2.5.2: also the footer buttons drawn just after
+}
+/** v2.5.2: the manager sees Frank's and Prince's screens view-only; "Act for …" lets him save for them (marked as his). */
+var ACTF = {}, ACTBLOCK = ['relgo', 'decl', 'declgo', 'outsave', 'dgave', 'fpaid', 'frecv', 'stopopen', 'stopsave', 'hmake', 'pickgo', 'dispgo', 'sback'];
+function actWho() { return SCREEN === 'release' ? 'Frank' : SCREEN === 'route' ? 'Prince' : ''; }
+function actView() { return !!(D && D.me.role === 'Supervisor' && actWho() && !ACTF[SCREEN]); }
+function actBar() {
+  if (!D || D.me.role !== 'Supervisor' || !actWho()) return ''; var nm = actWho();
+  if (ACTF[SCREEN]) return '<div class="actbar on">' + ico(ICO.swap) + '<div class="grow"><b>Acting for ' + nm + '</b><div class="small">Saved as “' + esc(D.me.first) + ' for ' + nm + '”; ' + nm + ' gets an email.</div></div><button data-act="actf" data-s="0">STOP</button></div>';
+  return '<div class="actbar">' + ico(ICO.eye) + '<div class="grow"><b>' + nm + '\'s screen – view only</b><div class="small muted">To do something for ' + nm + ', switch on.</div></div><button class="main" data-act="actf" data-s="1">ACT FOR ' + nm.toUpperCase() + '</button></div>';
+}
+/** The person the manager acts for, added to his saves made on that screen. */
+function actTag(op, data) {
+  if (!D || D.me.role !== 'Supervisor') return data; var f = { release: 'USR-FRANK', outstock: 'USR-FRANK', decline: 'USR-FRANK', receive: 'USR-FRANK', stockback: 'USR-FRANK', stop: 'USR-PRINCE', helper: 'USR-PRINCE', dispatch: SCREEN === 'release' ? 'USR-FRANK' : 'USR-PRINCE' }[op];
+  if (f && ACTF[f === 'USR-FRANK' ? 'release' : 'route']) data.actFor = f; return data;
 }
 function topbar() {
   if (!D) return;
@@ -369,6 +424,11 @@ function pendView() {
     if (x.op === 'vprofile') { var vv0 = vend(d.vid); if (vv0) { var bb = bdayParse(d.bday); vv0.bday = bb ? bb.key : ''; vv0.bdayTxt = bb ? bb.text : ''; } }
     if (x.op === 'rsent' && D.receipts) D.receipts.forEach(function (r) { if (r.rk === d.rk || (d.rids || []).some(function (i) { return r.rids.indexOf(i) >= 0; })) { r.sent = true; r.rk = r.rk || d.rk; r.via = d.via === 'SMS' ? 'Text message' : 'WhatsApp'; } });
     if (x.op === 'cancel' && D.myOrders) D.myOrders.forEach(function (o) { if (o.oid === d.oid) { o.status = 'Cancelling'; } });
+    if (x.op === 'dispatch') { var di = d.oids || []; (D.stops || []).forEach(function (s) { s.orders.forEach(function (o) { if (di.indexOf(o.oid) >= 0) o.disp = true; }); s.disp = s.orders.every(function (o) { return o.disp; }); }); (D.dispatched || []).forEach(function (y) { if (di.indexOf(y.oid) >= 0 && y.status === 'Approved') y.status = 'Dispatched'; }); } // v2.5.2
+    if (x.op === 'nddecide' && D.needs) D.needs = D.needs.filter(function (n) { return n.eid !== d.eid; });
+    if (x.op === 'stockback' && D.comingBack) D.comingBack = D.comingBack.filter(function (c) { return c.did ? (d.dids || []).indexOf(c.did) < 0 : (d.oids || []).indexOf(c.oid) < 0; });
+    if (x.op === 'stop' && d.what === 'NONE' && D.stops) D.stops = D.stops.filter(function (s) { return s.id !== d.vid; });
+    if (x.op === 'vprofile' && d.prof) { var vp = vend(d.vid); if (vp) { vp.prof = Object.assign({}, vp.prof || {}, { school: d.prof.newSchool ? '' : d.prof.school, at: D.today }); if (d.prof.newSchool) vp.school = d.prof.newSchool.name; } }
     if ((x.op === 'agree' || x.op === 'dispute') && D.myOrders) D.myOrders.forEach(function (o) { if (o.oid === d.oid && o.outcome) { o.outcome.check = x.op === 'agree' ? 'Agrees' : 'Disagrees'; o.outcome.mismatch = false; o.outcome.sending = 1; } });
     if (x.op === 'orders' && D.myOrders && !D.myOrders.some(function (o) { return o.sid === x.sid; })) (d.vendors || []).slice().reverse().forEach(function (v) {
       var vv = vend(v.vid) || { name: v.vid }; D.myOrders.unshift({ sid: x.sid, local: 1, oid: 'sending…', date: D.today, vid: v.vid, vendor: vv.name, agent: D.me.first, pay: v.pay === 'CREDIT' ? 'Credit' : 'Cash', status: 'Sending', lines: (v.lines || []).map(function (l) { return { sku: l.sku, qty: l.qty }; }), prepaid: 0, promised: v.promised || 0, outcome: null });
@@ -377,19 +437,22 @@ function pendView() {
 }
 /** The button of a save that is still on its way shows it. */
 function decorate() {
+  if (actView()) [].slice.call(document.querySelectorAll(ACTBLOCK.map(function (a) { return '[data-act="' + a + '"]'; }).join(','))).forEach(function (el) { el.disabled = true; el.title = 'View only – tap ACT FOR ' + actWho().toUpperCase() + ' at the top'; }); // v2.5.2
   queue().forEach(function (x) { if (!x.mark) return; try { [].slice.call(document.querySelectorAll(x.mark)).forEach(function (el) { el.disabled = true; el.className = String(el.className || '').replace(/\bmain\b/, '') + ' sent'; el.textContent = '✓ Saved – sending…'; }); } catch (e) { } });
 }
 document.addEventListener('click', function (e) {
   if (e.target.classList && e.target.classList.contains('overlay')) { if (e.target.parentNode && e.target.parentNode.id === 'dlg') ACT.dlgNo(); else $('over').innerHTML = ''; return; } // v2.4.9: tap outside = close
   var b = e.target.closest('[data-scr],[data-tab],[data-act]'); if (!b) return;
-  if (b.dataset.scr) { SCREEN = b.dataset.scr; TAB = firstTab(); MSG = null; render(); return; }
+  if (b.dataset.scr) { SCREEN = b.dataset.scr; TAB = firstTab(); MSG = null; ACTF = {}; render(); return; } // v2.5.2: "Act for …" goes off when the manager leaves the screen
   if (b.dataset.tab) { TAB = b.dataset.tab; MSG = null; render(); window.scrollTo(0, 0); return; }
+  if (actView() && ACTBLOCK.indexOf(b.dataset.act) >= 0) { say(actWho() + '\'s screen is view only. Tap ACT FOR ' + actWho().toUpperCase() + ' at the top first.'); return; } // v2.5.2
   var f = ACT[b.dataset.act]; if (f) f(b, e);
 });
 document.addEventListener('input', function (e) { var f = INP[e.target.dataset.inp]; if (f) f(e.target); });
 document.addEventListener('change', function (e) { var f = CHG[e.target.dataset.chg]; if (f) f(e.target); });
 var ACT = {}, INP = {}, CHG = {};
 ACT.dlgCh = function (b) { var c = DLGCH[+b.dataset.i]; DLGCH = []; dlgClose(); if (c && c[1]) c[1](); }; // v2.4.9
+ACT.actf = function (b) { var nm = actWho(); if (b.dataset.s === '1') ask('Act for ' + nm + '?\nWhat you save here is recorded as done by you for ' + nm + ', and ' + nm + ' gets an email. ' + (nm === 'Frank' ? 'Frank\'s own count of the cash stays the control.' : ''), function () { ACTF[SCREEN] = true; render(); }, 'ACT FOR ' + nm.toUpperCase()); else { ACTF[SCREEN] = false; render(); } };
 // ---------------------------------------------------------------- agent: new order (draft is kept on the phone until sent)
 function draft() { var d = null; try { d = JSON.parse(ls(DKEY) || 'null'); } catch (e) { } if (!d || !d.vendors) { d = { sid: uid(), vendors: [newV()] }; saveDraft(d); } return d; }
 function saveDraft(d) { ls(DKEY, JSON.stringify(d)); }
@@ -406,8 +469,7 @@ function vInfo(v) {
   p.push(v.debt > 0 ? '<span class="pill ' + (v.days > 7 ? 'red' : v.days >= 4 ? 'amber' : '') + '">Owes ' + ghs(v.debt) + ' · ' + v.days + ' days</span>' : '<span class="pill green">Owes nothing</span>');
   if (v.last) p.push('<span class="pill">Last bought ' + esc(dayLbl(v.last)) + (v.since !== '' ? ' (' + (v.since === 0 ? 'today' : v.since + ' day' + (v.since === 1 ? '' : 's') + ' ago') + ')' : '') + '</span>');
   if (v.stock) p.push('<span class="pill ' + (v.stock === 'Has stock' ? 'green' : 'amber') + '">' + esc(v.stock) + '</span>');
-  if (v.pace && v.pace.slow) p.push('<span class="pill red">Slow payer</span>'); else if (v.pace && v.pace.ontime) p.push('<span class="pill green">Good payer</span>'); // v2.5.0
-  if (v.lad && v.lad.need) p.push('<span class="pill amber">Ask ' + v.lad.need + '% before delivery</span>');
+  if (v.pace && v.pace.slow) p.push('<span class="pill red">Slow payer</span>'); // v2.5.2: good / upfront payers only through the filter
   return p.join('');
 }
 /** v2.5.0: suggestions on New order – never a rule. */
@@ -426,23 +488,23 @@ function pgNew() {
     if (x.vid && !vend(x.vid)) { x.vid = ''; saveDraft(d); } // vendor moved to another agent since the draft was kept
     var v = x.vid ? vend(x.vid) : null; h += '<div class="card">';
     if (!v) {
-      h += '<div class="row" style="flex-wrap:nowrap"><label class="grow" style="margin:0 0 6px;color:var(--ink);font-size:16px"><b>Select Vendor</b></label>' + (d.vendors.length > 1 ? '<button class="ghost" data-act="delV" data-k="' + x.k + '" data-e="1">✕ Remove</button>' : '') + '</div><input data-inp="vq" data-k="' + x.k + '" value="' + esc(x.q) + '" placeholder="type 2–3 letters of her name, school or phone" autocomplete="off" autocapitalize="off" spellcheck="false">';
+      h += '<div class="row" style="flex-wrap:nowrap"><label class="grow" style="margin:0 0 6px;color:var(--ink);font-size:16px"><b>Select Vendor</b></label>' + (d.vendors.length > 1 ? '<button class="ib gh sm" data-act="delV" data-k="' + x.k + '" data-e="1" aria-label="Remove" title="Remove">' + ico(ICO.trash) + '</button>' : '') + '</div><input data-inp="vq" data-k="' + x.k + '" value="' + esc(x.q) + '" placeholder="type 2–3 letters of her name, school or phone" autocomplete="off" autocapitalize="off" spellcheck="false">';
       h += '<div id="hits-' + x.k + '">' + hitsHtml(x) + '</div>';
     } else if (x.c) { // v2.4.9: a finished vendor folds up to one line – tap it to open it again
       var val0 = vValue(x); tv += val0; var ct0 = x.lines.reduce(function (t, l) { return t + (l.sku ? Number(l.qty) || 0 : 0); }, 0); tc += ct0; var miss = !x.lines.some(function (l) { return l.sku; });
-      h += '<div class="row ohead" data-act="nexp" data-k="' + x.k + '"><div class="grow"><b>' + esc(v.name) + '</b>' + (miss ? ' <span class="pill red">add a product</span>' : '') + '<div class="sub">' + x.lines.filter(function (l) { return l.sku; }).map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', ') + (ct0 ? ' · ' : '') + ghs(val0) + ' · ' + esc(PAYTXT[x.pay] || '') + '</div></div><span class="small muted">edit ▸</span></div>';
+      h += '<div class="row ohead" data-act="nexp" data-k="' + x.k + '"><div class="grow"><b>' + esc(v.name) + '</b>' + (miss ? ' <span class="pill red">add a product</span>' : '') + '<div class="sub">' + x.lines.filter(function (l) { return l.sku; }).map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', ') + (ct0 ? ' · ' : '') + ghs(val0) + ' · ' + esc(PAYTXT[x.pay] || '') + '</div></div><span class="ib gh sm" aria-label="Edit">' + ico(ICO.pen) + '</span></div>';
     } else {
       var val = vValue(x); tv += val;
-      h += '<div class="row" style="flex-wrap:nowrap">' + avatar(v.name) + '<div class="grow"><h3>' + esc(v.name) + '</h3><div class="sub">' + esc(v.school || '') + (v.phone ? ' · ' + esc(v.phone) : '') + '</div></div><button class="ghost" data-act="chgV" data-k="' + x.k + '">change</button></div>';
+      h += '<div class="row" style="flex-wrap:nowrap">' + avatar(v.name) + '<div class="grow"><h3>' + esc(v.name) + '</h3><div class="sub">' + esc(v.school || '') + (v.phone ? ' · ' + esc(v.phone) : '') + '</div></div><button class="ib gh sm" data-act="chgV" data-k="' + x.k + '" aria-label="Change vendor" title="Change vendor">' + ico(ICO.swap) + '</button></div>';
       h += '<div>' + vInfo(v) + '</div>' + habitTips(v, x);
       if (x.replaces) h += '<div class="msg info small">Correcting ' + esc(x.replaces) + ' – the old order is replaced when you send.</div>';
       if (!x.replaces && v.lastO && v.lastO.lines.length && !x.lines.some(function (l) { return l.sku; })) h += '<button class="ghost" style="margin:6px 0 2px;padding:6px 0" data-act="nrep" data-k="' + x.k + '">↻ Same as last time (' + esc(dayLbl(v.lastO.date)) + '): ' + v.lastO.lines.map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', ') + '</button>';
       x.lines.forEach(function (l, j) {
         tc += Number(l.qty) || 0;
-        h += '<div class="line">' + (l.sku ? '<span class="pkb">' + pk(l.sku) + '</span>' : '') + '<select data-chg="lsku" data-k="' + x.k + '" data-j="' + j + '"><option value="">– product –</option>' + D.skus.map(function (s) { return '<option value="' + s.id + '"' + (s.id === l.sku ? ' selected' : '') + '>' + esc(s.title) + ' – ' + s.price + (routeOf(s.id) === 'NONE' ? ' (Stockout)' : isOut(s.id) ? ' (out)' : '') + '</option>'; }).join('') + '</select>' +
+        h += '<div class="line">' + (l.sku ? '<span class="pkb">' + pk(l.sku) + '</span>' : '') + '<select data-chg="lsku" data-k="' + x.k + '" data-j="' + j + '"><option value="">– product –</option>' + D.skus.filter(function (s) { return routeOf(s.id) !== 'NONE' || s.id === l.sku; }).map(function (s) { var r = routeOf(s.id); return '<option value="' + s.id + '"' + (s.id === l.sku ? ' selected' : '') + '>' + esc(s.title) + (r && r !== 'NONE' ? ' · ' + esc(srcNm(r)) : '') + ' – ' + s.price + (r === 'NONE' ? ' (Stockout)' : !r && isOut(s.id) ? ' (out at Omni)' : '') + '</option>'; }).join('') + '</select>' +
           '<div class="step"><button data-act="qty" data-k="' + x.k + '" data-j="' + j + '" data-d="-1">−</button><input inputmode="numeric" data-inp="lqty" data-k="' + x.k + '" data-j="' + j + '" value="' + esc(l.qty) + '"><button data-act="qty" data-k="' + x.k + '" data-j="' + j + '" data-d="1">+</button></div>' +
-          (x.lines.length > 1 ? '<button class="ghost" data-act="delL" data-k="' + x.k + '" data-j="' + j + '">✕</button>' : '') + '</div>' +
-          (l.sku && routeOf(l.sku) === 'NONE' ? '<div class="small" style="color:var(--red);margin:-4px 0 6px">⚠ ' + esc(skn(l.sku)) + ' is Stockout – cannot be supplied' + (outMsg(l.sku) ? ' (' + esc(outMsg(l.sku)) + ')' : '') + '</div>' : '');
+          (x.lines.length > 1 ? '<button class="ib gh sm" data-act="delL" data-k="' + x.k + '" data-j="' + j + '" aria-label="Remove product" title="Remove product">' + ico(ICO.trash) + '</button>' : '') + '</div>' +
+          (l.sku && routeOf(l.sku) === 'NONE' ? '<div class="small" style="color:var(--red);margin:-4px 0 6px">⚠ ' + esc(skn(l.sku)) + ' is Stockout – cannot be supplied' + (outMsg(l.sku) ? ' (' + esc(outMsg(l.sku)) + ')' : '') + '</div>' : l.sku && routeOf(l.sku) ? '<div class="small muted" style="margin:-4px 0 6px">From ' + esc(srcNm(routeOf(l.sku))) + ' – the money for it goes to the HR office logbook, not Frank.</div>' : '');
       });
       h += '<button data-act="addL" data-k="' + x.k + '">+ PRODUCT</button>';
       h += '<label>Payment</label>';
@@ -476,7 +538,7 @@ function edit(el, fn, rerender) { var d = draft(); var x = findV(d, el.dataset.k
 INP.vq = function (el) { var d = draft(), x = findV(d, el.dataset.k); if (!x) return; x.q = el.value; saveDraft(d); var box = $('hits-' + x.k); if (box) box.innerHTML = hitsHtml(x); }; // the box itself is not redrawn (no lost letters)
 ACT.pickV = function (b) { edit(b, function (x, d) { if (d.vendors.some(function (y) { return y.vid === b.dataset.v && y !== x; })) { say('This vendor is already in this order – add products to her card instead.'); return; } x.vid = b.dataset.v; x.q = ''; x.c = 0; d.vendors.forEach(function (y) { if (y !== x && y.vid) y.c = 1; }); }, true); };
 ACT.nexp = function (b) { var d = draft(); d.vendors.forEach(function (y) { y.c = y.k === b.dataset.k ? 0 : (y.vid ? 1 : y.c); }); saveDraft(d); render(); };
-ACT.nrep = function (b) { edit(b, function (x) { var v = vend(x.vid); if (!v || !v.lastO) return; x.lines = v.lastO.lines.filter(function (l) { return D.skus.some(function (s) { return s.id === l.sku; }); }).map(function (l) { return { sku: l.sku, qty: l.qty }; }); if (!x.lines.length) x.lines = [{ sku: '', qty: 1 }]; x.pay = v.lastO.pay === 'Credit' ? 'CREDIT' : 'CASH'; }, true); };
+ACT.nrep = function (b) { var was = (findV(draft(), b.dataset.k) || {}).pay; setTimeout(function () { var x2 = findV(draft(), b.dataset.k); if (x2 && x2.pay !== was) toast('Payment set to ' + (PAYTXT[x2.pay] || x2.pay) + ' – like last time. Change it if needed.'); }, 0); edit(b, function (x) { var v = vend(x.vid); if (!v || !v.lastO) return; x.lines = v.lastO.lines.filter(function (l) { return D.skus.some(function (s) { return s.id === l.sku; }); }).map(function (l) { return { sku: l.sku, qty: l.qty }; }); if (!x.lines.length) x.lines = [{ sku: '', qty: 1 }]; x.pay = v.lastO.pay === 'Credit' ? 'CREDIT' : 'CASH'; }, true); };
 ACT.chgV = function (b) { edit(b, function (x) { x.vid = ''; }, true); };
 ACT.addL = function (b) { edit(b, function (x) { x.lines.push({ sku: '', qty: 1 }); }, true); };
 ACT.delL = function (b) { edit(b, function (x) { x.lines.splice(Number(b.dataset.j), 1); }, true); };
@@ -538,14 +600,15 @@ var FDEF = {
     ['stock', 'Stock (estimate)', [['', 'Any'], ['has', 'Has stock'], ['out', 'Likely out']]],
     ['bday', 'Birthday', [['', 'Any'], ['today', 'Today'], ['tomorrow', 'Tomorrow'], ['week', 'This week (next 7 days)'], ['month', 'This month'], ['missing', 'Not recorded']]],
     ['pace', 'Payment habit', [['', 'Any'], ['slow', 'Slow payer (over 14 days)'], ['ontime', 'Pays on time'], ['ready', 'Ready for upfront payment'], ['behind', 'Behind upfront target']]],
+    ['prof', 'Profile', [['', 'Any'], ['noschool', 'School missing'], ['todo', 'Profile not filled'], ['done', 'Profile filled']]],
     ['sort', 'Sort by', [['', 'Name A–Z'], ['old', 'Oldest debt first'], ['big', 'Biggest debt first'], ['since', 'Longest since buying']]]],
-  today: [['st', 'Status', [['', 'All'], ['wait', 'Pending approval'], ['appr', 'Approved'], ['del', 'Delivered'], ['dec', 'Declined'], ['canc', 'Cancelled'], ['ret', 'Returned'], ['vno', 'Vendor says not right']]],
+  today: [['st', 'Status', [['', 'All'], ['wait', 'Pending approval'], ['appr', 'Approved (waiting for Prince)'], ['disp', 'Dispatched (on the way)'], ['nd', 'Not delivered'], ['del', 'Delivered'], ['dec', 'Declined'], ['canc', 'Cancelled'], ['ret', 'Returned'], ['vno', 'Vendor says not right']]],
     ['pay', 'Payment', [['', 'Any'], ['Cash', 'Cash'], ['Credit', 'Credit']]], ['day', 'Date', 'date'], ['ent', 'Company app', [['', 'All orders'], ['yes', 'To enter in the company app']]]],
   pcash: [['day', 'Collected on', 'date']],
   prcpt: [['day', 'Date', 'date'], ['st', 'Status', [['', 'All'], ['not', 'Not sent'], ['wait', 'Sent – no answer yet'], ['yes', 'Vendor confirmed'], ['no', 'Vendor says not right']]], ['kind', 'Kind', [['', 'All'], ['payment', 'Cash payments'], ['delivery', 'Deliveries']]]],
   phist: [['day', 'Date', 'date'], ['to', 'Given to', [['', 'Everyone'], ['frank', 'Frank (Omni Haven)'], ['other', 'HR logbook / Clement / Bernice'], ['mgr', 'The manager']]], ['st', 'Status', [['', 'All'], ['wait', 'Waiting for confirmation'], ['ok', 'Confirmed'], ['diff', 'Counted different']]]],
   rdone: [['day', 'Date', 'date'], ['st', 'Status', [['', 'All'], ['Delivered', 'Delivered'], ['Some returned', 'Some returned'], ['Not delivered', 'Not delivered'], ['Cancelled', 'Cancelled']]], ['mgr', 'Manager', [['', 'Any'], ['dec', 'Manager decided'], ['wait', 'Waiting for the manager'], ['vno', 'Vendor says not right']]]],
-  disp: [['st', 'Status', [['', 'All'], ['Dispatched', 'With Prince (not delivered yet)'], ['Delivered', 'Delivered'], ['Returned', 'Returned'], ['Cancelled', 'Cancelled']]]],
+  disp: [['st', 'Status', [['', 'All'], ['Approved', 'Approved – waiting for Prince'], ['Dispatched', 'Dispatched – on the way'], ['Not delivered', 'Not delivered'], ['Delivered', 'Delivered'], ['Returned', 'Returned'], ['Cancelled', 'Cancelled']]]],
   hist: [['from', 'From', 'date'], ['to', 'To', 'date'], ['pay', 'Payment', [['', 'All'], ['owing', 'Owing'], ['paid', 'Paid'], ['part', 'Part paid'], ['wait', 'Waiting for the manager']]], ['sort', 'Sort', [['', 'Newest first'], ['old', 'Oldest first']]]],
   owed: [['age', 'Sold', [['', 'Any time'], ['0', '0–7 days ago'], ['8', '8–14 days ago'], ['15', '15+ days ago']]]],
   route: [['pay', 'To collect', [['', 'All stops'], ['collect', 'Cash to collect'], ['credit', 'Credit only'], ['debt', 'Has old debt']]]]
@@ -558,7 +621,7 @@ function filterBar(k, ph) {
   if (ag && agOn()) act.unshift(['ag', 'Agent: ' + agName(agOn())]);
   var n = act.filter(function (a) { return a[0] !== 'sort'; }).length;
   var h = '<div class="fbar"><div class="row" style="flex-wrap:nowrap"><input data-inp="flq" data-k="' + k + '" value="' + esc(f.q || '') + '" placeholder="' + esc(ph) + '" autocomplete="off" autocapitalize="off" spellcheck="false" style="flex:1 1 auto;min-width:0">' +
-    '<button class="fbtn' + (FOPEN[k] ? ' on' : '') + '" data-act="fopen" data-k="' + k + '">Filter' + (n ? ' (' + n + ')' : '') + ' ▾</button></div>';
+    '<button class="fbtn' + (FOPEN[k] ? ' on' : '') + '" data-act="fopen" data-k="' + k + '" aria-label="Filter" title="Filter">' + ico(ICO.filter) + (n ? '<span class="bdg">' + n + '</span>' : '') + '</button></div>';
   if (FOPEN[k]) h += '<div class="fgrid">' + (ag ? selHtml(k, 'ag', 'Agent', [['', 'All agents']].concat(D.agents.map(function (a) { return [a.id, a.name]; })), agOn()) : '') + defs.map(function (d) { return d[2] === 'date' ? '<label><span>' + esc(d[1]) + '</span><input type="date" data-chg="fset" data-k="' + k + '" data-f="' + d[0] + '" value="' + esc(f[d[0]] || '') + '"></label>' : selHtml(k, d[0], d[1], d[2], f[d[0]] || ''); }).join('') + '</div>' +
     '<div class="row" style="justify-content:space-between;margin-top:6px"><button class="ghost" data-act="fclear" data-k="' + k + '">Clear all</button><button data-act="fopen" data-k="' + k + '">Done</button></div>';
   else if (act.length) h += '<div class="chips">' + act.map(function (a) { return '<span class="chip">' + esc(a[1]) + '<b data-act="fx" data-k="' + k + '" data-f="' + a[0] + '">×</b></span>'; }).join('') + '</div>';
@@ -584,24 +647,20 @@ function bdayFold() {
   return fold('bday', bh, function () {
     return list.map(function (v, i) { var bi = bdayIn(v.bday), wa = waNum(v.phone);
       return '<div class="srow' + (i ? '' : ' first') + '" style="flex-wrap:nowrap"><div class="grow"><b>' + esc(v.name) + '</b> <span class="pill ' + (bi === 0 ? 'red' : 'amber') + '">' + (bi === 0 ? 'TODAY' : 'tomorrow') + '</span><div class="sub">' + esc(v.school || '') + (agFilterOk() ? ' · ' + esc(agName(v.agent)) : '') + '</div></div>' +
-        (v.phone ? '<a href="tel:' + esc(v.phone) + '"><button class="ghost" style="padding:6px 10px">Call</button></a>' : '') + (wa ? '<a href="https://wa.me/' + wa + '?text=' + encodeURIComponent('Happy birthday, ' + v.name + '! Wishing you a wonderful year. From all of us at CupSales.') + '" target="_blank"><button class="ghost" style="padding:6px 10px">WhatsApp</button></a>' : '') + '</div>'; }).join('') + '<p class="small muted" style="margin:8px 0 0">Other birthdays: Filter → Birthday.</p>';
+        '<div class="ibs">' + callBtn(v.phone, 1) + waBtn(wa, 'Happy birthday, ' + v.name + '! Wishing you a wonderful year. From all of us at CupSales.', 1) + '</div></div>'; }).join('') + '<p class="small muted" style="margin:8px 0 0">Other birthdays: filter → Birthday.</p>';
   }, 'warnf');
 }
 /** v2.5.0: payment habits – slow payers and the steps to paying before delivery (suggestions; the manager sees it per agent). */
 function habitsFold() {
-  var V = (D.vendors || []).filter(function (v) { return !agOn() || v.agent === agOn(); }); if (!V.length || !V.some(function (v) { return v.lad || v.pace; })) return '';
-  var slow = V.filter(function (v) { return v.pace && v.pace.slow; }), good = V.filter(function (v) { return v.pace && v.pace.ontime; }), asked = V.filter(function (v) { return v.lad && v.lad.need; });
-  var head = '💳 <b>Payment habits</b> <span class="pill ' + (slow.length ? 'red' : 'green') + '">' + slow.length + ' slow payer' + (slow.length === 1 ? '' : 's') + '</span>' + (good.length ? '<span class="pill green">' + good.length + ' good payer' + (good.length === 1 ? '' : 's') + '</span>' : '');
+  var V = (D.vendors || []).filter(function (v) { return !agOn() || v.agent === agOn(); }), slow = V.filter(function (v) { return v.pace && v.pace.slow; }); if (!slow.length) return '';
+  var head = '<div class="row" style="flex-wrap:nowrap;gap:10px"><span class="hi r">' + ico(ICO.clock) + '</span><div class="grow"><b>Slow payers: ' + slow.length + '</b><div class="small muted">took more than 14 days to pay their credit</div></div></div>';
   return fold('habits', head, function () {
     var h = '';
-    if (agFilterOk() && !agOn()) { var by = {}; V.forEach(function (v) { var a = by[v.agent] = by[v.agent] || { s: 0, g: 0, m: 0 }; if (v.pace && v.pace.slow) a.s++; if (v.pace && v.pace.ontime) a.g++; a.m += v.ctnM || 0; });
-      h += Object.keys(by).map(function (a) { var x = by[a]; return '<div class="srow"><div class="grow"><b>' + esc(agName(a)) + '</b><div class="small muted">' + x.s + ' slow · ' + x.g + ' good · ' + x.m + ' ctn this month in the app</div></div>' + (x.s ? '<button class="ghost" style="padding:4px 8px" data-act="vpace" data-p="slow" data-a="' + esc(a) + '">Show slow</button>' : '') + '</div>'; }).join(''); }
-    else if (slow.length) h += slow.sort(function (a, b) { return b.pace.avg - a.pace.avg; }).map(function (v) { return '<div class="srow"><div class="grow"><b>' + esc(v.name) + '</b><div class="small muted">took about ' + v.pace.avg + ' days to pay</div></div></div>'; }).join('');
-    else h += '<p class="muted" style="margin:0">No slow payer – well done.</p>';
-    if (asked.length) h += '<div class="small" style="margin-top:8px"><b>' + asked.length + '</b> vendor(s) are now asked to pay part before delivery.</div>';
-    h += '<details style="margin-top:8px"><summary class="small">How it works</summary><div class="small muted">Suggestions only – the agent decides. A slow payer (more than 14 days to pay her credit) gets the tip "give about half" on New order. From February 2027 vendors are asked to pay 50% before delivery after 4 months with us and 100% after 8 months (counted from 1 Oct 2026; new vendors from registration). Good payers can be asked earlier. Cartons count only orders made in the app (since 28 Sep).</div></details>';
-    return h;
-  });
+    if (agFilterOk() && !agOn()) { var by = {}; slow.forEach(function (v) { (by[v.agent] = by[v.agent] || []).push(v); });
+      h += Object.keys(by).map(function (a) { return '<div class="srow"><div class="grow"><b>' + esc(agName(a)) + '</b><div class="small muted">' + by[a].length + ' slow · ' + by[a].slice(0, 3).map(function (v) { return esc(v.name); }).join(', ') + (by[a].length > 3 ? ' …' : '') + '</div></div><button class="ghost" style="padding:4px 8px" data-act="vpace" data-p="slow" data-a="' + esc(a) + '">Show</button></div>'; }).join(''); }
+    else h += slow.sort(function (a, b) { return b.pace.avg - a.pace.avg; }).map(function (v) { return '<div class="srow"><div class="grow"><b>' + esc(v.name) + '</b><div class="small muted">took about ' + v.pace.avg + ' days to pay</div></div>' + callBtn(v.phone, 1) + '</div>'; }).join('');
+    return h + '<details style="margin-top:8px"><summary class="small">How it works</summary><div class="small muted">A suggestion only – you decide. A slow payer gets the tip "give about half" on New order when you choose credit. Good payers and the upfront-payment steps are in the filter (Payment habit).</div></details>';
+  }, 'warnf');
 }
 ACT.vpace = function (b) { fl('vendors').pace = b.dataset.p; flSave(); if (b.dataset.a) setAg(b.dataset.a); OPN.habits = false; render(); };
 LISTR.vendors = function () {
@@ -623,6 +682,7 @@ function vfilter() {
     var bi = bdayIn(v.bday);
     if (f.bday === 'tomorrow' && bi !== 1) return false;
     if (f.pace === 'slow' && !(v.pace && v.pace.slow)) return false; if (f.pace === 'ontime' && !(v.pace && v.pace.ontime)) return false; if (f.pace === 'ready' && !(v.lad && v.lad.ready)) return false; if (f.pace === 'behind' && !(v.lad && v.lad.need && v.lad.last !== null && v.lad.last < v.lad.need)) return false;
+    var pf = v.prof || {}; if (f.prof === 'noschool' && pf.school) return false; if (f.prof === 'todo' && pf.at) return false; if (f.prof === 'done' && !pf.at) return false; // v2.5.2
     if (f.bday === 'today' && bi !== 0) return false; if (f.bday === 'week' && !(bi >= 0 && bi <= 6)) return false; if (f.bday === 'month' && !(v.bday && v.bday.slice(0, 2) === D.today.slice(5, 7))) return false; if (f.bday === 'missing' && v.bday) return false;
     return true;
   });
@@ -637,12 +697,72 @@ function vlistHtml(list) { return vlistBody(list); }
 function vlistBody(list) {
   if (!list.length) return '<p class="muted">No vendor matches. Change the filter or the search.</p>';
   return list.map(function (v) {
-    var bi = bdayIn(v.bday);
-    return '<div class="card"><div class="row" style="flex-wrap:nowrap">' + avatar(v.name) + '<div class="grow"><h3>' + esc(v.name) + '</h3><div class="sub">' + esc(v.school || '') + (agFilterOk() && !agOn() ? ' · ' + esc(agName(v.agent)) : '') + '</div></div>' + (v.phone ? '<a href="tel:' + esc(v.phone) + '"><button>Call</button></a>' : '') + '<button data-act="orderV" data-v="' + v.id + '">Order</button></div><div>' + vInfo(v) +
-      (v.bdayTxt ? '<span class="pill ' + (bi >= 0 && bi <= 6 ? 'amber' : '') + '" data-act="bdayOpen" data-v="' + v.id + '" style="cursor:pointer">🎂 ' + esc(v.bdayTxt) + (bi === 0 ? ' – TODAY' : bi === 1 ? ' – tomorrow' : bi > 1 && bi <= 6 ? ' – in ' + bi + ' days' : '') + '</span>' : '') + '</div>' +
-      '<div class="row" style="margin-top:8px">' + ((D.me.role === 'Agent' || D.me.role === 'Supervisor') && v.debt > 0 ? '<button class="main" data-act="rcv" data-v="' + v.id + '">RECEIVED CASH</button>' : '') + (v.bdayTxt ? '' : '<button class="ghost" data-act="bdayOpen" data-v="' + v.id + '">🎂 Add birthday</button>') + '</div></div>';
+    var bi = bdayIn(v.bday), pf = v.prof || {};
+    return '<div class="card"><div class="row" style="flex-wrap:nowrap">' + avatar(v.name) + '<div class="grow"><h3>' + esc(v.name) + '</h3><div class="sub">' + esc(v.school || '') + (agFilterOk() && !agOn() ? ' · ' + esc(agName(v.agent)) : '') + '</div></div>' +
+      '<div class="ibs">' + callBtn(v.phone) + '<button class="ib" data-act="orderV" data-v="' + v.id + '" aria-label="New order for ' + esc(v.name) + '" title="New order">' + ico(ICO.cart) + '</button></div></div><div>' + vInfo(v) +
+      (v.bdayTxt ? '<span class="pill ' + (bi >= 0 && bi <= 6 ? 'amber' : '') + '" data-act="bdayOpen" data-v="' + v.id + '" style="cursor:pointer">🎂 ' + esc(v.bdayTxt) + (bi === 0 ? ' – TODAY' : bi === 1 ? ' – tomorrow' : bi > 1 && bi <= 6 ? ' – in ' + bi + ' days' : '') + '</span>' : '') +
+      (!pf.school ? '<span class="pill amber" data-act="profOpen" data-v="' + v.id + '" style="cursor:pointer">' + sico(ICO.school) + 'School missing</span>' : '') + '</div>' +
+      '<div class="row" style="margin-top:8px">' + ((D.me.role === 'Agent' || D.me.role === 'Supervisor') && v.debt > 0 ? '<button class="main" data-act="rcv" data-v="' + v.id + '">RECEIVED CASH</button>' : '') + (v.bdayTxt ? '' : '<button class="ghost" data-act="bdayOpen" data-v="' + v.id + '">🎂 Add birthday</button>') +
+      '<button class="ghost" data-act="profOpen" data-v="' + v.id + '" style="display:inline-flex;align-items:center;gap:6px">' + ico(ICO.idcard).replace('<svg ', '<svg style="width:19px;height:19px" ') + 'Profile</button></div></div>';
   }).join('');
 }
+// ---------------------------------------------------------------- v2.5.2: vendor profile (filled on the visit) and the Schools list
+var PROF = null;
+function schoolOf(id) { return (D.schools || []).filter(function (s) { return s.id === id; })[0] || null; }
+ACT.profOpen = function (b) {
+  var v = vend(b.dataset.v); if (!v) return; var p = v.prof || {};
+  PROF = { vid: v.id, school: p.school || '', pick: !p.school, q: '', newS: null, spot: p.spot || '', share: p.share || '', ptype: p.ptype || '', momo: p.momo || '', wa: p.wa || '', byear: p.byear || '', facts: {} };
+  profDraw();
+};
+function profDraw() {
+  var P = PROF, v = vend(P.vid); if (!v) return; var s = schoolOf(P.school);
+  var h = '<div class="overlay"><div class="sheet"><div class="row" style="flex-wrap:nowrap">' + avatar(v.name) + '<div class="grow"><h3 style="margin:0">' + esc(v.name) + '</h3><div class="sub">Profile – fill in what you know. Everything is optional.</div></div></div>';
+  h += '<div class="psec">' + ico(ICO.school) + ' School</div>';
+  if (P.newS) h += '<label>School name</label><input data-inp="pnew" data-f="name" value="' + esc(P.newS.name) + '" placeholder="e.g. Kotei Shining Star School"><div class="fgrid"><label><span>Area / zone</span><input data-inp="pnew" data-f="area" value="' + esc(P.newS.area) + '"></label><label><span>Pupils (about)</span><input inputmode="numeric" data-inp="pnew" data-f="pupils" value="' + esc(P.newS.pupils) + '"></label></div><label>Break times</label><input data-inp="pnew" data-f="breaks" value="' + esc(P.newS.breaks) + '" placeholder="e.g. 10:00 and 12:30"><button class="ghost" data-act="pnewx">Choose from the list instead</button>';
+  else if (s && !P.pick) {
+    var fp = P.facts.pupils !== undefined ? P.facts.pupils : s.pupils, fb = P.facts.breaks !== undefined ? P.facts.breaks : s.breaks;
+    h += '<div class="row" style="flex-wrap:nowrap"><div class="grow"><b>' + esc(s.name) + '</b><div class="small muted">' + (s.area ? esc(s.area) + ' · ' : '') + s.n + ' vendor' + (s.n === 1 ? '' : 's') + ' there</div></div><button class="ghost" data-act="ppick">Change</button></div>' +
+      '<div class="fgrid"><label><span>Pupils (about)</span><input inputmode="numeric" data-inp="pfact" data-f="pupils" value="' + esc(fp) + '"></label><label><span>Break times</span><input data-inp="pfact" data-f="breaks" value="' + esc(fb) + '" placeholder="10:00, 12:30"></label></div>';
+  } else h += '<input data-inp="psq" value="' + esc(P.q) + '" placeholder="Type 2–3 letters of the school" autocomplete="off" autocapitalize="off" spellcheck="false"><div id="psr">' + profHits() + '</div><button class="ghost" data-act="pnew">+ New school (not in the list)</button>';
+  h += '<div class="psec">' + ico(ICO.idcard) + ' About her</div>' +
+    '<label>Where she sells</label><input data-inp="pf" data-f="spot" value="' + esc(P.spot) + '" placeholder="e.g. by the gate near the JHS block">' +
+    '<label>What she gives the school (if anything)</label><input data-inp="pf" data-f="share" value="' + esc(P.share) + '" placeholder="e.g. GHS 50 a term · 10% · nothing">' +
+    '<label>Phone</label><div class="seg">' + [['Smartphone', 'Smartphone'], ['Basic phone', 'Basic phone']].map(function (x) { return '<button class="' + (P.ptype === x[0] ? 'on' : '') + '" data-act="pseg" data-f="ptype" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>' +
+    '<label>MoMo number</label><input inputmode="tel" data-inp="pf" data-f="momo" value="' + esc(P.momo) + '" placeholder="0241234567">' +
+    '<label>In our WhatsApp group?</label><div class="seg">' + [['Yes', 'Yes'], ['No', 'No']].map(function (x) { return '<button class="' + (P.wa === x[0] ? 'on' : '') + '" data-act="pseg" data-f="wa" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>' +
+    '<label>Year of birth (if she says)</label><input inputmode="numeric" maxlength="4" data-inp="pf" data-f="byear" value="' + esc(P.byear) + '" placeholder="e.g. 1988">' +
+    '<div class="row" style="margin-top:16px"><button class="grow" data-act="closeO">Cancel</button><button class="main grow" data-act="psave">SAVE</button></div></div></div>';
+  $('over').innerHTML = h;
+}
+function profHits() {
+  var q = norm(PROF.q); var L = (D.schools || []).filter(function (s) { return !q || norm(s.name + ' ' + s.area).indexOf(q) >= 0; }).slice(0, q ? 12 : 6);
+  if (!L.length) return '<p class="sub">No school found – add it with "+ New school".</p>';
+  return '<div class="psr">' + L.map(function (s) { return '<div class="hit" data-act="pschool" data-s="' + s.id + '"><span><b>' + esc(s.name) + '</b>' + (s.area ? '<div class="small muted">' + esc(s.area) + '</div>' : '') + '</span><span class="small muted">' + s.n + '</span></div>'; }).join('') + '</div>';
+}
+INP.psq = function (el) { PROF.q = el.value; var b = $('psr'); if (b) b.innerHTML = profHits(); };
+INP.pf = function (el) { PROF[el.dataset.f] = el.value; };
+INP.pnew = function (el) { PROF.newS[el.dataset.f] = el.value; };
+INP.pfact = function (el) { PROF.facts[el.dataset.f] = el.value; };
+ACT.pschool = function (b) { PROF.school = b.dataset.s; PROF.pick = false; PROF.facts = {}; profDraw(); };
+ACT.ppick = function () { PROF.pick = true; PROF.q = ''; profDraw(); };
+ACT.pnew = function () { PROF.newS = { name: PROF.q || '', area: '', pupils: '', breaks: '' }; profDraw(); };
+ACT.pnewx = function () { PROF.newS = null; PROF.pick = true; profDraw(); };
+ACT.pseg = function (b) { PROF[b.dataset.f] = PROF[b.dataset.f] === b.dataset.v ? '' : b.dataset.v; profDraw(); };
+ACT.psave = function () {
+  var P = PROF, v = vend(P.vid); if (!v) return; var momo = String(P.momo || '').replace(/\D/g, ''), y = String(P.byear || '').trim();
+  if (momo && !/^0\d{9}$/.test(momo)) { say('The MoMo number has 10 numbers and starts with 0, e.g. 0241234567.'); return; }
+  if (y && !/^(19[4-9]\d|200\d|2010)$/.test(y)) { say('Year of birth: 4 numbers, e.g. 1988 – or leave it empty.'); return; }
+  if (P.newS && String(P.newS.name || '').trim().length < 3) { say('Write the school\'s name – or choose it from the list.'); return; }
+  var num0 = function (x) { return String(x == null ? '' : x).replace(/[,\s]/g, ''); };
+  if (P.newS && num0(P.newS.pupils) && !/^\d{1,5}$/.test(num0(P.newS.pupils))) { say('Pupils: a number, e.g. 650.'); return; }
+  if (P.facts.pupils !== undefined && num0(P.facts.pupils) && !/^\d{1,5}$/.test(num0(P.facts.pupils))) { say('Pupils: a number, e.g. 650.'); return; }
+  var prof = { school: P.newS ? '' : P.school, spot: P.spot, share: P.share, ptype: P.ptype, momo: momo, wa: P.wa, byear: y };
+  if (P.newS) prof.newSchool = { name: String(P.newS.name).trim(), area: P.newS.area, pupils: num0(P.newS.pupils), breaks: P.newS.breaks };
+  else if (P.school && Object.keys(P.facts).length) prof.schoolFacts = { pupils: P.facts.pupils !== undefined ? num0(P.facts.pupils) : undefined, breaks: P.facts.breaks };
+  $('over').innerHTML = ''; var s = schoolOf(P.school);
+  v.prof = { school: P.newS ? '' : P.school, spot: P.spot, share: P.share, ptype: P.ptype, momo: momo, wa: P.wa, byear: y, at: D.today }; if (P.newS) v.school = String(P.newS.name).trim(); else if (s) v.school = s.name; // shown at once
+  bgSave('vprofile', { vid: v.id, prof: prof }, 'pf-' + v.id + '-' + uid(), v.name + ' – profile', null, true); PROF = null; render();
+};
 // ---------------------------------------------------------------- v2.4.8: birthdays
 function bdayCard(todayOnly) {
   var list = (D.vendors || []).filter(function (v) { var bi = bdayIn(v.bday); return bi >= 0 && bi <= (todayOnly ? 1 : 6) && (!agOn() || v.agent === agOn()); }).sort(function (a, b) { return bdayIn(a.bday) - bdayIn(b.bday); });
@@ -650,7 +770,7 @@ function bdayCard(todayOnly) {
   return '<div class="card" style="border-color:var(--amber)"><h3>🎂 Birthdays ' + (todayOnly ? 'today and tomorrow' : 'this week') + '</h3>' + list.map(function (v) {
     var bi = bdayIn(v.bday), wa = waNum(v.phone);
     return '<div class="row" style="border-top:1px solid var(--line);padding:6px 0;flex-wrap:nowrap;gap:6px"><div class="grow" style="min-width:0"><b>' + esc(v.name) + '</b> <span class="pill ' + (bi === 0 ? 'red' : 'amber') + '">' + (bi === 0 ? 'TODAY' : bi === 1 ? 'tomorrow' : dayLbl(addDays(D.today, bi))) + '</span><div class="sub">' + esc(v.school || '') + (agFilterOk() ? ' · ' + esc(agName(v.agent)) : '') + '</div></div>' +
-      (v.phone ? '<a href="tel:' + esc(v.phone) + '"><button class="ghost" style="padding:6px 10px">Call</button></a>' : '') + (wa ? '<a href="https://wa.me/' + wa + '?text=' + encodeURIComponent('Happy birthday, ' + v.name + '! Wishing you a wonderful year. From all of us at CupSales.') + '" target="_blank"><button class="ghost" style="padding:6px 10px">WhatsApp</button></a>' : '') + '</div>';
+      '<div class="ibs">' + callBtn(v.phone, 1) + waBtn(wa, 'Happy birthday, ' + v.name + '! Wishing you a wonderful year. From all of us at CupSales.', 1) + '</div></div>';
   }).join('') + '</div>';
 }
 function addDays(ymd, n) { var t = ymd.split('-'); return new Date(Date.UTC(+t[0], +t[1] - 1, +t[2] + n)).toISOString().slice(0, 10); }
@@ -679,7 +799,13 @@ ACT.rcv = function (b) {
   }, 'SAVE');
 };
 ACT.orderV = function (b) { var d = draft(); var x = d.vendors.filter(function (y) { return !y.vid; })[0]; if (!x) { x = newV(); d.vendors.push(x); } d.vendors.forEach(function (y) { if (y.vid && y !== x) y.c = 1; }); x.c = 0; if (d.vendors.some(function (y) { return y.vid === b.dataset.v; })) { TAB = 'new'; render(); return; } x.vid = b.dataset.v; saveDraft(d); TAB = 'new'; render(); };
-var STXT = { Sending: ['✓ Saved – sending…', 'green'], Cancelling: ['Cancel saved – sending…', 'red'], Submitted: ['Pending approval', 'amber'], Released: ['With Prince', ''], 'Partly released': ['Part with Prince', ''], Delivered: ['Delivered', 'green'], Cancelled: ['Cancelled', 'red'], Failed: ['Returned', 'red'], Rejected: ['Declined', 'red'], 'Cancelled after release': ['Cancelled – bring back', 'red'] };
+/** v2.5.2: what the agent sees for an order – label, colour, symbol. */
+function oSt(o) {
+  var s = o.status, part = s === 'Partly released';
+  if (s === 'Released' || part) { if (o.hold) return ['Not delivered – manager decides', 'red', 'alert']; if (o.disp) return [part ? 'Part dispatched' : 'Dispatched', 'blue', 'truck']; return [part ? 'Part approved' : 'Approved', '', 'check']; }
+  var x = STXT[s] || [s, '']; return [x[0], x[1], { Sending: 'clock', Cancelling: 'x', Submitted: 'clock', Delivered: 'box', Cancelled: 'x', Failed: 'back', Rejected: 'x', 'Cancelled after release': 'back' }[s] || ''];
+}
+var STXT = { Sending: ['✓ Saved – sending…', 'green'], Cancelling: ['Cancel saved – sending…', 'red'], Submitted: ['Pending approval', 'amber'], Released: ['With Prince', ''], 'Partly released': ['Part with Prince', ''], Delivered: ['Delivered', 'green'], Cancelled: ['Cancelled', 'red'], Failed: ['Returned', 'red'], Rejected: ['Declined', 'red'], 'Cancelled after release': ['Cancelled – cartons back', 'red'] };
 function needsCheck(o) { return false; } // v2.4.9: the agent no longer checks Prince's record – the vendor confirms it on her receipt
 function qtyTxt(l) { return l.qty + ' ' + esc(skn(l.sku)); }
 /** v2.4.9: what the vendor said on her delivery receipt, and the manager's decision. */
@@ -729,7 +855,7 @@ function needsHtml(list, title) { list = list || D.needs || []; if (!list.length
 function needsList(list) {
   return list.map(function (x, i) {
     var k = 'n:' + x.eid, o = isOpen(k);
-    return '<div class="srow' + (i ? '' : ' first') + '" style="align-items:flex-start;flex-wrap:wrap"><div class="grow tap" data-act="tog" data-o="' + esc(k) + '" data-s="' + (o ? 1 : 0) + '"><span class="pill ' + (x.sev === 'High' ? 'red' : 'amber') + '">' + esc(x.type) + '</span> <span class="small muted">' + esc(dayLbl(x.at)) + '</span>' + (x.vendor ? '<div><b>' + esc(x.vendor) + '</b></div>' : '') + (o ? '' : '<div class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(x.dec ? x.dec.summary : x.text) + '</div>') + '</div><span class="ar" data-act="tog" data-o="' + esc(k) + '" data-s="' + (o ? 1 : 0) + '">' + (o ? '▴' : '▾') + '</span>' +
+    return '<div class="srow' + (i ? '' : ' first') + '" style="align-items:flex-start;flex-wrap:wrap"><div class="grow tap" data-act="tog" data-o="' + esc(k) + '" data-s="' + (o ? 1 : 0) + '"><span class="pill ' + (x.sev === 'High' ? 'red' : 'amber') + '">' + esc(x.type) + '</span> <span class="small muted">' + esc(dayLbl(x.at)) + '</span>' + (x.vendor ? '<div><b>' + esc(x.vendor) + '</b></div>' : '') + (o ? '' : '<div class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(x.dec ? x.dec.summary : x.text) + '</div>') + '</div><span class="ar" data-act="tog" data-o="' + esc(k) + '" data-s="' + (o ? 1 : 0) + '">' + chev(o) + '</span>' +
       (o ? '<div style="flex:1 1 100%">' + (x.dec ? '' : '<div class="small" style="margin:4px 0">' + esc(x.text) + '</div>') + (x.dec ? decideHtml(x) : '<button data-act="resolve" data-e="' + x.eid + '">DONE</button>') + '</div>' : '') + '</div>';
   }).join('');
 }
@@ -767,14 +893,14 @@ function suppliersHtml() {
   if (!D.suppliers || !D.suppliers.length || D.me.role !== 'Supervisor') return '';
   return '<div class="card"><h3>Suppliers</h3>' + D.suppliers.map(function (x) {
     var fld = x.field.reduce(function (t, w) { return t + w.amt; }, 0);
-    return '<div style="margin:10px 0;padding-bottom:10px;border-bottom:1px solid var(--line)"><div class="row"><div class="grow"><b style="font-size:17px">' + esc(x.name) + '</b></div><div class="right">CupSales owes <b style="color:var(--red)">' + ghs(x.owed) + '</b></div></div>' +
+    return '<div style="margin:10px 0;padding-bottom:10px;border-bottom:1px solid var(--line)"><div class="row"><div class="grow"><b style="font-size:17px">' + esc(x.name) + '</b></div><div class="right">' + (x.src === 'SRC-MARKET' ? '<span class="small muted">bought by the company</span>' : 'CupSales owes <b style="color:var(--red)">' + ghs(x.owed) + '</b>') + '</div></div>' +
       '<table class="small"><tr><td>Vendors still owe for ' + esc(x.name) + ' goods</td><td class="right"><b>' + ghs(x.vendorsOwe) + '</b></td></tr>' +
       '<tr><td>Paid by vendors, with ' + (x.field.length ? x.field.map(function (w) { return esc(w.name) + ' ' + ghs(w.amt); }).join(', ') : 'agents / Prince') + '</td><td class="right"><b>' + ghs(fld) + '</b></td></tr>' +
       '<tr><td>Waiting at the HR office logbook</td><td class="right"><b>' + ghs(x.hr) + '</b></td></tr>' +
       (x.frank > 0.004 ? '<tr><td style="color:var(--red)">With Frank (should go to the HR logbook)</td><td class="right"><b>' + ghs(x.frank) + '</b></td></tr>' : '') +
-      '<tr><td><b>With you – ready to pay ' + esc(x.name) + '</b></td><td class="right"><b>' + ghs(x.me) + '</b></td></tr>' +
+      '<tr><td><b>' + (x.src === 'SRC-MARKET' ? 'With you – company money' : 'With you – ready to pay ' + esc(x.name)) + '</b></td><td class="right"><b>' + ghs(x.me) + '</b></td></tr>' +
       (x.last.length ? '<tr><td class="muted" colspan="2">Last paid: ' + x.last.map(function (l) { return ghs(l.amt) + ' on ' + esc(dayLbl(l.at)); }).join(' · ') + '</td></tr>' : '') + '</table>' +
-      '<div class="row" style="margin-top:8px"><button data-act="suphr" data-s="' + x.src + '" data-n="' + esc(x.name) + '" data-a="' + x.hr + '"' + (x.hr > 0.004 ? ' class="main"' : '') + '>COLLECTED FROM HR</button><button data-act="suppay" data-s="' + x.src + '" data-n="' + esc(x.name) + '" data-a="' + x.me + '" data-o="' + x.owed + '"' + (x.me > 0.004 ? ' class="main"' : '') + '>PAID ' + esc(x.name.toUpperCase()) + '</button></div></div>';
+      '<div class="row" style="margin-top:8px"><button data-act="suphr" data-s="' + x.src + '" data-n="' + esc(x.name) + '" data-a="' + x.hr + '"' + (x.hr > 0.004 ? ' class="main"' : '') + '>COLLECTED FROM HR</button>' + (x.src === 'SRC-MARKET' ? '<span class="small muted">Company money – nobody to pay</span>' : '<button data-act="suppay" data-s="' + x.src + '" data-n="' + esc(x.name) + '" data-a="' + x.me + '" data-o="' + x.owed + '"' + (x.me > 0.004 ? ' class="main"' : '') + '>PAID ' + esc(x.name.toUpperCase()) + '</button>') + '</div></div>';
   }).join('') + '<p class="sub">Paying a supplier lowers what CupSales owes it. Vendors\' debts only go down when the vendor pays.</p></div>';
 }
 ACT.suphr = function (b) {
@@ -797,7 +923,7 @@ function outCardHtml() {
   var parts = (D.sources || []).filter(function (x) { return x.id !== 'SRC-OMINI'; });
   var open = D.out.skus.filter(function (x) { return !routeOf(x); }).length, dirty = Object.keys(RTS).length + Object.keys(RTM).length;
   var head = '<b>Out of stock at Omni: ' + D.out.skus.length + ' product' + (D.out.skus.length === 1 ? '' : 's') + '</b>' + (open ? ' <span class="pill red">' + open + ' need you</span>' : '') + (dirty ? ' <span class="pill amber">not saved</span>' : '') + '<div class="small muted">' + D.out.skus.map(function (x) { var r = RTS[x] !== undefined ? RTS[x] : routeOf(x); return esc(skn(x)) + (r === 'NONE' ? ' – Stockout' : r ? ' – ' + esc(srcNm(r)) : ' – ?'); }).join(' · ') + '</div>';
-  return fold('outcard', head, function () { return '<p class="sub">' + esc(D.out.by || 'Frank') + ' marked these out (' + esc(D.out.at || '') + '). Choose who sends each one – or <b>Stockout</b> when it is finished and cannot be got anywhere. Add a message for the agents if you want (for example when it comes back).</p>' +
+  return fold('outcard', head, function () { return '<p class="sub">' + esc(D.out.by || 'Frank') + ' marked these out (' + esc(D.out.at || '') + '). Choose where each one comes from – Clement, Bernice or an open-market purchase – or <b>Stockout</b> when it cannot be got anywhere. Agents see a Stockout as a notice and cannot order it; from anywhere else they simply order it, with its source in the product list. A message (optional) goes with a Stockout.</p>' +
     D.out.skus.map(function (x) {
       var r = RTS[x] !== undefined ? RTS[x] : routeOf(x); var w = (D.waiting || []).filter(function (o) { return o.lines.some(function (l) { return l.sku === x; }); });
       var q = w.reduce(function (t, o) { return t + o.lines.filter(function (l) { return l.sku === x; }).reduce(function (a, l) { return a + l.qty; }, 0); }, 0);
@@ -805,15 +931,15 @@ function outCardHtml() {
         (r ? '<span class="pill ' + (r === 'NONE' ? 'red' : 'green') + '">' + (r === 'NONE' ? 'Stockout' : 'from ' + esc(srcNm(r))) + '</span>' : '<span class="pill red">who has it?</span>') + '</div>' +
         '<div class="seg" style="margin-top:6px">' + parts.map(function (p2) { return '<button class="' + (r === p2.id ? 'on' : '') + '" data-act="route" data-k="' + esc(x) + '" data-s="' + p2.id + '">' + esc(p2.name) + '</button>'; }).join('') + '<button class="' + (r === 'NONE' ? 'on' : '') + '" data-act="route" data-k="' + esc(x) + '" data-s="NONE">Stockout</button></div>' +
         '<input style="margin-top:6px" data-inp="rtm" data-k="' + esc(x) + '" value="' + esc(RTM[x] !== undefined ? RTM[x] : outMsg(x)) + '" placeholder="Message to the agents (optional)"></div>';
-    }).join('') + '<button class="main big" style="margin-top:8px" data-act="routesave">SAVE AND TELL AGENTS</button><p class="sub">Agents with waiting orders and Frank get ONE message listing all products; a Stockout or a message is also sent to every agent and shows on New order.</p>'; }, open ? 'redf' : 'warnf', !!open);
+    }).join('') + '<button class="main big" style="margin-top:8px" data-act="routesave">SAVE AND TELL AGENTS</button><p class="sub">Agents with waiting orders and Frank get ONE message listing all products. A Stockout (and when it can be ordered again) is sent to every agent.</p>'; }, open ? 'redf' : 'warnf', !!open);
 }
 var RTS = {}, RTM = {}; // v2.4.9 / v2.5.0: choices and messages not saved yet
 INP.rtm = function (el) { RTM[el.dataset.k] = el.value; };
 ACT.route = function (b) { var k = b.dataset.k, sv = b.dataset.s; if (routeOf(k) === sv) delete RTS[k]; else RTS[k] = sv; render(); };
 ACT.routesave = function () {
   var m = {}, ms = {}; Object.keys(RTS).forEach(function (k) { m[k] = RTS[k]; }); Object.keys(RTM).forEach(function (k) { if (String(RTM[k]).trim() !== outMsg(k)) ms[k] = String(RTM[k]).trim(); });
-  var miss = Object.keys(ms).filter(function (k) { return m[k] === undefined && !routeOf(k); }); if (miss.length) { say('First choose Clement, Bernice or Stockout for ' + miss.map(skn).join(', ') + '.'); return; }
-  if (!Object.keys(m).length && !Object.keys(ms).length) { say('Nothing changed – tap Clement, Bernice or Stockout, or write a message.'); return; }
+  var miss = Object.keys(ms).filter(function (k) { return m[k] === undefined && !routeOf(k); }); if (miss.length) { say('First choose where ' + miss.map(skn).join(', ') + ' comes from, or Stockout.'); return; }
+  if (!Object.keys(m).length && !Object.keys(ms).length) { say('Nothing changed – tap where it comes from or Stockout, or write a message.'); return; }
   RTS = {}; RTM = {}; var ks = Object.keys(m).concat(Object.keys(ms)).filter(function (k, i, a) { return a.indexOf(k) === i; });
   bgSave('route', { routes: m, msgs: ms }, 'rt-' + uid(), 'out of stock: ' + ks.map(function (k) { var r = m[k] !== undefined ? m[k] : routeOf(k); return skn(k) + (r === 'NONE' ? ' – Stockout' : ' from ' + srcNm(r)); }).join(', '), null, true);
 };
@@ -835,7 +961,7 @@ var OPN = {}, PSEC = {}, CURL = '';
 function isOpen(key, def) { return OPN[key] !== undefined ? OPN[key] : !!def; }
 function fold(key, head, body, cls, def) {
   var o = isOpen(key, def);
-  return '<div class="card fold' + (cls ? ' ' + cls : '') + '" id="f-' + esc(key) + '"><div class="fh" data-act="tog" data-o="' + esc(key) + '" data-s="' + (o ? 1 : 0) + '"><div class="grow">' + head + '</div><span class="ar">' + (o ? 'Hide ▴' : 'Details ▾') + '</span></div>' + (o ? '<div class="fb">' + (typeof body === 'function' ? body() : body) + '</div>' : '') + '</div>';
+  return '<div class="card fold' + (cls ? ' ' + cls : '') + '" id="f-' + esc(key) + '"><div class="fh" data-act="tog" data-o="' + esc(key) + '" data-s="' + (o ? 1 : 0) + '"><div class="grow">' + head + '</div><span class="ar" aria-label="' + (o ? 'Hide' : 'Details') + '">' + chev(o) + '</span></div>' + (o ? '<div class="fb">' + (typeof body === 'function' ? body() : body) + '</div>' : '') + '</div>';
 }
 ACT.tog = function (b) { OPN[b.dataset.o] = b.dataset.s !== '1'; if (b.dataset.l) rerenderList(); else render(); };
 function chips(k, list, cur) { return '<div class="pchips">' + list.map(function (x) { return '<button class="' + (cur === x[0] ? 'on' : '') + '" data-act="psec" data-k="' + k + '" data-s="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>'; }
@@ -845,22 +971,40 @@ function dayHead(day, right) { var t = D.today, ago = Math.round((Date.UTC(+t.sl
 function oValue(o) { return o.lines.reduce(function (t, l) { return t + (Number(l.qty) || 0) * (l.price != null ? Number(l.price) : sku(l.sku).price); }, 0); }
 function oCtn(o) { return o.lines.reduce(function (t, l) { return t + (Number(l.qty) || 0); }, 0); }
 function oCanChange(o) { return !o.local && o.status === 'Submitted' && !o.parent; }
-function oCanCancel(o) { return !o.local && (o.status === 'Submitted' || /Released/.test(o.status) || o.status === 'Partly released'); }
+function oCanCancel(o) { return !o.local && !o.hold && (o.status === 'Submitted' || /Released/.test(o.status) || o.status === 'Partly released'); }
 var SUB = { today: 'orders', done: 'orders' }; // v2.4.9: Orders | Payments inside "Orders & Payments"
 function subTabs(k, payN) { return '<div class="seg" style="margin:0 0 12px">' + [['orders', 'Orders'], ['pay', 'Payments' + (payN ? ' (' + payN + ')' : '')]].map(function (x) { return '<button class="' + (SUB[k] === x[0] ? 'on' : '') + '" data-act="sub" data-k="' + k + '" data-s="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>'; }
 ACT.sub = function (b) { SUB[b.dataset.k] = b.dataset.s; MSG = null; render(); window.scrollTo(0, 0); };
 function payNeeds() { return (D.needs || []).filter(function (x) { return x.dec; }); }
+/** v2.5.2: Prince could not deliver – the manager tries again or cancels (one card, open while something waits). */
+var NDN = {};
+function ndHtml() {
+  var L = (D.needs || []).filter(function (x) { return x.nd; }); if (!L.length || D.me.role !== 'Supervisor') return '';
+  var head = '<div class="row" style="flex-wrap:nowrap;gap:10px"><span class="hi r">' + ico(ICO.alert) + '</span><div class="grow"><b>Not delivered – you decide: ' + L.length + '</b><div class="small muted">' + L.slice(0, 3).map(function (x) { return esc(x.vendor); }).join(' · ') + '</div></div></div>';
+  return fold('nd', head, function () { return '<p class="sub" style="margin-top:0">TRY AGAIN puts it back on Prince\'s route. CANCEL tells Frank to expect the cartons back – nothing is owed for it. The agent is told either way.</p>' + L.map(function (x) {
+    var n = x.nd, cart = n.orders.reduce(function (t, o) { return t + o.lines.reduce(function (a, l) { return a + l.qty; }, 0); }, 0);
+    return '<div class="ndc"><div class="row" style="flex-wrap:nowrap"><div class="grow"><b style="font-size:16px">' + esc(x.vendor) + '</b><div class="small muted">' + esc(dayLbl(x.at)) + (n.time ? ' ' + esc(n.time) : '') + ' · ' + esc(n.by) + ' · agent ' + esc(n.orders.map(function (o) { return o.agent; }).filter(function (a, i, A) { return A.indexOf(a) === i; }).join(', ')) + '</div></div>' + callBtn(n.phone, 1) + '</div>' +
+      '<div class="why">“' + esc(n.reason) + '”</div>' + (n.orders.some(function (o) { return o.paid > 0; }) ? '<div class="small" style="color:var(--amber)">Paid upfront ' + ghs(n.orders.reduce(function (t, o) { return t + (o.paid || 0); }, 0)) + ' – if you cancel, you decide later: give it back or keep it for her next order.</div>' : '') + '<div class="small">' + n.orders.map(function (o) { return o.lines.map(function (l) { return '<span class="pill pk">' + pk(l.sku) + l.qty + ' ' + esc(skn(l.sku)) + '</span>'; }).join('') + ' <span class="muted">' + esc(o.pay) + (o.from && !/Omni/.test(o.from) ? ' · from ' + esc(o.from) : '') + '</span>'; }).join('<br>') + ' · ' + cart + ' ctn</div>' +
+      '<input style="margin-top:8px" data-inp="ndn" data-e="' + x.eid + '" value="' + esc(NDN[x.eid] || '') + '" placeholder="Note for Prince and the agent (optional)">' +
+      '<div class="row" style="margin-top:8px"><button class="main grow" data-act="ndgo" data-e="' + x.eid + '" data-c="RETRY" data-n="' + esc(x.vendor) + '">TRY AGAIN</button><button class="warn grow" data-act="ndgo" data-e="' + x.eid + '" data-c="CANCEL" data-n="' + esc(x.vendor) + '">CANCEL ORDER</button></div></div>'; }).join(''); }, 'redf', true);
+}
+INP.ndn = function (el) { NDN[el.dataset.e] = el.value; };
+ACT.ndgo = function (b) {
+  var re = b.dataset.c === 'RETRY', nm = b.dataset.n, note = String(NDN[b.dataset.e] || '').trim();
+  ask((re ? 'Prince tries ' + nm + ' again?\nIt goes back on his route.' : 'Cancel ' + nm + '\'s order?\nFrank is told to expect the cartons back; nothing is owed for it.') + (note ? '\nNote: ' + note : ''), function () {
+    bgSave('nddecide', { eid: b.dataset.e, choice: b.dataset.c, note: note }, 'nd-' + b.dataset.e, (re ? 'try again: ' : 'cancel: ') + nm, null, true); delete NDN[b.dataset.e]; }, re ? 'TRY AGAIN' : 'YES, CANCEL');
+};
 function rcptToSend() { var d3 = addDays(D.today, -3); return (D.receipts || []).filter(function (r) { return !r.sent && !r.answer && (!r.day || r.day >= d3); }).length; }
 function payCount() { return (D.toConfirm || []).length + payNeeds().length + rcptToSend(); }
 function pgToday() {
   var h = subTabs('today', payCount());
   if (SUB.today === 'pay') return h + paymentsHtml();
-  h += outCardHtml();
-  var other = (D.needs || []).filter(function (x) { return !x.dec && !x.pay && !x.tech; }), tech = (D.needs || []).filter(function (x) { return x.tech; });
+  h += ndHtml() + outCardHtml();
+  var other = (D.needs || []).filter(function (x) { return !x.dec && !x.pay && !x.tech && !x.nd; }), tech = (D.needs || []).filter(function (x) { return x.tech; });
   if (tech.length) h += '<div class="small muted" style="margin:0 2px 8px">⚙ ' + tech.length + ' technical message' + (tech.length === 1 ? '' : 's') + ' for the app owner (nothing for you to do).</div>';
   if (other.length) h += fold('needs-other', '<b>Other problems: ' + other.length + '</b><div class="small muted">' + other.slice(0, 3).map(function (x) { return esc(x.type); }).join(' · ') + (other.length > 3 ? ' …' : '') + '</div>', function () { return needsList(other); }, 'redf');
   var f0 = fl('today'); if (f0.ent === 'yes' && !(D.toEnter || []).length) { delete f0.ent; flSave(); }
-  var ne = (D.toEnter || []).length; if (ne && fl('today').ent !== 'yes') h += '<div class="hint" data-act="entgo">📋 <span class="grow"><b>' + ne + '</b> delivered order' + (ne === 1 ? '' : 's') + ' to enter in the company app</span><span class="ar">Show ▾</span></div>';
+  // v2.5.2: the company-app list is chosen in the filter (Company app → To enter); no hint line
   h += filterBar('today', 'Find a vendor or order number');
   return h + '<div id="flist">' + LISTR.today() + '</div>';
 }
@@ -919,7 +1063,7 @@ LISTR.pcash = function () {
   return C.map(function (c) {
     var items = (c.items || []).filter(function (x) { return hasQ('pcash', x.text); }), t = HTK[c.src] || (HTK[c.src] = {});
     var sel = items.filter(function (x) { return t[x.id] !== false; }), sum = Math.round(sel.reduce(function (s, x) { return s + x.amt; }, 0) * 100) / 100;
-    var h = '<div class="card"><div class="row"><div class="grow">' + (c.free <= 0.004 ? '<b style="font-size:17px">Nothing with you</b> – ' + esc(c.money) + ' money' : '<b style="font-size:17px">' + ghs(c.free) + '</b> ') + (c.free <= 0.004 ? '' : c.src === 'Unallocated' ? 'extra cash (a vendor paid too much) – keep it apart, the manager will decide' : esc(c.money) + ' money with you') + '</div></div>' + (c.pending > 0.004 ? '<div class="small muted">+ ' + ghs(c.pending) + ' handed over, waiting for ' + esc(cashTo(c)) + ' to confirm</div>' : '');
+    var h = '<div class="card"><div class="row"><div class="grow">' + (c.free <= 0.004 ? '<b style="font-size:17px">Nothing with you</b> – ' + esc(c.money) + ' money' : '<b style="font-size:17px">' + ghs(c.free) + '</b> ') + (c.free <= 0.004 ? '' : c.src === 'Unallocated' ? 'extra cash (a vendor paid too much, or paid for an order that was cancelled) – keep it apart, the manager decides: give it back or keep it for her next order' : esc(c.money) + ' money with you') + '</div></div>' + (c.pending > 0.004 ? '<div class="small muted">+ ' + ghs(c.pending) + ' handed over, waiting for ' + esc(cashTo(c)) + ' to confirm</div>' : '');
     if (items.length) h += '<div class="small muted" style="margin:6px 0 2px">' + (c.route ? 'Tick the payments you are handing over (each order):' : 'Made of:') + '</div>' + items.map(function (x) {
       return '<label class="tk">' + (c.route ? '<input type="checkbox" class="chk" data-chg="htk" data-s="' + esc(c.src) + '" data-i="' + esc(x.id) + '"' + (t[x.id] !== false ? ' checked' : '') + '>' : '') + '<span class="grow"><b>' + esc(vnOf(x.text)) + '</b><div class="small muted">' + esc(String(x.text).split(' – ').slice(1).join(' – ')) + ' · ' + esc(x.when || '') + (x.day ? ' · ' + (x.day === D.today ? 'today' : Math.round((Date.parse(D.today) - Date.parse(x.day)) / 86400000) + ' d ago') : '') + '</div></span><b>' + ghs(x.amt) + '</b></label>'; }).join('');
     if (c.route && c.free > 0.004 && (c.items || []).length && !items.length) h += '<p class="small muted">No payment matches the search.</p>';
@@ -994,7 +1138,8 @@ LISTR.today = function () {
     if (!hasQ('today', o.vendor + ' ' + o.oid + ' ' + (o.school || ''))) return false;
     if (f.pay && o.pay !== f.pay) return false; if (f.day && o.date !== f.day) return false;
     var st = f.st, c = o.outcome || {};
-    if (st === 'wait' && !/^(Submitted|Sending)$/.test(o.status)) return false; if (st === 'appr' && !(/Released/.test(o.status) || o.status === 'Partly released')) return false;
+    var rel = /Released/.test(o.status) || o.status === 'Partly released';
+    if (st === 'wait' && !/^(Submitted|Sending)$/.test(o.status)) return false; if (st === 'appr' && !(rel && !o.disp && !o.hold)) return false; if (st === 'disp' && !(rel && o.disp && !o.hold)) return false; if (st === 'nd' && !(rel && o.hold)) return false;
     if (st === 'del' && o.status !== 'Delivered') return false; if (st === 'dec' && o.status !== 'Rejected') return false; if (st === 'canc' && !/Cancel/.test(o.status)) return false;
     if (st === 'ret' && o.status !== 'Failed') return false; if (st === 'vno' && !/^Not correct/.test(c.vans || '')) return false;
     return true;
@@ -1003,17 +1148,18 @@ LISTR.today = function () {
   mo = mo.slice().sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
   var live = function (o) { return !/Cancel|Rejected/.test(o.status); }, nl = mo.filter(live), tv = 0, tc = 0; nl.forEach(function (o) { tv += oValue(o); tc += oCtn(o); });
   var A = (D.myOrders || []).filter(function (o) { return !agOn() || o.agent === agName(agOn()); }), cnt = function (fn) { return A.filter(fn).length; };
-  var q = [['wait', 'Pending', cnt(function (o) { return /^(Submitted|Sending)$/.test(o.status); })], ['appr', 'With Prince', cnt(function (o) { return /Released/.test(o.status) || o.status === 'Partly released'; })], ['vno', 'Vendor says not right', cnt(function (o) { return o.outcome && /^Not correct/.test(o.outcome.vans || ''); })]].filter(function (x) { return x[2]; });
+  var rl = function (o) { return /Released/.test(o.status) || o.status === 'Partly released'; };
+  var q = [['wait', 'Pending', cnt(function (o) { return /^(Submitted|Sending)$/.test(o.status); })], ['appr', 'Approved', cnt(function (o) { return rl(o) && !o.disp && !o.hold; })], ['disp', 'Dispatched', cnt(function (o) { return rl(o) && o.disp && !o.hold; })], ['nd', 'Not delivered', cnt(function (o) { return rl(o) && o.hold; })], ['vno', 'Vendor says not right', cnt(function (o) { return o.outcome && /^Not correct/.test(o.outcome.vans || ''); })]].filter(function (x) { return x[2]; });
   var h = (q.length ? '<div class="pchips">' + q.map(function (x) { return '<button class="' + (f.st === x[0] ? 'on' : '') + '" data-act="stq" data-s="' + x[0] + '">' + x[1] + ' <b>' + x[2] + '</b></button>'; }).join('') + '</div>' : '') +
     '<div class="sumline"><b>' + nl.length + '</b> order' + (nl.length === 1 ? '' : 's') + ' · <b>' + tc + '</b> cartons · <b>' + ghs(tv) + '</b>' + (mo.length > nl.length ? ' <span class="muted">(' + (mo.length - nl.length) + ' cancelled/declined not counted)</span>' : '') + '</div>', cur = null;
   mo.forEach(function (o) {
     if (o.date !== cur) { cur = o.date; var dd = mo.filter(function (y) { return y.date === cur; }); dd = dd.filter(live); h += '<div class="dayh"><b>' + esc(dayLbl(cur)) + (cur === D.today ? ' – today' : '') + '</b><span>' + dd.length + ' order' + (dd.length === 1 ? '' : 's') + ' · <b>' + ghs(dd.reduce(function (t, y) { return t + oValue(y); }, 0)) + '</b></span></div>'; }
-    var s = STXT[o.status] || [o.status, ''], open = OPENO[o.oid];
+    var s = oSt(o), open = OPENO[o.oid];
     h += '<div class="card oc"><div class="row ohead" data-act="otog" data-o="' + esc(o.oid) + '"><div class="grow"><b>' + esc(o.vendor) + '</b>' +
-      '<div class="sub">' + oCtn(o) + ' ctn · ' + ghs(oValue(o)) + ' · ' + (o.prepaid ? 'Paid upfront ' + ghs(o.prepaid) : esc(o.pay)) + (agFilterOk() ? ' · ' + esc(o.agent) : '') + (o.outcome && o.outcome.delivered && o.outcome.delivered.length ? ' · by ' + esc(o.outcome.rider || 'Prince') : '') + '</div>' + (o.outcome ? vansHtml(o.outcome) : '') + (o.status === 'Submitted' && o.date < D.today ? '<div class="small" style="color:var(--red)">waiting ' + (function (n) { return n + ' day' + (n === 1 ? '' : 's'); })(Math.round((Date.parse(D.today) - Date.parse(o.date)) / 86400000)) + ' – call Frank</div>' : '') + '</div><span class="pill ' + s[1] + '" style="white-space:nowrap">' + esc(s[0]) + '</span>' +
+      (o.parent ? '<div class="small" style="color:var(--info)">Part of the same order – from ' + esc(o.rel ? o.rel.from : 'another place') + '</div>' : '') + '<div class="sub">' + oCtn(o) + ' ctn · ' + ghs(oValue(o)) + ' · ' + (o.prepaid ? 'Paid upfront ' + ghs(o.prepaid) : esc(o.pay)) + (agFilterOk() ? ' · ' + esc(o.agent) : '') + (o.outcome && o.outcome.delivered && o.outcome.delivered.length ? ' · by ' + esc(o.outcome.rider || 'Prince') : '') + '</div>' + (o.outcome ? vansHtml(o.outcome) : '') + (o.status === 'Submitted' && o.date < D.today ? '<div class="small" style="color:var(--red)">waiting ' + (function (n) { return n + ' day' + (n === 1 ? '' : 's'); })(Math.round((Date.parse(D.today) - Date.parse(o.date)) / 86400000)) + ' – call Frank</div>' : '') + (o.disp && /Released/.test(o.status) && !o.hold ? '<div class="small" style="color:var(--info)">Prince took it ' + esc(o.disp.replace(/^\d+ \w+ /, '')) + '</div>' : '') + '</div>' + stPill(s) +
       (o.local ? '' : '<button class="kebab" data-act="omenu" data-o="' + esc(o.oid) + '" aria-label="More">⋮</button>') + '</div>';
     if (OMENU === o.oid) h += '<div class="mback" data-act="mclose"></div><div class="menu"><button data-act="odet" data-o="' + esc(o.oid) + '">View details</button>' +
-      (oCanChange(o) ? '<button data-act="editO" data-o="' + esc(o.oid) + '">Change order</button>' : '') + (oCanCancel(o) ? '<button class="warn" data-act="cancelO" data-o="' + esc(o.oid) + '">Cancel order' + (o.status === 'Submitted' ? '' : ' (already approved)') + '</button>' : '') +
+      (oCanChange(o) ? '<button data-act="editO" data-o="' + esc(o.oid) + '">Change order</button>' : '') + (oCanCancel(o) ? '<button class="warn" data-act="cancelO" data-o="' + esc(o.oid) + '">Cancel order' + (o.status === 'Submitted' ? '' : o.disp ? ' (already on the way)' : ' (already approved)') + '</button>' : '') +
       (!oCanChange(o) && !oCanCancel(o) ? '<div class="no">' + esc(s[0]) + ' – it can no longer be changed or cancelled.</div>' : '') + '</div>';
     if (open) h += oBody(o);
     h += '</div>';
@@ -1033,14 +1179,14 @@ var LKEY = {}; // v2.5.0: the list on screen is CURL (set by filterBar)
 function rerenderList() { var box = $('flist'); if (box && CURL && LISTR[CURL]) box.innerHTML = LISTR[CURL](); else render(); }
 ACT.odet = function (b) {
   var o = D.myOrders.filter(function (x) { return x.oid === b.dataset.o; })[0]; OMENU = ''; rerenderList(); if (!o) return;
-  var c = o.outcome, s = STXT[o.status] || [o.status, ''], tr = function (k, v) { return v === '' || v == null ? '' : '<tr><td class="k">' + esc(k) + '</td><td>' + v + '</td></tr>'; };
-  var h = '<div class="overlay"><div class="sheet"><div class="row"><div class="grow"><h3 style="margin:0">' + esc(o.vendor) + '</h3><div class="sub">' + esc(o.school || '') + '</div></div><span class="pill ' + s[1] + '">' + esc(s[0]) + '</span></div>' +
+  var c = o.outcome, s = oSt(o), tr = function (k, v) { return v === '' || v == null ? '' : '<tr><td class="k">' + esc(k) + '</td><td>' + v + '</td></tr>'; };
+  var h = '<div class="overlay"><div class="sheet"><div class="row"><div class="grow"><h3 style="margin:0">' + esc(o.vendor) + '</h3><div class="sub">' + esc(o.school || '') + '</div></div>' + stPill(s) + '</div>' +
     '<table class="dt" style="margin-top:8px">' + tr('Order number', esc(o.oid)) + tr('Ordered', esc(o.sent || dayLbl(o.date))) + tr('Agent', esc(o.agent)) + tr('Payment asked', esc(o.pay === 'Cash' ? 'Cash at delivery' : o.pay)) + (o.parent ? tr('Part of', esc(o.parent)) : '') + '</table>' +
     '<h3 style="margin:14px 0 4px">Products</h3><table><tr class="small muted"><td>Product</td><td class="right">Cartons</td><td class="right">Price</td><td class="right">Total</td></tr>' +
     o.lines.map(function (l) { var p = l.price != null ? Number(l.price) : sku(l.sku).price; return '<tr><td><b>' + esc(skn(l.sku)) + '</b><div class="small muted">' + esc(sku(l.sku).title) + '</div></td><td class="right">' + l.qty + '</td><td class="right">' + ghs(p) + '</td><td class="right"><b>' + ghs(p * l.qty) + '</b></td></tr>'; }).join('') +
     '<tr><td><b>Total</b></td><td class="right"><b>' + oCtn(o) + '</b></td><td></td><td class="right"><b>' + ghs(oValue(o)) + '</b></td></tr></table>' +
     '<table class="dt" style="margin-top:8px">' + (o.prepaid ? tr('Paid with the order', ghs(o.prepaid)) : '') + (o.promised ? tr('Old debt promised at delivery', ghs(o.promised)) : '') +
-    (o.rel ? tr('Approved', esc(o.rel.at) + ' from ' + esc(o.rel.from) + (o.rel.status === 'Partly released' ? ' (part)' : '')) : '') + (o.why ? tr('Declined', esc(o.why)) : '') +
+    (o.rel ? tr('Approved', esc(o.rel.at) + ' from ' + esc(o.rel.from) + (o.rel.status === 'Partly released' ? ' (part)' : '')) : '') + (o.disp ? tr('Dispatched', esc(o.disp) + (o.dispBy && !/^Before/.test(o.dispBy) ? ' – marked by ' + esc(o.dispBy) : '')) : '') + (o.hold ? tr('Delivery', '<b style="color:var(--red)">Not delivered – the manager decides</b>') : '') + (o.why ? tr('Declined', esc(o.why)) : '') +
     (c ? (c.delivered.length ? tr('Delivered', esc(dayLbl(c.at)) + ' ' + esc(c.time) + ' – ' + c.delivered.map(qtyTxt).join(', ')) + tr('Delivered by', esc(c.rider || 'Prince') + (c.helper ? ' (helper)' : '')) + (c.returned.length ? tr('Returned', c.returned.map(qtyTxt).join(', ')) : '') +
       tr('Value delivered', ghs(c.value)) + tr('Paid', '<b>' + ghs(c.paid) + '</b>') + tr('Still owing', c.owing > 0.004 ? '<b style="color:var(--red)">' + ghs(c.owing) + '</b>' : '<b style="color:var(--green)">nothing – fully paid</b>') +
       tr('Asked / recorded', esc(c.said || '?') + ' / ' + esc(c.prince || '?')) + tr('Vendor', /^Confirmed/.test(c.vans || '') ? '✓ confirmed' + (/text/.test(c.vans) ? ' by text' : '') : /^Not correct/.test(c.vans || '') ? '<b style="color:var(--red)">says NOT right</b>' + (c.vcom ? ': ' + esc(c.vcom) : '') : c.rsent ? 'receipt sent – no answer yet' : 'receipt not sent yet') + (c.decision ? tr('Manager decided', esc(c.decision)) : '')
@@ -1071,7 +1217,7 @@ ACT.editO = function (b) {
 };
 ACT.cancelO = function (b) {
   var o = D.myOrders.filter(function (x) { return x.oid === b.dataset.o; })[0]; $('over').innerHTML = ''; if (OMENU) { OMENU = ''; rerenderList(); } if (!o) return;
-  ask('Cancel ' + o.vendor + ' (' + o.oid + ')?' + (o.status !== 'Submitted' ? '\nIt is already with Prince – Frank and Prince will be told.' : ''), function () {
+  ask('Cancel ' + o.vendor + ' (' + o.oid + ')?' + (o.status !== 'Submitted' ? '\nIt is already ' + (o.disp ? 'on the way with Prince' : 'approved') + ' – Frank and Prince will be told.' : ''), function () {
   bgSave('cancel', { oid: o.oid }, 'c-' + o.oid, 'cancel ' + o.vendor + ' (' + o.oid + ')', null); }, 'YES, CANCEL IT');
 };
 // ---------------------------------------------------------------- v2.4.8: receipts for vendors
@@ -1215,8 +1361,35 @@ function pgBook() {
   return h;
 }
 ACT.booksub = function (b) { BOOKSUB = b.dataset.s; OMENU = ''; render(); };
-function pgApproved() { return '<h3 style="margin:2px 2px 8px">Approved today</h3><p class="sub">Today\'s approved orders and what happened to each. As Prince delivers, record the money here. Earlier days: My book → Order history.</p>' + filterBar('disp', 'Find a vendor, school or agent') + '<div id="flist">' + LISTR.disp() + '</div>'; }
-var DSTC = { Dispatched: '', Delivered: 'green', Returned: 'red', Cancelled: 'red' };
+function pgApproved() {
+  return comingBackHtml() + pickupFrankHtml() + '<h3 style="margin:2px 2px 8px">Approved today</h3><p class="sub">Today\'s approved orders and what happened to each. Earlier days: My book → Order history.</p>' + filterBar('disp', 'Find a vendor, school or agent') + '<div id="flist">' + LISTR.disp() + '</div>';
+}
+/** v2.5.2: approved orders Prince has not taken yet – Frank ticks what Prince took and taps PRINCE TOOK THESE. */
+var FPK = {};
+function pickupFrankHtml() {
+  var L = (D.dispatched || []).filter(function (x) { return x.status === 'Approved'; }); if (!L.length) return '';
+  var sel = L.filter(function (x) { return FPK[x.oid] === true; }), ct = 0; L.forEach(function (x) { x.lines.forEach(function (l) { ct += l.qty; }); });
+  var head = '<div class="row" style="flex-wrap:nowrap;gap:10px"><span class="hi b">' + ico(ICO.truck) + '</span><div class="grow"><b>Waiting for Prince: ' + L.length + ' order' + (L.length === 1 ? '' : 's') + '</b><div class="small muted">' + ct + ' cartons – tick what Prince takes</div></div></div>';
+  return fold('fpick', head, function () { return '<button class="ghost" data-act="fpkall">✓ Tick all ' + L.length + '</button>' + L.map(function (x) { return '<label class="pk-o"><input type="checkbox" class="chk" data-chg="fpk" data-o="' + esc(x.oid) + '"' + (FPK[x.oid] === true ? ' checked' : '') + '><span class="grow"><b>' + esc(x.vendor) + '</b> <span class="small muted">' + esc(x.agent) + (x.day !== D.today ? ' · approved ' + esc(dayLbl(x.day)) : '') + '</span><div class="small">' + x.lines.map(qtyTxt).join(', ') + (x.omni ? '' : ' · from ' + esc(x.from)) + '</div></span></label>'; }).join('') +
+    '<button class="main big" style="margin-top:8px" data-act="dispgo"' + (sel.length ? '' : ' disabled') + '>PRINCE TOOK THESE (' + sel.length + ')</button><p class="small muted" style="margin:6px 0 0">The agents are told their orders are on the way. Prince can also tick this on his phone.</p>'; }, '', true);
+}
+CHG.fpk = function (el) { FPK[el.dataset.o] = el.checked; render(); };
+ACT.fpkall = function () { (D.dispatched || []).forEach(function (x) { if (x.status === 'Approved') FPK[x.oid] = true; }); render(); };
+ACT.dispgo = function () {
+  var L = (D.dispatched || []).filter(function (x) { return x.status === 'Approved' && FPK[x.oid] === true; }); if (!L.length) { say('Tick the orders Prince took.'); return; }
+  ask('Prince took ' + L.length + ' order' + (L.length === 1 ? '' : 's') + '?\n' + L.map(function (x) { return x.vendor + ' – ' + x.lines.map(function (l) { return l.qty + ' ' + skn(l.sku); }).join(', '); }).join('\n'), function () {
+    bgSave('dispatch', { oids: L.map(function (x) { return x.oid; }) }, 'dp-' + uid(), 'given to Prince: ' + L.length + ' order' + (L.length === 1 ? '' : 's'), null, true); FPK = {}; }, 'YES – ON THE WAY');
+};
+/** v2.5.2: cancelled after they left – the cartons Frank should get back. */
+function comingBackHtml() {
+  var L = D.comingBack || []; if (!L.length) return '';
+  var ct = 0; L.forEach(function (x) { x.lines.forEach(function (l) { ct += l.qty; }); });
+  var nc = L.filter(function (x) { return !x.ret; }).length, nr = L.length - nc;
+  var head = '<div class="row" style="flex-wrap:nowrap;gap:10px"><span class="hi r">' + ico(ICO.back) + '</span><div class="grow"><b>Coming back: ' + ct + ' carton' + (ct === 1 ? '' : 's') + '</b><div class="small muted">' + [nc ? nc + ' cancelled order' + (nc === 1 ? '' : 's') : '', nr ? nr + ' not kept at delivery' : ''].filter(String).join(' · ') + ' – nothing is owed for them</div></div></div>';
+  return fold('fback', head, function () { return L.map(function (x) { return '<div class="pk-o"><span class="grow"><b>' + esc(x.vendor) + '</b> <span class="small muted">' + esc(x.agent) + ' · ' + esc(dayLbl(x.at)) + '</span><div class="small">' + x.lines.map(function (l) { return '<span class="pill pk">' + pk(l.sku) + l.qty + ' ' + esc(skn(l.sku)) + '</span>'; }).join('') + '</div>' + (x.why ? '<div class="small muted">' + esc(x.why) + '</div>' : '') + (x.shelf ? '<div class="small" style="color:var(--info)">Prince had not taken it – put it back on the shelf.</div>' : '') + '</span><button data-act="sback" data-o="' + esc(x.oid) + '" data-d="' + esc(x.did || '') + '" data-n="' + esc(x.vendor) + '">GOT THEM BACK</button></div>'; }).join(''); }, 'redf', true);
+}
+ACT.sback = function (b) { ask('The cartons of ' + b.dataset.n + ' are back in the warehouse?\nCount them first.', function () { bgSave('stockback', b.dataset.d ? { dids: [b.dataset.d] } : { oids: [b.dataset.o] }, 'sb-' + (b.dataset.d || b.dataset.o), 'cartons back: ' + b.dataset.n, null, true); }, 'YES, BACK'); };
+var DSTC = { Approved: '', Dispatched: 'blue', 'Not delivered': 'red', Delivered: 'green', Returned: 'red', Cancelled: 'red' }, DSTI = { Approved: 'check', Dispatched: 'truck', 'Not delivered': 'alert', Delivered: 'box', Returned: 'back', Cancelled: 'x' };
 LISTR.disp = function () {
   var f = fl('disp'), day = D.today, fr = D.me.role === 'Warehouse'; // v2.4.9: today only
   var L = (D.dispatched || []).filter(function (x) { return x.day === day && (!agOn() || x.agent === agName(agOn())) && hasQ('disp', x.vendor + ' ' + x.school + ' ' + x.agent + ' ' + x.oid) && (!f.st || x.status === f.st); });
@@ -1225,10 +1398,10 @@ LISTR.disp = function () {
   var h = '<div class="sumline"><b>' + esc(dayLbl(day)) + '</b> · <b>' + L.length + '</b> order' + (L.length === 1 ? '' : 's') + ' · <b>' + ctn + '</b> cartons · <b>' + ghs(val) + '</b> · ' + L.filter(function (x) { return x.status === 'Delivered'; }).length + ' delivered</div>';
   L.forEach(function (x) {
     var key = 'd:' + x.oid, wc = cashFor(x.oid);
-    h += '<div class="lrow"><div class="grow"><b>' + esc(x.vendor) + '</b> <span class="small muted">' + esc(x.agent) + '</span><div class="small">' + x.lines.map(qtyTxt).join(', ') + ' · ' + ghs(x.value) + (x.omni ? '' : ' · from ' + esc(x.from)) + '</div>' + (x.tried ? '<div class="small" style="color:var(--amber)">Not delivered yet: ' + esc(x.tried) + '</div>' : '') +
+    h += '<div class="lrow"><div class="grow"><b>' + esc(x.vendor) + '</b> <span class="small muted">' + esc(x.agent) + '</span><div class="small">' + x.lines.map(qtyTxt).join(', ') + ' · ' + ghs(x.value) + (x.omni ? '' : ' · from ' + esc(x.from)) + '</div>' + (x.tried ? '<div class="small" style="color:var(--amber)">Not delivered yet: ' + esc(x.tried) + '</div>' : '') + (x.status === 'Dispatched' && x.dispAt && !/^Before/.test(x.dispBy) ? '<div class="small muted">Prince took it ' + esc(x.dispAt) + '</div>' : '') +
       (x.status === 'Delivered' ? '<div class="small">' + (x.owing > 0.004 ? (/credit/i.test(x.pay || '') ? '<b>on credit ' + ghs(x.owing) + '</b> – due ' + esc(dayLbl(addDays(x.at || x.day, 7))) : '<b style="color:var(--red)">owes ' + ghs(x.owing) + '</b>') + (x.paid > 0.004 ? ' (paid ' + ghs(x.paid) + ')' : '') : '<b style="color:var(--green)">paid</b>') + (wc ? ' · <b style="color:var(--amber)">' + ghs(wc.amt) + ' still with ' + esc(wc.name) + '</b>' : '') + '</div>' : '') +
       (wc && fr ? '<button class="ghost" style="padding:4px 2px" data-act="dgave" data-o="' + esc(x.oid) + '">✓ ' + esc(wc.name) + ' gave me ' + ghs(wc.amt) + '</button>' : '') + '</div>' +
-      '<span class="pill ' + (DSTC[x.status] || '') + '" style="white-space:nowrap">' + esc(x.status === 'Dispatched' ? 'With Prince' : x.status) + '</span><button class="kebab" data-act="lmenu" data-o="' + esc(key) + '">⋮</button>' +
+      stPill([x.status, DSTC[x.status] || '', DSTI[x.status]]) + '<button class="kebab" data-act="lmenu" data-o="' + esc(key) + '" aria-label="More">⋮</button>' +
       (OMENU === key ? '<div class="mback" data-act="mclose"></div><div class="menu" style="top:40px"><button data-act="ddet" data-o="' + esc(x.oid) + '">View details</button>' +
         (wc && fr ? '<button data-act="dgave" data-o="' + esc(x.oid) + '">' + esc(wc.name) + ' gave me ' + ghs(wc.amt) + '</button>' : '') +
         (fr && x.status === 'Delivered' && x.owing > 0.004 && x.omni && !wc ? '<button data-act="fpaid" data-v="' + esc(x.vid) + '" data-a="' + x.owing + '" data-n="' + esc(x.vendor) + '" data-g="' + esc(x.agent) + '" data-r="' + esc(x.oid) + '">Record cash payment</button>' : '') + '</div>' : '') + '</div>';
@@ -1248,7 +1421,7 @@ function detSheet(title, sub, pill, rows, btns) {
 }
 ACT.ddet = function (b) {
   var x = (D.dispatched || []).filter(function (y) { return y.oid === b.dataset.o; })[0]; OMENU = ''; rerenderList(); if (!x) return;
-  detSheet(x.vendor, x.school, '<span class="pill ' + (DSTC[x.status] || '') + '">' + esc(x.status) + '</span>', [['Order', esc(x.oid)], ['Agent', esc(x.agent)], ['Approved', esc(dayLbl(x.day)) + ' ' + esc(x.time) + ' from ' + esc(x.from) + (x.part ? ' (part of the order)' : '')], ['Products', x.lines.map(qtyTxt).join(', ')], ['Value', ghs(x.value)], ['Payment asked', esc(x.pay)],
+  detSheet(x.vendor, x.school, stPill([x.status, DSTC[x.status] || '', DSTI[x.status]]), [['Order', esc(x.oid)], ['Agent', esc(x.agent)], ['Approved', esc(dayLbl(x.day)) + ' ' + esc(x.time) + ' from ' + esc(x.from) + (x.part ? ' (part of the order)' : '')], ['Dispatched', x.dispAt && !/^Before/.test(x.dispBy) ? esc(x.dispAt) + ' – ' + esc(x.dispBy) : ''], ['Products', x.lines.map(qtyTxt).join(', ')], ['Value', ghs(x.value)], ['Payment asked', esc(x.pay)],
     ['Delivered by', x.rider ? esc(x.rider) : ''], ['Delivered', x.delivered ? esc(dayLbl(x.at)) + ' – ' + x.delivered.map(qtyTxt).join(', ') : (x.tried ? 'not yet – ' + esc(x.tried) : 'not yet')], ['Paid', x.delivered ? '<b>' + ghs(x.paid) + '</b>' : ''], ['Still owing', x.delivered ? (x.owing > 0.004 ? '<b style="color:var(--red)">' + ghs(x.owing) + '</b>' : '<b style="color:var(--green)">nothing</b>') : '']]);
 };
 LISTR.hist = function () {
@@ -1374,21 +1547,48 @@ function spreadRet(s, st) {
   st.ret = {}; s.orders.forEach(function (o) { Object.keys(o.retn).forEach(function (sk) { if (o.retn[sk] > 0) st.ret[o.oid + '|' + sk] = o.retn[sk]; }); });
 }
 function pgRoute() {
-  if (!D.stops.length) return emptyHtml('Nothing to deliver right now.');
+  var R = routeStops(), P = pickStops();
+  if (!R.length && !P.length) return emptyHtml('Nothing to deliver right now.');
   var dn = D.done || [], dc = dn.reduce(function (t, x) { return t + x.cash; }, 0), nd = dn.filter(function (x) { return /^(Not delivered|Refused)/.test(x.status); }).length;
-  return (D.me.role === 'Helper' ? '<div class="msg info">Helper link for ' + esc(D.me.first) + ' – works today only.</div>' : '') + '<div class="sumline">Today: <b>' + (dn.length - nd) + '</b> delivered' + (nd ? ' · <b>' + nd + '</b> not delivered (still on your list)' : '') + ' · cash <b>' + ghs(dc) + '</b> · <b>' + D.stops.length + '</b> to go</div>' + filterBar('route', 'Find a vendor or school') + '<div id="flist">' + LISTR.route() + '</div>';
+  return (D.me.role === 'Helper' ? '<div class="msg info">Helper link for ' + esc(D.me.first) + ' – works today only.</div>' : '') + '<div class="sumline">Today: <b>' + (dn.length - nd) + '</b> delivered' + (nd ? ' · <b>' + nd + '</b> not delivered' : '') + ' · cash <b>' + ghs(dc) + '</b> · <b>' + R.length + '</b> stop' + (R.length === 1 ? '' : 's') + ' to go' + (P.length ? ' · <b>' + P.reduce(function (t, s) { return t + s.orders.length; }, 0) + '</b> order(s) to pick up' : '') + '</div>' + pickHtml(P) + (R.length ? filterBar('route', 'Find a vendor or school') + '<div id="flist">' + LISTR.route() + '</div>' : '<p class="muted" style="margin:4px 2px">Pick up the orders above first – then they show here to deliver.</p>');
 }
+/** v2.5.2: part of a stop – the orders already picked up (disp) or still at the warehouse; amounts worked out again. */
+function stopPart(s, disp) {
+  var os = s.orders.filter(function (o) { return ('disp' in o ? !!o.disp : true) === disp; }); if (!os.length) return null; if (os.length === s.orders.length) return s;
+  var c = Object.assign({}, s, { orders: os }), col = 0, cr = 0, pr = 0, r2 = function (x) { return Math.round(x * 100) / 100; };
+  os.forEach(function (o) { var due = Math.max(0, r2((o.value || 0) - (o.prepaid || 0))); if (o.pay === 'Credit') cr += due; else col += due; pr += o.promised || 0; });
+  c.collect = r2(col); c.credit = r2(cr); c.promised = r2(Math.min(pr, s.debt || 0)); c.ask = r2(col + c.promised); return c;
+}
+function routeStops() { return (D.stops || []).map(function (s) { return stopPart(s, true); }).filter(Boolean); }
+function pickStops() { return (D.stops || []).map(function (s) { return stopPart(s, false); }).filter(Boolean); }
+var RPK = {};
+function pickHtml(P) {
+  if (!P.length) return ''; var n = 0, ct = 0, N = 0;
+  P.forEach(function (s) { s.orders.forEach(function (o) { N++; if (RPK[o.oid] === true) n++; o.lines.forEach(function (l) { ct += l.qty; }); }); });
+  var src = {}; P.forEach(function (s) { s.orders.forEach(function (o) { src[o.from] = 1; }); });
+  var head = '<div class="row" style="flex-wrap:nowrap;gap:10px"><span class="hi b">' + ico(ICO.truck) + '</span><div class="grow"><b>Pick up: ' + N + ' order' + (N === 1 ? '' : 's') + ' · ' + ct + ' cartons</b><div class="small muted">at ' + Object.keys(src).map(esc).join(', ') + '</div></div></div>';
+  return fold('rpick', head, function () { return '<p class="sub" style="margin-top:0">Tick what you took, then tap the button – the agents are told it is on the way.</p><button class="ghost" data-act="rpkall">✓ Tick all ' + N + '</button>' + P.map(function (s) { return s.orders.map(function (o) {
+    return '<label class="pk-o"><input type="checkbox" class="chk" data-chg="rpk" data-o="' + esc(o.oid) + '"' + (RPK[o.oid] === true ? ' checked' : '') + '><span class="grow"><b>' + esc(s.name) + '</b> <span class="small muted">' + esc(s.school || '') + '</span><div class="small">' + o.lines.map(function (l) { return '<span class="pill pk">' + pk(l.sku) + l.qty + ' ' + esc(skn(l.sku)) + '</span>'; }).join('') + (/Omni/.test(o.from) ? '' : ' <span class="pill amber">from ' + esc(o.from) + '</span>') + '</div></span></label>'; }).join(''); }).join('') +
+    '<button class="main big" style="margin-top:8px" data-act="pickgo"' + (n ? '' : ' disabled') + '>I HAVE PICKED THEM UP (' + n + ')</button>'; }, 'warnf', true);
+}
+CHG.rpk = function (el) { RPK[el.dataset.o] = el.checked; render(); };
+ACT.rpkall = function () { pickStops().forEach(function (s) { s.orders.forEach(function (o) { RPK[o.oid] = true; }); }); render(); };
+ACT.pickgo = function () {
+  var ids = [], nm = []; pickStops().forEach(function (s) { s.orders.forEach(function (o) { if (RPK[o.oid] === true) { ids.push(o.oid); if (nm.indexOf(s.name) < 0) nm.push(s.name); } }); });
+  if (!ids.length) { say('Tick the orders you took.'); return; }
+  ask('You took ' + ids.length + ' order' + (ids.length === 1 ? '' : 's') + ' for ' + nm.join(', ') + '?\nThe agents are told they are on the way.', function () { bgSave('dispatch', { oids: ids }, 'dp-' + uid(), 'picked up ' + ids.length + ' order' + (ids.length === 1 ? '' : 's'), null, true); RPK = {}; }, 'YES, PICKED UP');
+};
 LISTR.route = function () {
   var f = fl('route'), h = '', zone = null;
-  var stops = D.stops.filter(function (s) { return (!agOn() || s.orders.some(function (o) { return o.agent === agName(agOn()); })) && hasQ('route', s.name + ' ' + (s.school || '') + ' ' + s.orders.map(function (o) { return o.oid + ' ' + o.agent; }).join(' ')) &&
+  var stops = routeStops().filter(function (s) { return (!agOn() || s.orders.some(function (o) { return o.agent === agName(agOn()); })) && hasQ('route', s.name + ' ' + (s.school || '') + ' ' + s.orders.map(function (o) { return o.oid + ' ' + o.agent; }).join(' ')) &&
     (!f.pay || (f.pay === 'collect' ? s.collect > 0 : f.pay === 'credit' ? s.credit > 0 && !(s.collect > 0) : s.debt > 0)); });
   if (!stops.length) return '<p class="muted">No stop matches. Change the filter or the search.</p>';
   h += '<div class="sumline"><b>' + stops.length + '</b> stop' + (stops.length === 1 ? '' : 's') + ' · collect <b>' + ghs(stops.reduce(function (t, s) { return t + (s.collect || 0); }, 0)) + '</b> for orders</div>';
   stops.forEach(function (s) {
     var z = s.school || 'No school recorded'; if (z !== zone) { zone = z; h += '<div class="zone">' + esc(z) + '</div>'; }
     var st = STOP[s.id] || (STOP[s.id] = { open: false, what: '', ret: {}, cash: '', claim: false, cagent: '', camt: '', cwhen: '', reason: '', note: '', sid: uid() });
-    h += '<div class="card"><div class="row"><div class="grow"><h3>' + esc(s.name) + '</h3><div class="sub">agent ' + esc(s.orders[0].agent) + (s.phone ? ' · <a href="tel:' + esc(s.phone) + '">' + esc(s.phone) + '</a>' : '') + (s.orders.some(function (o) { return o.tries; }) ? ' · <span class="pill amber">tried before</span>' : '') + '</div></div></div>';
-    s.orders.forEach(function (o) { h += '<div class="small" style="margin-top:4px">' + o.lines.map(function (l) { return '<span class="pill pk">' + pk(l.sku) + l.qty + ' ' + esc(skn(l.sku)) + '</span>'; }).join('') + ' <span class="muted">from ' + esc(o.from) + ' · ' + esc(o.pay) + '</span></div>'; });
+    h += '<div class="card"><div class="row" style="flex-wrap:nowrap"><div class="grow"><h3>' + esc(s.name) + '</h3><div class="sub">agent ' + esc(s.orders[0].agent) + (s.phone ? ' · ' + esc(s.phone) : '') + (s.orders.some(function (o) { return o.tries; }) ? ' · <span class="pill amber">tried before</span>' : '') + '</div></div>' + callBtn(s.phone) + '</div>';
+    s.orders.forEach(function (o) { h += '<div class="small" style="margin-top:4px">' + o.lines.map(function (l) { return '<span class="pill pk">' + pk(l.sku) + l.qty + ' ' + esc(skn(l.sku)) + '</span>'; }).join('') + ' <span class="muted">' + (s.orders.length > 1 && o.date ? 'ordered ' + esc(dayLbl(o.date)) + ' · ' : '') + 'from ' + esc(o.from) + ' · ' + esc(o.pay) + '</span></div>'; });
     if (st.what === 'LESS') spreadRet(s, st); h += stopAsk(s, st);
     if (queue().some(function (x) { return x.op === 'stop' && x.data.vid === s.id; })) h += '<div class="msg" style="background:var(--green2);color:var(--green)">✓ Saved on this phone – ' + (noSig() ? 'sent when there is signal. Go on to the next stop.' : 'sending to the system. Go on to the next stop.') + '</div>';
     else if (!st.open) h += '<button class="main big" data-act="stopopen" data-v="' + s.id + '">RECORD</button>';
@@ -1397,7 +1597,7 @@ LISTR.route = function () {
       if (st.what === 'LESS') { var tot = {}; s.orders.forEach(function (o) { o.lines.forEach(function (l) { tot[l.sku] = (tot[l.sku] || 0) + l.qty; }); }); st.retp = st.retp || {};
         Object.keys(tot).forEach(function (sk) { var n = st.retp[sk] || 0; h += '<div class="row" style="margin-top:6px"><div class="grow"><b>' + esc(skn(sk)) + '</b> <span class="sub">(' + tot[sk] + ' brought) – returned:</span></div><div class="step"><button data-act="retp" data-v="' + s.id + '" data-k="' + esc(sk) + '" data-max="' + tot[sk] + '" data-d="-1">−</button><input readonly value="' + n + '"><button data-act="retp" data-v="' + s.id + '" data-k="' + esc(sk) + '" data-max="' + tot[sk] + '" data-d="1">+</button></div></div>'; }); }
       if (0) s.orders.forEach(function (o) { o.lines.forEach(function (l) { var k = o.oid + '|' + l.sku; var n = st.ret[k] || 0; h += '<div class="row" style="margin-top:6px"><div class="grow"><b>' + esc(skn(l.sku)) + '</b>' + (s.orders.length > 1 ? ' <span class="sub">from ' + esc(o.from) + '</span>' : '') + ' <span class="sub">(' + l.qty + ' brought) – returned:</span></div><div class="step"><button data-act="ret" data-v="' + s.id + '" data-k="' + k + '" data-max="' + l.qty + '" data-d="-1">−</button><input readonly value="' + n + '"><button data-act="ret" data-v="' + s.id + '" data-k="' + k + '" data-max="' + l.qty + '" data-d="1">+</button></div></div>'; }); });
-      if (st.what === 'NONE') h += '<label>Why? (school closed, vendor absent, refused…)</label><input data-inp="sreason" data-v="' + s.id + '" value="' + esc(st.reason) + '">';
+      if (st.what === 'NONE') h += '<label>Why?</label><div class="chipq">' + ['Vendor not there', 'School closed', 'She refused the goods', 'She has no money', 'Could not find her'].map(function (r) { return '<button class="' + (st.reason === r ? 'on' : '') + '" data-act="sreasq" data-v="' + s.id + '" data-r="' + esc(r) + '">' + esc(r) + '</button>'; }).join('') + '</div><input data-inp="sreason" data-v="' + s.id + '" value="' + esc(st.reason) + '" placeholder="or write the reason"><div class="small muted" style="margin-top:4px">The manager and the agent are told; the manager decides if you try again. Keep the cartons safe.</div>';
       if (st.what === 'ALL' || st.what === 'LESS') {
         h += '<label>ALL the cash she gave you now (GHS) – orders and old debt together</label><input inputmode="decimal" data-inp="scash" data-v="' + s.id + '" value="' + esc(st.cash) + '" placeholder="0 if she gave nothing">';
         h += '<label class="row" style="color:var(--ink)"><input type="checkbox" class="chk" data-chg="sclaim" data-v="' + s.id + '"' + (st.claim ? ' checked' : '') + '> She says she already paid an agent</label>';
@@ -1410,10 +1610,11 @@ LISTR.route = function () {
   });
   return h;
 };
-function stop(id) { for (var i = 0; i < D.stops.length; i++) if (D.stops[i].id === id) return D.stops[i]; return null; }
+function stop(id) { var R = routeStops(); for (var i = 0; i < R.length; i++) if (R[i].id === id) return R[i]; return null; }
 ACT.stopopen = function (b) { STOP[b.dataset.v].open = true; render(); };
 ACT.stopclose = function (b) { STOP[b.dataset.v].open = false; render(); };
 ACT.stopwhat = function (b) { STOP[b.dataset.v].what = b.dataset.w; render(); };
+ACT.sreasq = function (b) { STOP[b.dataset.v].reason = b.dataset.r; render(); };
 ACT.retp = function (b) { var st = STOP[b.dataset.v]; st.retp = st.retp || {}; st.retp[b.dataset.k] = Math.max(0, Math.min(Number(b.dataset.max), (st.retp[b.dataset.k] || 0) + Number(b.dataset.d))); render(); };
 ACT.ret = function (b) { var st = STOP[b.dataset.v]; st.ret[b.dataset.k] = Math.max(0, Math.min(Number(b.dataset.max), (st.ret[b.dataset.k] || 0) + Number(b.dataset.d))); render(); };
 INP.scash = function (el) { STOP[el.dataset.v].cash = el.value; }; INP.sreason = function (el) { STOP[el.dataset.v].reason = el.value; }; INP.snote = function (el) { STOP[el.dataset.v].note = el.value; };
@@ -1439,7 +1640,7 @@ ACT.stopsave = function (b) {
   var due = Math.max(0, s.collect - (stopDue(s, null) - stopDue(s, st)));
   var low = cash + 0.004 < due && !st.claim ? '\n\nYou were to collect ' + ghs(due) + ' but typed ' + ghs(cash) + '. She will owe ' + ghs(due - cash) + ' more. Is that right?' : '';
   var kept2 = {}; s.orders.forEach(function (o) { o.lines.forEach(function (l) { var n = l.qty - (st.ret[o.oid + '|' + l.sku] || 0); if (n > 0) kept2[skn(l.sku)] = (kept2[skn(l.sku)] || 0) + n; }); });
-  if (st.what === 'NONE') doSave(); else ask(s.name + '\n' + (st.what === 'ALL' ? 'Delivered all' : 'Some returned') + ': ' + Object.keys(kept2).map(function (k) { return kept2[k] + ' ' + k; }).join(', ') + '\nCash: ' + ghs(cash) + (st.claim ? '\nSays she paid ' + (st.cagent || s.orders[0].agent) + ' ' + ghs(num(st.camt)) : '') + low, doSave, low ? 'YES, SAVE' : 'SAVE');
+  if (st.what === 'NONE') ask(s.name + ' – NOT delivered:\n“' + st.reason.trim() + '”\n\nThe manager and the agent are told. It leaves your list until the manager decides.', doSave, 'SAVE'); else ask(s.name + '\n' + (st.what === 'ALL' ? 'Delivered all: ' : 'She KEPT: ') + Object.keys(kept2).map(function (k) { return kept2[k] + ' ' + k; }).join(', ') + (st.what === 'LESS' ? '\nCOMING BACK: ' + Object.keys(st.ret).filter(function (k) { return st.ret[k] > 0; }).map(function (k) { return st.ret[k] + ' ' + skn(k.split('|')[1]); }).join(', ') : '') + '\nCash: ' + ghs(cash) + (st.claim ? '\nSays she paid ' + (st.cagent || s.orders[0].agent) + ' ' + ghs(num(st.camt)) : '') + low, doSave, low ? 'YES, SAVE' : 'SAVE');
 };
 function pgDone() {
   var top = D.me.role === 'Helper' ? '' : subTabs('done', (D.toConfirm || []).length + rcptToSend());
@@ -1447,7 +1648,7 @@ function pgDone() {
   var tot = D.done.reduce(function (t, x) { return t + x.cash; }, 0);
   var h = top + '<div class="sumline">Today: <b>' + D.done.length + '</b> stop' + (D.done.length === 1 ? '' : 's') + ' · cash taken <b>' + ghs(tot) + '</b> – should match the delivery cash in your pocket.</div>';
   if (D.me.role === 'Helper') { if (D.cash && D.cash.length) h += '<div class="card"><h3>Cash with me</h3>' + cashTable(D.cash) + '</div>'; h += receiptsHtml(); }
-  var nd = (D.decisions || []).length; if (nd && D.me.role !== 'Helper' && fl('rdone').mgr !== 'dec') h += '<div class="hint" data-act="rdec">⚖ <span class="grow"><b>' + nd + '</b> manager decision' + (nd === 1 ? '' : 's') + ' this week</span><span class="ar">Show ▾</span></div>';
+  var nd = (D.decisions || []).length; if (nd && D.me.role !== 'Helper' && fl('rdone').mgr !== 'dec') h += '<div class="hint" data-act="rdec">⚖ <span class="grow"><b>' + nd + '</b> manager decision' + (nd === 1 ? '' : 's') + ' this week</span><span class="ar">' + chev(false) + '</span></div>';
   return h + filterBar('rdone', 'Find a vendor or agent') + '<div id="flist">' + LISTR.rdone() + '</div>';
 }
 ACT.rdec = function () { fl('rdone').mgr = 'dec'; flSave(); render(); };
@@ -1459,12 +1660,12 @@ LISTR.rdone = function () {
   });
   if (!L.length) return emptyHtml(Object.keys(f).some(function (k) { return f[k] && k !== 'q'; }) || f.q ? 'Nothing matches. Deliveries of the last 14 days are here.' : 'No deliveries yet.');
   var cash = L.reduce(function (t, x) { return t + (x.cash || 0); }, 0), h = '<div class="sumline"><b>' + L.length + '</b> stop' + (L.length === 1 ? '' : 's') + ' · cash <b>' + ghs(cash) + '</b> · ' + L.filter(function (x) { return x.wait; }).length + ' waiting for the manager</div><div class="card" style="padding:4px 12px">', cur = null;
-  var stc = { Delivered: 'green', 'Some returned': 'amber', 'Not delivered': 'red', Cancelled: 'red' };
+  var stc = { Delivered: 'green', 'Some returned': 'amber', 'Not delivered': 'red', Cancelled: 'red' }, sti = { Delivered: 'box', 'Some returned': 'back', 'Not delivered': 'alert', Cancelled: 'x' };
   L.forEach(function (x) {
     if (x.day !== cur) { cur = x.day; var dd = L.filter(function (y) { return y.day === cur; }); h += dayHead(cur, dd.length + ' · ' + ghs(dd.reduce(function (t, y) { return t + (y.cash || 0); }, 0))); }
     var k = 'd:' + x.day + (x.oids || []).join(''), o = isOpen(k);
     h += '<div class="srow" style="flex-wrap:wrap"><div class="grow tap"' + rowTap(k) + '><b>' + esc(x.vendor) + '</b>' + (x.n > 1 ? ' <span class="small muted">(' + x.n + ' orders)</span>' : '') + '<div class="small muted">' + (x.time ? esc(x.time) + ' · ' : '') + (x.status === 'Not delivered' || x.status === 'Cancelled' ? '' : esc(x.pay || '') + ' · ') + (x.agent ? esc(x.agent) : '') + '</div>' +
-      (x.wait ? '<span class="pill amber">waiting for the manager</span>' : x.dec ? '<span class="pill">manager decided</span>' : '') + (x.vno && !x.dec ? '<span class="pill red">vendor says not right</span>' : '') + '</div><div class="right"><span class="pill ' + (stc[x.status] || '') + '">' + esc(x.status) + '</span><div><b>' + ghs(x.cash || 0) + '</b>' + (x.status === 'Not delivered' && x.cash > 0 ? '<div class="small muted">old debt</div>' : '') + '</div></div>' +
+      (x.wait ? '<span class="pill amber">waiting for the manager</span>' : x.dec ? '<span class="pill">manager decided</span>' : '') + (x.vno && !x.dec ? '<span class="pill red">vendor says not right</span>' : '') + '</div><div class="right">' + stPill([x.status, stc[x.status] || '', sti[x.status]]) + '<div><b>' + ghs(x.cash || 0) + '</b>' + (x.status === 'Not delivered' && x.cash > 0 ? '<div class="small muted">old debt</div>' : '') + '</div></div>' +
       (o ? '<div class="dets" style="flex:1 1 100%">' + esc((x.oids || []).join(', ')) + (x.by ? ' · ' + esc(x.by) : '') + (x.dec ? '<br><b>Manager:</b> ' + esc(x.dec) : '') + (x.note ? '<br>' + esc(x.note) : '') + '</div>' : '') + '</div>';
   });
   return h + '</div>';
@@ -1476,11 +1677,11 @@ function pgHelpers() {
     '<label>The message (stops, amounts and the link)</label><textarea id="htext" rows="8" readonly>' + esc(HRES.text) + '</textarea><button class="ghost" data-act="hnew">Make another</button></div>';
   if (!D.stops.length) return '<p class="muted">No stops to give to a helper.</p>';
   var h = '<div class="card"><h3>Give stops to a helper</h3><p class="sub">The helper gets a link for today only, showing only these stops. The cash they collect counts as with Prince – collect it from them.</p><label>Helper\'s name</label><input data-inp="hname" value="' + esc(HNAME) + '">';
-  D.stops.forEach(function (s) { h += '<label class="row" style="color:var(--ink);font-size:16px"><input type="checkbox" class="chk" data-chg="hsel" data-v="' + s.id + '"' + (HSEL[s.id] ? ' checked' : '') + '> ' + esc(s.name) + ' <span class="sub">' + esc(s.school || '') + '</span></label>'; });
+  D.stops.forEach(function (s) { h += '<label class="row" style="color:var(--ink);font-size:16px"><input type="checkbox" class="chk" data-chg="hsel" data-v="' + s.id + '"' + (HSEL[s.id] ? ' checked' : '') + '> ' + esc(s.name) + ' <span class="sub">' + esc(s.school || '') + (s.disp ? '' : ' · not picked up yet') + '</span></label>'; });
   return h + '<p><button class="main big" data-act="hmake">MAKE HELPER LINK</button></p></div>';
 }
 INP.hname = function (el) { HNAME = el.value; }; CHG.hsel = function (el) { HSEL[el.dataset.v] = el.checked; };
-ACT.hmake = function (b) { var v = Object.keys(HSEL).filter(function (k) { return HSEL[k]; }); if (!HNAME.trim() || !v.length) { say('Write the name and tick at least one stop.'); return; } b.disabled = true; b.textContent = 'Making the link…'; call('helper', { name: HNAME, vids: v }, uid(), function (r) { if (!r || !r.url) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show('No link came back – try again. If it happens again, tell the manager.', 'err'); return; } HRES = r; HSEL = {}; HNAME = ''; MSG = null; render(); window.scrollTo(0, 0); }, function (m) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show(m, 'err'); }); };
+ACT.hmake = function (b) { var v = Object.keys(HSEL).filter(function (k) { return HSEL[k]; }); if (!HNAME.trim() || !v.length) { say('Write the name and tick at least one stop.'); return; } b.disabled = true; b.textContent = 'Making the link…'; call('helper', actTag('helper', { name: HNAME, vids: v }), uid(), function (r) { if (!r || !r.url) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show('No link came back – try again. If it happens again, tell the manager.', 'err'); return; } HRES = r; HSEL = {}; HNAME = ''; MSG = null; render(); window.scrollTo(0, 0); }, function (m) { b.disabled = false; b.textContent = 'MAKE HELPER LINK'; show(m, 'err'); }); };
 ACT.hnew = function () { HRES = null; render(); };
 ACT.hcopy = function () { var t = $('htext'); try { t.focus(); t.select(); document.execCommand('copy'); show('Copied – paste it to the helper.', 'ok'); } catch (e) { say('Press and hold the message to copy it.'); } };
 /** Buttons in emails: #cancel=ORD-… asks to cancel that order; #confirm / #decide open the right tab. */
@@ -1501,6 +1702,7 @@ function goHash2(h) {
     setTimeout(function () { ACT.cancelO({ dataset: { o: oid } }); }, 60);
   } else if (h === 'confirm') { if (D.me.role === 'Warehouse') { SCREEN = 'release'; TAB = 'cash'; } else if (D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'pay'; } else if (D.screens.indexOf('route') >= 0) { SCREEN = 'route'; TAB = 'done'; SUB.done = 'pay'; } render(); }
   else if (h === 'decide' && D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'pay'; render(); }
+  else if (h === 'nd' && D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'orders'; OPN.nd = true; render(); var c0 = $('f-nd'); if (c0) try { c0.scrollIntoView(); } catch (x) { } }
   else if (h === 'out' && D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'orders'; OPN.outcard = true; render(); var c = $('f-outcard'); if (c) try { c.scrollIntoView(); } catch (x) { } }
 }
 function rcpBoot() {
