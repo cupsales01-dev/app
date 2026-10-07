@@ -50,6 +50,7 @@ main{padding:12px 12px 120px;max-width:640px;margin:0 auto}
 /* buttons */
 button{font:inherit;border:0;border-radius:10px;padding:10px 14px;background:var(--grey2);color:var(--ink);font-weight:650;cursor:pointer;font-size:14.5px}
 button.main{background:var(--blue);color:#fff}button.main:active{background:#B00014}
+.seg.wrap{flex-wrap:wrap}.seg.wrap button{flex:0 0 auto;min-width:72px}
 .wrep{display:flex;gap:8px;margin:0 0 6px}.wrep a{flex:1;text-decoration:none}.wrep button{width:100%;margin:0;display:flex;align-items:center;justify-content:center;gap:6px}.wrep svg{width:17px;height:17px}
 button.warn{background:var(--red2);color:var(--red)}button.ghost{background:transparent;color:var(--blue);padding:8px 6px}
 button:disabled{opacity:.45}button.sent{background:var(--green2);color:var(--green);opacity:1}
@@ -453,7 +454,7 @@ function badges() {
 }
 function ordCount() { var sup = D.me.role === 'Supervisor'; return (D.me.role === 'Agent' ? (D.toEnter || []).length : 0) + (sup ? (D.needs || []).filter(function (x) { return x.nd; }).length + outOpen() + otherNeeds().length : 0); }
 function outOpen() { return D.me.role === 'Supervisor' && D.out && D.out.skus ? D.out.skus.filter(function (x) { return !routeOf(x); }).length : 0; }
-function otherNeeds() { return (D.needs || []).filter(function (x) { return !x.dec && !x.pay && !x.tech && !x.nd; }); }
+function otherNeeds() { return (D.needs || []).filter(function (x) { return !x.dec && !x.cl && !x.dup && !x.pay && !x.tech && !x.nd; }); }
 function scrCount(B, s) { var t = 0; Object.keys(B[s] || {}).forEach(function (k) { t += B[s][k] || 0; }); return t; }
 /** v2.5.3: while the app is open the newest screen is fetched every few minutes (never while typing or in a box), so new
  *  work shows on the tabs without closing the app – and a short note says where it is. */
@@ -499,6 +500,8 @@ function pendView() {
     if (x.op === 'cancel' && D.myOrders) D.myOrders.forEach(function (o) { if (o.oid === d.oid) { o.status = 'Cancelling'; } });
     if (x.op === 'dispatch') { var di = d.oids || []; (D.stops || []).forEach(function (s) { s.orders.forEach(function (o) { if (di.indexOf(o.oid) >= 0) o.disp = true; }); s.disp = s.orders.every(function (o) { return o.disp; }); }); (D.dispatched || []).forEach(function (y) { if (di.indexOf(y.oid) >= 0 && y.status === 'Approved') y.status = 'Dispatched'; }); } // v2.5.2
     if (x.op === 'nddecide' && D.needs) D.needs = D.needs.filter(function (n) { return n.eid !== d.eid; });
+    if (x.op === 'claim' && D.claims) D.claims = D.claims.filter(function (c) { return c.id !== d.id; }); // v2.5.6
+    if ((x.op === 'claimdec' || x.op === 'dupcancel') && D.needs) D.needs = D.needs.filter(function (n) { return n.eid !== d.eid; });
     if (x.op === 'stockback' && D.comingBack) D.comingBack = D.comingBack.filter(function (c) { return c.did ? (d.dids || []).indexOf(c.did) < 0 : (d.oids || []).indexOf(c.oid) < 0; });
     if (x.op === 'stop' && d.what === 'NONE' && D.stops) D.stops = D.stops.filter(function (s) { return s.id !== d.vid; });
     if (x.op === 'vprofile' && d.prof) { var vp = vend(d.vid); if (vp) { vp.prof = Object.assign({}, vp.prof || {}, { school: d.prof.newSchool ? '' : d.prof.school, at: D.today }); if (d.prof.newSchool) vp.school = d.prof.newSchool.name; } }
@@ -606,7 +609,7 @@ ACT.nfold = function (b) { var d = draft(), x = findV(d, b.dataset.k); if (!x) r
 function hitsHtml(x) {
   var hs = hitsFor(x.q);
   if (hs.length) return '<div class="hits">' + hs.map(function (y) { return '<div class="hit row" style="flex-wrap:nowrap" data-act="pickV" data-k="' + x.k + '" data-v="' + y.id + '">' + avatar(y.name) + '<div class="grow"><b>' + esc(y.name) + '</b><div class="sub ell">' + esc(y.school || '') + '</div></div>' + (y.debt > 0 ? '<span class="small t-red nowrap">owes ' + ghs(y.debt) + '</span>' : '') + '</div>'; }).join('') + '</div>';
-  if (x.q && x.q.length >= 2) return '<p class="sub">No vendor found. New vendor? Register her first (Register form), then she appears here.</p>';
+  if (x.q && x.q.length >= 2) return '<p class="sub">No vendor found.</p><button class="ghost" data-act="regOpen" data-q="' + esc(x.q) + '">' + ico(ICO.plus) + ' Register a new vendor</button>';
   return '';
 }
 function findV(d, k) { for (var i = 0; i < d.vendors.length; i++) if (d.vendors[i].k === k) return d.vendors[i]; return null; }
@@ -716,7 +719,7 @@ function hasQ(k, text) { var n = norm(fl(k).q); return !n || norm(text).indexOf(
 function bdayIn(key) { if (!key || !D) return -1; var t = D.today.split('-'), m = +key.slice(0, 2), d = +key.slice(3, 5); var now = Date.UTC(+t[0], +t[1] - 1, +t[2]); var nx = Date.UTC(+t[0], m - 1, d); if (nx < now) nx = Date.UTC(+t[0] + 1, m - 1, d); return Math.round((nx - now) / 86400000); }
 var MONS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 function bdayParse(s) { var x = String(s || '').match(/^(\d{1,2}) ([A-Za-z]{3})$/); if (!x) return null; var m = MONS.indexOf(x[2]) + 1, d = +x[1]; if (!m || d < 1 || d > 31) return null; return { key: ('0' + m).slice(-2) + '-' + ('0' + d).slice(-2), text: d + ' ' + MONS[m - 1] }; }
-function pgVendors() { return todoBox([bdayRow(), habitsRow()]) + filterBar('vendors', 'Find a vendor, school or phone') + '<div id="flist">' + LISTR.vendors() + '</div>'; }
+function pgVendors() { return todoBox([bdayRow(), habitsRow()]) + filterBar('vendors', 'Find a vendor, school or phone') + (D.me.role === 'Agent' || D.me.role === 'Supervisor' ? '<button class="ghost" style="margin:0 0 8px" data-act="regOpen">' + ico(ICO.plus) + ' New vendor</button>' : '') + '<div id="flist">' + LISTR.vendors() + '</div>'; }
 function bdayList() { return (D.vendors || []).filter(function (v) { var bi = bdayIn(v.bday); return bi >= 0 && bi <= 1 && (!agOn() || v.agent === agOn()); }).sort(function (a, b) { return bdayIn(a.bday) - bdayIn(b.bday); }); }
 function bdayRow() {
   var list = bdayList(); if (!list.length) return ''; var t = list.filter(function (v) { return bdayIn(v.bday) === 0; }).length;
@@ -933,31 +936,124 @@ ACT.dispute = function (b) {
 };
 var DEC = {};
 function decideHtml(x) {
-  var st = DEC[x.eid] || (DEC[x.eid] = { choice: '', cash: '', holder: 'Prince', note: '' });
-  var h = '<div class="ask small">' + esc(x.dec.summary) + '<br><b>' + esc(x.dec.agent) + ' says:</b> ' + (x.dec.agentSays ? '“' + esc(x.dec.agentSays) + '”' : '<span class="muted">gave no reason</span>') + '</div><div class="seg">' +
-    (x.dec.vendorCase ? [['RIDER', 'Prince is right'], ['OTHER', 'The vendor is right – correct it']] : [['RIDER', 'Prince is right'], ['AGENT', esc(x.dec.agent) + ' is right'], ['OTHER', 'Something else']]).map(function (c) { return '<button class="' + (st.choice === c[0] ? 'on' : '') + '" data-act="decch" data-e="' + x.eid + '" data-c="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
-  if (st.choice && st.choice !== 'RIDER') h += '<label>Cash she really paid for THIS order (GHS)</label><input inputmode="decimal" data-inp="deccash" data-e="' + x.eid + '" value="' + esc(st.cash) + '"><label>Who has that cash?</label><select data-chg="dechold" data-e="' + x.eid + '">' + ['Prince', x.dec.agentName || x.dec.agent].map(function (p) { return '<option' + (st.holder === p ? ' selected' : '') + '>' + esc(p) + '</option>'; }).join('') + '</select>';
-  if (st.choice) h += '<label>Note (optional)</label><input data-inp="decnote" data-e="' + x.eid + '" value="' + esc(st.note) + '"><p><button class="main big" data-act="decsave" data-e="' + x.eid + '" data-d="' + x.dec.did + '">SAVE DECISION</button></p>';
+  var c = x.dec, held = c.held || [], st = DEC[x.eid] || (DEC[x.eid] = { cash: c.took != null ? String(c.took) : '', holder: held.length === 1 ? held[0].name : (c.rider || 'Prince'), note: '' });
+  var tr = function (k, v) { return v === '' || v == null ? '' : '<tr><td class="k">' + esc(k) + '</td><td>' + v + '</td></tr>'; };
+  var h = '<table class="dt">' + tr('Due for this order', c.due != null ? '<b>' + ghs(c.due) + '</b>' : '') +
+    tr('Recorded at delivery', c.took != null ? ghs(c.took) + (held.length ? ' – with ' + held.map(function (p) { return esc(p.name) + (held.length > 1 ? ' ' + ghs(p.amt) : ''); }).join(', ') : '') + (c.outcome ? ' <span class="muted">(' + esc(c.outcome) + ')</span>' : '') : esc(c.summary)) +
+    tr(c.vendorCase ? 'The vendor says' : c.agent + ' says', c.agentSays ? '“' + esc(c.agentSays) + '”' : '<span class="muted">gave no reason</span>') + '</table>';
+  h += '<div class="psec">What really happened?</div><label>Cash paid for THIS order (GHS)</label><input inputmode="decimal" data-inp="deccash" data-e="' + x.eid + '" value="' + esc(st.cash) + '">' +
+    (num(st.cash) > 0 ? '<label>Who received it?</label>' + whoSeg('dechold', x.eid, st.holder) : '') +
+    '<label>Note (optional)</label><input data-inp="decnote" data-e="' + x.eid + '" value="' + esc(st.note) + '">' +
+    '<div class="btns"><button data-act="decok" data-e="' + x.eid + '" data-d="' + c.did + '">Record is right</button><button class="main" data-act="decsave" data-e="' + x.eid + '" data-d="' + c.did + '">Save decision</button></div>';
   return h;
 }
-ACT.decch = function (b) { var st = DEC[b.dataset.e]; st.choice = b.dataset.c; var x = (D.needs || []).filter(function (n) { return n.eid === b.dataset.e; })[0];
-  if (x && x.dec && b.dataset.c !== 'RIDER') { if (b.dataset.c === 'AGENT' && x.dec.agentName) st.holder = x.dec.agentName; var m = String(x.dec.agentSays || '').replace(/,/g, '').match(/(\d+(?:\.\d+)?)/); if (m && String(st.cash).trim() === '') st.cash = m[1]; }
-  render(); };
-INP.deccash = function (el) { DEC[el.dataset.e].cash = el.value; }; INP.decnote = function (el) { DEC[el.dataset.e].note = el.value; }; CHG.dechold = function (el) { DEC[el.dataset.e].holder = el.value; };
+/** v2.5.6: everyone who can hold money – one tap. */
+function whoSeg(act, k, cur) { var L = (D.staff || []).map(function (s) { return s.name; }); if (!L.length) L = ['Prince'].concat((D.agents || []).map(function (a) { return a.name; }), ['Frank', D.me.first]); return '<div class="seg wrap">' + L.filter(function (n, i) { return L.indexOf(n) === i; }).map(function (n) { return '<button class="' + (cur === n ? 'on' : '') + '" data-act="' + act + '" data-e="' + esc(k) + '" data-v="' + esc(n) + '">' + esc(n) + '</button>'; }).join('') + '</div>'; }
+ACT.decch = function (b) { render(); }; // v2.5.6: kept for a page opened before the update
+ACT.dechold = function (b) { DEC[b.dataset.e].holder = b.dataset.v; render(); };
+INP.deccash = function (el) { var st = DEC[el.dataset.e], was = num(st.cash) > 0; st.cash = el.value; if (was !== num(el.value) > 0) { render(); var n = document.querySelector('[data-inp=deccash][data-e="' + el.dataset.e + '"]'); if (n) { n.focus(); n.setSelectionRange(n.value.length, n.value.length); } } }; INP.decnote = function (el) { DEC[el.dataset.e].note = el.value; };
 ACT.decsave = function (b) {
-  var st = DEC[b.dataset.e]; if (st.choice !== 'RIDER' && !(String(st.cash).trim() !== '' && num(st.cash) >= 0)) { say('Type the cash she really paid for this order.'); return; }
-  var x0 = (D.needs || []).filter(function (n) { return n.eid === b.dataset.e; })[0] || { dec: {} };
-  ask('Save your decision' + (x0.vendor ? ' for ' + x0.vendor : '') + '?\n' + (st.choice === 'RIDER' ? 'Prince is right.' : (st.choice === 'AGENT' ? (x0.dec.agent || 'The agent') + ' is right.' : st.choice === 'OTHER' && x0.dec.vendorCase ? 'The vendor is right – corrected.' : 'Something else.') + '\nShe really paid ' + ghs(num(st.cash)) + ' – with ' + st.holder + '.') + (st.note ? '\nNote: ' + st.note : ''), function () { ACT.decsave2(b, st); }, 'SAVE DECISION');
+  var st = DEC[b.dataset.e], x0 = (D.needs || []).filter(function (n) { return n.eid === b.dataset.e; })[0] || { dec: {} }, c = x0.dec || {};
+  if (String(st.cash).trim() === '' || !(num(st.cash) >= 0)) { say('Type the cash she really paid for this order – 0 if nothing.'); return; }
+  var cash = num(st.cash); if (cash > 0 && !st.holder) { say('Tap who received the money.'); return; }
+  var owe = Math.max(0, Math.round(((c.due || 0) - cash) * 100) / 100);
+  ask((x0.vendor ? x0.vendor + ':\n' : '') + (cash > 0 ? 'She paid ' + ghs(cash) + ' for this order – received by ' + st.holder + '.' : 'She paid nothing for this order.') + '\nThe order will owe ' + ghs(owe) + '.' + (cash > 0 ? '\nThe cash counts as with ' + st.holder + '.' : '') + (st.note ? '\nNote: ' + st.note : ''), function () { ACT.decsave2(b, st); }, 'SAVE DECISION');
 };
+ACT.decok = function (b) { var x0 = (D.needs || []).filter(function (n) { return n.eid === b.dataset.e; })[0] || { dec: {} }, st = DEC[b.dataset.e] || {};
+  ask((x0.vendor ? x0.vendor + ':\n' : '') + 'The record stays as it is' + (x0.dec.took != null ? ' (' + ghs(x0.dec.took) + ' for this order)' : '') + '.\n' + (x0.dec.agent || 'The agent') + ' and Prince are told.', function () { bgSave('decide', { did: b.dataset.d, eid: b.dataset.e, choice: 'RIDER', note: st.note || '' }, 'dc-' + b.dataset.d, 'decision (' + b.dataset.d + ')', b); delete DEC[b.dataset.e]; }, 'RECORD IS RIGHT'); };
 ACT.decsave2 = function (b, st) {
-  bgSave('decide', { did: b.dataset.d, eid: b.dataset.e, choice: st.choice, cash: st.choice === 'RIDER' ? '' : num(st.cash), holder: st.holder, note: st.note }, 'dc-' + b.dataset.d, 'decision (' + b.dataset.d + ')', b); delete DEC[b.dataset.e];
+  bgSave('decide', { did: b.dataset.d, eid: b.dataset.e, cash: num(st.cash), holder: num(st.cash) > 0 ? st.holder : '', note: st.note }, 'dc-' + b.dataset.d, 'decision (' + b.dataset.d + ')', b); delete DEC[b.dataset.e];
 };
+// ---------------------------------------------------------------- v2.5.6: "she says she paid the agent" – the manager decides
+var CLD = {};
+function claimDecHtml(x) {
+  var c = x.cl, st = CLD[x.eid] || (CLD[x.eid] = { paid: '', amount: String(c.amount), holder: c.agent, note: '' });
+  var tr = function (k, v) { return v === '' || v == null ? '' : '<tr><td class="k">' + esc(k) + '</td><td>' + v + '</td></tr>'; };
+  var h = '<table class="dt">' + tr('The vendor says', 'she paid ' + esc(c.agent) + ' <b>' + ghs(c.amount) + '</b>' + (c.when ? ' (' + esc(c.when) + ')' : '') + ' – told ' + esc(c.raisedBy)) +
+    tr(c.agent + ' says', 'she did NOT pay her' + (c.said ? ': “' + esc(c.said) + '”' : '')) + tr('She owes now', ghs(c.owes)) + '</table>';
+  h += '<div class="psec">What really happened?</div><div class="seg">' + [['YES', 'She paid'], ['NO', 'She did not pay']].map(function (o) { return '<button class="' + (st.paid === o[0] ? 'on' : '') + '" data-act="cldp" data-e="' + x.eid + '" data-v="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>';
+  if (st.paid === 'YES') h += '<label>How much (GHS)</label><input inputmode="decimal" data-inp="cldamt" data-e="' + x.eid + '" value="' + esc(st.amount) + '"><label>Who received it?</label>' + whoSeg('cldh', x.eid, st.holder);
+  if (st.paid) h += '<label>Note (optional)</label><input data-inp="cldnote" data-e="' + x.eid + '" value="' + esc(st.note) + '"><p><button class="main big" data-act="cldsave" data-e="' + x.eid + '">Save decision</button></p>';
+  return h;
+}
+ACT.cldp = function (b) { CLD[b.dataset.e].paid = b.dataset.v; render(); };
+ACT.cldh = function (b) { CLD[b.dataset.e].holder = b.dataset.v; render(); };
+INP.cldamt = function (el) { CLD[el.dataset.e].amount = el.value; }; INP.cldnote = function (el) { CLD[el.dataset.e].note = el.value; };
+ACT.cldsave = function (b) {
+  var st = CLD[b.dataset.e], x = (D.needs || []).filter(function (n) { return n.eid === b.dataset.e; })[0]; if (!x || !x.cl) return; var amt = num(st.amount);
+  if (st.paid === 'YES' && !(amt > 0)) { say('Type how much she paid.'); return; } if (st.paid === 'YES' && !st.holder) { say('Tap who received the money.'); return; }
+  ask(x.vendor + ':\n' + (st.paid === 'YES' ? 'She paid ' + ghs(amt) + ' – received by ' + st.holder + '.\nHer debt goes down by ' + ghs(amt) + ' and the cash counts as with ' + st.holder + '.' : 'She did NOT pay – her debt stays ' + ghs(x.cl.owes) + '.') + (st.note ? '\nNote: ' + st.note : '') + '\n' + x.cl.agent + ' is told.', function () {
+    bgSave('claimdec', { id: x.cl.id, eid: x.eid, paid: st.paid, amount: st.paid === 'YES' ? amt : 0, holder: st.paid === 'YES' ? st.holder : '', note: st.note }, 'cd-' + x.cl.id, 'decision – ' + x.vendor, null, true); delete CLD[b.dataset.e]; }, 'SAVE DECISION');
+};
+// ---------------------------------------------------------------- v2.5.6: a payment recorded twice
+function dupHtml(x) { var p = x.dup; return '<div class="small" style="margin:4px 0">' + esc(p.by) + ' recorded <b>' + ghs(p.amount) + '</b> from ' + esc(x.vendor) + ' twice' + (p.at ? ' (the second at ' + esc(p.at) + ')' : '') + '.</div><div class="btns"><button data-act="resolve" data-e="' + x.eid + '">She paid twice – keep both</button><button class="warn" data-act="dupx" data-e="' + x.eid + '" data-r="' + esc(p.rid) + '">Cancel the second</button></div>'; }
+ACT.dupx = function (b) { var x = (D.needs || []).filter(function (n) { return n.eid === b.dataset.e; })[0]; if (!x || !x.dup) return;
+  ask('Cancel the second ' + ghs(x.dup.amount) + ' from ' + x.vendor + '?\nHer debt goes back up by ' + ghs(x.dup.amount) + ' and ' + x.dup.by + ' counts ' + ghs(x.dup.amount) + ' less.', function () { bgSave('dupcancel', { rid: x.dup.rid, eid: x.eid }, 'du-' + x.dup.rid, 'cancel double entry – ' + x.vendor, null, true); }, 'YES, CANCEL IT'); };
+// ---------------------------------------------------------------- v2.5.6: the agent answers "she says she paid you"
+var CLA = {};
+SHEETS.claims = function () {
+  var L = myClaims(); if (!L.length) return '';
+  return shHead('money', 'red', L.length === 1 ? 'She says she paid you' : L.length + ' vendors say they paid you', 'Her debt does not change until you answer') + L.map(function (c) {
+    var st = CLA[c.id] || (CLA[c.id] = { ans: '', amount: '', note: '' });
+    var h = '<div class="card" style="margin:10px 0"><div class="row" style="flex-wrap:nowrap">' + avatar(c.vendor) + '<div class="grow"><b>' + esc(c.vendor) + '</b><div class="small muted">Told ' + esc(c.raisedBy) + (c.at ? ' on ' + esc(c.at) : '') + ' · owes ' + ghs(c.owes) + ' in our records</div></div></div>' +
+      '<p style="margin:10px 0 6px">She says she paid you <b>' + ghs(c.amount) + '</b>' + (c.when ? ' (' + esc(c.when) + ')' : '') + '. Did she?</p><div class="seg">' + [['YES', 'Yes, ' + ghs(c.amount)], ['DIFF', 'Different amount'], ['NO', 'No']].map(function (o) { return '<button class="' + (st.ans === o[0] ? 'on' : '') + '" data-act="clans" data-c="' + c.id + '" data-v="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>';
+    if (st.ans === 'DIFF') h += '<label>How much did she give you? (GHS)</label><input inputmode="decimal" data-inp="clamt" data-c="' + c.id + '" value="' + esc(st.amount) + '">';
+    if (st.ans === 'NO') h += '<label>What happened? (the manager reads this)</label><input data-inp="clnote" data-c="' + c.id + '" value="' + esc(st.note) + '" placeholder="e.g. I have not collected from her this month">';
+    if (st.ans) h += '<p><button class="main big" data-act="clsave" data-c="' + c.id + '">Send answer</button></p>';
+    return h + '</div>';
+  }).join('');
+};
+ACT.clans = function (b) { CLA[b.dataset.c].ans = b.dataset.v; drawSheet(); };
+INP.clamt = function (el) { CLA[el.dataset.c].amount = el.value; }; INP.clnote = function (el) { CLA[el.dataset.c].note = el.value; };
+ACT.clsave = function (b) {
+  var c = myClaims().filter(function (x) { return x.id === b.dataset.c; })[0], st = CLA[b.dataset.c]; if (!c) return; var amt = st.ans === 'YES' ? c.amount : num(st.amount);
+  if (st.ans === 'DIFF' && !(amt > 0)) { say('Type how much she gave you.'); return; }
+  ask(c.vendor + ':\n' + (st.ans === 'NO' ? 'She did NOT pay you.\nIt goes to the manager to decide; her debt stays until then.' : 'She paid you ' + ghs(amt) + '.\nHer debt goes down and the cash counts as with you until you hand it over.') + (st.note ? '\nNote: ' + st.note : ''), function () {
+    bgSave('claim', { id: c.id, ans: st.ans, amount: st.ans === 'DIFF' ? amt : '', note: st.note }, 'cl-' + c.id, (st.ans === 'NO' ? 'not paid' : 'paid ' + ghs(amt)) + ' – ' + c.vendor, null, true); delete CLA[c.id]; }, 'SEND');
+};
+// ---------------------------------------------------------------- v2.5.6: register a new vendor (replaces the Register form)
+var REG = null;
+ACT.regOpen = function (b) { SHEETK = ''; REG = { name: (b && b.dataset.q) || '', phone: '', waK: '', waN: '', school: '', q: '', newS: '', bus: '', agent: '' }; regDraw(); };
+function regDraw() {
+  var R = REG, s = schoolOf(R.school), sup = D.me.role === 'Supervisor';
+  var h = '<div class="overlay"><div class="sheet"><div class="shd"><span class="lead t-blue">' + ico(ICO.plus) + '</span><div class="grow"><h3>New vendor</h3><div class="sub">She can be ordered for as soon as it is saved</div></div><button class="ib gh sm x" data-act="closeO" aria-label="Close">' + ico(ICO.x) + '</button></div>' +
+    (sup ? '<label>Agent</label><div class="seg">' + (D.agents || []).map(function (a) { return '<button class="' + (R.agent === a.id ? 'on' : '') + '" data-act="ragent" data-v="' + a.id + '">' + esc(a.name) + '</button>'; }).join('') + '</div>' : '') +
+    '<label>Her full name</label><input data-inp="rf" data-f="name" value="' + esc(R.name) + '" placeholder="e.g. Akosua Mensah" autocapitalize="words">' +
+    '<label>Phone</label><input inputmode="tel" data-inp="rf" data-f="phone" value="' + esc(R.phone) + '" placeholder="0241234567">' +
+    '<label>WhatsApp on that number?</label><div class="seg">' + [['Same number', 'Yes'], ['Other', 'Another number'], ['No WhatsApp', 'No WhatsApp']].map(function (x) { return '<button class="' + (R.waK === x[0] ? 'on' : '') + '" data-act="rwa" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>' +
+    (R.waK === 'Other' ? '<label>Her WhatsApp number</label><input inputmode="tel" data-inp="rf" data-f="waN" value="' + esc(R.waN) + '" placeholder="0241234567">' : '') +
+    '<label>School</label>';
+  if (s) h += '<div class="row" style="flex-wrap:nowrap"><div class="grow"><b>' + esc(s.name) + '</b>' + (s.area ? '<div class="small muted">' + esc(s.area) + '</div>' : '') + '</div><button class="ghost" data-act="rpickx">Change</button></div>';
+  else if (R.newMode) h += '<input data-inp="rf" data-f="newS" value="' + esc(R.newS) + '" placeholder="School name"><button class="ghost" data-act="rnewx">Choose from the list instead</button>';
+  else h += '<input data-inp="rsq" value="' + esc(R.q) + '" placeholder="Type 2–3 letters of the school" autocomplete="off" autocapitalize="off" spellcheck="false"><div id="rsr">' + regHits() + '</div><button class="ghost" data-act="rnew">+ School not in the list</button>';
+  h += '<label>Business / outlet name (optional)</label><input data-inp="rf" data-f="bus" value="' + esc(R.bus) + '">' +
+    '<div class="btns" style="margin-top:18px"><button data-act="closeO">Cancel</button><button class="main" data-act="rsave">Register</button></div></div></div>';
+  $('over').innerHTML = h;
+}
+function regHits() { var q = norm(REG.q); var L = (D.schools || []).filter(function (s) { return !q || norm(s.name + ' ' + s.area).indexOf(q) >= 0; }).slice(0, q ? 12 : 6); if (!L.length) return '<p class="sub">No school found – tap "+ School not in the list".</p>';
+  return '<div class="psr">' + L.map(function (s) { return '<div class="hit" data-act="rschool" data-s="' + s.id + '"><span><b>' + esc(s.name) + '</b>' + (s.area ? '<div class="small muted">' + esc(s.area) + '</div>' : '') + '</span><span class="small muted">' + s.n + '</span></div>'; }).join('') + '</div>'; }
+INP.rf = function (el) { REG[el.dataset.f] = el.value; }; INP.rsq = function (el) { REG.q = el.value; var b = $('rsr'); if (b) b.innerHTML = regHits(); };
+ACT.rschool = function (b) { REG.school = b.dataset.s; REG.newMode = false; regDraw(); }; ACT.rpickx = function () { REG.school = ''; REG.q = ''; regDraw(); };
+ACT.rnew = function () { REG.newMode = true; REG.newS = REG.q || ''; regDraw(); var el = document.querySelector('[data-f=newS]'); if (el) el.focus(); };
+ACT.rnewx = function () { REG.newMode = false; REG.newS = ''; regDraw(); };
+ACT.rwa = function (b) { REG.waK = REG.waK === b.dataset.v ? '' : b.dataset.v; regDraw(); }; ACT.ragent = function (b) { REG.agent = b.dataset.v; regDraw(); };
+ACT.rsave = function () {
+  var R = REG, ph = String(R.phone || '').replace(/\D/g, ''), wn = String(R.waN || '').replace(/\D/g, ''), nm = String(R.name || '').replace(/\s+/g, ' ').trim(), s = schoolOf(R.school), sn = s ? s.name : String(R.newS || '').trim();
+  if (D.me.role === 'Supervisor' && !R.agent) { say('Tap the agent she belongs to.'); return; }
+  if (nm.length < 3) { say('Write her full name.'); return; }
+  if (!/^0\d{9}$/.test(ph)) { say('The phone number has 10 numbers and starts with 0, e.g. 0241234567.'); return; }
+  if (R.waK === 'Other' && !/^0\d{9}$/.test(wn)) { say('The WhatsApp number has 10 numbers and starts with 0.'); return; }
+  if (sn.length < 3) { say('Choose her school – or type its name.'); return; }
+  ask('Register ' + nm + '?\n' + ph + ' · ' + sn, function () {
+    bgSave('register', { name: nm, phone: ph, wa: R.waK === 'Other' ? wn : R.waK, school: s ? s.id : '', schoolName: s ? '' : sn, business: R.bus, agent: R.agent }, 'rg-' + uid(), 'new vendor ' + nm, null, true); REG = null; $('over').innerHTML = ''; }, 'REGISTER');
+};
+// v2.5.6: what is waiting to be sent already shows as done
 function needsHtml(list, title) { list = list || D.needs || []; if (!list.length) return ''; return '<div class="card"><h3>' + esc(title || 'Needs you') + ' (' + list.length + ')</h3>' + needsList(list) + '</div>'; }
 function needsList(list) {
   return list.map(function (x, i) {
     var k = 'n:' + x.eid, o = isOpen(k);
-    return '<div class="srow' + (i ? '' : ' first') + '" style="align-items:flex-start;flex-wrap:wrap"><div class="grow tap" data-act="tog" data-o="' + esc(k) + '" data-s="' + (o ? 1 : 0) + '"><span class="pill ' + (x.sev === 'High' ? 'red' : 'amber') + '">' + esc(x.type) + '</span> <span class="small muted">' + esc(dayLbl(x.at)) + '</span>' + (x.vendor ? '<div><b>' + esc(x.vendor) + '</b></div>' : '') + (o ? '' : '<div class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(x.dec ? x.dec.summary : x.text) + '</div>') + '</div><span class="ar" data-act="tog" data-o="' + esc(k) + '" data-s="' + (o ? 1 : 0) + '">' + chev(o) + '</span>' +
-      (o ? '<div style="flex:1 1 100%">' + (x.dec ? '' : '<div class="small" style="margin:4px 0">' + esc(x.text) + '</div>') + (x.dec ? decideHtml(x) : '<button data-act="resolve" data-e="' + x.eid + '">DONE</button>') + '</div>' : '') + '</div>';
+    return '<div class="srow' + (i ? '' : ' first') + '" style="align-items:flex-start;flex-wrap:wrap"><div class="grow tap" data-act="tog" data-o="' + esc(k) + '" data-s="' + (o ? 1 : 0) + '"><span class="pill ' + (x.sev === 'High' ? 'red' : 'amber') + '">' + esc(x.type) + '</span> <span class="small muted">' + esc(dayLbl(x.at)) + '</span>' + (x.vendor ? '<div><b>' + esc(x.vendor) + '</b></div>' : '') + (o ? '' : '<div class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(x.dec ? x.dec.summary : x.cl ? x.cl.agent + ' says she did not pay her ' + ghs(x.cl.amount) : x.text) + '</div>') + '</div><span class="ar" data-act="tog" data-o="' + esc(k) + '" data-s="' + (o ? 1 : 0) + '">' + chev(o) + '</span>' +
+      (o ? '<div style="flex:1 1 100%">' + (x.dec || x.cl || x.dup ? '' : '<div class="small" style="margin:4px 0">' + esc(x.text) + '</div>') + (x.dec ? decideHtml(x) : x.cl ? claimDecHtml(x) : x.dup ? dupHtml(x) : '<button data-act="resolve" data-e="' + x.eid + '">DONE</button>') + '</div>' : '') + '</div>';
   }).join('');
 }
 ACT.resolve = function (b) { askIn('What was done? (short)', 'Checked', '', function (note) { bgSave('resolve', { eid: b.dataset.e, note: note }, 'rs-' + b.dataset.e, 'problem closed', b); }, 'DONE'); };
@@ -1082,7 +1178,7 @@ function oCanCancel(o) { return !o.local && !o.hold && (o.status === 'Submitted'
 var SUB = { today: 'orders', done: 'orders' }; // v2.4.9: Orders | Payments inside "Orders & Payments"
 function subTabs(k, payN, ordN) { return '<div class="seg sub-tabs">' + [['orders', 'Orders', ordN], ['pay', 'Payments', payN]].map(function (x) { return '<button class="' + (SUB[k] === x[0] ? 'on' : '') + '" data-act="sub" data-k="' + k + '" data-s="' + x[0] + '">' + x[1] + (x[2] ? ' <span class="cnt">' + x[2] + '</span>' : '') + '</button>'; }).join('') + '</div>'; }
 ACT.sub = function (b) { SUB[b.dataset.k] = b.dataset.s; MSG = null; render(); window.scrollTo(0, 0); };
-function payNeeds() { return (D.needs || []).filter(function (x) { return x.dec; }); }
+function payNeeds() { return (D.needs || []).filter(function (x) { return x.dec || x.cl || x.dup; }); }
 /** v2.5.2: Prince could not deliver – the manager tries again or cancels (one card, open while something waits). */
 var NDN = {};
 function ndList() { return D.me.role === 'Supervisor' ? (D.needs || []).filter(function (x) { return x.nd; }) : []; }
@@ -1103,12 +1199,15 @@ ACT.ndgo = function (b) {
     bgSave('nddecide', { eid: b.dataset.e, choice: b.dataset.c, note: note }, 'nd-' + b.dataset.e, (re ? 'try again: ' : 'cancel: ') + nm, null, true); delete NDN[b.dataset.e]; }, re ? 'TRY AGAIN' : 'YES, CANCEL');
 };
 function rcptToSend() { var d3 = addDays(D.today, -3); return (D.receipts || []).filter(function (r) { return !r.sent && !r.answer && (!r.day || r.day >= d3); }).length; }
-function payCount() { return (D.toConfirm || []).length + payNeeds().length + rcptToSend(); }
+function payCount() { return (D.toConfirm || []).length + payNeeds().length + rcptToSend() + myClaims().length; }
+/** v2.5.6: "she says she paid you" – waiting for this agent's answer. */
+function myClaims() { return D.me.role === 'Agent' ? (D.claims || []) : []; }
+function claimsRow() { var L = myClaims(); if (!L.length) return ''; return todoRow('claims', 'money', 'red', L.length === 1 ? esc(L[0].vendor) + ' says she paid you ' + ghs(L[0].amount) : L.length + ' vendors say they paid you', 'Tap to answer – her debt waits for you', L.length); }
 function pgToday() {
   var h = subTabs('today', payCount(), ordCount());
   if (SUB.today === 'pay') return h + paymentsHtml();
   var other = otherNeeds();
-  h += todoBox([ndHtml(), outCardHtml(), other.length ? todoRow('needs', 'alert', 'amber', 'Other problems', other.slice(0, 3).map(function (x) { return esc(x.type); }).join(' · '), other.length) : '',
+  h += todoBox([claimsRow(), ndHtml(), outCardHtml(), other.length ? todoRow('needs', 'alert', 'amber', 'Other problems', other.slice(0, 3).map(function (x) { return esc(x.type); }).join(' · '), other.length) : '',
     D.me.role === 'Agent' && (D.toEnter || []).length && fl('today').ent !== 'yes' ? '<div class="li" data-act="entgo">' + leadI('done', 'blue') + '<div class="grow"><div class="t">Enter in the company app</div><div class="s">Delivered orders to copy</div></div><span class="cnt">' + D.toEnter.length + '</span><span class="go">' + ico(ICO.right) + '</span></div>' : '']);
   var f0 = fl('today'); if (f0.ent === 'yes' && !(D.toEnter || []).length) { delete f0.ent; flSave(); }
   h += filterBar('today', 'Find a vendor or order number');
@@ -1126,8 +1225,8 @@ function toEnterList() {
   return '<div class="sumline"><b>' + L.length + '</b> delivered order' + (L.length === 1 ? '' : 's') + ' to copy into the company app – tick each one you have entered.</div><div class="card" style="padding:2px 14px">' + L.map(function (x, i) { return '<label class="tk"' + (i ? '' : ' style="border-top:0"') + '><input type="checkbox" class="chk" name="ent" value="' + x.oid + '" data-chg="entk"' + (ENTK[x.oid] ? ' checked' : '') + '><span class="grow"><b>' + esc(x.vendor) + '</b>' + (D.me.role === 'Supervisor' ? ' · ' + esc(x.agent) : '') + '<div class="small muted">' + x.lines.map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', ') + ' · ' + esc(x.pay) + ' · ' + esc(dayLbl(x.date)) + '</div></span><b>' + ghs(x.value) + '</b></label>'; }).join('') +
     '</div><button class="main big" data-act="entered">Done – ticked ones are entered</button>';
 }
-function decNeeds() { return (D.needs || []).filter(function (x) { return x.dec; }); }
-function remNeeds() { return (D.needs || []).filter(function (x) { return !x.dec && x.pay && !x.tech; }); }
+function decNeeds() { return (D.needs || []).filter(function (x) { return x.dec || x.cl || x.dup; }); }
+function remNeeds() { return (D.needs || []).filter(function (x) { return !x.dec && !x.cl && !x.dup && x.pay && !x.tech; }); }
 function paySecs() {
   var r = D.me.role, n = decNeeds().length, nr = rcptToSend();
   var rc = ['rcpt', 'Receipts' + (nr ? ' <span class="cnt">' + nr + '</span>' : '')];
@@ -1137,8 +1236,8 @@ function paySecs() {
 }
 function paymentsHtml() {
   var secs = paySecs(), cur = PSEC.pay || (D.me.role === 'Supervisor' && decNeeds().length ? 'dec' : 'cash'); if (!secs.some(function (s) { return s[0] === cur; })) cur = secs[0][0];
-  var h = confirmHtml() + chips('pay', secs, cur);
-  if (cur === 'dec') { var pn = decNeeds(), rm = remNeeds(); h += pn.length ? '<div class="card"><p class="sub" style="margin-top:0">Tap a case to see both sides and decide who is right.</p>' + needsList(pn) + '</div>' : '<p class="muted">No dispute to decide now.</p>';
+  var h = todoBox([claimsRow()]) + confirmHtml() + chips('pay', secs, cur);
+  if (cur === 'dec') { var pn = decNeeds(), rm = remNeeds(); h += pn.length ? '<div class="card"><p class="sub" style="margin-top:0">Tap a case, check both sides, then record what really happened.</p>' + needsList(pn) + '</div>' : '<p class="muted">No dispute to decide now.</p>';
     if (rm.length) h += fold('rem', '<b>Reminders: ' + rm.length + '</b><div class="small muted">' + remSum(rm) + '</div>', function () { return needsList(rm); }); }
   else if (cur === 'cash') h += (D.me.role === 'Supervisor' ? supFold() : '') + cashSecHtml();
   else if (cur === 'rcpt') h += filterBar('prcpt', 'Find a vendor') + '<div id="flist">' + LISTR.prcpt() + '</div>';
@@ -1833,6 +1932,7 @@ function goHash2(h) {
     setTimeout(function () { ACT.cancelO({ dataset: { o: oid } }); }, 60);
   } else if (h === 'confirm') { if (D.me.role === 'Warehouse') { SCREEN = 'release'; TAB = 'cash'; } else if (D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'pay'; } else if (D.screens.indexOf('route') >= 0) { SCREEN = 'route'; TAB = 'done'; SUB.done = 'pay'; } render(); }
   else if (h === 'decide' && D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'pay'; render(); }
+  else if (h === 'claims' && D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'orders'; render(); sheetOpen('claims'); } // v2.5.6
   else if (h === 'nd' && D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'orders'; render(); sheetOpen('nd'); }
   else if (h === 'out' && D.screens.indexOf('order') >= 0) { SCREEN = 'order'; TAB = 'today'; SUB.today = 'orders'; render(); sheetOpen('outcard'); }
 }
