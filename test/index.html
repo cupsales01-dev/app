@@ -50,7 +50,7 @@ main{padding:12px 12px 120px;max-width:640px;margin:0 auto}
 /* buttons */
 button{font:inherit;border:0;border-radius:10px;padding:10px 14px;background:var(--grey2);color:var(--ink);font-weight:650;cursor:pointer;font-size:14.5px}
 button.main{background:var(--blue);color:#fff}button.main:active{background:#B00014}
-.seg.wrap{flex-wrap:wrap}.seg.wrap button{flex:0 0 auto;min-width:72px}
+.seg.wrap{flex-wrap:wrap}.pbar{height:8px;border-radius:4px;background:var(--line);margin:6px 0 4px;overflow:hidden}.pbar i{display:block;height:100%;background:var(--blue);border-radius:4px}.seg.wrap button{flex:0 0 auto;min-width:72px}
 .wrep{display:flex;gap:8px;margin:0 0 6px}.wrep a{flex:1;text-decoration:none}.wrep button{width:100%;margin:0;display:flex;align-items:center;justify-content:center;gap:6px}.wrep svg{width:17px;height:17px}
 button.warn{background:var(--red2);color:var(--red)}button.ghost{background:transparent;color:var(--blue);padding:8px 6px}
 button:disabled{opacity:.45}button.sent{background:var(--green2);color:var(--green);opacity:1}
@@ -229,6 +229,7 @@ function flush(after) {
     else if (r.error) { whenFree(function () { dlgOpen('NOT SAVED – ' + x.label + ':\n\n' + r.error, null, 'OK', null, null); }); }
     else {
       RECENT.push({ key: x.key, label: x.label, at: Date.now() }); RECENT = RECENT.slice(-20);
+      if (!r.dup) { CONF.push({ op: x.op, data: x.data, sid: x.sid, at: Date.now(), c: 1 }); CONF = CONF.filter(function (c) { return Date.now() - c.at < 900000; }).slice(-40); } // v2.5.7
       var m = r.dup ? x.label + ' – was already saved.' : (r.msg || (r.msgs && r.msgs.length ? r.msgs.join('\n') : '') || (r.done ? 'Sent: ' + r.done.map(function (d) { return d.vendor; }).join(', ') : x.label + ' – done.'));
       if (x.op === 'orders' && r.problems && r.problems.length) { // vendors that were not saved go back to the New order screen
         var d = draft(); r.problems.forEach(function (p) { var v = (x.data.vendors || []).filter(function (y) { return y.vid === p.vid; })[0]; if (v && !d.vendors.some(function (y) { return y.vid === v.vid; })) { var n = newV(); n.vid = v.vid; n.lines = v.lines; n.pay = v.pay; n.paid = v.paid ? String(v.paid) : ''; n.promised = v.promised ? String(v.promised) : ''; n.note = v.note || ''; n.replaces = v.replaces || ''; d.vendors = d.vendors.filter(function (y) { return y.vid; }).concat([n]); } }); saveDraft(d);
@@ -243,13 +244,14 @@ function flush(after) {
   }, function (e) { FLUSHING = false; NOSIG = !!(e && e.offline); clearTimeout(RETRYT); RETRYT = setTimeout(function () { flush(); }, e && e.offline ? 30000 : 15000); topbar(); after && after(); });
 }
 var LATERSEQ = 0; // v2.4.8
+var POLLING = false; var CONF = []; // v2.5.7: saves the system confirmed – shown as done until a screen fetched after them arrives
 var OKS = []; // what the system said about the saves just sent – shown on top of the new screen
 /** When the queue is empty: show the newest screen (from the last save's answer, or ask for it) – never while the person is typing. */
 function later() {
   topbar();
   if (queue().length) return;
   var busy = function () { var a = document.activeElement; return $('dlg').innerHTML || $('over').innerHTML || (a && /INPUT|SELECT|TEXTAREA/.test(a.tagName)); };
-  var my = ++LATERSEQ; var apply = function (d) { if (my !== LATERSEQ) return; if (busy()) { setTimeout(function () { apply(d); }, 1500); return; } D = d; if (LASTREV) REV = LASTREV; OFFLINE = false; ls(CKEY, JSON.stringify(d)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })); if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (OKS.length) MSG = { t: OKS.splice(0).join('\n'), k: 'ok' }; var y = window.scrollY; render(); window.scrollTo(0, y); };
+  var my = ++LATERSEQ, t0 = Date.now(); var apply = function (d) { if (my !== LATERSEQ) return; if (busy()) { setTimeout(function () { apply(d); }, 1500); return; } d.__t0 = d.__t0 || d.__at || t0; D = d; if (LASTREV) REV = LASTREV; OFFLINE = false; ls(CKEY, JSON.stringify(d)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })); if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (OKS.length) MSG = { t: OKS.splice(0).join('\n'), k: 'ok' }; var y = window.scrollY; render(); window.scrollTo(0, y); };
   if (NEXTD && Date.now() - (NEXTD.__at || 0) < 60000) { var d0 = NEXTD; NEXTD = null; apply(d0); return; }
   NEXTD = null; rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: 'init', data: {} }, function (r) { if (r && !r.error && !r.auth && r.screens && !queue().length) apply(r); }, function () { });
 }
@@ -318,8 +320,8 @@ function load(after) {
     NEXTD = null;
     // v2.4.9: the screen kept on this phone shows at once ("Updating…"); the newest one replaces it when it arrives
     if (!D) { var c0 = null; try { c0 = JSON.parse(ls(CKEY) || 'null'); } catch (x) { } if (c0 && c0.screens && c0.me) { D = c0; STALE = true; if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB || !TABS[SCREEN].some(function (t) { return t[0] === TAB; })) TAB = firstTab(); render(); } }
-    call('init', {}, '', function (r) {
-      var put = function () {
+    var t0 = Date.now(); call('init', {}, '', function (r) {
+      r.__t0 = t0; var put = function () {
         if (STALE && ($('dlg').innerHTML || $('over').innerHTML || (document.activeElement && /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)))) { setTimeout(put, 1200); return; }
         var was = STALE; STALE = false; D = r; OFFLINE = false; ls(CKEY, JSON.stringify(r)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })); if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB) TAB = firstTab(); var y = window.scrollY; render(); if (was) window.scrollTo(0, y); after && after();
       }; put(); },
@@ -462,10 +464,10 @@ var POLLT = Date.now();
 function badgeFlat() { var B = badges(), o = {}; Object.keys(B).forEach(function (s) { Object.keys(B[s]).forEach(function (k) { if (k !== 'new') o[s + '.' + k] = B[s][k] || 0; }); }); return o; }
 function poll() {
   var busy = function () { var a = document.activeElement; return !D || RK || document.visibilityState === 'hidden' || queue().length || FLUSHING || $('dlg').innerHTML || $('over').innerHTML || (a && /INPUT|SELECT|TEXTAREA/.test(a.tagName)); };
-  if (busy()) return; POLLT = Date.now();
+  if (busy() || POLLING) return; POLLT = Date.now(); var t0 = Date.now(); POLLING = true; setTimeout(function () { POLLING = false; }, 60000);
   rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: 'init', data: {}, poll: 1 }, function (r) {
-    if (!r || r.error || r.auth || !r.screens || busy()) return;
-    var before = badgeFlat(); D = r; if (SEENREV) REV = SEENREV; OFFLINE = false; STALE = false; ls(CKEY, JSON.stringify(r)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }));
+    POLLING = false; if (!r || r.error || r.auth || !r.screens || busy() || (D && D.__t0 > t0)) return; // an older answer never replaces a newer screen
+    var before = badgeFlat(); r.__t0 = t0; D = r; if (SEENREV) REV = SEENREV; OFFLINE = false; STALE = false; ls(CKEY, JSON.stringify(r)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }));
     if (D.screens.indexOf(SCREEN) < 0) { SCREEN = D.screens[0]; TAB = firstTab(); }
     var y = window.scrollY; render(); window.scrollTo(0, y);
     var after = badgeFlat(), news = Object.keys(after).filter(function (k) { return after[k] > (before[k] || 0); });
@@ -478,12 +480,13 @@ function ping() {
   if (!D || RK || document.visibilityState === 'hidden') return; PINGT = Date.now();
   rpc({ op: 'ping' }, function (r) { if (!r || r.rev == null) return; SEENREV = String(r.rev); if (REV === null) { REV = SEENREV; return; } if (SEENREV !== REV) poll(); }, function () { });
 }
-setInterval(function () { if (Date.now() - POLLT > 300000) poll(); else if (Date.now() - PINGT > 28000) ping(); }, 10000);
-document.addEventListener('visibilitychange', function () { if (document.visibilityState !== 'visible') return; if (Date.now() - POLLT > 300000) setTimeout(poll, 1000); else setTimeout(ping, 800); });
+setInterval(function () { if (Date.now() - POLLT > 300000) poll(); else if (Date.now() - PINGT > 14000) ping(); }, 5000);
+var BACKT = null; function onBack() { if (document.visibilityState !== 'visible' || !D) return; clearTimeout(BACKT); BACKT = setTimeout(function () { if (Date.now() - POLLT > 30000) poll(); else ping(); }, 600); } // v2.5.7: opened again → the newest screen (once)
+document.addEventListener('visibilitychange', onBack); window.addEventListener('pageshow', function (e) { if (e.persisted) onBack(); }); window.addEventListener('focus', onBack);
 /** v2.4.7: what is saved on the phone but not yet in the system is shown as done already. */
 function pendView() {
   if (!D) return;
-  queue().forEach(function (x) {
+  queue().concat(CONF.filter(function (c) { return (!D.__t0 || c.at > D.__t0) && Date.now() - c.at < 900000; })).forEach(function (x) { // v2.5.7: and the saves confirmed after this screen was fetched
     var d = x.data || {};
     if (x.op === 'release' && D.waiting) { var ids = (d.items || []).map(function (i) { return i.oid; }); D.waiting = D.waiting.filter(function (o) { return ids.indexOf(o.oid) < 0; }); }
     if (x.op === 'confirm' && D.toConfirm) D.toConfirm = D.toConfirm.filter(function (c) { return c.hid !== d.hid; });
@@ -503,11 +506,12 @@ function pendView() {
     if (x.op === 'claim' && D.claims) D.claims = D.claims.filter(function (c) { return c.id !== d.id; }); // v2.5.6
     if ((x.op === 'claimdec' || x.op === 'dupcancel') && D.needs) D.needs = D.needs.filter(function (n) { return n.eid !== d.eid; });
     if (x.op === 'stockback' && D.comingBack) D.comingBack = D.comingBack.filter(function (c) { return c.did ? (d.dids || []).indexOf(c.did) < 0 : (d.oids || []).indexOf(c.oid) < 0; });
-    if (x.op === 'stop' && d.what === 'NONE' && D.stops) D.stops = D.stops.filter(function (s) { return s.id !== d.vid; });
+    if (x.op === 'stop' && D.stops) { var so = d.oids || []; D.stops = D.stops.filter(function (s) { if (s.id !== d.vid) return true; if (d.what === 'NONE' || !so.length) return false; s.orders = s.orders.filter(function (o) { return so.indexOf(o.oid) < 0; }); return s.orders.length > 0; }); } // v2.5.7: a recorded stop leaves the list at once
+    if (x.op === 'startday' && D.myDay) D.myDay.start = D.myDay.start || 'now';
     if (x.op === 'vprofile' && d.prof) { var vp = vend(d.vid); if (vp) { vp.prof = Object.assign({}, vp.prof || {}, { school: d.prof.newSchool ? '' : d.prof.school, at: D.today }); if (d.prof.newSchool) vp.school = d.prof.newSchool.name; } }
     if ((x.op === 'agree' || x.op === 'dispute') && D.myOrders) D.myOrders.forEach(function (o) { if (o.oid === d.oid && o.outcome) { o.outcome.check = x.op === 'agree' ? 'Agrees' : 'Disagrees'; o.outcome.mismatch = false; o.outcome.sending = 1; } });
     if (x.op === 'orders' && D.myOrders && !D.myOrders.some(function (o) { return o.sid === x.sid; })) (d.vendors || []).slice().reverse().forEach(function (v) {
-      var vv = vend(v.vid) || { name: v.vid }; D.myOrders.unshift({ sid: x.sid, local: 1, oid: 'sending…', date: D.today, vid: v.vid, vendor: vv.name, agent: D.me.first, pay: v.pay === 'CREDIT' ? 'Credit' : 'Cash', status: 'Sending', lines: (v.lines || []).map(function (l) { return { sku: l.sku, qty: l.qty }; }), prepaid: 0, promised: v.promised || 0, outcome: null });
+      var vv = vend(v.vid) || { name: v.vid }; D.myOrders.unshift({ sid: x.sid, local: 1, oid: x.c ? 'saved' : 'sending…', date: D.today, vid: v.vid, vendor: vv.name, agent: D.me.first, pay: v.pay === 'CREDIT' ? 'Credit' : 'Cash', status: 'Sending', lines: (v.lines || []).map(function (l) { return { sku: l.sku, qty: l.qty }; }), prepaid: 0, promised: v.promised || 0, outcome: null });
     });
   });
 }
@@ -559,7 +563,7 @@ function habitTips(v, x) {
 ACT.nhalf = function (b) { edit(b, function (x) { x.lines.forEach(function (l) { if (l.sku && Number(l.qty) > 1) l.qty = Math.ceil(Number(l.qty) / 2); }); x.halved = true; }, true); };
 function pgNew() {
   var d = draft(), h = '', tv = 0, tc = 0;
-  h += outNotice();
+  h += todoBox([startRow()]) + outNotice();
   d.vendors.forEach(function (x, i) {
     if (x.vid && !vend(x.vid)) { x.vid = ''; saveDraft(d); } // vendor moved to another agent since the draft was kept
     var v = x.vid ? vend(x.vid) : null; h += '<div class="card vcard">';
@@ -1022,19 +1026,23 @@ function regDraw() {
     '<label>Phone</label><input inputmode="tel" data-inp="rf" data-f="phone" value="' + esc(R.phone) + '" placeholder="0241234567">' +
     '<label>WhatsApp on that number?</label><div class="seg">' + [['Same number', 'Yes'], ['Other', 'Another number'], ['No WhatsApp', 'No WhatsApp']].map(function (x) { return '<button class="' + (R.waK === x[0] ? 'on' : '') + '" data-act="rwa" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>' +
     (R.waK === 'Other' ? '<label>Her WhatsApp number</label><input inputmode="tel" data-inp="rf" data-f="waN" value="' + esc(R.waN) + '" placeholder="0241234567">' : '') +
+    '<label>Birthday (if she says)</label><div class="fgrid"><select data-chg="rbd" data-f="bdD"><option value="">Day</option>' + [].concat.apply([], Array(31)).map(function (z, i) { return '<option' + (String(i + 1) === String(R.bdD) ? ' selected' : '') + '>' + (i + 1) + '</option>'; }).join('') + '</select><select data-chg="rbd" data-f="bdM"><option value="">Month</option>' + MONS.map(function (m) { return '<option' + (R.bdM === m ? ' selected' : '') + '>' + m + '</option>'; }).join('') + '</select></div>' +
+    '<label>Year of birth (optional)</label><input inputmode="numeric" maxlength="4" data-inp="rf" data-f="byear" value="' + esc(R.byear || '') + '" placeholder="e.g. 1988">' +
     '<label>School</label>';
   if (s) h += '<div class="row" style="flex-wrap:nowrap"><div class="grow"><b>' + esc(s.name) + '</b>' + (s.area ? '<div class="small muted">' + esc(s.area) + '</div>' : '') + '</div><button class="ghost" data-act="rpickx">Change</button></div>';
   else if (R.newMode) h += '<input data-inp="rf" data-f="newS" value="' + esc(R.newS) + '" placeholder="School name"><button class="ghost" data-act="rnewx">Choose from the list instead</button>';
   else h += '<input data-inp="rsq" value="' + esc(R.q) + '" placeholder="Type 2–3 letters of the school" autocomplete="off" autocapitalize="off" spellcheck="false"><div id="rsr">' + regHits() + '</div><button class="ghost" data-act="rnew">+ School not in the list</button>';
-  h += '<label>Business / outlet name (optional)</label><input data-inp="rf" data-f="bus" value="' + esc(R.bus) + '">' +
+  if (s || R.newMode) h += '<div class="fgrid"><label><span>School population (about)</span><input inputmode="numeric" data-inp="rf" data-f="pupils" value="' + esc(R.pupils != null ? R.pupils : (s && s.pupils) || '') + '" placeholder="e.g. 650"></label><label><span>Break times</span><input data-inp="rf" data-f="breaks" value="' + esc(R.breaks != null ? R.breaks : (s && s.breaks) || '') + '" placeholder="10:00, 12:30"></label></div>';
+  h += '<label>Profit share – what she gives the school (if any)</label><input data-inp="rf" data-f="share" value="' + esc(R.share || '') + '" placeholder="e.g. 10% · GHS 50 a term · nothing">' +
+    '<label>Business / outlet name (optional)</label><input data-inp="rf" data-f="bus" value="' + esc(R.bus) + '">' +
     '<div class="btns" style="margin-top:18px"><button data-act="closeO">Cancel</button><button class="main" data-act="rsave">Register</button></div></div></div>';
   $('over').innerHTML = h;
 }
 function regHits() { var q = norm(REG.q); var L = (D.schools || []).filter(function (s) { return !q || norm(s.name + ' ' + s.area).indexOf(q) >= 0; }).slice(0, q ? 12 : 6); if (!L.length) return '<p class="sub">No school found – tap "+ School not in the list".</p>';
   return '<div class="psr">' + L.map(function (s) { return '<div class="hit" data-act="rschool" data-s="' + s.id + '"><span><b>' + esc(s.name) + '</b>' + (s.area ? '<div class="small muted">' + esc(s.area) + '</div>' : '') + '</span><span class="small muted">' + s.n + '</span></div>'; }).join('') + '</div>'; }
 INP.rf = function (el) { REG[el.dataset.f] = el.value; }; INP.rsq = function (el) { REG.q = el.value; var b = $('rsr'); if (b) b.innerHTML = regHits(); };
-ACT.rschool = function (b) { REG.school = b.dataset.s; REG.newMode = false; regDraw(); }; ACT.rpickx = function () { REG.school = ''; REG.q = ''; regDraw(); };
-ACT.rnew = function () { REG.newMode = true; REG.newS = REG.q || ''; regDraw(); var el = document.querySelector('[data-f=newS]'); if (el) el.focus(); };
+ACT.rschool = function (b) { REG.school = b.dataset.s; REG.newMode = false; REG.pupils = null; REG.breaks = null; regDraw(); }; CHG.rbd = function (el) { REG[el.dataset.f] = el.value; }; ACT.rpickx = function () { REG.school = ''; REG.q = ''; REG.pupils = null; REG.breaks = null; regDraw(); };
+ACT.rnew = function () { REG.newMode = true; REG.newS = REG.q || ''; REG.pupils = null; REG.breaks = null; regDraw(); var el = document.querySelector('[data-f=newS]'); if (el) el.focus(); };
 ACT.rnewx = function () { REG.newMode = false; REG.newS = ''; regDraw(); };
 ACT.rwa = function (b) { REG.waK = REG.waK === b.dataset.v ? '' : b.dataset.v; regDraw(); }; ACT.ragent = function (b) { REG.agent = b.dataset.v; regDraw(); };
 ACT.rsave = function () {
@@ -1044,8 +1052,13 @@ ACT.rsave = function () {
   if (!/^0\d{9}$/.test(ph)) { say('The phone number has 10 numbers and starts with 0, e.g. 0241234567.'); return; }
   if (R.waK === 'Other' && !/^0\d{9}$/.test(wn)) { say('The WhatsApp number has 10 numbers and starts with 0.'); return; }
   if (sn.length < 3) { say('Choose her school – or type its name.'); return; }
-  ask('Register ' + nm + '?\n' + ph + ' · ' + sn, function () {
-    bgSave('register', { name: nm, phone: ph, wa: R.waK === 'Other' ? wn : R.waK, school: s ? s.id : '', schoolName: s ? '' : sn, business: R.bus, agent: R.agent }, 'rg-' + uid(), 'new vendor ' + nm, null, true); REG = null; $('over').innerHTML = ''; }, 'REGISTER');
+  if (!!R.bdD !== !!R.bdM) { say('Birthday: choose both the day and the month – or neither.'); return; }
+  var yr = String(R.byear || '').trim(); if (yr && !/^(19[4-9]\d|200\d|2010)$/.test(yr)) { say('Year of birth: 4 numbers, e.g. 1988 – or leave it empty.'); return; }
+  var pp = String(R.pupils != null ? R.pupils : (s && s.pupils) || '').replace(/[,\s]/g, ''); if (pp && !/^\d{1,5}$/.test(pp)) { say('School population: a number, e.g. 650.'); return; }
+  var bd = R.bdD && R.bdM ? R.bdD + ' ' + R.bdM : '', ex = {}; if (bd) ex.bday = bd; if (yr) ex.byear = yr; if (String(R.share || '').trim()) ex.share = String(R.share).trim();
+  if (R.pupils != null) ex.pupils = pp; if (R.breaks != null) ex.breaks = String(R.breaks).trim();
+  ask('Register ' + nm + '?\n' + ph + ' · ' + sn + (bd ? '\nBirthday ' + bd : ''), function () {
+    bgSave('register', Object.assign({ name: nm, phone: ph, wa: R.waK === 'Other' ? wn : R.waK, school: s ? s.id : '', schoolName: s ? '' : sn, business: R.bus, agent: R.agent }, ex), 'rg-' + uid(), 'new vendor ' + nm, null, true); REG = null; $('over').innerHTML = ''; }, 'REGISTER');
 };
 // v2.5.6: what is waiting to be sent already shows as done
 function needsHtml(list, title) { list = list || D.needs || []; if (!list.length) return ''; return '<div class="card"><h3>' + esc(title || 'Needs you') + ' (' + list.length + ')</h3>' + needsList(list) + '</div>'; }
@@ -1099,6 +1112,7 @@ function suppliersHtml() {
       (x.frank > 0.004 ? '<tr><td style="color:var(--red)">With Frank (should go to the HR logbook)</td><td class="right"><b>' + ghs(x.frank) + '</b></td></tr>' : '') +
       '<tr><td><b>' + (x.src === 'SRC-MARKET' ? 'With you – company money' : 'With you – ready to pay ' + esc(x.name)) + '</b></td><td class="right"><b>' + ghs(x.me) + '</b></td></tr>' +
       (x.last.length ? '<tr><td class="muted" colspan="2">Last paid: ' + x.last.map(function (l) { return ghs(l.amt) + ' on ' + esc(dayLbl(l.at)); }).join(' · ') + '</td></tr>' : '') + '</table>' +
+      (x.st ? '<div class="sub" style="margin:8px 0 4px">Send ' + esc(x.name) + ' a statement on WhatsApp</div><div class="wrep"><a href="https://wa.me/?text=' + encodeURIComponent(x.st.sum) + '" target="_blank"><button class="main">' + ico(ICO.wa) + 'Summary</button></a><a href="https://wa.me/?text=' + encodeURIComponent(x.st.full) + '" target="_blank"><button>' + ico(ICO.wa) + 'Full statement</button></a></div>' : '') +
       '<div class="row" style="margin-top:8px"><button data-act="suphr" data-s="' + x.src + '" data-n="' + esc(x.name) + '" data-a="' + x.hr + '"' + (x.hr > 0.004 ? ' class="main"' : '') + '>COLLECTED FROM HR</button>' + (x.src === 'SRC-MARKET' ? '<span class="small muted">Company money – nobody to pay</span>' : '<button data-act="suppay" data-s="' + x.src + '" data-n="' + esc(x.name) + '" data-a="' + x.me + '" data-o="' + x.owed + '"' + (x.me > 0.004 ? ' class="main"' : '') + '>PAID ' + esc(x.name.toUpperCase()) + '</button>') + '</div></div>';
   }).join('') + '<p class="sub">Paying a supplier lowers what CupSales owes it. Vendors\' debts only go down when the vendor pays.</p></div>';
 }
@@ -1207,7 +1221,7 @@ function pgToday() {
   var h = subTabs('today', payCount(), ordCount());
   if (SUB.today === 'pay') return h + paymentsHtml();
   var other = otherNeeds();
-  h += todoBox([claimsRow(), ndHtml(), outCardHtml(), other.length ? todoRow('needs', 'alert', 'amber', 'Other problems', other.slice(0, 3).map(function (x) { return esc(x.type); }).join(' · '), other.length) : '',
+  h += todoBox([startRow(), monthRow(), teamRow(), claimsRow(), ndHtml(), outCardHtml(), other.length ? todoRow('needs', 'alert', 'amber', 'Other problems', other.slice(0, 3).map(function (x) { return esc(x.type); }).join(' · '), other.length) : '',
     D.me.role === 'Agent' && (D.toEnter || []).length && fl('today').ent !== 'yes' ? '<div class="li" data-act="entgo">' + leadI('done', 'blue') + '<div class="grow"><div class="t">Enter in the company app</div><div class="s">Delivered orders to copy</div></div><span class="cnt">' + D.toEnter.length + '</span><span class="go">' + ico(ICO.right) + '</span></div>' : '']);
   var f0 = fl('today'); if (f0.ent === 'yes' && !(D.toEnter || []).length) { delete f0.ent; flSave(); }
   h += filterBar('today', 'Find a vendor or order number');
@@ -1571,11 +1585,91 @@ function pgBook() {
     '<h3 style="margin-top:14px">Debt in cartons – all unpaid orders</h3><div style="margin:6px 0">' + skl(B.owedSkus) + '</div>'; }) +
     '<div class="sub" style="margin:8px 2px 4px">Send today\'s report on WhatsApp</div><div class="wrep">' + (B.reportS ? '<a href="https://wa.me/?text=' + encodeURIComponent(B.reportS) + '" target="_blank"><button class="main">' + ico(ICO.wa) + 'Summary</button></a>' : '') +
     '<a href="https://wa.me/?text=' + encodeURIComponent(B.report) + '" target="_blank"><button>' + ico(ICO.wa) + 'Full report</button></a></div>';
+  h += delRangeHtml(B); // v2.5.7
   var wp = (B.withPeople || []).reduce(function (t, p) { return t + p.total; }, 0);
   if (wp > 0.004) h += '<div class="msg info">' + ghs(wp) + ' already paid by vendors is still with ' + (B.withPeople || []).map(function (p) { return esc(p.name) + ' (' + ghs(p.total) + ')'; }).join(', ') + ' – see Payments.</div>';
   h += '<div class="sech">Order history <span>delivered, by day</span></div>' + filterBar('hist', 'Find a customer or school') + '<div id="flist">' + LISTR.hist() + '</div>';
   return h;
 }
+/** v2.5.7: cartons delivered in a period – how many are paid for and how many are still owed (Omni Haven goods). */
+var DRG = { k: 'today', from: '', to: '' };
+// ---------------------------------------------------------------- v2.5.7: Start day, My month (agent), Team and targets (manager)
+function startRow() {
+  var Y = D.myDay; if (D.me.role !== 'Agent' || !Y || !Y.workday || Y.start) return '';
+  return '<div class="li" data-act="startday">' + leadI('done', 'green') + '<div class="grow"><div class="t">Start my day</div><div class="s">Tap when you reach your first school</div></div><span class="go">' + ico(ICO.right) + '</span></div>';
+}
+ACT.startday = function () {
+  var go = function (pos, why) { var c = pos && pos.coords; bgSave('startday', { lat: c ? c.latitude : '', lng: c ? c.longitude : '', acc: c ? c.accuracy : '', pt: Date.now(), why: why || '' }, 'sd-' + D.today, 'day started', null, true); };
+  ask('Start your day now (' + new Date().toTimeString().slice(0, 5) + ')?\nYour time and where your phone is are saved.', function () {
+    if (!navigator.geolocation) { go(null, 'no location on this phone'); return; } toast('Finding your location…');
+    var done = false; var t = setTimeout(function () { if (!done) { done = true; go(null, 'location took too long'); } }, 12000);
+    navigator.geolocation.getCurrentPosition(function (p) { if (done) return; done = true; clearTimeout(t); go(p); }, function (e) { if (done) return; done = true; clearTimeout(t); go(null, e && e.code === 1 ? 'location not allowed' : 'location not found'); }, { enableHighAccuracy: true, timeout: 11000, maximumAge: 60000 });
+  }, 'START');
+};
+function monthRow() {
+  var M = D.myMonth; if (D.me.role !== 'Agent' || !M) return '';
+  return todoRow('mymonth', 'today', 'blue', 'My month: ' + M.ctn + ' of ' + M.target + ' cartons', 'On track for about ' + ghs(M.proj.incentive) + ' incentive' + (D.myDay && D.myDay.start ? ' · day started ' + (D.myDay.start === 'now' ? 'just now' : D.myDay.start) : ''), 0);
+}
+SHEETS.mymonth = function () {
+  var M = D.myMonth; if (!M) return ''; var p = M.proj, r = function (a, b) { return '<tr><td class="k">' + a + '</td><td>' + b + '</td></tr>'; }, bar = function (x, y) { var w = Math.max(0, Math.min(100, y ? x / y * 100 : 0)); return '<div class="pbar"><i style="width:' + w + '%"></i></div>'; };
+  var h = shHead('today', 'blue', 'My month – ' + esc(M.month), M.daysLeft + ' working day' + (M.daysLeft === 1 ? '' : 's') + ' left of ' + M.daysAll);
+  h += '<div class="card" style="padding:12px 14px"><b>Cartons</b> <span class="right">' + M.ctn + ' of ' + M.target + '</span>' + bar(M.ctn, M.target) + '<div class="small muted">' + (M.ctn >= M.target ? 'Target reached – well done!' : 'About ' + Math.ceil((M.target - M.ctn) / Math.max(1, M.daysLeft)) + ' a day to reach it') + '</div></div>';
+  h += '<div class="card" style="padding:12px 14px"><b>New vendors who bought</b> <span class="right">' + M.regsBought + ' of ' + M.vt + '</span>' + bar(M.regsBought, M.vt) + '<div class="small muted">' + M.regs + ' registered this month' + (M.regsWaiting.length ? ' · waiting for a first carton: ' + M.regsWaiting.map(esc).join(', ') : '') + '</div></div>';
+  h += '<div class="card" style="padding:12px 14px"><b>Active vendors</b> <span class="right">' + p.activePct + '% of ' + M.at + '%</span>' + bar(p.activePct, M.at) + '<div class="small muted">' + M.bought + ' of ' + M.vendors + ' have bought this month' + (M.notBought.length ? ' · not yet: ' + M.notBought.slice(0, 12).map(esc).join(', ') + (M.notBought.length > 12 ? ' and ' + (M.notBought.length - 12) + ' more' : '') : '') + '</div></div>';
+  h += '<div class="card" style="padding:12px 14px"><b>Incentive at this pace</b> <span class="right"><b>' + ghs(p.incentive) + '</b></span><table class="dt" style="margin-top:6px">' + r('Cartons (35%)', ghs(p.vol)) + r('New vendors (35%)', ghs(p.reg)) + r('Active (30%)', ghs(p.act)) + '</table><div class="small muted">A projection from your figures so far – the manager confirms the final amount.</div></div>';
+  return h;
+};
+function teamRow() {
+  var T = D.team; if (D.me.role !== 'Supervisor' || !T) return '';
+  return todoRow('team', 'user', 'blue', 'Team – ' + esc(T.month.slice(8)), T.agents.map(function (a) { return esc(a.name) + ' ' + a.ctn + '/' + a.t.real; }).join(' · '), 0);
+}
+SHEETS.team = function () {
+  var T = D.team; if (!T) return ''; var r = function (a, b) { return '<tr><td class="k">' + a + '</td><td>' + b + '</td></tr>'; };
+  var h = shHead('user', 'blue', 'Team – ' + esc(T.month.slice(8) + ' ' + T.month.slice(0, 4)), T.gone + ' of ' + T.days + ' working days gone · only you see this');
+  T.agents.forEach(function (a) {
+    var c = a.conv, st = a.today;
+    h += '<div class="card" style="padding:12px 14px"><div class="row" style="flex-wrap:nowrap">' + avatar(a.name) + '<div class="grow"><b>' + esc(a.name) + '</b><div class="small muted">Today: ' + (st ? 'started ' + esc(st.hm) + (st.note ? ' <span class="t-amber">(' + esc(st.note) + ')</span>' : '') + (st.lat ? ' · <a href="https://www.google.com/maps/search/?api=1&query=' + st.lat + ',' + st.lng + '" target="_blank">where</a>' : ' · no location') : '<span class="t-amber">not started</span>') + '</div></div></div><table class="dt" style="margin-top:6px">' +
+      r('Cartons', '<b>' + a.ctn + '</b> of ' + a.t.real + (a.t.shown !== a.t.real ? ' <span class="muted">(she sees ' + a.t.shown + ')</span>' : '') + ' · pace ' + a.proj.projCtn) +
+      r('New vendors who bought', '<b>' + a.regsBought + '</b> of ' + a.t.vendors + ' <span class="muted">(' + a.regs + ' registered)</span>') +
+      r('Active', '<b>' + a.activePct + '%</b> of ' + a.t.active + '% <span class="muted">(' + a.bought + ' of ' + a.vendors + ')</span>') +
+      r('Incentive (50/50)', '<b>' + ghs(a.real.now) + '</b> so far · ' + ghs(a.real.pace) + ' at this pace <span class="muted">(she sees ' + ghs(a.proj.incentive) + ')</span>') +
+      r('Conveyance', '<b>' + ghs(c.due) + '</b> of ' + ghs(c.amount) + (c.penalty ? ' · lateness <b class="t-red">−' + ghs(c.penalty) + '</b>' : '') + (c.missing ? ' · <span class="t-amber">' + c.missing + ' day' + (c.missing === 1 ? '' : 's') + ' without a start</span>' : '')) + '</table>' +
+      (c.late.length ? '<div class="small muted" style="margin-top:4px">Late: ' + c.late.map(function (l) { return esc(dayLbl(l.day)) + ' ' + esc(l.at) + ' (' + l.mins + ' min, ' + ghs(l.pen) + ')'; }).join(' · ') + ' · GHS ' + c.hourly + ' an hour, late hours count double.</div>' : '') + '</div>';
+  });
+  return h + '<p><button class="big" data-act="tgtOpen">Set targets for ' + esc(T.month.slice(8)) + '</button></p>';
+};
+var TGT = null;
+ACT.tgtOpen = function () { var T = D.team; if (!T) return; TGT = { month: T.month, rows: T.agents.map(function (a) { return { uid: a.uid, name: a.name, real: a.t.real, shown: a.t.shown, vendors: a.t.vendors, active: a.t.active, incentive: a.t.incentive, conveyance: a.t.conveyance, days: a.t.days }; }) }; SHEETK = 'targets'; drawSheet(); };
+SHEETS.targets = function () {
+  if (!TGT) return ''; var f = function (i, k, lbl) { return '<label><span>' + lbl + '</span><input inputmode="numeric" data-inp="tgt" data-i="' + i + '" data-f="' + k + '" value="' + esc(TGT.rows[i][k]) + '"></label>'; };
+  return shHead('user', 'blue', 'Targets – ' + esc(TGT.month.slice(8) + ' ' + TGT.month.slice(0, 4)), 'Agents see only “cartons they see”, never the money rules') + TGT.rows.map(function (x, i) {
+    return '<div class="psec">' + esc(x.name) + '</div><div class="fgrid">' + f(i, 'real', 'Cartons (real)') + f(i, 'shown', 'Cartons they see') + f(i, 'vendors', 'New vendors') + f(i, 'active', 'Active %') + f(i, 'incentive', 'Incentive GHS') + f(i, 'conveyance', 'Conveyance GHS') + f(i, 'days', 'Working days') + '</div>';
+  }).join('') + '<div class="btns" style="margin-top:14px"><button data-act="closeO">Cancel</button><button class="main" data-act="tgtSave">Save</button></div>';
+};
+INP.tgt = function (el) { TGT.rows[+el.dataset.i][el.dataset.f] = el.value; };
+ACT.tgtSave = function () {
+  var lim = { real: [0, 5000, 'cartons (real)'], shown: [0, 5000, 'cartons they see'], vendors: [0, 500, 'new vendors'], active: [0, 100, 'active %'], incentive: [0, 100000, 'incentive'], conveyance: [0, 100000, 'conveyance'], days: [1, 31, 'working days'] }, bad = [];
+  TGT.rows.forEach(function (x) { Object.keys(lim).forEach(function (k) { var v = String(x[k]).replace(/[,\s]/g, ''), n = Number(v); if (!/^\d+(\.\d+)?$/.test(v) || n < lim[k][0] || n > lim[k][1]) bad.push(x.name + ' – ' + lim[k][2] + ' (' + lim[k][0] + '–' + lim[k][1] + ')'); }); });
+  if (bad.length) { say('Check these numbers: ' + bad.join(', ') + '.'); return; }
+  var T = TGT; ask('Save the targets for ' + T.month.slice(8) + '?\n' + T.rows.map(function (x) { return x.name + ': ' + x.real + ' cartons (she sees ' + x.shown + '), ' + x.vendors + ' new vendors, ' + x.active + '% active'; }).join('\n'), function () {
+    bgSave('targets', { month: T.month, rows: T.rows.map(function (x) { return { uid: x.uid, real: num(x.real), shown: num(x.shown), vendors: num(x.vendors), active: num(x.active), incentive: num(x.incentive), conveyance: num(x.conveyance), days: num(x.days) }; }) }, 'tg-' + uid(), 'targets ' + T.month.slice(8), null, true); TGT = null; SHEETK = ''; $('over').innerHTML = ''; }, 'SAVE'); };
+function delRangeHtml(B) {
+  var t = D.today, wd = new Date(t + 'T12:00:00Z').getUTCDay(), wk = addDays(t, -((wd + 6) % 7)), mo = t.slice(0, 8) + '01';
+  var r = DRG.k === 'today' ? [t, t] : DRG.k === 'week' ? [wk, t] : DRG.k === 'month' ? [mo, t] : [DRG.from || mo, DRG.to || t];
+  if (r[0] > r[1]) r = [r[1], r[0]];
+  var L = (B.history || []).filter(function (x) { return !x.old && x.omni !== false && x.date >= r[0] && x.date <= r[1]; });
+  var by = {}, tot = 0, pd = 0, ow = 0, val = 0, paid = 0, owing = 0;
+  L.forEach(function (x) { var full = !(x.owing > 0.004); val += x.value || 0; paid += x.paid || 0; owing += x.owing || 0; (x.lines || []).forEach(function (l) { var b = by[l.sku] = by[l.sku] || { t: 0, p: 0, o: 0 }; b.t += l.qty; tot += l.qty; if (full) { b.p += l.qty; pd += l.qty; } else { b.o += l.qty; ow += l.qty; } }); });
+  var r1 = function (n) { return Math.round(n * 10) / 10; };
+  var h = '<div class="sech">Delivered <span>Omni Haven goods</span></div><div class="card" style="padding:12px 14px"><div class="seg wrap" style="margin:0 0 10px">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['dates', 'Dates']].map(function (x) { return '<button class="' + (DRG.k === x[0] ? 'on' : '') + '" data-act="drg" data-k="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
+  if (DRG.k === 'dates') h += '<div class="fgrid"><label><span>From</span><input type="date" data-chg="drgd" data-f="from" value="' + esc(r[0]) + '" min="' + esc(addDays(t, -60)) + '" max="' + esc(t) + '"></label><label><span>To</span><input type="date" data-chg="drgd" data-f="to" value="' + esc(r[1]) + '" max="' + esc(t) + '"></label></div>';
+  h += '<div class="small muted" style="margin:2px 0 8px">' + esc(r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) + ' · ' + L.length + ' order' + (L.length === 1 ? '' : 's') + '</div>' +
+    '<div class="tiles"><div class="tile"><b>' + r1(tot) + '</b><span>cartons delivered</span></div><div class="tile"><b class="t-green">' + r1(pd) + '</b><span>paid in full</span></div><div class="tile"><b class="t-red">' + r1(ow) + '</b><span>still owed (' + ghs(owing) + ')</span></div></div>';
+  var ks = Object.keys(by).sort(); if (ks.length) h += '<table class="dt" style="margin-top:8px"><tr><td class="k">Product</td><td><b>Delivered</b> · paid · owed</td></tr>' + ks.map(function (k) { var b = by[k]; return '<tr><td class="k">' + esc(skn(k)) + '</td><td><b>' + r1(b.t) + '</b> · ' + r1(b.p) + ' · <span class="' + (b.o ? 't-red' : '') + '">' + r1(b.o) + '</span></td></tr>'; }).join('') + '</table>';
+  else h += '<p class="muted small" style="margin:6px 0 0">Nothing delivered in this period.</p>';
+  return h + '<p class="small muted" style="margin:8px 0 0">Value ' + ghs(val) + ' · paid ' + ghs(paid) + '. An order counts as owed until it is paid in full. The book keeps the last 60 days.</p></div>';
+}
+ACT.drg = function (b) { DRG.k = b.dataset.k; render(); }; CHG.drgd = function (el) { DRG[el.dataset.f] = el.value; render(); };
 ACT.booksub = function (b) { BOOKSUB = b.dataset.s; OMENU = ''; render(); };
 function pgApproved() {
   return todoBox([comingBackHtml(), pickupFrankHtml()]) + '<div class="sech">Approved today</div>' + filterBar('disp', 'Find a vendor, school or agent') + '<div id="flist">' + LISTR.disp() + '</div>';
