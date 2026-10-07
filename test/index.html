@@ -50,6 +50,7 @@ main{padding:12px 12px 120px;max-width:640px;margin:0 auto}
 /* buttons */
 button{font:inherit;border:0;border-radius:10px;padding:10px 14px;background:var(--grey2);color:var(--ink);font-weight:650;cursor:pointer;font-size:14.5px}
 button.main{background:var(--blue);color:#fff}button.main:active{background:#B00014}
+.wrep{display:flex;gap:8px;margin:0 0 6px}.wrep a{flex:1;text-decoration:none}.wrep button{width:100%;margin:0;display:flex;align-items:center;justify-content:center;gap:6px}.wrep svg{width:17px;height:17px}
 button.warn{background:var(--red2);color:var(--red)}button.ghost{background:transparent;color:var(--blue);padding:8px 6px}
 button:disabled{opacity:.45}button.sent{background:var(--green2);color:var(--green);opacity:1}
 .big{width:100%;padding:13px;font-size:15.5px}
@@ -1469,7 +1470,8 @@ function pgBook() {
   var h = '<div class="sech">Today · ' + esc(dayLbl(B.day)) + '</div><div class="tiles"><div class="tile"><b>' + om.length + '</b><span>orders approved</span></div><div class="tile"><b>' + ctn + '</b><span>cartons from Omni</span></div><div class="tile"><b>' + ghs(val).replace('GHS ', '') + '</b><span>value (GHS)</span></div></div>' +
     fold('bk-sum', 'Given out today: <b>' + (B.today.omini.concat(B.today.other).reduce(function (t, x) { return t + x.qty; }, 0)) + ' ctn</b> · owed to Omni: <b style="color:var(--red)">' + ghs(owedTot) + '</b> <span class="small muted">(' + B.owed.length + ' vendor' + (B.owed.length === 1 ? '' : 's') + ')</span>', function () { return '<h3 style="margin-top:0">Products given out today</h3><div class="sub">From Omni Haven</div><div style="margin:6px 0">' + skl(B.today.omini) + '</div>' + (B.today.other.length ? '<div class="sub">Sent from Clement / Bernice</div><div style="margin:6px 0">' + skl(B.today.other) + '</div>' : '') +
     '<h3 style="margin-top:14px">Debt in cartons – all unpaid orders</h3><div style="margin:6px 0">' + skl(B.owedSkus) + '</div>'; }) +
-    '<a href="https://wa.me/?text=' + encodeURIComponent(B.report) + '" target="_blank" style="text-decoration:none"><button class="ghost" style="margin:0 0 4px;padding:4px 2px">' + ico(ICO.wa).replace('<svg ', '<svg style="width:17px;height:17px;vertical-align:-3px;margin-right:6px" ') + 'Send today\'s report on WhatsApp</button></a>';
+    '<div class="sub" style="margin:8px 2px 4px">Send today\'s report on WhatsApp</div><div class="wrep">' + (B.reportS ? '<a href="https://wa.me/?text=' + encodeURIComponent(B.reportS) + '" target="_blank"><button class="main">' + ico(ICO.wa) + 'Summary</button></a>' : '') +
+    '<a href="https://wa.me/?text=' + encodeURIComponent(B.report) + '" target="_blank"><button>' + ico(ICO.wa) + 'Full report</button></a></div>';
   var wp = (B.withPeople || []).reduce(function (t, p) { return t + p.total; }, 0);
   if (wp > 0.004) h += '<div class="msg info">' + ghs(wp) + ' already paid by vendors is still with ' + (B.withPeople || []).map(function (p) { return esc(p.name) + ' (' + ghs(p.total) + ')'; }).join(', ') + ' – see Payments.</div>';
   h += '<div class="sech">Order history <span>delivered, by day</span></div>' + filterBar('hist', 'Find a customer or school') + '<div id="flist">' + LISTR.hist() + '</div>';
