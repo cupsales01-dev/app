@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>TEST – CupSales</title><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#D7141A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="TEST – CupSales"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" href="icon-192.png"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<html><head><meta charset="utf-8"><title>TEST – CupSales</title><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#E2001A"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="TEST – CupSales"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" href="icon-192.png"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* v2.5.3 look: calm and compact like a professional phone app – white surfaces, one red for actions, colour and symbols
    for state, short rows that open a details sheet, red counts where something waits for you. */
-:root{--bg:#F3F4F6;--card:#fff;--ink:#14171C;--mute:#687080;--line:#E6E8EC;--blue:#D7141A;--blue2:#FDECEC;--red:#C62828;--red2:#FDECEC;--green:#15803D;--green2:#E7F6EC;--amber:#B45309;--amber2:#FEF3C7;--info:#1D4ED8;--info2:#E8EEFD;--grey2:#EEF0F3;--yel:#FFC400;--yel2:#FFF6D6;--dark:#14171C;--r:14px}
+:root{--bg:#F3F4F6;--card:#fff;--ink:#14171C;--mute:#687080;--line:#E6E8EC;--blue:#E2001A;--blue2:#FDE8EA;--red:#C62828;--red2:#FDECEC;--green:#15803D;--green2:#E7F6EC;--amber:#B45309;--amber2:#FEF3C7;--info:#1D4ED8;--info2:#E8EEFD;--grey2:#EEF0F3;--yel:#FFC400;--yel2:#FFF6D6;--dark:#14171C;--r:14px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
 h2{font-size:20px;margin:0 0 6px;letter-spacing:-.2px}h3{font-size:16px;margin:0 0 4px;font-weight:700;letter-spacing:-.1px}
@@ -13,11 +13,11 @@ a{color:var(--blue)}b{font-weight:650}
 .nowrap{white-space:nowrap}.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* app bar */
 #top{position:sticky;top:0;z-index:5;background:#fff}
-.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:#fff;border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:#E2001A;color:#fff;border-bottom:3px solid #FFD100}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}.brand .logo{width:32px;height:32px;flex:0 0 auto}
-.brand b{display:block;font-size:17px;font-weight:800;letter-spacing:-.2px;line-height:1.15}.brand i{display:block;font-style:normal;font-size:12px;color:var(--mute);line-height:1.2}
-.who{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mute);white-space:nowrap}.who .av{width:32px;height:32px;font-size:13px;margin:0;box-shadow:none}
-.test{background:#FFF4CC;color:#7A5200;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;text-align:center;padding:3px 10px;border-bottom:1px solid #F3DF9A}
+.brand b{display:block;font-size:17px;font-weight:800;letter-spacing:-.2px;line-height:1.15;color:#fff}.brand i{display:block;font-style:normal;font-size:12px;color:#FFE27A;line-height:1.2;font-weight:600}
+.who{display:flex;align-items:center;gap:8px;font-size:13px;color:#FFE9EC;white-space:nowrap}.who .av{width:32px;height:32px;font-size:13px;margin:0;box-shadow:none;background:#FFD100 !important;color:#B00014}
+.test{background:#FFD100;color:#5A3A00;font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;text-align:center;padding:3px 10px;border-bottom:1px solid #F3DF9A}
 .scrs{display:flex;gap:4px;margin:8px 12px 2px;padding:3px;background:var(--grey2);border-radius:12px}
 .scrs button{flex:1 1 0;display:flex;align-items:center;justify-content:center;gap:6px;background:transparent;color:var(--mute);font-weight:600;font-size:13.5px;padding:8px 4px;border-radius:9px;box-shadow:none;position:relative}
 .scrs button svg{width:17px;height:17px}.scrs button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(16,24,40,.12)}
@@ -49,7 +49,7 @@ main{padding:12px 12px 120px;max-width:640px;margin:0 auto}
 .todo .li{min-height:54px}.todo .cnt{margin-left:2px}
 /* buttons */
 button{font:inherit;border:0;border-radius:10px;padding:10px 14px;background:var(--grey2);color:var(--ink);font-weight:650;cursor:pointer;font-size:14.5px}
-button.main{background:var(--blue);color:#fff}button.main:active{background:#B81016}
+button.main{background:var(--blue);color:#fff}button.main:active{background:#B00014}
 button.warn{background:var(--red2);color:var(--red)}button.ghost{background:transparent;color:var(--blue);padding:8px 6px}
 button:disabled{opacity:.45}button.sent{background:var(--green2);color:var(--green);opacity:1}
 .big{width:100%;padding:13px;font-size:15.5px}
@@ -217,7 +217,7 @@ var FLUSHING = false, RETRYT = null, FAILS = {}, NOSIG = false;
 function noSig() { return OFFLINE || NOSIG || navigator.onLine === false; }
 function flush(after) {
   var q = queue(); if (!q.length || FLUSHING) { after && after(); return; } FLUSHING = true; var x = q[0]; topbar();
-  rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: x.op, data: x.data, sid: x.sid, at: x.at, wi: q.length === 1 ? 1 : 0 }, function (r) {
+  rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: x.op, data: x.data, sid: x.sid, at: x.at, wi: 0 }, function (r) {
     FLUSHING = false; NOSIG = false;
     if (!r || r.auth) { if (r && r.auth) authScreen(r); topbar(); after && after(); return; } // kept on the phone; sent after the PIN
     var busy = r.error && r.retry, broke = r.error && /went wrong/i.test(r.error);
@@ -235,6 +235,7 @@ function flush(after) {
       toast('✓ ' + m);
     }
     if (r.init && !r.error && !r.ask) { NEXTD = r.init; NEXTD.__at = Date.now(); }
+    if (r.rev) LASTREV = String(r.rev); // v2.5.4
     if (!r.error && !r.ask) bgRefreshSoon();
     if (queue().length) flush(after); else { later(); after && after(); }
   }, function (e) { FLUSHING = false; NOSIG = !!(e && e.offline); clearTimeout(RETRYT); RETRYT = setTimeout(function () { flush(); }, e && e.offline ? 30000 : 15000); topbar(); after && after(); });
@@ -246,7 +247,7 @@ function later() {
   topbar();
   if (queue().length) return;
   var busy = function () { var a = document.activeElement; return $('dlg').innerHTML || $('over').innerHTML || (a && /INPUT|SELECT|TEXTAREA/.test(a.tagName)); };
-  var my = ++LATERSEQ; var apply = function (d) { if (my !== LATERSEQ) return; if (busy()) { setTimeout(function () { apply(d); }, 1500); return; } D = d; OFFLINE = false; ls(CKEY, JSON.stringify(d)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })); if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (OKS.length) MSG = { t: OKS.splice(0).join('\n'), k: 'ok' }; var y = window.scrollY; render(); window.scrollTo(0, y); };
+  var my = ++LATERSEQ; var apply = function (d) { if (my !== LATERSEQ) return; if (busy()) { setTimeout(function () { apply(d); }, 1500); return; } D = d; if (LASTREV) REV = LASTREV; OFFLINE = false; ls(CKEY, JSON.stringify(d)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })); if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (OKS.length) MSG = { t: OKS.splice(0).join('\n'), k: 'ok' }; var y = window.scrollY; render(); window.scrollTo(0, y); };
   if (NEXTD && Date.now() - (NEXTD.__at || 0) < 60000) { var d0 = NEXTD; NEXTD = null; apply(d0); return; }
   NEXTD = null; rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: 'init', data: {} }, function (r) { if (r && !r.error && !r.auth && r.screens && !queue().length) apply(r); }, function () { });
 }
@@ -263,7 +264,7 @@ window.addEventListener('online', function () { flush(); });
 setInterval(function () { if (queue().length) flush(); }, 60000);
 function call(op, data, sid, ok, fail) {
   var slow = setTimeout(function () { if (op === 'init' && !D) $('main').innerHTML = '<div class="pin"><p class="muted">Still opening… the first time after an update can take up to a minute. Please wait.</p></div>'; }, 12000);
-  rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: op, data: data || {}, sid: sid || '', wi: op !== 'init' ? 1 : 0 }, function (r) {
+  rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: op, data: data || {}, sid: sid || '', wi: op !== 'init' && op !== 'helper' ? 1 : 0 }, function (r) {
     clearTimeout(slow);
     try {
       if (!r) { var m0 = 'The system sent back nothing. Close and open the link again. If it happens again, tell the manager.'; fail ? fail(m0) : show(m0, 'err'); return; }
@@ -462,15 +463,21 @@ function poll() {
   if (busy()) return; POLLT = Date.now();
   rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: 'init', data: {}, poll: 1 }, function (r) {
     if (!r || r.error || r.auth || !r.screens || busy()) return;
-    var before = badgeFlat(); D = r; OFFLINE = false; STALE = false; ls(CKEY, JSON.stringify(r)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }));
+    var before = badgeFlat(); D = r; if (SEENREV) REV = SEENREV; OFFLINE = false; STALE = false; ls(CKEY, JSON.stringify(r)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }));
     if (D.screens.indexOf(SCREEN) < 0) { SCREEN = D.screens[0]; TAB = firstTab(); }
     var y = window.scrollY; render(); window.scrollTo(0, y);
     var after = badgeFlat(), news = Object.keys(after).filter(function (k) { return after[k] > (before[k] || 0); });
     if (news.length) toast('New: ' + news.map(function (k) { var p = k.split('.'), tb = (TABS[p[0]] || []).filter(function (x) { return x[0] === p[1]; })[0]; return (after[k] - (before[k] || 0)) + ' on ' + (D.screens.length > 1 ? SNAME[p[0]] + ' › ' : '') + (tb ? tb[1] : p[1]); }).join(', '));
   }, function () { });
 }
-setInterval(function () { if (Date.now() - POLLT > 170000) poll(); }, 20000);
-document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible' && Date.now() - POLLT > 60000) setTimeout(poll, 1500); });
+/** v2.5.4: every half minute the phone asks "has anything changed?" (nothing is read for that); only then is the newest screen fetched. */
+var REV = null, SEENREV = '', LASTREV = '', PINGT = 0;
+function ping() {
+  if (!D || RK || document.visibilityState === 'hidden') return; PINGT = Date.now();
+  rpc({ op: 'ping' }, function (r) { if (!r || r.rev == null) return; SEENREV = String(r.rev); if (REV === null) { REV = SEENREV; return; } if (SEENREV !== REV) poll(); }, function () { });
+}
+setInterval(function () { if (Date.now() - POLLT > 300000) poll(); else if (Date.now() - PINGT > 28000) ping(); }, 10000);
+document.addEventListener('visibilitychange', function () { if (document.visibilityState !== 'visible') return; if (Date.now() - POLLT > 300000) setTimeout(poll, 1000); else setTimeout(ping, 800); });
 /** v2.4.7: what is saved on the phone but not yet in the system is shown as done already. */
 function pendView() {
   if (!D) return;
@@ -1756,7 +1763,8 @@ function pgDone() {
   var top = D.me.role === 'Helper' ? '' : subTabs('done', (D.toConfirm || []).length + rcptToSend(), 0);
   if (SUB.done === 'pay' && D.me.role !== 'Helper') return top + paymentsHtml();
   var tot = D.done.reduce(function (t, x) { return t + x.cash; }, 0);
-  var h = top + '<div class="sumline">Today: <b>' + D.done.length + '</b> stop' + (D.done.length === 1 ? '' : 's') + ' · cash taken <b>' + ghs(tot) + '</b> – should match the delivery cash in your pocket.</div>';
+  var td = (D.rdone || []).filter(function (x) { return x.day === D.today; }), tk = ctnSum(td, 'kept');
+  var h = top + '<div class="tiles"><div class="tile"><b>' + D.done.length + '</b><span>stops today</span></div><div class="tile"><b>' + (tk ? tk.split(' ')[0] : 0) + '</b><span>cartons delivered</span></div><div class="tile"><b>' + ghs(tot).replace('GHS ', '') + '</b><span>cash (GHS) – in your pocket</span></div></div>';
   if (D.me.role === 'Helper') { if (D.cash && D.cash.length) h += '<div class="card"><h3>Cash with me</h3>' + cashTable(D.cash) + '</div>'; h += receiptsHtml(); }
   var nd = (D.decisions || []).length; if (nd && D.me.role !== 'Helper' && fl('rdone').mgr !== 'dec') h += todoBox(['<div class="li" data-act="rdec">' + leadI('check', 'blue') + '<div class="grow"><div class="t">Manager decisions this week</div></div><span class="cnt g">' + nd + '</span><span class="go">' + ico(ICO.right) + '</span></div>']);
   return h + filterBar('rdone', 'Find a vendor or agent') + '<div id="flist">' + LISTR.rdone() + '</div>';
@@ -1766,19 +1774,30 @@ LISTR.rdone = function () {
   var f = fl('rdone'), L = (D.rdone || D.done.map(function (x) { return Object.assign({ day: D.today, oids: [] }, x); })).filter(function (x) {
     if (f.day && x.day !== f.day) return false; if (f.st && x.status !== f.st) return false;
     if (f.mgr === 'dec' && !x.dec) return false; if (f.mgr === 'wait' && !x.wait) return false; if (f.mgr === 'vno' && !x.vno) return false;
-    return hasQ('rdone', x.vendor + ' ' + (x.agent || '') + ' ' + (x.oids || []).join(' '));
+    return hasQ('rdone', x.vendor + ' ' + (x.agent || '') + ' ' + (x.oids || []).join(' ') + ' ' + Object.keys(x.kept || {}).concat(Object.keys(x.back || {})).map(skn).join(' '));
   });
   if (!L.length) return emptyHtml(Object.keys(f).some(function (k) { return f[k] && k !== 'q'; }) || f.q ? 'Nothing matches. Deliveries of the last 14 days are here.' : 'No deliveries yet.');
-  var cash = L.reduce(function (t, x) { return t + (x.cash || 0); }, 0), h = '<div class="sumline"><b>' + L.length + '</b> stop' + (L.length === 1 ? '' : 's') + ' · cash <b>' + ghs(cash) + '</b> · ' + L.filter(function (x) { return x.wait; }).length + ' waiting for the manager</div><div class="card" style="padding:4px 12px">', cur = null;
-  var stc = { Delivered: 'green', 'Some returned': 'amber', 'Not delivered': 'red', Cancelled: 'red' }, sti = { Delivered: 'box', 'Some returned': 'back', 'Not delivered': 'alert', Cancelled: 'x' };
+  var cash = L.reduce(function (t, x) { return t + (x.cash || 0); }, 0), h = '<div class="sumline"><b>' + L.length + '</b> stop' + (L.length === 1 ? '' : 's') + ' · cash <b>' + ghs(cash) + '</b>' + (L.some(function (x) { return x.wait; }) ? ' · ' + L.filter(function (x) { return x.wait; }).length + ' waiting for the manager' : '') + '</div>', cur = null, open = false;
+  var tn = { Delivered: 'green', 'Some returned': 'amber', 'Not delivered': 'red', Cancelled: 'grey' }, sti = { Delivered: 'box', 'Some returned': 'back', 'Not delivered': 'alert', Cancelled: 'x' };
   L.forEach(function (x) {
-    if (x.day !== cur) { cur = x.day; var dd = L.filter(function (y) { return y.day === cur; }); h += dayHead(cur, dd.length + ' · ' + ghs(dd.reduce(function (t, y) { return t + (y.cash || 0); }, 0))); }
-    var k = 'd:' + x.day + (x.oids || []).join(''), o = isOpen(k);
-    h += '<div class="srow" style="flex-wrap:wrap"><div class="grow tap"' + rowTap(k) + '><b>' + esc(x.vendor) + '</b>' + (x.n > 1 ? ' <span class="small muted">(' + x.n + ' orders)</span>' : '') + '<div class="small muted">' + (x.time ? esc(x.time) + ' · ' : '') + (x.status === 'Not delivered' || x.status === 'Cancelled' ? '' : esc(x.pay || '') + ' · ') + (x.agent ? esc(x.agent) : '') + '</div>' +
-      (x.wait ? '<span class="pill amber">waiting for the manager</span>' : x.dec ? '<span class="pill">manager decided</span>' : '') + (x.vno && !x.dec ? '<span class="pill red">vendor says not right</span>' : '') + '</div><div class="right">' + stPill([x.status, stc[x.status] || '', sti[x.status]]) + '<div><b>' + ghs(x.cash || 0) + '</b>' + (x.status === 'Not delivered' && x.cash > 0 ? '<div class="small muted">old debt</div>' : '') + '</div></div>' +
-      (o ? '<div class="dets" style="flex:1 1 100%">' + esc((x.oids || []).join(', ')) + (x.by ? ' · ' + esc(x.by) : '') + (x.dec ? '<br><b>Manager:</b> ' + esc(x.dec) : '') + (x.note ? '<br>' + esc(x.note) : '') + '</div>' : '') + '</div>';
+    if (x.day !== cur) { if (open) h += '</div>'; cur = x.day; var dd = L.filter(function (y) { return y.day === cur; }), kp = ctnSum(dd, 'kept'), bk = ctnSum(dd, 'back');
+      h += dayHead(cur, dd.length + ' · ' + ghs(dd.reduce(function (t, y) { return t + (y.cash || 0); }, 0))) + (kp || bk ? '<div class="small muted" style="margin:-2px 4px 6px">' + (kp ? 'Delivered <b style="color:var(--ink)">' + kp + '</b>' : '') + (bk ? (kp ? ' · ' : '') + 'back / not delivered ' + bk : '') + '</div>' : '') + '<div class="list">'; open = true; }
+    var tone = tn[x.status] || 'grey', kept = ctnTxt(x.kept), back = ctnTxt(x.back), fl2 = (x.wait ? '<span class="t-amber" title="Waiting for the manager">' + ico(ICO.clock) + '</span>' : '') + (x.vno && !x.dec ? '<span class="t-red" title="Vendor says not right">' + ico(ICO.alert) + '</span>' : '');
+    var sub = [kept, back ? '<span class="' + (kept ? 't-amber">back ' : 't-red">') + back + '</span>' : '', x.time ? esc(x.time) : ''].filter(Boolean).join(' · ');
+    h += liRow(' data-act="rddet" data-k="' + esc(x.day + '|' + (x.oids || []).join(',')) + '"', leadI(sti[x.status] || 'box', tone), esc(x.vendor) + (x.n > 1 ? ' <span class="small muted">· ' + x.n + ' orders</span>' : '') + (fl2 ? '<span class="flags">' + fl2 + '</span>' : ''), sub, ghs(x.cash || 0), esc(x.status), tone);
   });
-  return h + '</div>';
+  return h + (open ? '</div>' : '');
+};
+/** v2.5.4: cartons as "3 BFC, 2 HMO" – and the total of a day. */
+function ctnTxt(m) { return Object.keys(m || {}).filter(function (k) { return m[k] > 0; }).map(function (k) { return m[k] + ' ' + esc(skn(k)); }).join(', '); }
+function ctnSum(L, f) { var t = {}; L.forEach(function (x) { Object.keys(x[f] || {}).forEach(function (k) { t[k] = (t[k] || 0) + x[f][k]; }); }); var n = 0; Object.keys(t).forEach(function (k) { n += t[k]; }); return n ? n + ' ctn (' + ctnTxt(t) + ')' : ''; }
+ACT.rddet = function (b) {
+  var x = (D.rdone || []).filter(function (y) { return y.day + '|' + (y.oids || []).join(',') === b.dataset.k; })[0]; if (!x) return;
+  var row = function (m, cls) { return Object.keys(m || {}).filter(function (k) { return m[k] > 0; }).map(function (k) { return '<span class="pill pk' + (cls || '') + '">' + pk(k) + m[k] + ' ' + esc(skn(k)) + '</span>'; }).join(''); };
+  var kept = row(x.kept), back = row(x.back, ' red');
+  detSheet(x.vendor, dayLbl(x.day) + (x.time ? ' · ' + x.time : '') + (x.agent ? ' · agent ' + x.agent : ''), stPill([x.status, { Delivered: 'green', 'Some returned': 'amber', 'Not delivered': 'red', Cancelled: 'red' }[x.status] || '', { Delivered: 'box', 'Some returned': 'back', 'Not delivered': 'alert', Cancelled: 'x' }[x.status]]),
+    [['Delivered', kept || '<span class="muted">nothing</span>'], [x.status === 'Delivered' ? '' : x.status === 'Some returned' ? 'Brought back' : 'Not delivered', back], ['Cash taken', '<b>' + ghs(x.cash || 0) + '</b>' + (x.pay ? ' <span class="muted">· ' + esc(x.pay) + '</span>' : '')], ['Orders', esc((x.oids || []).join(', '))], ['By', esc(x.by || '')],
+      ['Manager', x.dec ? esc(x.dec) : x.wait ? '<span class="t-amber">has to decide</span>' : ''], ['Vendor', x.vno ? '<span class="t-red">says the record is not right</span>' : ''], ['Note', esc(x.note || '')]].filter(function (r) { return r[0]; }));
 };
 var HSEL = {}, HNAME = '', HRES = null;
 function pgHelpers() {
