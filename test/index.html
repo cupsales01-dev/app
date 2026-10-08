@@ -3,7 +3,7 @@
 <style>
 /* v2.5.3 look: calm and compact like a professional phone app – white surfaces, one red for actions, colour and symbols
    for state, short rows that open a details sheet, red counts where something waits for you. */
-:root{--bg:#F3F4F6;--card:#fff;--ink:#14171C;--mute:#687080;--line:#E6E8EC;--blue:#E2001A;--blue2:#FDE8EA;--red:#C62828;--red2:#FDECEC;--green:#15803D;--green2:#E7F6EC;--amber:#B45309;--amber2:#FEF3C7;--info:#1D4ED8;--info2:#E8EEFD;--grey2:#EEF0F3;--yel:#FFC400;--yel2:#FFF6D6;--dark:#14171C;--r:14px}
+:root{--bg:#F4F5F7;--card:#fff;--ink:#14171C;--mute:#687080;--line:#E9EBEF;--sh:0 1px 2px rgba(16,24,40,.05),0 2px 8px rgba(16,24,40,.06);--blue:#E2001A;--blue2:#FDE8EA;--red:#C62828;--red2:#FDECEC;--green:#15803D;--green2:#E7F6EC;--amber:#B45309;--amber2:#FEF3C7;--info:#1D4ED8;--info2:#E8EEFD;--grey2:#EEF0F3;--yel:#FFC400;--yel2:#FFF6D6;--dark:#14171C;--r:14px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 'Inter',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
 h2{font-size:20px;margin:0 0 6px;letter-spacing:-.2px}h3{font-size:16px;margin:0 0 4px;font-weight:700;letter-spacing:-.1px}
@@ -13,7 +13,7 @@ a{color:var(--blue)}b{font-weight:650}
 .nowrap{white-space:nowrap}.ell{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* app bar */
 #top{position:sticky;top:0;z-index:5;background:#fff}
-.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:#E2001A;color:#fff;border-bottom:3px solid #FFD100}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:linear-gradient(135deg,#E2001A 0%,#C40018 100%);color:#fff;border-bottom:3px solid #FFD100}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}.brand .logo{width:32px;height:32px;flex:0 0 auto}
 .brand b{display:block;font-size:17px;font-weight:800;letter-spacing:-.2px;line-height:1.15;color:#fff}.brand i{display:block;font-style:normal;font-size:12px;color:#FFE27A;line-height:1.2;font-weight:600}
 .who{display:flex;align-items:center;gap:8px;font-size:13px;color:#FFE9EC;white-space:nowrap}.who .av{width:32px;height:32px;font-size:13px;margin:0;box-shadow:none;background:#FFD100 !important;color:#B00014}
@@ -33,12 +33,12 @@ a{color:var(--blue)}b{font-weight:650}
 /* bottom navigation */
 .bnav{position:fixed;left:0;right:0;bottom:0;z-index:7;background:rgba(255,255,255,.97);display:flex;border-top:1px solid var(--line);padding:4px 4px calc(4px + env(safe-area-inset-bottom));backdrop-filter:saturate(1.4) blur(8px)}
 .bnav button{flex:1 1 0;min-width:0;background:none;color:#7B8290;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;line-height:1.15;font-weight:600;padding:6px 2px 5px;border-radius:10px;text-align:center;box-shadow:none;position:relative}
-.bnav button svg{width:23px;height:23px}.bnav button.on{color:var(--blue)}
+.bnav button svg{width:23px;height:23px;padding:2px 10px;box-sizing:content-box;border-radius:999px;transition:background .15s}.bnav button.on{color:var(--blue)}.bnav button.on svg{background:var(--blue2)}
 .bnav .cnt{position:absolute;top:1px;left:50%;margin-left:6px;box-shadow:0 0 0 2px #fff}
 main{padding:12px 12px 120px;max-width:640px;margin:0 auto}
 /* surfaces */
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin:0 0 12px}
-.list{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin:0 0 12px;overflow:hidden}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:0 0 12px;box-shadow:var(--sh)}
+.list{background:var(--card);border:1px solid var(--line);border-radius:16px;margin:0 0 12px;overflow:hidden;box-shadow:var(--sh)}
 .li{display:flex;align-items:center;gap:12px;padding:11px 14px;border-top:1px solid var(--line);position:relative;cursor:pointer;min-height:58px}
 .li:first-child{border-top:0}.li:active{background:#F8F9FA}
 .li .t{font-weight:650;font-size:15px;line-height:1.25}.li .s{color:var(--mute);font-size:13px;line-height:1.3;margin-top:2px}
@@ -52,11 +52,11 @@ main{padding:12px 12px 120px;max-width:640px;margin:0 auto}
 .sech{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:16px 4px 6px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--mute)}.sech span{font-weight:600;text-transform:none;letter-spacing:0;font-size:12.5px}
 .sech:first-child{margin-top:4px}
 /* "needs you" rows at the top of a screen */
-.todo{background:var(--card);border:1px solid var(--line);border-radius:var(--r);margin:0 0 12px;overflow:hidden}
+.todo{background:var(--card);border:1px solid var(--line);border-radius:16px;margin:0 0 12px;overflow:hidden;box-shadow:var(--sh)}
 .todo .li{min-height:54px}.todo .cnt{margin-left:2px}
 /* buttons */
-button{font:inherit;border:0;border-radius:10px;padding:10px 14px;background:var(--grey2);color:var(--ink);font-weight:650;cursor:pointer;font-size:14.5px}
-button.main{background:var(--blue);color:#fff}button.main:active{background:#B00014}
+button{font:inherit;border:0;border-radius:12px;padding:10px 14px;transition:transform .08s ease,background .15s ease;background:var(--grey2);color:var(--ink);font-weight:650;cursor:pointer;font-size:14.5px}
+button.main{background:var(--blue);color:#fff;box-shadow:0 2px 6px rgba(226,0,26,.25)}button:active{transform:scale(.98)}button.main:active{background:#B00014}
 .seg.wrap{flex-wrap:wrap}.pbar{position:relative;height:8px;border-radius:4px;background:var(--line);margin:6px 0 4px;overflow:hidden}.pbar i{display:block;height:100%;background:var(--blue);border-radius:4px}.seg.wrap button{flex:0 0 auto;min-width:72px}
 .wrep{display:flex;gap:8px;margin:0 0 6px}.wrep a{flex:1;text-decoration:none}.wrep button{width:100%;margin:0;display:flex;align-items:center;justify-content:center;gap:6px}.wrep svg{width:17px;height:17px}
 button.warn{background:var(--red2);color:var(--red)}button.ghost{background:transparent;color:var(--blue);padding:8px 6px}
@@ -106,7 +106,8 @@ input[type=checkbox]{accent-color:var(--blue)}.chk{width:22px;height:22px;flex:0
 .fbar input,input.srch{padding:10px 12px 10px 36px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='6.5'/%3E%3Cpath d='M16 16l4.5 4.5'/%3E%3C/svg%3E") no-repeat 11px center/17px}
 .fbtn{position:relative;width:44px;height:44px;padding:0;display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;background:#fff;border:1px solid #D5D9E0;color:var(--ink)}.fbtn svg{width:19px;height:19px}.fbtn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 .fbtn .bdg{position:absolute;top:-6px;right:-6px;background:var(--blue);color:#fff;border-radius:999px;font-size:11px;font-weight:800;min-width:19px;height:19px;line-height:19px;padding:0 5px;box-shadow:0 0 0 2px #fff}
-.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 4px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}.fgrid label{margin:0}.fgrid span{display:block;font-size:12px;color:var(--mute);margin:0 0 3px}.fgrid select,.fgrid input{padding:8px}
+.fgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin:10px 0 4px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}.fgrid label{margin:0;min-width:0}.fgrid span{display:block;font-size:12px;color:var(--mute);margin:0 0 3px}.fgrid select,.fgrid input,.fbar .fgrid input{padding:8px;background-image:none;min-width:0}
+input[type=date],input[type=time]{min-height:42px;-webkit-appearance:none;appearance:none;text-align:left;display:block;line-height:1.2;background-image:none}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.chip{background:var(--ink);color:#fff;border-radius:999px;padding:4px 4px 4px 11px;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center;gap:2px}.chip b{padding:0 8px;cursor:pointer;font-size:15px}
 .pchips{display:flex;gap:6px;margin:0 0 10px;overflow-x:auto;scrollbar-width:none}.pchips::-webkit-scrollbar{display:none}
 .pchips button{flex:0 0 auto;white-space:nowrap;background:#fff;border:1px solid #D5D9E0;color:var(--ink);font-weight:600;font-size:13.5px;border-radius:999px;padding:7px 13px;display:inline-flex;align-items:center;gap:6px}
@@ -152,6 +153,22 @@ main{padding-bottom:170px}
 .pin{max-width:320px;margin:48px auto;text-align:center}.pin input{font-size:26px;letter-spacing:12px;text-align:center}.pin .logo{width:72px;height:72px;margin:0 auto 12px;display:block}
 .rcp{max-width:460px;margin:10px auto}.rcp .amt{font-size:32px;font-weight:800;color:var(--green);margin:6px 0}
 details summary{cursor:pointer;color:var(--mute)}
+/* v2.5.9: Today – the plan as stops (schools), short facts, tags */
+.tag{display:inline-flex;align-items:center;border-radius:999px;padding:1px 8px;font-size:11.5px;font-weight:700;background:var(--grey2);color:#3F4652;margin:2px 4px 0 0;white-space:nowrap;letter-spacing:.1px}
+.tag.red{background:var(--red2);color:var(--red)}.tag.amber{background:var(--amber2);color:var(--amber)}.tag.green{background:var(--green2);color:var(--green)}.tag.blue{background:var(--info2);color:var(--info)}
+.hero{background:linear-gradient(135deg,#1F2430 0%,#2E3545 100%);color:#fff;border-radius:18px;padding:16px;margin:0 0 12px;box-shadow:0 6px 18px rgba(20,23,28,.18)}
+.hero .ey{font-size:12px;letter-spacing:.5px;text-transform:uppercase;color:#C9CED8;font-weight:700}.hero h2{color:#fff;margin:2px 0 0}.hero .tag{background:rgba(255,255,255,.14);color:#fff}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 10px}.kpis>div{background:rgba(255,255,255,.08);border-radius:12px;padding:8px 10px}.kpis b{display:block;font-size:19px;font-weight:800}.kpis span{font-size:11.5px;color:#C9CED8}
+.hero .pbar{background:rgba(255,255,255,.18)}.hero .pbar i{background:#FFD100}.hero .cov{font-size:12.5px;color:#DDE1E8;cursor:pointer}
+.stopc{background:#fff;border:1px solid var(--line);border-radius:16px;margin:0 0 10px;box-shadow:var(--sh);overflow:hidden}
+.stopc .sh{display:flex;align-items:center;gap:10px;padding:11px 12px 9px 14px;background:#FAFBFC;border-bottom:1px solid var(--line)}.stopc .sh .nb{width:26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px;flex:0 0 auto}
+.stopc .sh .nb.ok{background:var(--green)}.stopc .sh b{font-size:15px}
+.pv{display:flex;gap:10px;align-items:flex-start;padding:10px 12px 10px 14px;border-top:1px solid var(--line)}.pv:first-of-type{border-top:0}.pv .av{width:34px;height:34px;font-size:13px}
+.pv.done{background:#F6FBF7}.pv.skip{opacity:.55}.pv .fx{font-size:12.5px;color:var(--mute);margin-top:2px}.pv .fx b{color:var(--ink);font-weight:650}.pv .sb{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}.pv .sb button,.pv .sb a{font-size:12.5px;padding:6px 10px;min-height:0}.pv .sb a{text-decoration:none}
+.spin.dk{border-color:rgba(0,0,0,.12);border-top-color:var(--blue);vertical-align:-2px;margin-right:6px}
+.stk{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line)}.stk input{width:72px;text-align:center;padding:8px 4px}.seg.mini{flex:0 0 auto;padding:2px}.seg.mini button{flex:0 0 auto;font-size:12.5px;padding:6px 8px}
+.tl{border-left:2px solid var(--line);margin:6px 0 4px 8px;padding-left:12px}.tl .ev{position:relative;padding:6px 0 10px}.tl .ev:before{content:'';position:absolute;left:-18px;top:11px;width:10px;height:10px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 3px #fff}.tl .ev.c:before{background:var(--info)}
+.cashsum{background:linear-gradient(135deg,#F0FAF3 0%,#fff 70%)}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -418,6 +435,11 @@ function render() {
   $('main').innerHTML = m + body; topbar(); syncShow(); // v2.5.3: the counts follow what is on the screen
   drawSheet(); decorate(); setTimeout(decorate, 0); // v2.5.2: also the footer buttons drawn just after
 }
+/** v2.5.9: a pop-up drawn again after a tap stays where it was (it used to jump back to the top). */
+var OVK = '';
+function overDraw(h, key) { var o = document.querySelector('#over .sheet'), st = o && OVK === key ? o.scrollTop : 0; $('over').innerHTML = h; OVK = key; var n = document.querySelector('#over .sheet'); if (n && st) n.scrollTop = st; }
+/** v2.5.9: a read that changes nothing (history, a place's name) – no save queue, no refresh. */
+function readOp(op, data, ok, fail) { rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: op, data: data || {} }, function (r) { if (!r) { if (fail) fail('No answer – try again.'); return; } if (r.auth) { if (fail) fail('Open the app again and sign in.'); return; } ok(r); }, function () { if (fail) fail('No connection – try again when you have signal.'); }); }
 /** v2.5.3: details and decisions open in a sheet from the bottom; it is drawn again whenever the screen is. */
 var SHEETK = ''; // SHEETS: defined at the top of the page (first used there)
 function sheetOpen(k) { SHEETK = k; drawSheet(); }
@@ -470,7 +492,7 @@ function badges() {
 }
 function ordCount() { var sup = D.me.role === 'Supervisor'; return (D.me.role === 'Agent' ? (D.toEnter || []).length : 0) + (sup ? (D.needs || []).filter(function (x) { return x.nd; }).length + outOpen() + otherNeeds().length : 0); }
 function outOpen() { return D.me.role === 'Supervisor' && D.out && D.out.skus ? D.out.skus.filter(function (x) { return !routeOf(x); }).length : 0; }
-function otherNeeds() { return (D.needs || []).filter(function (x) { return !x.dec && !x.cl && !x.dup && !x.pay && !x.tech && !x.nd; }); }
+function otherNeeds() { return (D.needs || []).filter(function (x) { return !x.dec && !x.cl && !x.dup && !x.over && !x.pay && !x.tech && !x.nd; }); }
 function scrCount(B, s) { var t = 0; Object.keys(B[s] || {}).forEach(function (k) { t += B[s][k] || 0; }); return t; }
 /** v2.5.3: while the app is open the newest screen is fetched every few minutes (never while typing or in a box), so new
  *  work shows on the tabs without closing the app – and a short note says where it is. */
@@ -492,9 +514,17 @@ function poll() {
 var REV = null, SEENREV = '', LASTREV = '', PINGT = 0;
 function ping() {
   if (!D || RK || document.visibilityState === 'hidden') return; PINGT = Date.now();
-  rpc({ op: 'ping' }, function (r) { if (!r || r.rev == null) return; SEENREV = String(r.rev); if (REV === null) { if (STALE || !D.rev) return; REV = String(D.rev); } if (SEENREV !== REV) poll(); }, function () { });
+  rpc({ op: 'ping', t: TOKEN, since: REV || '' }, function (r) { if (!r || r.rev == null) return; SEENREV = String(r.rev); if (REV === null) { if (STALE || !D.rev) return; REV = String(D.rev); }
+    if (r.ev && r.ev.length && D && !STALE) { var top = EVSEEN > REV ? EVSEEN : REV, nw = r.ev.filter(function (e) { return String(e.r) > top && e.by !== D.me.uid; }); if (r.ev.length) EVSEEN = String(r.ev[r.ev.length - 1].r); if (nw.length) evApply(nw); } // v2.5.9: the change shows at once
+    if (SEENREV !== REV) poll(); }, function () { });
 }
-setInterval(function () { if (Date.now() - POLLT > 300000) poll(); else if (Date.now() - PINGT > 14000) ping(); }, 5000);
+var EVSEEN = '';
+/** v2.5.9: status changes made on another phone (approved, on the way, delivered, confirmed…) – shown straight away, kept until the new screen. */
+function evApply(L) {
+  L.forEach(function (e) { CONF.push({ op: e.op, ev: 1, at: Date.now(), data: { oids: e.oids, oid: e.oid, what: e.what, vid: e.vid, hid: e.hid, from: e.from, uid: e.uid, approve: e.ap, skus: e.skus, routes: e.routes, eid: e.eid, items: (e.oids || []).map(function (o) { return { oid: o }; }) } }); });
+  CONF = CONF.slice(-60); if ($('dlg').innerHTML || $('over').innerHTML || (document.activeElement && /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))) return; var y = window.scrollY; render(); window.scrollTo(0, y);
+}
+setInterval(function () { if (Date.now() - POLLT > 300000) poll(); else if (Date.now() - PINGT > 8000) ping(); }, 4000); // v2.5.9: every 8 seconds while open
 var BACKT = null; function onBack() { if (document.visibilityState !== 'visible' || !D) return; clearTimeout(BACKT); BACKT = setTimeout(function () { if (Date.now() - POLLT > 30000) poll(); else ping(); }, 600); } // v2.5.7: opened again → the newest screen (once)
 document.addEventListener('visibilitychange', onBack); window.addEventListener('pageshow', function (e) { if (e.persisted) onBack(); }); window.addEventListener('focus', onBack);
 /** v2.4.7: what is saved on the phone but not yet in the system is shown as done already. */
@@ -504,6 +534,16 @@ function pendView() {
     var d = x.data || {};
     if (D.waiting && D.srvNow) D.waiting.forEach(function (o) { if (o.t0) o.mins = Math.max(0, Math.round((D.srvNow - o.t0 + Date.now() - (D.__t0 || Date.now())) / 60000)); }); // v2.5.8
     if (x.op === 'release' && D.waiting) { var ids = (d.items || []).map(function (i) { return i.oid; }); D.waiting = D.waiting.filter(function (o) { return ids.indexOf(o.oid) < 0; }); }
+    if (x.op === 'release' && D.myOrders) { var ri = (d.items || []).map(function (i) { return i.oid; }); D.myOrders.forEach(function (o) { if (ri.indexOf(o.oid) >= 0 && /^(Submitted|Sending)$/.test(o.status)) o.status = 'Released'; }); } // v2.5.9
+    if (x.op === 'stop' && D.myOrders && x.ev) (d.oids || []).forEach(function (oid) { D.myOrders.forEach(function (o) { if (o.oid !== oid) return; if (d.what === 'NONE') o.hold = o.hold || 'Not delivered'; else if (o.status !== 'Delivered') { o.status = 'Delivered'; o.disp = o.disp || 'yes'; } }); });
+    if ((x.op === 'confirm' || x.op === 'receive') && x.ev) { (D.handovers || []).forEach(function (h) { if (h.hid === d.hid && h.status === 'Sent') h.status = 'Confirmed'; }); (D.collected || []).forEach(function (c) { (c.ho || []).forEach(function (h) { if (h.hid === d.hid && h.status === 'Sent') h.status = 'Confirmed'; }); }); }
+    if (x.op === 'payment' && D.me.role !== 'Warehouse' && d.vid) { var pk0 = 'p-' + x.sid, vp = vend(d.vid) || {}, tnow = new Date(), hm0 = ('0' + tnow.getHours()).slice(-2) + ':' + ('0' + tnow.getMinutes()).slice(-2); D.__pv = D.__pv || {};
+      if (D.receipts && !D.receipts.some(function (r) { return r.key === pk0 || (d.rk && r.rk === d.rk); })) D.receipts.unshift({ key: pk0, rk: d.rk || '', rids: [], vendor: vp.name || d.vid, phone: vp.phone || '', amount: d.amount, by: D.me.first, at: dayLbl(D.today) + ' ' + hm0, day: D.today, kind: 'payment', sent: false, answer: '' });
+      if (D.collected && !D.collected.some(function (c) { return c.id === pk0; })) D.collected.unshift({ id: pk0, day: D.today, when: hm0, vid: d.vid, vendor: vp.name || d.vid, amt: d.amount, left: d.amount, ho: [], money: 'Omni Haven', refs: [], rk: d.rk || '', answer: '' });
+      if (!D.__pv[pk0] && vp.debt > 0) { D.__pv[pk0] = 1; vp.debt = Math.max(0, Math.round((vp.debt - d.amount) * 100) / 100); } }
+    if (x.op === 'call' && D.plan) { D.plan.called = D.plan.called || []; if (!D.plan.called.some(function (c) { return c.sid0 === x.sid; })) D.plan.called.push({ sid0: x.sid, vid: d.vid || '', sid: d.sid || '', out: 'Call – ' + d.outcome }); }
+    if (x.op === 'overdec' && D.needs) D.needs = D.needs.filter(function (n) { return n.eid !== d.eid; });
+    if (x.op === 'planok' && D.plan && d.uid && D.me.uid === d.uid && d.approve && D.plan.status === 'Agreed') D.plan.status = 'Approved';
     if (x.op === 'confirm' && D.toConfirm) D.toConfirm = D.toConfirm.filter(function (c) { return c.hid !== d.hid; });
     if ((x.op === 'resolve' || x.op === 'decide') && D.needs) D.needs = D.needs.filter(function (n) { return n.eid !== d.eid && !(n.dec && n.dec.did === d.did); });
     if (x.op === 'entered' && D.toEnter) D.toEnter = D.toEnter.filter(function (e) { return (d.oids || []).indexOf(e.oid) < 0; });
@@ -523,9 +563,10 @@ function pendView() {
     if (x.op === 'stockback' && D.comingBack) D.comingBack = D.comingBack.filter(function (c) { return c.did ? (d.dids || []).indexOf(c.did) < 0 : (d.oids || []).indexOf(c.oid) < 0; });
     if (x.op === 'stop' && D.stops) { var so = d.oids || []; D.stops = D.stops.filter(function (s) { if (s.id !== d.vid) return true; if (d.what === 'NONE' || !so.length) return false; s.orders = s.orders.filter(function (o) { return so.indexOf(o.oid) < 0; }); return s.orders.length > 0; }); } // v2.5.7: a recorded stop leaves the list at once
     if (x.op === 'startday' && D.myDay) D.myDay.start = D.myDay.start || 'now';
-    if (x.op === 'plan' && D.plan && d.items && D.plan.day === d.day) { D.plan.items = d.items; D.plan.status = 'Agreed'; D.plan.suggested = false; } // v2.5.8
+    if (x.op === 'plan' && D.plan && d.items && D.plan.day === d.day) { D.plan.items = d.items; D.plan.status = 'Agreed'; D.plan.suggested = false; if (d.note !== undefined) D.plan.anote = d.note; if (d.goal !== undefined) D.plan.goal = d.goal; } // v2.5.8
     if (x.op === 'visit' && D.plan && !(D.plan.visits || []).some(function (v) { return v.sid0 === x.sid; })) { D.plan.visits = (D.plan.visits || []).concat([{ sid0: x.sid, vid: d.vid || '', sid: d.sid || '', at: d.at ? new Date(d.at).toTimeString().slice(0, 5) : '', out: d.outcome || 'School visit', why: d.reason || '' }]); }
-    if (x.op === 'planok' && D.teamDay) D.teamDay.agents.forEach(function (a) { if (a.uid !== d.uid) return; if (d.approve) a.status = 'Approved'; (d.add || []).forEach(function (z) { if (!a.items.some(function (y) { return y.k === z.k && y.id === z.id; })) { a.items.push(Object.assign({ by: 'Manager', done: '' }, z)); a.planned++; } }); });
+    if (x.op === 'planok' && D.teamDay) D.teamDay.agents.forEach(function (a) { if (a.uid !== d.uid) return; if (d.approve && a.status === 'Agreed') a.status = 'Approved'; (d.add || []).forEach(function (z) { if (!a.items.some(function (y) { return y.k === z.k && y.id === z.id && !y.rm; })) { a.items.push(Object.assign({ by: 'Manager', done: '' }, z)); a.planned++; } });
+      (d.remove || []).forEach(function (r) { a.items.forEach(function (y) { if (y.k === r.k && y.id === r.id) y.rm = 'Manager'; }); }); a.planned = a.items.filter(function (y) { return !y.skip && !y.rm; }).length; }); // v2.5.9: + taken out
     if (x.op === 'vprofile' && d.prof) { var vp = vend(d.vid); if (vp) { vp.prof = Object.assign({}, vp.prof || {}, { school: d.prof.newSchool ? '' : d.prof.school, at: D.today }); if (d.prof.newSchool) vp.school = d.prof.newSchool.name; } }
     if ((x.op === 'agree' || x.op === 'dispute') && D.myOrders) D.myOrders.forEach(function (o) { if (o.oid === d.oid && o.outcome) { o.outcome.check = x.op === 'agree' ? 'Agrees' : 'Disagrees'; o.outcome.mismatch = false; o.outcome.sending = 1; } });
     if (x.op === 'orders' && D.myOrders && !D.myOrders.some(function (o) { return o.sid === x.sid; })) (d.vendors || []).slice().reverse().forEach(function (v) {
@@ -581,7 +622,7 @@ function habitTips(v, x) {
 ACT.nhalf = function (b) { edit(b, function (x) { x.lines.forEach(function (l) { if (l.sku && Number(l.qty) > 1) l.qty = Math.ceil(Number(l.qty) / 2); }); x.halved = true; }, true); };
 function pgNew() {
   var d = draft(), h = '', tv = 0, tc = 0;
-  h += todoBox([startRow()]) + outNotice();
+  h += outNotice(); // v2.5.9: Start my day is on Today only
   d.vendors.forEach(function (x, i) {
     if (x.vid && !vend(x.vid)) { x.vid = ''; saveDraft(d); } // vendor moved to another agent since the draft was kept
     var v = x.vid ? vend(x.vid) : null; h += '<div class="card vcard">';
@@ -693,7 +734,7 @@ ACT.send = function (b) {
 };
 // ---------------------------------------------------------------- agent: vendors and today
 // v2.4.8: one filter panel (drop-downs) on every list – the same on every screen. Choices are kept on this phone.
-var FL = {}; try { FL = JSON.parse(localStorage.getItem('cs_fl_' + TOKEN) || '{}') || {}; } catch (x) { FL = {}; }
+var FL = {}; try { FL = JSON.parse(localStorage.getItem('cs_fl_' + TOKEN) || '{}') || {}; } catch (x) { FL = {}; } if (FL.pcash) delete FL.pcash.day; // v2.5.9: Cash opens on today
 var FOPEN = {}, LISTR = {};
 function fl(k) { return FL[k] || (FL[k] = {}); }
 function flSave() { try { localStorage.setItem('cs_fl_' + TOKEN, JSON.stringify(FL)); } catch (x) { } }
@@ -741,7 +782,24 @@ function hasQ(k, text) { var n = norm(fl(k).q); return !n || norm(text).indexOf(
 function bdayIn(key) { if (!key || !D) return -1; var t = D.today.split('-'), m = +key.slice(0, 2), d = +key.slice(3, 5); var now = Date.UTC(+t[0], +t[1] - 1, +t[2]); var nx = Date.UTC(+t[0], m - 1, d); if (nx < now) nx = Date.UTC(+t[0] + 1, m - 1, d); return Math.round((nx - now) / 86400000); }
 var MONS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 function bdayParse(s) { var x = String(s || '').match(/^(\d{1,2}) ([A-Za-z]{3})$/); if (!x) return null; var m = MONS.indexOf(x[2]) + 1, d = +x[1]; if (!m || d < 1 || d > 31) return null; return { key: ('0' + m).slice(-2) + '-' + ('0' + d).slice(-2), text: d + ' ' + MONS[m - 1] }; }
-function pgVendors() { return todoBox([bdayRow(), habitsRow()]) + filterBar('vendors', 'Find a vendor, school or phone') + (D.me.role === 'Agent' || D.me.role === 'Supervisor' ? '<button class="ghost" style="margin:0 0 8px" data-act="regOpen">' + ico(ICO.plus) + ' New vendor</button>' : '') + '<div id="flist">' + LISTR.vendors() + '</div>'; }
+var VSUB = 'v';
+function pgVendors() {
+  var seg = (D.schools || []).length ? '<div class="seg sub-tabs">' + [['v', 'Vendors'], ['s', 'Schools']].map(function (x) { return '<button class="' + (VSUB === x[0] ? 'on' : '') + '" data-act="vsub" data-s="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>' : '';
+  if (VSUB === 's') return seg + filterBar('schools', 'Find a school or area – see its history') + '<div id="flist">' + LISTR.schools() + '</div>';
+  return seg + todoBox([bdayRow(), habitsRow()]) + filterBar('vendors', 'Find a vendor, school or phone') + (D.me.role === 'Agent' || D.me.role === 'Supervisor' ? '<button class="ghost" style="margin:0 0 8px" data-act="regOpen">' + ico(ICO.plus) + ' New vendor</button>' : '') + '<div id="flist">' + LISTR.vendors() + '</div>';
+}
+ACT.vsub = function (b) { VSUB = b.dataset.s; render(); window.scrollTo(0, 0); };
+var STG = { Lead: ['Not visited', ''], Visited: ['Visited', 'blue'], Interested: ['Interested', 'green'], 'Vendor registered': ['Our vendors', 'green'], 'Not interested': ['Not interested', 'red'] };
+LISTR.schools = function () {
+  var f = fl('schools'), q = norm(f.q);
+  var L = (D.schools || []).filter(function (s) { if (f.st && (s.st || 'Lead') !== f.st && !(f.st === 'Vendor registered' && s.n)) return false; return q ? norm(s.name + ' ' + s.area).indexOf(q) >= 0 : (s.n || (s.st && s.st !== 'Lead') || f.st); });
+  if (!L.length) return emptyHtml(q ? 'No school matches.' : 'Type a school\'s name to find it.');
+  return '<div class="sumline"><b>' + L.length + '</b> school' + (L.length === 1 ? '' : 's') + ' · tap one for everything that happened there</div><div class="list">' + L.slice(0, 150).map(function (s) {
+    var g = STG[s.n ? 'Vendor registered' : s.st || 'Lead'] || [s.st, ''];
+    return liRow(' data-act="hist" data-k="s" data-i="' + s.id + '"', leadI('school', g[1] || 'grey'), esc(s.name), esc(s.area || '') + (s.n ? ' · ' + s.n + ' vendor' + (s.n === 1 ? '' : 's') : '') + (s.lv ? ' · visited ' + esc(dayLbl(s.lv)) : '') + (s.fu ? ' · next ' + esc(dayLbl(s.fu.day)) : ''), '', esc(g[0]), g[1] || 'grey');
+  }).join('') + '</div>' + (L.length > 150 ? '<p class="small muted">… ' + (L.length - 150) + ' more – type more of the name.</p>' : '');
+};
+FDEF.schools = [['st', 'Stage', [['', 'Any'], ['Lead', 'Not visited yet'], ['Visited', 'Visited'], ['Interested', 'Interested'], ['Vendor registered', 'Our vendors there'], ['Not interested', 'Not interested']]]];
 function bdayList() { return (D.vendors || []).filter(function (v) { var bi = bdayIn(v.bday); return bi >= 0 && bi <= 1 && (!agOn() || v.agent === agOn()); }).sort(function (a, b) { return bdayIn(a.bday) - bdayIn(b.bday); }); }
 function bdayRow() {
   var list = bdayList(); if (!list.length) return ''; var t = list.filter(function (v) { return bdayIn(v.bday) === 0; }).length;
@@ -801,7 +859,7 @@ function vlistBody(list) {
     if (bi >= 0 && bi <= 6) fl2 += '<span class="' + (bi <= 1 ? 't-red' : 't-amber') + '" title="Birthday">' + ico(ICO.cake) + '</span>';
     if (v.pace && v.pace.slow) fl2 += '<span class="t-red" title="Slow payer">' + ico(ICO.clock) + '</span>';
     if (!pf.school) fl2 += '<span class="t-amber" title="School missing">' + ico(ICO.school) + '</span>';
-    var sub = esc(v.school || 'No school') + (agFilterOk() && !agOn() ? ' · ' + esc(agName(v.agent)) : '') + ' · ' + (v.last ? (v.since === 0 ? 'bought today' : v.since !== '' ? 'bought ' + v.since + 'd ago' : 'bought ' + esc(dayLbl(v.last))) : 'never bought');
+    var tg0 = vTags(v), sub = (tg0.indexOf('new') >= 0 ? '<span class="tag green">New vendor</span>' : tg0.indexOf('signup') >= 0 ? '<span class="tag blue">Signed up</span>' : '') + esc(v.school || 'No school') + (agFilterOk() && !agOn() ? ' · ' + esc(agName(v.agent)) : '') + ' · ' + (v.last ? (v.since === 0 ? 'bought today' : v.since !== '' ? 'bought ' + v.since + 'd ago' : 'bought ' + esc(dayLbl(v.last))) : 'never bought');
     return liRow(' data-act="vdet" data-v="' + v.id + '"', avatar(v.name), esc(v.name) + (fl2 ? '<span class="flags">' + fl2 + '</span>' : ''), sub, v.debt > 0 ? '<span class="' + (v.days > 7 ? 't-red' : v.days >= 4 ? 't-amber' : '') + '">' + ghs(v.debt) + '</span>' : '', v.debt > 0 ? v.days + ' days' : 'Owes nothing', v.debt > 0 ? (v.days > 7 ? 'red' : 'grey') : 'green');
   }).join('') + '</div>' + (list.length > 400 ? '<p class="small muted">… ' + (list.length - 400) + ' more – search or filter.</p>' : '');
 }
@@ -819,8 +877,9 @@ SHEETS.vdet = function () {
     tr('Birthday', v.bdayTxt ? esc(v.bdayTxt) + (bi === 0 ? ' – <b class="t-red">today</b>' : bi === 1 ? ' – tomorrow' : bi > 1 && bi <= 6 ? ' – in ' + bi + ' days' : '') : '<span class="muted">not recorded</span>') +
     tr('School', s ? esc(s.name) + (s.pupils ? ' · ' + esc(s.pupils) + ' pupils' : '') : '<span class="t-amber">missing</span>') + tr('Breaks', s && brkTxt(s) ? esc(brkTxt(s)) : '') + tr('Closes', pf.close ? esc(pf.close) : '') + tr('Sells', pf.spot ? esc(pf.spot) : '') + tr('MoMo', pf.momo ? esc(pf.momo) : '') + tr('WhatsApp', pf.wa ? esc(pf.wa) : '') +
     (agFilterOk() ? tr('Agent', esc(agName(v.agent))) : '') + '</table>';
-  if (v.lv) h += '<p class="small muted" style="margin:6px 2px">Last visit ' + esc(dayLbl(v.lv.day)) + ': ' + esc(v.lv.out || '') + (v.lv.lever ? ' · lever: ' + esc(v.lv.lever) : '') + (v.lv.con ? ' · concerns: ' + esc(v.lv.con) : '') + '</p>';
-  return h + '<div class="btns"><button data-act="bdayOpen" data-v="' + v.id + '">' + (v.bdayTxt ? 'Birthday' : 'Add birthday') + '</button><button data-act="profOpen" data-v="' + v.id + '">' + (pf.at ? 'Profile' : 'Fill profile') + '</button></div>' +
+  if (v.lv) h += '<p class="small muted" style="margin:6px 2px">Last visit ' + esc(dayLbl(v.lv.day)) + (v.lv.by ? ' (' + esc(v.lv.by) + ')' : '') + ': ' + esc(v.lv.out || '') + (v.lv.lever ? ' · lever: ' + esc(v.lv.lever) : '') + (v.lv.con ? ' · concerns: ' + esc(v.lv.con) : '') + '</p>';
+  if (v.fu) h += '<div class="msg info small" style="margin:6px 0">Next step ' + esc(dayLbl(v.fu.day)) + ' – ' + esc(v.fu.how === 'Call' ? 'call' : 'visit') + (v.fu.bring ? ': ' + esc(v.fu.bring) : '') + (v.fu.by ? ' (' + esc(v.fu.by) + ')' : '') + '</div>';
+  return h + '<div class="btns"><button data-act="bdayOpen" data-v="' + v.id + '">' + (v.bdayTxt ? 'Birthday' : 'Add birthday') + '</button><button data-act="profOpen" data-v="' + v.id + '">' + (pf.at ? 'Profile' : 'Fill profile') + '</button><button data-act="hist" data-k="v" data-i="' + v.id + '">History</button></div>' +
     '<div class="btns" style="margin-top:8px"><a href="' + esc(mapUrl(vPin(v), v.school || v.name, '')) + '" target="_blank"><button class="ic">' + ico(ICO.pin) + (vPin(v) ? 'Map' : 'Find on map') + '</button></a>' + (D.me.role === 'Agent' || D.me.role === 'Supervisor' ? '<button class="main ic" data-act="visOpen" data-k="v" data-i="' + v.id + '">' + ico(ICO.plan) + 'Visit report</button>' : '') + '</div>';
 };
 /** v2.5.3: the number to WhatsApp her on – the one she gave for WhatsApp, else her phone; none if she has no WhatsApp. */
@@ -854,7 +913,7 @@ function profDraw() {
     (P.waK === 'Other' ? '<label>Her WhatsApp number</label><input inputmode="tel" data-inp="pf" data-f="waN" value="' + esc(P.waN) + '" placeholder="0241234567">' : '') +
     '<label>Year of birth (if she says)</label><input inputmode="numeric" maxlength="4" data-inp="pf" data-f="byear" value="' + esc(P.byear) + '" placeholder="e.g. 1988">' +
     '<div class="btns" style="margin-top:18px"><button data-act="closeO">Cancel</button><button class="main" data-act="psave">Save</button></div></div></div>';
-  $('over').innerHTML = h;
+  overDraw(h, 'prof');
 }
 /** v2.5.8: the school's first and second break (times). */
 function brkHtml(inp, b1, b2) { return '<div class="fgrid"><label><span>First break</span><input type="time" data-inp="' + inp + '" data-f="b1" value="' + esc(b1 || '') + '"></label><label><span>Second break</span><input type="time" data-inp="' + inp + '" data-f="b2" value="' + esc(b2 || '') + '"></label></div>'; }
@@ -1014,6 +1073,39 @@ ACT.cldsave = function (b) {
   ask(x.vendor + ':\n' + (st.paid === 'YES' ? 'She paid ' + ghs(amt) + ' – received by ' + st.holder + '.\nHer debt goes down by ' + ghs(amt) + ' and the cash counts as with ' + st.holder + '.' : 'She did NOT pay – her debt stays ' + ghs(x.cl.owes) + '.') + (st.note ? '\nNote: ' + st.note : '') + '\n' + x.cl.agent + ' is told.', function () {
     bgSave('claimdec', { id: x.cl.id, eid: x.eid, paid: st.paid, amount: st.paid === 'YES' ? amt : 0, holder: st.paid === 'YES' ? st.holder : '', note: st.note }, 'cd-' + x.cl.id, 'decision – ' + x.vendor, null, true); delete CLD[b.dataset.e]; }, 'SAVE DECISION');
 };
+// ---------------------------------------------------------------- v2.5.9: extra money (paid more than she owed) – what really happens to it
+var OVD = {};
+var OVOPT = { REFUND: ['Give it back to her', 'The person holding it gives it back to her; their cash count goes down.'], WRONG: ['The amount was typed wrong', 'She did not really pay it – it is removed and the holder\'s cash count goes down.'],
+  CREDIT: ['Credit for her next order', 'It pays part of her next order (shown as "paid already"); the holder hands it to Frank.'], DEBT: ['Use it for her debt', 'It pays her oldest debt now; the holder hands it over as usual.'],
+  OTHERV: ['It pays another vendor\'s debt', 'e.g. she paid for a friend – it pays that vendor\'s oldest debt.'], RIGHT: ['Leave it as it is', 'Nothing moves – the extra stays kept apart.'] };
+function overHtml(x) {
+  var o = x.over, st = OVD[x.eid] || (OVD[x.eid] = { c: '', amt: String(o.amount), note: '', vid2: '', q: '' });
+  var tr = function (k, v) { return '<tr><td class="k">' + esc(k) + '</td><td>' + v + '</td></tr>'; };
+  var h = '<table class="dt">' + tr('Extra kept apart', '<b>' + ghs(o.amount) + '</b>') + tr('Held by', o.holders.map(function (p) { return esc(p.name) + (o.holders.length > 1 ? ' ' + ghs(p.amt) : ''); }).join(', ') || '–') + tr('She owes now', o.debt > 0.004 ? ghs(o.debt) : 'nothing') + (o.agent ? tr('Agent', esc(o.agent)) : '') + '</table>';
+  var ks = ['REFUND', 'WRONG', 'CREDIT'].concat(o.debt > 0.004 ? ['DEBT'] : []).concat(['OTHERV', 'RIGHT']);
+  h += '<div class="psec">What really happens to it?</div><div class="chips">' + ks.map(function (k) { return '<button class="' + (st.c === k ? 'on' : '') + '" data-act="ovc" data-e="' + x.eid + '" data-v="' + k + '">' + esc(OVOPT[k][0]) + '</button>'; }).join('') + '</div>';
+  if (st.c) h += '<div class="note">' + ico(ICO.info) + '<span>' + esc(OVOPT[st.c][1]) + '</span></div>';
+  if (st.c && st.c !== 'RIGHT') h += '<label>' + (st.c === 'WRONG' ? 'Amount NOT really paid (GHS)' : 'Amount (GHS)') + '</label><input inputmode="decimal" data-inp="ovamt" data-e="' + x.eid + '" value="' + esc(st.amt) + '">';
+  if (st.c === 'OTHERV') { var v2 = st.vid2 ? vend(st.vid2) : null; h += '<label>Which vendor does it pay for?</label>' + (v2 ? '<div class="row" style="flex-wrap:nowrap"><b class="grow">' + esc(v2.name) + ' <span class="small muted">owes ' + ghs(v2.debt) + '</span></b><button class="ghost" data-act="ovv" data-e="' + x.eid + '" data-v="">Change</button></div>' : '<input data-inp="ovq" data-e="' + x.eid + '" value="' + esc(st.q) + '" placeholder="Name or school" autocomplete="off"><div id="ovh-' + x.eid + '">' + ovHits(x.eid) + '</div>'); }
+  if (st.c) h += '<label>Note (optional – the holder reads it)</label><input data-inp="ovnote" data-e="' + x.eid + '" value="' + esc(st.note) + '"><p><button class="main big" data-act="ovsave" data-e="' + x.eid + '">Save decision</button></p>';
+  return h;
+}
+function ovHits(eid) { var st = OVD[eid], q = norm(st.q); if (q.length < 2) return ''; var L = (D.vendors || []).filter(function (v) { return v.debt > 0.004 && norm(v.name + ' ' + v.school).indexOf(q) >= 0; }).slice(0, 8);
+  return L.length ? '<div class="psr">' + L.map(function (v) { return '<div class="hit" data-act="ovv" data-e="' + eid + '" data-v="' + v.id + '"><span><b>' + esc(v.name) + '</b><div class="small muted">' + esc(v.school || '') + '</div></span><span class="small t-red">' + ghs(v.debt) + '</span></div>'; }).join('') + '</div>' : '<p class="sub">No vendor with a debt matches.</p>'; }
+ACT.ovc = function (b) { OVD[b.dataset.e].c = b.dataset.v; render(); };
+ACT.ovv = function (b) { OVD[b.dataset.e].vid2 = b.dataset.v; render(); };
+INP.ovamt = function (el) { OVD[el.dataset.e].amt = el.value; }; INP.ovnote = function (el) { OVD[el.dataset.e].note = el.value; };
+INP.ovq = function (el) { OVD[el.dataset.e].q = el.value; var b = $('ovh-' + el.dataset.e); if (b) b.innerHTML = ovHits(el.dataset.e); };
+ACT.ovsave = function (b) {
+  var x = (D.needs || []).filter(function (n) { return n.eid === b.dataset.e; })[0], st = OVD[b.dataset.e]; if (!x || !x.over || !st || !st.c) return; var o = x.over, amt = num(st.amt);
+  if (st.c !== 'RIGHT' && !(amt > 0 && amt <= o.amount + 0.004)) { say('Amount: more than 0 and at most ' + ghs(o.amount) + '.'); return; }
+  if (st.c === 'OTHERV' && !st.vid2) { say('Choose the vendor whose debt it pays.'); return; }
+  if (st.c === 'DEBT' && amt > o.debt + 0.004) { say('She owes only ' + ghs(o.debt) + '.'); return; }
+  var v2 = st.vid2 ? vend(st.vid2) : null, holders = o.holders.map(function (p) { return p.name; }).join(', ');
+  var txt = st.c === 'RIGHT' ? 'Leave it as it is – the extra stays kept apart.' : st.c === 'REFUND' ? holders + ' gives ' + ghs(amt) + ' back to ' + x.vendor + '.' : st.c === 'WRONG' ? ghs(amt) + ' is removed – it was typed wrong.' : st.c === 'CREDIT' ? ghs(amt) + ' becomes her credit – it pays part of her next order.' : st.c === 'DEBT' ? ghs(amt) + ' pays her debt now.' : ghs(amt) + ' pays ' + (v2 ? v2.name : '') + '\'s debt.';
+  ask(x.vendor + ':\n' + txt + (st.c !== 'RIGHT' && holders ? '\n' + holders + ' is told what to do.' : '') + (st.note ? '\nNote: ' + st.note : ''), function () {
+    bgSave('overdec', { eid: x.eid, choice: st.c, amount: st.c === 'RIGHT' ? '' : amt, vid2: st.vid2 || '', note: st.note }, 'od-' + x.eid, 'extra money – ' + x.vendor, null, true); delete OVD[x.eid]; }, 'SAVE DECISION');
+};
 // ---------------------------------------------------------------- v2.5.6: a payment recorded twice
 function dupHtml(x) { var p = x.dup; return '<div class="small" style="margin:4px 0">' + esc(p.by) + ' recorded <b>' + ghs(p.amount) + '</b> from ' + esc(x.vendor) + ' twice' + (p.at ? ' (the second at ' + esc(p.at) + ')' : '') + '.</div><div class="btns"><button data-act="resolve" data-e="' + x.eid + '">She paid twice – keep both</button><button class="warn" data-act="dupx" data-e="' + x.eid + '" data-r="' + esc(p.rid) + '">Cancel the second</button></div>'; }
 ACT.dupx = function (b) { var x = (D.needs || []).filter(function (n) { return n.eid === b.dataset.e; })[0]; if (!x || !x.dup) return;
@@ -1062,7 +1154,7 @@ function regDraw() {
   h += '<label>Profit share – what she gives the school (if any)</label><input data-inp="rf" data-f="share" value="' + esc(R.share || '') + '" placeholder="e.g. 10% · GHS 50 a term · nothing">' +
     '<label>Business / outlet name (optional)</label><input data-inp="rf" data-f="bus" value="' + esc(R.bus) + '">' +
     '<div class="btns" style="margin-top:18px"><button data-act="closeO">Cancel</button><button class="main" data-act="rsave">Register</button></div></div></div>';
-  $('over').innerHTML = h;
+  overDraw(h, 'reg');
 }
 function regHits() { var q = norm(REG.q); var L = (D.schools || []).filter(function (s) { return !q || norm(s.name + ' ' + s.area).indexOf(q) >= 0; }).slice(0, q ? 12 : 6); if (!L.length) return '<p class="sub">No school found – tap "+ School not in the list".</p>';
   return '<div class="psr">' + L.map(function (s) { return '<div class="hit" data-act="rschool" data-s="' + s.id + '"><span><b>' + esc(s.name) + '</b>' + (s.area ? '<div class="small muted">' + esc(s.area) + '</div>' : '') + '</span><span class="small muted">' + s.n + '</span></div>'; }).join('') + '</div>'; }
@@ -1092,7 +1184,7 @@ function needsList(list) {
   return list.map(function (x, i) {
     var k = 'n:' + x.eid, o = isOpen(k);
     return '<div class="srow' + (i ? '' : ' first') + '" style="align-items:flex-start;flex-wrap:wrap"><div class="grow tap" data-act="tog" data-o="' + esc(k) + '" data-s="' + (o ? 1 : 0) + '"><span class="pill ' + (x.sev === 'High' ? 'red' : 'amber') + '">' + esc(x.type) + '</span> <span class="small muted">' + esc(dayLbl(x.at)) + '</span>' + (x.vendor ? '<div><b>' + esc(x.vendor) + '</b></div>' : '') + (o ? '' : '<div class="small muted" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(x.dec ? x.dec.summary : x.cl ? x.cl.agent + ' says she did not pay her ' + ghs(x.cl.amount) : x.text) + '</div>') + '</div><span class="ar" data-act="tog" data-o="' + esc(k) + '" data-s="' + (o ? 1 : 0) + '">' + chev(o) + '</span>' +
-      (o ? '<div style="flex:1 1 100%">' + (x.dec || x.cl || x.dup ? '' : '<div class="small" style="margin:4px 0">' + esc(x.text) + '</div>') + (x.dec ? decideHtml(x) : x.cl ? claimDecHtml(x) : x.dup ? dupHtml(x) : '<button data-act="resolve" data-e="' + x.eid + '">DONE</button>') + '</div>' : '') + '</div>';
+      (o ? '<div style="flex:1 1 100%">' + (x.dec || x.cl || x.dup ? '' : '<div class="small" style="margin:4px 0">' + esc(x.text) + '</div>') + (x.dec ? decideHtml(x) : x.cl ? claimDecHtml(x) : x.dup ? dupHtml(x) : x.over ? overHtml(x) : '<button data-act="resolve" data-e="' + x.eid + '">DONE</button>') + '</div>' : '') + '</div>';
   }).join('');
 }
 ACT.resolve = function (b) { askIn('What was done? (short)', 'Checked', '', function (note) { bgSave('resolve', { eid: b.dataset.e, note: note }, 'rs-' + b.dataset.e, 'problem closed', b); }, 'DONE'); };
@@ -1218,7 +1310,7 @@ function oCanCancel(o) { return !o.local && !o.hold && (o.status === 'Submitted'
 var SUB = { today: 'orders', done: 'orders' }; // v2.4.9: Orders | Payments inside "Orders & Payments"
 function subTabs(k, payN, ordN) { return '<div class="seg sub-tabs">' + [['orders', 'Orders', ordN], ['pay', 'Payments', payN]].map(function (x) { return '<button class="' + (SUB[k] === x[0] ? 'on' : '') + '" data-act="sub" data-k="' + k + '" data-s="' + x[0] + '">' + x[1] + (x[2] ? ' <span class="cnt">' + x[2] + '</span>' : '') + '</button>'; }).join('') + '</div>'; }
 ACT.sub = function (b) { SUB[b.dataset.k] = b.dataset.s; MSG = null; render(); window.scrollTo(0, 0); };
-function payNeeds() { return (D.needs || []).filter(function (x) { return x.dec || x.cl || x.dup; }); }
+function payNeeds() { return (D.needs || []).filter(function (x) { return x.dec || x.cl || x.dup || x.over; }); }
 /** v2.5.2: Prince could not deliver – the manager tries again or cancels (one card, open while something waits). */
 var NDN = {};
 function ndList() { return D.me.role === 'Supervisor' ? (D.needs || []).filter(function (x) { return x.nd; }) : []; }
@@ -1247,7 +1339,7 @@ function pgToday() {
   var h = subTabs('today', payCount(), ordCount());
   if (SUB.today === 'pay') return h + paymentsHtml();
   var other = otherNeeds();
-  h += todoBox([startRow(), monthRow(), teamRow(), claimsRow(), ndHtml(), outCardHtml(), other.length ? todoRow('needs', 'alert', 'amber', 'Other problems', other.slice(0, 3).map(function (x) { return esc(x.type); }).join(' · '), other.length) : '',
+  h += todoBox([claimsRow(), ndHtml(), outCardHtml(), other.length ? todoRow('needs', 'alert', 'amber', 'Other problems', other.slice(0, 3).map(function (x) { return esc(x.type); }).join(' · '), other.length) : '',
     D.me.role === 'Agent' && (D.toEnter || []).length && fl('today').ent !== 'yes' ? '<div class="li" data-act="entgo">' + leadI('done', 'blue') + '<div class="grow"><div class="t">Enter in the company app</div><div class="s">Delivered orders to copy</div></div><span class="cnt">' + D.toEnter.length + '</span><span class="go">' + ico(ICO.right) + '</span></div>' : '']);
   var f0 = fl('today'); if (f0.ent === 'yes' && !(D.toEnter || []).length) { delete f0.ent; flSave(); }
   h += filterBar('today', 'Find a vendor or order number');
@@ -1265,8 +1357,8 @@ function toEnterList() {
   return '<div class="sumline"><b>' + L.length + '</b> delivered order' + (L.length === 1 ? '' : 's') + ' to copy into the company app – tick each one you have entered.</div><div class="card" style="padding:2px 14px">' + L.map(function (x, i) { return '<label class="tk"' + (i ? '' : ' style="border-top:0"') + '><input type="checkbox" class="chk" name="ent" value="' + x.oid + '" data-chg="entk"' + (ENTK[x.oid] ? ' checked' : '') + '><span class="grow"><b>' + esc(x.vendor) + '</b>' + (D.me.role === 'Supervisor' ? ' · ' + esc(x.agent) : '') + '<div class="small muted">' + x.lines.map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', ') + ' · ' + esc(x.pay) + ' · ' + esc(dayLbl(x.date)) + '</div></span><b>' + ghs(x.value) + '</b></label>'; }).join('') +
     '</div><button class="main big" data-act="entered">Done – ticked ones are entered</button>';
 }
-function decNeeds() { return (D.needs || []).filter(function (x) { return x.dec || x.cl || x.dup; }); }
-function remNeeds() { return (D.needs || []).filter(function (x) { return !x.dec && !x.cl && !x.dup && x.pay && !x.tech; }); }
+function decNeeds() { return (D.needs || []).filter(function (x) { return x.dec || x.cl || x.dup || x.over; }); }
+function remNeeds() { return (D.needs || []).filter(function (x) { return !x.dec && !x.cl && !x.dup && !x.over && x.pay && !x.tech; }); }
 function paySecs() {
   var r = D.me.role, n = decNeeds().length, nr = rcptToSend();
   var rc = ['rcpt', 'Receipts' + (nr ? ' <span class="cnt">' + nr + '</span>' : '')];
@@ -1288,42 +1380,49 @@ function remSum(L) { var c = {}; L.forEach(function (x) { c[x.type] = (c[x.type]
 function supFold() { var S = D.suppliers || []; if (!S.length) return ''; var owe = S.reduce(function (t, s) { return t + (Number(s.owed) || 0); }, 0); return fold('sup', '<b>Suppliers</b> <span class="small muted">' + S.map(function (s) { return esc(s.name); }).join(' · ') + '</span>' + (owe > 0 ? '<div class="small">CupSales owes <b style="color:var(--red)">' + ghs(owe) + '</b></div>' : ''), function () { return suppliersHtml().replace(/^<div class="card"><h3>Suppliers<\/h3>/, '<div>'); }); }
 var HTK = {}; // v2.5.0: the payments ticked to hand over, per kind of money
 function cashSecHtml() {
-  var v = PSEC.cashv || 'now', h = '<div class="seg" style="margin:0 0 10px">' + [['now', 'With me now'], ['day', 'By day']].map(function (x) { return '<button class="' + (v === x[0] ? 'on' : '') + '" data-act="psec" data-k="cashv" data-s="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
-  if (v === 'day' && !fl('pcash').day) { fl('pcash').day = D.today; flSave(); } if (v === 'now' && fl('pcash').day) { delete fl('pcash').day; flSave(); }
-  h += filterBar('pcash', 'Find a vendor or order');
-  return h + '<div id="flist">' + LISTR.pcash() + '</div>';
+  var C = (D.cash || []).filter(function (c) { return c.free > 0.004 || c.pending > 0.004; }), free = 0, pend = 0, keep = 0; C.forEach(function (c) { if (c.src === 'Unallocated') keep += c.free; else free += c.free; pend += c.pending || 0; });
+  if (!D.collected) return handCards(); // a helper's link
+  var h = '<div class="card cashsum"><div class="row" style="flex-wrap:nowrap"><div class="grow"><div class="small muted">Cash with you now</div><b style="font-size:24px;letter-spacing:-.3px">' + ghs(free + keep) + '</b>' + (pend > 0.004 ? '<div class="small muted">+ ' + ghs(pend) + ' handed over, waiting for confirmation</div>' : '') + (keep > 0.004 ? '<div class="small t-amber">' + ghs(keep) + ' is extra money – keep it apart, the manager decides</div>' : '') + '</div>' +
+    (free > 0.004 && D.me.role !== 'Supervisor' ? '<button class="main" data-act="sheet" data-k="hand">Hand over</button>' : C.length ? '<button data-act="sheet" data-k="hand">Details</button>' : '') + '</div></div>';
+  return h + filterBar('pcash', 'Find a vendor or order') + '<div id="flist">' + LISTR.pcash() + '</div>';
+}
+SHEETS.hand = function () { return shHead('cash', 'green', 'Cash with you', 'Tick the payments you hand over – each order') + handCards(); };
+function handCards() {
+  var C = (D.cash || []).filter(function (c) { return c.free > 0.004 || c.pending > 0.004; });
+  if (!C.length) return emptyHtml('No vendor money with you.');
+  return C.map(function (c) {
+    var items = c.items || [], t = HTK[c.src] || (HTK[c.src] = {});
+    var sel = items.filter(function (x) { return t[x.id] !== false; }), sum = Math.round(sel.reduce(function (s, x) { return s + x.amt; }, 0) * 100) / 100;
+    var h = '<div class="card"><div class="row"><div class="grow">' + (c.free <= 0.004 ? '<b style="font-size:17px">Nothing with you</b> – ' + esc(c.money) + ' money' : '<b style="font-size:17px">' + ghs(c.free) + '</b> ') + (c.free <= 0.004 ? '' : c.src === 'Unallocated' ? 'extra cash (a vendor paid too much, or paid for an order that was cancelled) – keep it apart, the manager decides' : esc(c.money) + ' money with you') + '</div></div>' + (c.pending > 0.004 ? '<div class="small muted">+ ' + ghs(c.pending) + ' handed over, waiting for ' + esc(cashTo(c)) + ' to confirm</div>' : '');
+    if (items.length) h += '<div class="small muted" style="margin:6px 0 2px">' + (c.route ? 'Tick the payments you are handing over:' : 'Made of:') + '</div>' + items.map(function (x) {
+      return '<label class="tk">' + (c.route ? '<input type="checkbox" class="chk" data-chg="htk" data-s="' + esc(c.src) + '" data-i="' + esc(x.id) + '"' + (t[x.id] !== false ? ' checked' : '') + '>' : '') + '<span class="grow"><b>' + esc(vnOf(x.text)) + '</b><div class="small muted">' + esc(String(x.text).split(' – ').slice(1).join(' – ')) + ' · ' + esc(x.when || '') + (x.day ? ' · ' + (x.day === D.today ? 'today' : Math.round((Date.parse(D.today) - Date.parse(x.day)) / 86400000) + ' d ago') : '') + '</div></span><b>' + ghs(x.amt) + '</b></label>'; }).join('');
+    if (c.route && c.free > 0.004) h += '<button class="main big" style="margin-top:8px" data-act="hsel" data-src="' + esc(c.src) + '"' + (sum > 0.004 || !items.length ? '' : ' disabled') + '>HAND OVER ' + ghs(items.length ? sum : c.free) + (items.length && sel.length < items.length ? ' (' + sel.length + ' of ' + items.length + ')' : '') + ' TO ' + esc(cashTo(c).toUpperCase()) + '</button>';
+    else if (c.free > 0.004 && c.src !== 'Unallocated') h += '<div class="small muted" style="margin-top:6px">' + (D.me.role === 'Supervisor' ? 'With you' + ((D.suppliers || []).some(function (x) { return x.name === c.money; }) ? ' – see Suppliers' : '') : 'Keep it apart – ask the manager') + '</div>';
+    return h + '</div>';
+  }).join('');
 }
 function cashTo(c) { return /→ Frank/.test(c.route || '') ? 'Frank' : /→ Joshua/.test(c.route || '') ? 'the manager' : 'the HR office logbook'; }
 function vnOf(t) { return String(t || '').split(' – ')[0]; }
 LISTR.pcash = function () {
-  var f = fl('pcash');
-  if (f.day) { // what she collected that day, and where each payment is now
-    var L = (D.collected || []).filter(function (x) { return x.day === f.day && hasQ('pcash', x.vendor + ' ' + x.refs.join(' ')); });
-    if (!L.length) return '<p class="muted">You recorded no vendor payment on ' + esc(dayLbl(f.day)) + '.</p>';
-    var tot = L.reduce(function (t, x) { return t + x.amt; }, 0), left = L.reduce(function (t, x) { return t + x.left; }, 0);
-    return '<div class="sumline">' + esc(dayLbl(f.day)) + ': collected <b>' + ghs(tot) + '</b> · still with you <b style="color:' + (left > 0.004 ? 'var(--amber)' : 'var(--green)') + '">' + ghs(left) + '</b> · handed over <b>' + ghs(tot - left) + '</b></div><div class="card" style="padding:4px 12px">' + L.map(function (x, i) {
+  var f = fl('pcash'), from = addDays(D.today, -13);
+  var L = (D.collected || []).filter(function (x) { return (f.day ? x.day === f.day : x.day >= from) && hasQ('pcash', x.vendor + ' ' + (x.refs || []).join(' ')); });
+  var days = {}; L.forEach(function (x) { (days[x.day] = days[x.day] || []).push(x); }); var keys = Object.keys(days).sort().reverse();
+  if (!f.day && keys.indexOf(D.today) < 0) keys.unshift(D.today);
+  if (!keys.length) return '<p class="muted">You recorded no vendor payment on ' + esc(dayLbl(f.day)) + '.</p>';
+  return keys.map(function (day) {
+    var X = days[day] || [], tot = X.reduce(function (t, x) { return t + x.amt; }, 0), left = X.reduce(function (t, x) { return t + x.left; }, 0), td = day === D.today;
+    var head = dayHead(day, X.length ? '<b>' + ghs(tot) + '</b>' + (left > 0.004 ? ' · <span class="t-amber">' + ghs(left) + ' with you</span>' : ' · all handed over') : 'nothing yet');
+    if (!X.length) return head + '<div class="card" style="padding:12px 14px"><p class="muted small" style="margin:0">Nothing collected today yet. Cash you record shows here at once.</p></div>';
+    return head + '<div class="card" style="padding:4px 12px' + (td ? ';border-color:#BFE3CB;box-shadow:0 0 0 3px #E7F6EC' : '') + '">' + X.map(function (x, i) {
       var k = 'c:' + x.id, o = isOpen(k), st = x.left > 0.004 ? '<span class="pill amber">' + (x.left + 0.004 < x.amt ? ghs(x.left) + ' ' : '') + 'with you</span>' : x.ho.some(function (y) { return y.status === 'Sent'; }) ? '<span class="pill">waiting for ' + esc(x.ho[0].to) + '</span>' : '<span class="pill green">handed to ' + esc((x.ho[0] || {}).to || '?') + '</span>';
-      return '<div class="srow' + (i ? '' : ' first') + '" style="flex-wrap:wrap"><div class="grow tap"' + rowTap(k) + '><b>' + esc(x.vendor) + '</b> · ' + ghs(x.amt) + '<div class="small muted">' + esc(x.when.slice(-5)) + ' · ' + esc(x.refs.join(', ')) + '</div></div>' + st +
-        (o ? '<div class="dets" style="flex:1 1 100%">' + (x.ho.length ? x.ho.map(function (y) { return ghs(y.amt) + ' handed to ' + esc(y.to) + ' on ' + esc(y.at) + ' – ' + esc(y.status === 'Sent' ? 'waiting for confirmation' : y.status); }).join('<br>') : 'Not handed over yet.') + '<br>Receipt: ' + (/^Confirmed/.test(x.answer) ? '✓ vendor confirmed' : x.answer ? 'vendor says not right' : x.rk ? 'link made' : 'none') + ' · ' + esc(x.money) + ' money</div>' : '') + '</div>';
+      return '<div class="srow' + (i ? '' : ' first') + '" style="flex-wrap:wrap"><div class="grow tap"' + rowTap(k) + '><b>' + esc(x.vendor) + '</b> · ' + ghs(x.amt) + '<div class="small muted">' + esc(String(x.when).slice(-5)) + ((x.refs || []).length ? ' · ' + esc(x.refs.join(', ')) : '') + '</div></div>' + st +
+        (o ? '<div class="dets" style="flex:1 1 100%">' + (x.ho.length ? x.ho.map(function (y) { return ghs(y.amt) + ' handed to ' + esc(y.to) + ' on ' + esc(y.at) + ' – ' + esc(y.status === 'Sent' ? 'waiting for confirmation' : y.status); }).join('<br>') : 'Not handed over yet.') + '<br>Receipt: ' + (/^Confirmed/.test(x.answer) ? '✓ vendor confirmed' : x.answer ? 'vendor says not right' : x.rk ? 'link made' : 'none') + (x.money ? ' · ' + esc(x.money) + ' money' : '') + '</div>' : '') + '</div>';
     }).join('') + '</div>';
-  }
-  var C = (D.cash || []).filter(function (c) { return c.free > 0.004 || c.pending > 0.004; });
-  if (!C.length) return emptyHtml('No vendor money with you.');
-  return C.map(function (c) {
-    var items = (c.items || []).filter(function (x) { return hasQ('pcash', x.text); }), t = HTK[c.src] || (HTK[c.src] = {});
-    var sel = items.filter(function (x) { return t[x.id] !== false; }), sum = Math.round(sel.reduce(function (s, x) { return s + x.amt; }, 0) * 100) / 100;
-    var h = '<div class="card"><div class="row"><div class="grow">' + (c.free <= 0.004 ? '<b style="font-size:17px">Nothing with you</b> – ' + esc(c.money) + ' money' : '<b style="font-size:17px">' + ghs(c.free) + '</b> ') + (c.free <= 0.004 ? '' : c.src === 'Unallocated' ? 'extra cash (a vendor paid too much, or paid for an order that was cancelled) – keep it apart, the manager decides: give it back or keep it for her next order' : esc(c.money) + ' money with you') + '</div></div>' + (c.pending > 0.004 ? '<div class="small muted">+ ' + ghs(c.pending) + ' handed over, waiting for ' + esc(cashTo(c)) + ' to confirm</div>' : '');
-    if (items.length) h += '<div class="small muted" style="margin:6px 0 2px">' + (c.route ? 'Tick the payments you are handing over (each order):' : 'Made of:') + '</div>' + items.map(function (x) {
-      return '<label class="tk">' + (c.route ? '<input type="checkbox" class="chk" data-chg="htk" data-s="' + esc(c.src) + '" data-i="' + esc(x.id) + '"' + (t[x.id] !== false ? ' checked' : '') + '>' : '') + '<span class="grow"><b>' + esc(vnOf(x.text)) + '</b><div class="small muted">' + esc(String(x.text).split(' – ').slice(1).join(' – ')) + ' · ' + esc(x.when || '') + (x.day ? ' · ' + (x.day === D.today ? 'today' : Math.round((Date.parse(D.today) - Date.parse(x.day)) / 86400000) + ' d ago') : '') + '</div></span><b>' + ghs(x.amt) + '</b></label>'; }).join('');
-    if (c.route && c.free > 0.004 && (c.items || []).length && !items.length) h += '<p class="small muted">No payment matches the search.</p>';
-    else if (c.route && c.free > 0.004) h += '<button class="main big" style="margin-top:8px" data-act="hsel" data-src="' + esc(c.src) + '"' + (sum > 0.004 || !items.length ? '' : ' disabled') + '>HAND OVER ' + ghs(items.length ? sum : c.free) + (items.length && sel.length < items.length ? ' (' + sel.length + ' of ' + items.length + ')' : '') + ' TO ' + esc(cashTo(c).toUpperCase()) + '</button>';
-    else if (c.free > 0.004 && c.src !== 'Unallocated') h += '<div class="small muted" style="margin-top:6px">' + (D.me.role === 'Supervisor' ? 'With you' + ((D.suppliers || []).some(function (x) { return x.name === c.money; }) ? ' – see Suppliers' : '') : 'Keep it apart – ask the manager') + '</div>';
-    return h + '</div>';
-  }).join('');
+  }).join('') + (!f.day ? '<p class="small muted">The last 14 days. Older: Filter → Collected on.</p>' : '');
 };
-CHG.htk = function (el) { (HTK[el.dataset.s] = HTK[el.dataset.s] || {})[el.dataset.i] = el.checked; rerenderList(); };
+CHG.htk = function (el) { (HTK[el.dataset.s] = HTK[el.dataset.s] || {})[el.dataset.i] = el.checked; if (SHEETK === 'hand') drawSheet(); else rerenderList(); };
 ACT.hsel = function (b) {
-  var c = (D.cash || []).filter(function (x) { return x.src === b.dataset.src; })[0]; if (!c) return; var t = HTK[c.src] || {}, items = (c.items || []).filter(function (x) { return t[x.id] !== false && x.id && hasQ('pcash', x.text); });
+  var c = (D.cash || []).filter(function (x) { return x.src === b.dataset.src; })[0]; if (!c) return; var t = HTK[c.src] || {}, items = (c.items || []).filter(function (x) { return t[x.id] !== false && x.id; }); SHEETK = ''; $('over').innerHTML = '';
   if ((c.items || []).length && !items.length) { say('No payment ticked – clear the search or tick a payment.'); return; }
   var amt = items.length ? Math.round(items.reduce(function (s, x) { return s + x.amt; }, 0) * 100) / 100 : c.free, to = cashTo(c);
   var go = function (lb) { var hk = 'ho-' + c.src + '-' + items.map(function (x) { return x.id; }).join(',') + '-' + amt; bgSave('handover', { src: c.src, amount: amt, logbook: lb, items: items.map(function (x) { return { id: x.id, amt: x.amt }; }) }, SIDS[hk] || (SIDS[hk] = 'ho-' + uid()), 'hand over ' + ghs(amt) + ' to ' + to, b); HTK[c.src] = {}; };
@@ -1626,72 +1725,163 @@ function itemPin(x) { return x.k === 'v' ? vPin(vend(x.id)) : (schoolOf(x.id) ||
 function itemArea(x) { if (x.k === 's') { var s = schoolOf(x.id); return s ? s.area : ''; } return ''; }
 var PLANX = null; // the agent's changes to today's plan, not yet agreed
 function planItems() { var P = D.plan || {}; if (PLANX && PLANX.day === P.day) return PLANX.items; return P.items || []; }
-function planEdit() { var P = D.plan; if (!PLANX || PLANX.day !== P.day) PLANX = { day: P.day, items: JSON.parse(JSON.stringify(P.items || [])) }; return PLANX.items; }
+function planEdit() { var P = D.plan; if (!PLANX || PLANX.day !== P.day) PLANX = { day: P.day, items: JSON.parse(JSON.stringify(P.items || [])), note: P.anote || '', goal: P.goal != null ? P.goal : null }; return PLANX.items; }
 function visitOf(x) { var V = (D.plan && D.plan.visits) || []; return V.filter(function (v) { return x.k === 'v' ? v.vid === x.id : v.sid === x.id && !v.vid; }).pop() || null; }
+var TAGS = { owes: ['Owes', 'red'], out: ['Out of stock', 'amber'], notbought: ['Not bought', 'amber'], dormant: ['Dormant', 'red'], risk: ['Slipping', 'amber'], signup: ['Signed up', 'blue'], 'new': ['New vendor', 'green'], follow: ['Follow-up', 'blue'], check: ['Check result', 'blue'], cover: ['Not visited this month', ''], pros: ['Prospect', 'blue'] };
+function tagPills(t) { var m = MONS[+D.today.slice(5, 7) - 1]; return (t || []).filter(function (k, i, a) { return TAGS[k] && a.indexOf(k) === i; }).map(function (k) { return '<span class="tag ' + TAGS[k][1] + '">' + (k === 'notbought' ? 'Not bought in ' + m : TAGS[k][0]) + '</span>'; }).join(''); }
+function agoD(d) { return d ? Math.round((Date.parse(D.today) - Date.parse(d)) / 86400000) : 999; }
+/** v2.5.9: the same reasons the plan is made from (owes, likely out, not bought this month, dormant, signed up, new vendor, follow-up, not visited). */
+function vTags(v) {
+  var m1 = D.today.slice(0, 8) + '01', t = [];
+  if (v.debt > 0.004 && v.days > 7) t.push('owes');
+  if (v.stock === 'Likely out') t.push('out');
+  if (v.last && v.last < m1) t.push('notbought');
+  if (v.last && v.since !== '' && v.since > 30) t.push('dormant');
+  if (!v.last) t.push('signup'); else if (v.first && agoD(v.first) <= 30 && agoD(v.reg) <= 60) t.push('new');
+  if (v.fu && v.fu.day <= D.today) t.push('follow');
+  if (!v.lv || v.lv.day < m1) t.push('cover');
+  return t;
+}
+/** v2.5.9: on Today only what matters about a vendor – her debt and her last order (the reasons are the tags). */
+function vFacts(v) {
+  if (!v) return '';
+  var d = v.debt > 0.004 ? '<b class="' + (v.days > 7 ? 't-red' : v.days >= 4 ? 't-amber' : '') + '">Owes ' + ghs(v.debt) + '</b> · ' + v.days + ' days' : '<span class="t-green">Owes nothing</span>';
+  var l = v.last ? 'last order <b>' + esc(dayLbl(v.last)) + '</b>' + (v.since !== '' ? ' (' + (v.since === 0 ? 'today' : v.since + 'd ago') + ')' : '') : 'no order yet';
+  return '<div class="fx">' + d + ' · ' + l + (v.fu && v.fu.day <= D.today && v.fu.bring ? ' · bring: ' + esc(v.fu.bring) : '') + '</div>';
+}
+function stopKeyOf(x) { if (x.stop) return x.stop; if (x.k === 's') return 'S:' + x.id; var v = vend(x.id), sid = v && v.prof && v.prof.school; return sid ? 'S:' + sid : v && v.school ? 'Z:' + norm(v.school) : 'V:' + x.id; }
+function stopName(k, x) { if (k.indexOf('S:') === 0) { var s = schoolOf(k.slice(2)); if (s) return s.name; } if (x.k === 's') return x.name; return x.school || 'No school recorded'; }
+function planGroups(L) { var G = [], at = {}; L.forEach(function (x, i) { if (x.rm) return; var k = stopKeyOf(x); if (at[k] === undefined) { at[k] = G.length; G.push({ k: k, name: stopName(k, x), items: [] }); } G[at[k]].items.push({ x: x, i: i }); }); return G; }
+var DAYN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 function pgPlan() {
   if (D.me.role === 'Supervisor') return pgTeamDay();
   var P = D.plan; var h = todoBox([startRow(), monthRow()]);
   if (!P) return h + emptyHtml('Your plan is not ready – pull down to refresh.');
   if (!P.work && !(P.items || []).length) return h + emptyHtml('No plan on Saturday and Sunday – working days are Monday to Friday.') + otherVisits([]);
-  var L = planItems(), go = L.filter(function (x) { return !x.skip; }), done = go.filter(function (x) { return visitOf(x); }).length, edited = !!(PLANX && PLANX.day === P.day);
-  var st = edited ? ['Changed – tap AGREE to send it to the manager', 'amber'] : P.suggested ? [(L.some(function (x) { return x.by === 'Manager'; }) ? 'The manager added a visit. ' : '') + 'Suggested for you – check it, change it if needed, then AGREE', 'amber'] : P.status === 'Approved' ? ['✓ Approved by the manager', 'green'] : P.status === 'Agreed' ? ['Agreed – waiting for the manager to approve', 'blue'] : [P.status || '', ''];
-  h += '<div class="sech">Today\'s plan <span>' + done + ' of ' + go.length + ' visited' + (P.mixed ? ' · existing + new schools day' : '') + '</span></div>';
-  h += '<div class="msg ' + (st[1] === 'green' ? 'ok' : st[1] === 'amber' ? 'info' : 'info') + '" style="margin-bottom:10px">' + esc(st[0]) + (P.note ? '<br><b>Manager:</b> ' + esc(P.note) : '') + '</div>';
-  h += '<div class="list">' + (L.length ? L.map(function (x, i) {
-    var v = visitOf(x), pin = itemPin(x), vv = x.k === 'v' ? vend(x.id) : null;
-    return '<div class="stop' + (v ? ' done' : '') + (x.skip ? ' skip' : '') + '"><span class="nb">' + (v ? ico(ICO.check) : i + 1) + '</span><div class="grow"><div class="t"><b>' + esc(x.name) + '</b>' + (x.k === 's' ? ' <span class="pill blue">new school</span>' : '') + (x.by === 'Manager' ? ' <span class="pill">manager</span>' : '') + '</div>' +
-      '<div class="why">' + (x.school ? esc(x.school) + ' · ' : '') + esc(x.why || '') + (vv && vv.prof && vv.prof.close ? ' · closes ' + esc(vv.prof.close) : '') + (x.k === 'v' && vv ? brkLine(schoolOf((vv.prof || {}).school)) : x.k === 's' ? brkLine(schoolOf(x.id)) : '') + '</div>' +
-      (x.skip ? '<div class="why t-amber">Skipped: ' + esc(x.skip) + '</div>' : '') + (v ? '<div class="why t-green">✓ Visited ' + esc(v.at) + ' – ' + esc(v.out) + (v.why ? ' (' + esc(v.why) + ')' : '') + '</div>' : '') +
-      '<div class="sb"><a href="' + esc(mapUrl(pin, x.k === 's' ? x.name : (vv && vv.school) || x.name, itemArea(x))) + '" target="_blank"><button class="ghost ic">' + ico(ICO.pin) + (pin ? 'Map' : 'Find') + '</button></a>' +
-      (x.skip ? '<button class="ghost" data-act="plUnskip" data-i="' + i + '">Put back</button>' : '<button class="' + (v ? 'ghost' : 'main') + '" data-act="visOpen" data-k="' + x.k + '" data-i="' + esc(x.id) + '" data-kind="' + esc(x.kind || '') + '">' + (v ? 'Visit again' : 'Arrived – report') + '</button>' + (v ? '' : '<button class="ghost" data-act="plSkip" data-i="' + i + '">Skip</button>')) + '</div></div></div>';
-  }).join('') : '<p class="muted" style="padding:12px 14px;margin:0">No visits suggested – add one.</p>') + '</div>';
-  var pins = go.filter(function (x) { return !visitOf(x) && itemPin(x); });
-  h += '<div class="btns"><button class="ic" data-act="plAdd">' + ico(ICO.plus) + 'Add a visit</button>' + (pins.length ? '<a href="' + esc(routeUrl(pins)) + '" target="_blank"><button class="ic">' + ico(ICO.route) + 'Route (' + Math.min(9, pins.length) + ')</button></a>' : '') + '</div>';
-  if (edited || P.suggested) h += '<button class="main big" style="margin-top:10px" data-act="plAgree">AGREE THIS PLAN (' + go.length + ' visit' + (go.length === 1 ? '' : 's') + ')</button>';
-  h += '<button class="ghost ic" style="margin-top:6px" data-act="schHere">' + ico(ICO.school) + '+ School here (a school I am passing)</button>';
-  if (go.length - pins.length > 0) h += '<p class="small muted">' + (go.length - pins.length) + ' stop' + (go.length - pins.length === 1 ? ' has' : 's have') + ' no pin yet – "Find" searches the name in Google Maps; your first "Arrived" there pins it.</p>';
+  var L = planItems(), go = L.filter(function (x) { return !x.skip && !x.rm; }), done = go.filter(function (x) { return visitOf(x); }).length, edited = !!(PLANX && PLANX.day === P.day);
+  var calls = P.calls || [], cdone = calls.filter(callOf).length, pros = (P.visits || []).filter(function (v) { return v.sid && !v.vid; }).length, goal = planGoal();
+  var kind = P.school === false ? 'School holiday – calls and debts' : P.peak ? 'Peak day – re-orders and debts' : 'New schools and collection day';
+  var cov = P.cover || { all: 0, done: 0 };
+  h += '<div class="hero"><div class="row" style="flex-wrap:nowrap;align-items:flex-start"><div class="grow"><div class="ey">' + esc(dayLbl(P.day)) + '</div><h2>Today\'s plan</h2></div><span class="tag">' + esc(kind) + '</span></div>' +
+    '<div class="kpis"><div><b>' + done + '/' + go.length + '</b><span>visits</span></div><div><b>' + cdone + '/' + calls.length + '</b><span>calls</span></div><div><b>' + pros + '/' + goal + '</b><span>new schools</span></div></div>' +
+    '<div class="cov" data-act="plAdd" data-f="cover"><div class="pbar"><i style="width:' + (cov.all ? Math.round(cov.done / cov.all * 100) : 0) + '%"></i></div>This month: visited <b>' + cov.done + ' of ' + cov.all + '</b> vendors – each one at least once a month ›</div></div>';
+  var st = edited ? ['Changed – agree it below to send it to the manager', 'info'] : P.suggested ? [(L.some(function (x) { return x.by === 'Manager'; }) ? 'The manager added a stop. ' : '') + 'Suggested for you – change what you want, then agree it below', 'info'] : P.status === 'Approved' ? ['✓ Approved by the manager', 'ok'] : P.status === 'Agreed' ? ['Agreed – waiting for the manager to approve', 'info'] : [P.status || '', 'info'];
+  h += '<div class="msg ' + st[1] + '" style="margin-bottom:10px">' + esc(st[0]) + (P.note ? '<br><b>Manager:</b> ' + esc(P.note) : '') + (!edited && P.anote ? '<br><b>Your note:</b> ' + esc(P.anote) : '') + '</div>';
+  var G = planGroups(L);
+  if (!G.length) h += '<div class="card"><p class="muted" style="margin:0">No visits suggested – add a stop.</p></div>';
+  G.forEach(function (g, gi) {
+    var s = g.k.indexOf('S:') === 0 ? schoolOf(g.k.slice(2)) : null, pin = s && s.pin ? s.pin : itemPin(g.items[0].x), allDone = g.items.every(function (y) { return y.x.skip || visitOf(y.x); });
+    var vs = g.items.filter(function (y) { return y.x.k === 'v'; }).length;
+    h += '<div class="stopc"><div class="sh"><span class="nb' + (allDone ? ' ok' : '') + '">' + (allDone ? '✓' : gi + 1) + '</span><div class="grow" style="min-width:0"><b class="ell" style="display:block">' + esc(g.name) + '</b><div class="small muted ell">' + (vs ? vs + ' vendor' + (vs === 1 ? '' : 's') : 'Prospect school') + (s ? brkLine(s) : '') + '</div></div>' +
+      (s ? '<button class="ib gh sm" data-act="hist" data-k="s" data-i="' + s.id + '" aria-label="History" title="History">' + ico(ICO.info) + '</button>' : '') + '<a class="ibl" href="' + esc(mapUrl(pin, s ? s.name : g.name, s ? s.area : '')) + '" target="_blank" aria-label="Map" title="Map"><span class="ib sm">' + ico(ICO.pin) + '</span></a></div>';
+    g.items.forEach(function (y) { h += planRow(y.x, y.i); });
+    h += '</div>';
+  });
+  var rmd = L.filter(function (x) { return x.rm; }); if (rmd.length) h += '<p class="small muted">Taken out by the manager: ' + rmd.map(function (x) { return esc(x.name); }).join(', ') + '</p>';
+  if (calls.length) h += '<div class="sech">Call list <span>orders are taken by phone</span></div><div class="stopc">' + calls.map(callRow).join('') + '</div>';
+  var pins = []; G.forEach(function (g) { var s = g.k.indexOf('S:') === 0 ? schoolOf(g.k.slice(2)) : null, open = g.items.some(function (y) { return !y.x.skip && !visitOf(y.x); }); var p = s && s.pin ? s.pin : itemPin(g.items[0].x); if (open && p) pins.push(p); });
+  h += '<div class="btns"><button class="ic" data-act="plAdd">' + ico(ICO.plus) + 'Add a stop</button>' + (pins.length ? '<a href="' + esc(routeUrlP(pins)) + '" target="_blank"><button class="ic">' + ico(ICO.route) + 'Route (' + Math.min(9, pins.length) + ')</button></a>' : '') + '</div>';
+  h += '<div class="btns" style="margin-top:8px"><a href="https://www.google.com/maps/search/schools+near+me/" target="_blank"><button class="ic">' + ico(ICO.school) + 'Schools near me</button></a><button class="ic" data-act="schHere">' + ico(ICO.plus) + 'School here</button></div>';
+  if (edited || P.suggested) {
+    var nt = edited ? PLANX.note || '' : P.anote || '';
+    h += '<div class="card" style="margin-top:12px"><h3>Agree your plan</h3><label>New schools you will visit today</label><div class="row" style="flex-wrap:nowrap"><div class="step"><button data-act="plGoal" data-d="-1" aria-label="One less">−</button><input inputmode="numeric" data-inp="plgoal" value="' + goal + '"><button data-act="plGoal" data-d="1" aria-label="One more">+</button></div><span class="small muted grow">' + go.filter(function (x) { return x.k === 's'; }).length + ' in the list – more if you plan your own</span></div>' +
+      '<label>Note to the manager (optional)</label><textarea rows="2" data-inp="plnote" placeholder="e.g. I will also visit two schools near Suame roundabout">' + esc(nt) + '</textarea>' +
+      '<button class="main big" style="margin-top:12px" data-act="plAgree">AGREE – ' + go.length + ' visit' + (go.length === 1 ? '' : 's') + ' at ' + G.filter(function (g) { return g.items.some(function (y) { return !y.x.skip; }); }).length + ' stops</button></div>';
+  } else if (P.status === 'Agreed' || P.status === 'Approved') h += '<button class="ghost" style="margin-top:6px" data-act="plEdit">Change my note or new-school promise</button>';
+  var miss = G.filter(function (g) { var s = g.k.indexOf('S:') === 0 ? schoolOf(g.k.slice(2)) : null; return !(s && s.pin) && !itemPin(g.items[0].x); }).length; if (miss) h += '<p class="small muted">' + miss + ' stop' + (miss === 1 ? ' has' : 's have') + ' no pin yet – the map searches the name; your first "Arrived" there pins it.</p>';
   return h + otherVisits(L);
 }
-function planLeft() { var P = D.plan; if (!P || !P.work) return 0; return planItems().filter(function (x) { return !x.skip && !visitOf(x); }).length; }
+function planGoal() { var P = D.plan || {}; if (PLANX && PLANX.day === P.day && PLANX.goal != null) return PLANX.goal; if (P.goal != null) return P.goal; return planItems().filter(function (x) { return x.k === 's' && !x.skip && !x.rm; }).length; }
+function planRow(x, i) {
+  var v = visitOf(x), vv = x.k === 'v' ? vend(x.id) : null, tags = x.tags && x.tags.length ? x.tags : vv ? vTags(vv) : ['pros'], mine = x.kind === 'added' && !x.by;
+  var shown = tags.filter(function (t) { return t !== 'cover' || tags.length === 1; });
+  return '<div class="pv' + (v ? ' done' : '') + (x.skip ? ' skip' : '') + '">' + (vv ? avatar(vv.name) : leadI('school', 'blue')) + '<div class="grow" style="min-width:0"><div><b' + (vv ? ' data-act="vdet" data-v="' + vv.id + '" style="cursor:pointer"' : '') + '>' + esc(vv ? x.name : (x.tags || []).indexOf('follow') >= 0 ? 'Follow-up visit' : 'Prospect visit') + '</b>' + (x.by === 'Manager' ? ' <span class="tag">by the manager</span>' : '') + '</div>' +
+    '<div>' + tagPills(shown) + '</div>' + (vv ? vFacts(vv) : '<div class="fx">' + esc(x.why || '') + '</div>') +
+    (x.by === 'Manager' && x.why && x.why !== 'Added by the manager' ? '<div class="fx">Manager: ' + esc(x.why) + '</div>' : '') +
+    (x.skip ? '<div class="fx t-amber">Skipped: ' + esc(x.skip) + '</div>' : '') + (v ? '<div class="fx t-green">✓ ' + esc(v.at) + ' – ' + esc(v.out) + (v.why ? ' (' + esc(v.why) + ')' : '') + '</div>' : '') +
+    '<div class="sb">' + (x.skip ? '<button class="ghost" data-act="plUnskip" data-i="' + i + '">Put back</button>' : '<button class="' + (v ? 'ghost' : 'main') + '" data-act="visOpen" data-k="' + x.k + '" data-i="' + esc(x.id) + '" data-kind="' + esc(x.kind || '') + '">' + (v ? 'Visit again' : 'Arrived – report') + '</button>' +
+      (vv && vv.phone && !v ? '<a href="tel:' + esc(vv.phone) + '"><button class="ghost ic">' + ico(ICO.phone) + 'Call</button></a>' : '') + (x.k === 's' ? '<button class="ghost" data-act="hist" data-k="s" data-i="' + esc(x.id) + '">History</button>' : '') +
+      (v ? '' : mine ? '<button class="ghost" data-act="plDel" data-i="' + i + '">Remove</button>' : '<button class="ghost" data-act="plSkip" data-i="' + i + '">Skip</button>')) + '</div></div></div>';
+}
+function callOf(c) { return ((D.plan && D.plan.called) || []).filter(function (x) { return c.k === 'v' ? x.vid === c.id : x.sid === c.id && !x.vid; }).pop() || null; }
+function callRow(c) {
+  var dn = callOf(c), vv = c.k === 'v' ? vend(c.id) : null, wa = vv ? waOf(vv) : waNum(c.phone);
+  return '<div class="pv' + (dn ? ' done' : '') + '">' + (vv ? avatar(vv.name) : leadI('school', 'blue')) + '<div class="grow" style="min-width:0"><b>' + esc(c.name) + '</b><div>' + tagPills((c.tags || []).filter(function (t) { return t !== 'cover'; })) + '</div>' +
+    (vv ? vFacts(vv) : '<div class="fx">' + esc(c.why || '') + '</div>') + (c.usual ? '<div class="fx">Usually orders about <b>' + c.usual + ' ctn</b></div>' : '') + (dn ? '<div class="fx t-green">✓ ' + esc(String(dn.out || '').replace(/^Call – /, '')) + '</div>' : '') +
+    '<div class="sb">' + (c.phone ? '<a href="tel:' + esc(c.phone) + '"><button class="' + (dn ? 'ghost' : 'main') + ' ic">' + ico(ICO.phone) + 'Call</button></a>' : '') + (wa ? '<a href="https://wa.me/' + wa + '" target="_blank"><button class="ghost ic">' + ico(ICO.wa) + 'WhatsApp</button></a>' : '') + '<button class="ghost" data-act="callLog" data-k="' + c.k + '" data-i="' + esc(c.id) + '">' + (dn ? 'Log again' : 'Log the call') + '</button></div></div></div>';
+}
+function routeUrlP(P) { var p = P.slice(0, 9).map(function (q) { return q[0] + ',' + q[1]; }); var dest = p.pop(); return 'https://www.google.com/maps/dir/?api=1&destination=' + dest + (p.length ? '&waypoints=' + encodeURIComponent(p.join('|')) : ''); }
+function planLeft() { var P = D.plan; if (!P || !P.work) return 0; return planItems().filter(function (x) { return !x.skip && !x.rm && !visitOf(x); }).length; }
 function brkLine(s) { var t = brkTxt(s); return t ? ' · ' + esc(t) : ''; }
 function routeUrl(L) { var p = L.slice(0, 9).map(function (x) { var q = itemPin(x); return q[0] + ',' + q[1]; }); var dest = p.pop(); return 'https://www.google.com/maps/dir/?api=1&destination=' + dest + (p.length ? '&waypoints=' + encodeURIComponent(p.join('|')) : ''); }
 function otherVisits(L) {
   var V = ((D.plan && D.plan.visits) || []).filter(function (v) { return !L.some(function (x) { return x.k === 'v' ? v.vid === x.id : v.sid === x.id && !v.vid; }); }); if (!V.length) return '';
-  return '<div class="sech">Other visits today</div><div class="list">' + V.map(function (v) { var n = v.vid ? (vend(v.vid) || {}).name || v.vid : (schoolOf(v.sid) || {}).name || v.sid; return liRow('', leadI('check', 'green'), esc(n), esc(v.at + ' – ' + v.out + (v.why ? ' (' + v.why + ')' : '')), '', '', ''); }).join('') + '</div>';
+  return '<div class="sech">Other visits today</div><div class="list">' + V.map(function (v) { var n = v.name || (v.vid ? (vend(v.vid) || {}).name || v.vid : (schoolOf(v.sid) || {}).name || v.sid); return liRow('', leadI('check', 'green'), esc(n), esc(v.at + ' – ' + v.out + (v.why ? ' (' + v.why + ')' : '')), '', '', ''); }).join('') + '</div>';
 }
 ACT.plSkip = function (b) { var L = planEdit(), x = L[+b.dataset.i]; if (!x) return; askIn('Why skip ' + x.name + ' today?', '', '', function (t) { t = String(t || '').trim(); if (t.length < 3) { say('Write why you skip this visit (a few words).'); return; } x.skip = t; render(); }, 'SKIP'); };
+ACT.plDel = function (b) { var L = planEdit(), x = L[+b.dataset.i]; if (!x) return; L.splice(+b.dataset.i, 1); render(); };
+ACT.plEdit = function () { planEdit(); render(); };
+ACT.plGoal = function (b) { planEdit(); PLANX.goal = Math.max(0, Math.min(15, planGoal() + Number(b.dataset.d))); render(); };
+INP.plgoal = function (el) { planEdit(); var n = parseInt(el.value, 10); PLANX.goal = isNaN(n) ? 0 : Math.max(0, Math.min(15, n)); };
+INP.plnote = function (el) { planEdit(); PLANX.note = el.value; };
 ACT.plUnskip = function (b) { var L = planEdit(), x = L[+b.dataset.i]; if (!x) return; delete x.skip; render(); };
 ACT.plAgree = function () {
-  var L = planItems(), go = L.filter(function (x) { return !x.skip; }); if (!go.length) { say('Keep at least one visit in your plan.'); return; }
-  ask('Agree this plan?\n' + go.map(function (x, i) { return (i + 1) + '. ' + x.name; }).join('\n') + (L.length > go.length ? '\nSkipped: ' + L.filter(function (x) { return x.skip; }).map(function (x) { return x.name; }).join(', ') : '') + '\n\nThe manager is asked to approve it.', function () {
-    bgSave('plan', { day: D.plan.day, items: L }, 'pl-' + uid(), 'plan for today (' + go.length + ' visits)', null, true); PLANX = null; }, 'AGREE');
+  var L = planItems(), go = L.filter(function (x) { return !x.skip && !x.rm; }), goal = planGoal(), note = PLANX && PLANX.day === D.plan.day ? String(PLANX.note || '').trim() : String(D.plan.anote || '');
+  if (!go.length && !(goal > 0)) { say('Keep at least one visit in your plan.'); return; }
+  var G = planGroups(go);
+  ask('Agree this plan?\n' + G.map(function (g, i) { return (i + 1) + '. ' + g.name + (g.items.length > 1 ? ' (' + g.items.length + ')' : ''); }).join('\n') + (L.some(function (x) { return x.skip; }) ? '\nSkipped: ' + L.filter(function (x) { return x.skip; }).map(function (x) { return x.name; }).join(', ') : '') + '\nNew schools you promise: ' + goal + (note ? '\nNote: ' + note : '') + '\n\nThe manager is asked to approve it.', function () {
+    bgSave('plan', { day: D.plan.day, items: L, note: note, goal: goal }, 'pl-' + uid(), 'plan for today (' + go.length + ' visits)', null, true); PLANX = null; }, 'AGREE');
 };
-// adding a visit (the agent to her plan, the manager to an agent's plan)
 var PICK = null;
-ACT.plAdd = function () { PICK = { q: '', uid: '' }; sheetOpen('pick'); };
+var PKF = [['', 'All'], ['owes', 'Owes'], ['out', 'Out of stock'], ['notbought', 'Not bought'], ['signup', 'Signed up'], ['new', 'New vendors'], ['cover', 'Not visited this month'], ['follow', 'Follow-up due'], ['pros', 'Prospect schools']];
+ACT.plAdd = function (b) { PICK = { q: '', uid: '', f: (b && b.dataset && b.dataset.f) || '' }; sheetOpen('pick'); };
 SHEETS.pick = function () {
-  if (!PICK) return ''; var q = norm(PICK.q), ag = PICK.uid || (D.me.role === 'Agent' ? '' : '');
-  var V = (D.vendors || []).filter(function (v) { return (!ag || v.agent === ag) && (!q || norm(v.name + ' ' + v.school).indexOf(q) >= 0); }).slice(0, q ? 15 : 8);
-  var S = (D.schools || []).filter(function (s) { return (!ag || !s.ag || s.ag === ag) && (!q || norm(s.name + ' ' + s.area).indexOf(q) >= 0) && (q || s.g); }).slice(0, q ? 10 : 5);
-  return shHead('plus', 'blue', PICK.uid ? 'Add a visit for ' + esc(agName(PICK.uid)) : 'Add a visit', 'A vendor, or a school (new schools of your area are marked)') + '<input data-inp="pickq" value="' + esc(PICK.q) + '" placeholder="Type 2–3 letters of a name or school" autocomplete="off" autocapitalize="off" spellcheck="false"><div id="pickr">' + pickHits(V, S) + '</div>';
+  if (!PICK) return '';
+  return shHead('plus', 'blue', PICK.uid ? 'Add a stop for ' + esc(agName(PICK.uid)) : 'Add to today\'s plan', 'Filter by reason, then add a vendor, a whole school or a prospect school') +
+    '<input data-inp="pickq" value="' + esc(PICK.q) + '" placeholder="Name, school or area" autocomplete="off" autocapitalize="off" spellcheck="false" class="srch"><div class="pchips" style="margin-top:8px">' + PKF.map(function (x) { return '<button class="' + ((PICK.f || '') === x[0] ? 'on' : '') + '" data-act="pickf" data-f="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div><div id="pickr">' + pickList() + '</div>' +
+    (PICK.uid ? '' : '<button class="big" style="margin-top:10px" data-act="closeO">Done</button>');
 };
-function pickHits(V, S) {
-  return '<div class="psr">' + V.map(function (v) { return '<div class="hit" data-act="pickAdd" data-k="v" data-i="' + v.id + '"><span><b>' + esc(v.name) + '</b><div class="small muted">' + esc(v.school || '') + '</div></span><span class="small muted">vendor</span></div>'; }).join('') +
-    S.map(function (s) { return '<div class="hit" data-act="pickAdd" data-k="s" data-i="' + s.id + '"><span><b>' + esc(s.name) + '</b><div class="small muted">' + esc(s.area || '') + (s.st ? ' · ' + esc(s.st) : '') + '</div></span><span class="small muted">school</span></div>'; }).join('') + '</div>' + (!V.length && !S.length ? '<p class="sub">Nothing found.</p>' : '');
+function inPlanK(k, id) { var L; if (PICK && PICK.uid) { var a = ((D.teamDay || {}).agents || []).filter(function (z) { return z.uid === PICK.uid; })[0]; L = a ? a.items : []; } else L = planItems(); var x = L.filter(function (y) { return y.k === k && y.id === id; })[0]; return x ? (x.rm ? 'rm' : 'in') : ''; }
+function pickList() {
+  var q = norm(PICK.q), f = PICK.f || '', ag = PICK.uid; PICK.groups = {};
+  if (f === 'pros') {
+    var S = (D.schools || []).filter(function (s) { return (!ag || !s.ag || s.ag === ag) && !s.n && (!q || norm(s.name + ' ' + s.area).indexOf(q) >= 0); });
+    var rank = function (s) { return s.fu && s.fu.day <= D.today ? 0 : s.st === 'Interested' ? 1 : s.st === 'Visited' ? 2 : s.st === 'Not interested' ? 4 : 3; };
+    S.sort(function (a, b) { return rank(a) - rank(b) || (a.name < b.name ? -1 : 1); });
+    if (!S.length) return '<p class="sub">No prospect school matches.</p>';
+    return '<div class="stopc" style="margin-top:8px">' + S.slice(0, 40).map(schPickRow).join('') + '</div>' + (S.length > 40 ? '<p class="small muted">… type part of a name or area to see more.</p>' : '');
+  }
+  var V = (D.vendors || []).filter(function (v) { return (!ag || v.agent === ag) && (!q || norm(v.name + ' ' + v.school + ' ' + v.phone).indexOf(q) >= 0) && (!f || vTags(v).indexOf(f) >= 0); });
+  var G = [], at = {}; V.forEach(function (v) { var sid = v.prof && v.prof.school, k = sid ? 'S:' + sid : v.school ? 'Z:' + norm(v.school) : 'V:' + v.id; if (at[k] === undefined) { at[k] = G.length; G.push({ k: k, name: sid && schoolOf(sid) ? schoolOf(sid).name : v.school || 'No school recorded', sid: sid || '', L: [] }); } G[at[k]].L.push(v); });
+  G.sort(function (a, b) { return b.L.length - a.L.length || (a.name < b.name ? -1 : 1); });
+  var h = '', n = 0;
+  G.forEach(function (g) { if (n >= 60) return; PICK.groups[g.k] = g.L.map(function (v) { return v.id; }); var left = g.L.filter(function (v) { return !inPlanK('v', v.id); }).length;
+    h += '<div class="stopc" style="margin-top:8px"><div class="sh"><div class="grow" style="min-width:0"><b class="ell" style="display:block">' + esc(g.name) + '</b><div class="small muted">' + g.L.length + ' vendor' + (g.L.length === 1 ? '' : 's') + '</div></div>' + (g.sid ? '<button class="ib gh sm" data-act="hist" data-k="s" data-i="' + g.sid + '" aria-label="History" title="History">' + ico(ICO.info) + '</button>' : '') + (g.L.length > 1 && left ? '<button class="ghost" data-act="pickAll" data-g="' + esc(g.k) + '">Add all ' + left + '</button>' : '') + '</div>' +
+      g.L.map(function (v) { n++; var ip = inPlanK('v', v.id); return '<div class="pv">' + avatar(v.name) + '<div class="grow" style="min-width:0"><b>' + esc(v.name) + '</b><div>' + tagPills(vTags(v)) + '</div>' + vFacts(v) + '</div>' + (ip === 'in' ? '<span class="small t-green nowrap">✓ in plan</span>' : ip === 'rm' ? '<span class="small muted nowrap">taken out</span>' : '<button class="main" style="padding:7px 12px" data-act="pickAdd" data-k="v" data-i="' + v.id + '">Add</button>') + '</div>'; }).join('') + '</div>';
+  });
+  if (q) { var S2 = (D.schools || []).filter(function (s) { return (!ag || !s.ag || s.ag === ag) && !s.n && norm(s.name + ' ' + s.area).indexOf(q) >= 0; }).slice(0, 10); if (S2.length) h += '<div class="sech">Prospect schools</div><div class="stopc">' + S2.map(schPickRow).join('') + '</div>'; }
+  return h || '<p class="sub">Nothing matches – change the filter or the search.</p>';
 }
-INP.pickq = function (el) { PICK.q = el.value; var b = $('pickr'); if (!b) return; var q = norm(PICK.q), ag = PICK.uid; b.innerHTML = pickHits((D.vendors || []).filter(function (v) { return (!ag || v.agent === ag) && (!q || norm(v.name + ' ' + v.school).indexOf(q) >= 0); }).slice(0, q ? 15 : 8), (D.schools || []).filter(function (s) { return (!ag || !s.ag || s.ag === ag) && (!q || norm(s.name + ' ' + s.area).indexOf(q) >= 0) && (q || s.g); }).slice(0, q ? 10 : 5)); };
-ACT.pickAdd = function (b) {
-  var k = b.dataset.k, id = b.dataset.i, v = k === 'v' ? vend(id) : null, s = k === 's' ? schoolOf(id) : null; if (!v && !s) return;
-  var it = { k: k, id: id, name: v ? v.name : s.name, school: v ? v.school || '' : s.area || '', kind: 'added', why: 'Added by me' };
-  if (PICK.uid) { var u = PICK.uid; askIn('Why should ' + agName(u) + ' visit ' + it.name + '? (she sees this)', '', '', function (t) { it.why = String(t || '').trim() || 'Added by the manager'; bgSave('planok', { uid: u, add: [it] }, 'po-' + uid(), 'visit added for ' + agName(u) + ': ' + it.name, null, true); PICK = null; SHEETK = ''; $('over').innerHTML = ''; }, 'ADD'); return; }
-  var L = planEdit(); if (L.some(function (x) { return x.k === k && x.id === id; })) { say(it.name + ' is already in your plan.'); return; }
-  L.push(it); PICK = null; SHEETK = ''; $('over').innerHTML = ''; render();
-};
-// "+ School here": a school she passes, with where the phone is
+function schPickRow(s) { var ip = inPlanK('s', s.id), g = STG[s.st || 'Lead'] || [s.st, ''];
+  return '<div class="pv">' + leadI('school', g[1] || 'grey') + '<div class="grow" style="min-width:0"><b>' + esc(s.name) + '</b><div><span class="tag ' + (g[1] || '') + '">' + esc(g[0]) + '</span>' + (s.fu && s.fu.day <= D.today ? '<span class="tag blue">Follow-up due</span>' : '') + '</div><div class="fx">' + esc(s.area || '') + (s.own ? ' · ' + esc(s.own) : '') + (s.lv ? ' · visited ' + esc(dayLbl(s.lv)) : '') + (s.fu ? ' · next ' + esc(dayLbl(s.fu.day)) + (s.fu.bring ? ': ' + esc(s.fu.bring) : '') : '') + '</div></div>' +
+    '<button class="ib gh sm" data-act="hist" data-k="s" data-i="' + s.id + '" aria-label="History" title="History">' + ico(ICO.info) + '</button>' + (ip === 'in' ? '<span class="small t-green nowrap">✓</span>' : ip === 'rm' ? '' : '<button class="main" style="padding:7px 12px" data-act="pickAdd" data-k="s" data-i="' + s.id + '">Add</button>') + '</div>'; }
+INP.pickq = function (el) { PICK.q = el.value; var b = $('pickr'); if (b) b.innerHTML = pickList(); };
+ACT.pickf = function (b) { PICK.f = b.dataset.f; drawSheet(); };
+function pickItem(k, id) { var v = k === 'v' ? vend(id) : null, s = k === 's' ? schoolOf(id) : null; if (!v && !s) return null;
+  return { k: k, id: id, name: v ? v.name : s.name, school: v ? v.school || '' : s.area || '', kind: 'added', why: v ? 'Added' : s.st === 'Interested' ? 'Interested – find and register a vendor' : s.st === 'Visited' ? 'Visited before – next step' : 'New school – introduce CupSales', tags: v ? vTags(v) : ['pros'].concat(s.fu && s.fu.day <= D.today ? ['follow'] : []), stop: v ? stopKeyOf({ k: 'v', id: id }) : 'S:' + id }; }
+function pickAddList(list) {
+  list = list.filter(Boolean); if (!list.length) return;
+  if (PICK.uid) { var u = PICK.uid; askIn('Why should ' + agName(u) + ' visit ' + (list.length === 1 ? list[0].name : list.length + ' vendors at ' + (list[0].school || 'this school')) + '? (she sees this)', '', '', function (t) { var w = String(t || '').trim() || 'Added by the manager'; list.forEach(function (it) { it.why = w; }); bgSave('planok', { uid: u, add: list }, 'po-' + uid(), 'added for ' + agName(u) + ': ' + list.map(function (x) { return x.name; }).join(', '), null, true); PICK = null; SHEETK = ''; $('over').innerHTML = ''; }, 'ADD'); return; }
+  var L = planEdit(); list.forEach(function (it) { if (!L.some(function (x) { return x.k === it.k && x.id === it.id; })) L.push(it); });
+  toast('Added: ' + list.map(function (x) { return x.name; }).join(', ') + '\nAgree the plan when you are ready.'); render();
+}
+ACT.pickAdd = function (b) { pickAddList([pickItem(b.dataset.k, b.dataset.i)]); };
+ACT.pickAll = function (b) { var ids = (PICK.groups || {})[b.dataset.g] || []; pickAddList(ids.filter(function (id) { return !inPlanK('v', id); }).map(function (id) { return pickItem('v', id); })); };
+// "+ School here": a school she is standing at – it counts as a new-school visit and starts its history
 ACT.schHere = function () {
   askIn('Name of the school you are at', '', '', function (n) {
     n = String(n || '').replace(/\s+/g, ' ').trim(); if (n.length < 3) { say('Write the school\'s name.'); return; }
-    gps(function (g) { bgSave('school', { name: n, stage: 'Lead', lat: g ? g.lat : '', lng: g ? g.lng : '', acc: g ? g.acc : '' }, 'sh-' + uid(), 'school added: ' + n, null, true); });
+    gps(function (g) { bgSave('school', { name: n, stage: 'Visited', here: 1, lat: g ? g.lat : '', lng: g ? g.lng : '', acc: g ? g.acc : '' }, 'sh-' + uid(), 'school added: ' + n, null, true); if (D.plan) { D.plan.visits = (D.plan.visits || []).concat([{ vid: '', sid: 'new-' + uid(), name: n, at: new Date().toTimeString().slice(0, 5), out: 'School visit – added here', why: '' }]); } });
   }, 'ADD SCHOOL');
 };
 /** The phone's location (or null after 12 seconds / when not allowed). */
@@ -1700,16 +1890,91 @@ function gps(cb) {
   var done = false, t = setTimeout(function () { if (!done) { done = true; cb(null, 'location took too long'); } }, 12000);
   navigator.geolocation.getCurrentPosition(function (p) { if (done) return; done = true; clearTimeout(t); cb({ lat: p.coords.latitude, lng: p.coords.longitude, acc: p.coords.accuracy }); }, function (e) { if (done) return; done = true; clearTimeout(t); cb(null, e && e.code === 1 ? 'location not allowed' : 'location not found'); }, { enableHighAccuracy: true, timeout: 11000, maximumAge: 30000 });
 }
+// ---------------------------------------------------------------- v2.5.9: calls, reminders, the lasting history, where is this
+var CALLX = null, CALL_OUT = ['Ordered', 'Will order later', 'Paid / will pay', 'No answer', 'Not now', 'Other'];
+ACT.callLog = function (b) { var k = b.dataset.k, id = b.dataset.i, c = ((D.plan || {}).calls || []).filter(function (x) { return x.k === k && x.id === id; })[0], v = k === 'v' ? vend(id) : null, s = k === 's' ? schoolOf(id) : null;
+  CALLX = { k: k, id: id, name: c ? c.name : v ? v.name : s ? s.name : id, phone: c ? c.phone : v ? v.phone : s ? s.cphone : '', out: '', note: '', next: null }; sheetOpen('calllog'); };
+SHEETS.calllog = function () { var X = CALLX; if (!X) return '';
+  return shHead('phone', 'green', esc(X.name), 'What came of the call?') + (X.phone ? '<a href="tel:' + esc(X.phone) + '" style="text-decoration:none"><button class="ic" style="margin-bottom:6px">' + ico(ICO.phone) + 'Call ' + esc(X.phone) + '</button></a>' : '') +
+    '<div class="chips">' + CALL_OUT.map(function (o) { return '<button class="' + (X.out === o ? 'on' : '') + '" data-act="clo" data-v="' + esc(o) + '">' + esc(o) + '</button>'; }).join('') + '</div>' +
+    (X.out === 'Ordered' && X.k === 'v' ? '<p class="small muted">After saving, her New order opens.</p>' : '') +
+    '<label>Note' + (X.out === 'Other' ? '' : ' (optional)') + '</label><input data-inp="clnt" value="' + esc(X.note) + '">' + nextHtml(X, 'cl') +
+    '<div class="btns"><button data-act="closeO">Cancel</button><button class="main" data-act="clSave">Save</button></div>';
+};
+ACT.clo = function (b) { CALLX.out = b.dataset.v; if (CALLX.out === 'Will order later' && !CALLX.next) CALLX.next = { date: addDays(D.today, 2), how: 'Call', bring: '' }; drawSheet(); };
+INP.clnt = function (el) { CALLX.note = el.value; };
+ACT.clSave = function () { var X = CALLX; if (!X) return; if (!X.out) { say('Tap what came of the call.'); return; } if (X.out === 'Other' && String(X.note).trim().length < 3) { say('Write what came of the call.'); return; } var nx = nextOk(X); if (nx === false) return;
+  var d = { outcome: X.out, note: X.note, next: nx }; if (X.k === 'v') d.vid = X.id; else d.sid = X.id;
+  SHEETK = ''; $('over').innerHTML = ''; CALLX = null; bgSave('call', d, 'cl-' + uid(), 'call – ' + X.name + ': ' + X.out.toLowerCase(), null, true);
+  if (X.out === 'Ordered' && X.k === 'v') setTimeout(function () { ACT.orderV({ dataset: { v: X.id } }); }, 60); };
+function nextHtml(X, p) { var n = X.next;
+  if (!n) return '<button class="ghost" style="margin-top:6px" data-act="nxo" data-p="' + p + '">+ Set a reminder (follow-up visit or call)</button>';
+  return '<div class="psec">Next step – a reminder</div><div class="fgrid"><label><span>When</span><input type="date" data-inp="nx" data-p="' + p + '" data-f="date" value="' + esc(n.date) + '" min="' + D.today + '"></label><div><span>How</span><div class="seg">' + ['Visit', 'Call'].map(function (hw) { return '<button class="' + (n.how === hw ? 'on' : '') + '" data-act="nxh" data-p="' + p + '" data-v="' + hw + '">' + hw + '</button>'; }).join('') + '</div></div></div>' +
+    '<label>What to bring or do</label><input data-inp="nx" data-p="' + p + '" data-f="bring" value="' + esc(n.bring) + '" placeholder="e.g. posters and the price list; meet the head teacher"><button class="ghost" data-act="nxx" data-p="' + p + '">No reminder</button>';
+}
+function nxObj(p) { return p === 'v' ? VIS : CALLX; } function nxDraw(p) { if (p === 'v') visDraw(); else drawSheet(); }
+ACT.nxo = function (b) { var X = nxObj(b.dataset.p); if (!X) return; X.next = { date: addDays(D.today, 7), how: 'Visit', bring: '' }; nxDraw(b.dataset.p); };
+ACT.nxx = function (b) { var X = nxObj(b.dataset.p); if (!X) return; X.next = null; nxDraw(b.dataset.p); };
+ACT.nxh = function (b) { var X = nxObj(b.dataset.p); if (!X || !X.next) return; X.next.how = b.dataset.v; nxDraw(b.dataset.p); };
+INP.nx = function (el) { var X = nxObj(el.dataset.p); if (X && X.next) X.next[el.dataset.f] = el.value; };
+function nextOk(X) { var n = X.next; if (!n) return null; if (!/^\d{4}-\d{2}-\d{2}$/.test(n.date || '') || n.date < D.today) { say('Reminder: choose a date from today on – or tap "No reminder".'); return false; } return { date: n.date, how: n.how, bring: String(n.bring || '').trim() }; }
+// the lasting history of a school or a vendor (read when opened – screens stay small)
+var HIST = null;
+ACT.hist = function (b) { HIST = { k: b.dataset.k, id: b.dataset.i, d: null, err: '' }; sheetOpen('hist'); var my = HIST;
+  readOp('hist', my.k === 's' ? { sid: my.id } : { vid: my.id }, function (r) { if (HIST !== my) return; if (r.error) my.err = r.error; else my.d = r; drawSheet(); }, function (m) { if (HIST !== my) return; my.err = m; drawSheet(); }); };
+SHEETS.hist = function () {
+  var H = HIST; if (!H) return ''; var s0 = H.k === 's' ? schoolOf(H.id) : null, v0 = H.k === 'v' ? vend(H.id) : null, R = H.d, S = R && R.school;
+  var title = (s0 && s0.name) || (v0 && v0.name) || (S && S.name) || (R && R.vendors && R.vendors[0] && H.k === 'v' ? R.vendors[0].name : '') || 'History';
+  var h = shHead(H.k === 's' ? 'school' : 'user', 'blue', esc(title), 'History – everything recorded here, by everyone');
+  if (!R) return h + (H.err ? '<div class="msg err">' + esc(H.err) + '</div>' : '<p class="muted"><i class="spin dk"></i>Getting the history…</p>');
+  var tr = function (k, x) { return x === '' || x == null ? '' : '<tr><td class="k">' + esc(k) + '</td><td>' + x + '</td></tr>'; };
+  if (S) { var g = STG[S.stage || 'Lead'] || [S.stage, ''];
+    h += '<table class="dt">' + tr('Stage', '<span class="tag ' + (g[1] || '') + '">' + esc(g[0] || 'Not visited') + '</span>' + (S.stageNote ? ' ' + esc(S.stageNote) : '')) + tr('Area', esc([S.area, S.district].filter(function (x, i, a) { return x && a.indexOf(x) === i; }).join(' · '))) + tr('Type', esc([S.own, S.level].filter(String).join(' · '))) +
+      tr('Pupils', esc(S.pupils)) + tr('Breaks', esc([S.b1 ? '1st ' + S.b1 : '', S.b2 ? '2nd ' + S.b2 : ''].filter(String).join(' · '))) + tr('Contact', S.contact || S.cphone ? esc(S.contact) + (S.cphone ? ' · <a href="tel:' + esc(S.cphone) + '">' + esc(S.cphone) + '</a>' : '') : '') +
+      tr('Food vendors', esc(S.fv)) + tr('Noodle brands', esc(S.brands)) + tr('Agent', esc(S.agent)) + tr('Added', S.addedBy ? esc(S.addedBy) + (S.added ? ' on ' + esc(dayLbl(S.added)) : '') : '') + '</table>'; }
+  if (R.vendors && R.vendors.length && H.k === 's') h += '<div class="psec">' + ico(ICO.vendors) + ' Vendors here (' + R.vendors.length + ')</div><div class="list" style="box-shadow:none">' + R.vendors.map(function (x) { return liRow(vend(x.id) ? ' data-act="vdet" data-v="' + x.id + '"' : '', avatar(x.name), esc(x.name), esc(x.agent) + (x.reg ? ' · signed up ' + esc(dayLbl(x.reg)) : '') + (x.first ? ' · first carton ' + esc(dayLbl(x.first)) : ' · no carton yet'), '', x.status !== 'Active' ? esc(x.status) : x.last ? 'last ' + esc(dayLbl(x.last)) : 'signed up', x.last ? 'grey' : 'blue'); }).join('') + '</div>';
+  if (H.k === 'v' && R.vendors && R.vendors[0]) { var x0 = R.vendors[0]; h += '<table class="dt">' + tr('Agent', esc(x0.agent)) + tr('Signed up', x0.reg ? esc(dayLbl(x0.reg)) : '') + tr('First carton', x0.first ? esc(dayLbl(x0.first)) : 'not yet') + tr('Last order', x0.last ? esc(dayLbl(x0.last)) : '') + (S ? tr('School', esc(S.name)) : '') + '</table>'; }
+  h += '<div class="psec">' + ico(ICO.clock) + ' Visits and calls (' + R.visits.length + ')</div>';
+  h += R.visits.length ? '<div class="tl">' + R.visits.map(function (e) { var nx = e.next;
+    return '<div class="ev' + (e.call ? ' c' : '') + '"><div class="small muted">' + esc(dayLbl(e.day)) + (e.at ? ' ' + esc(e.at) : '') + ' · <b style="color:var(--ink)">' + esc(e.who) + '</b> · ' + (e.call ? 'call' : 'visit') + (e.vendor && H.k === 's' ? ' – ' + esc(e.vendor) : '') + '</div><div><b>' + esc(e.out || 'Visit') + '</b>' + (e.why ? ' – ' + esc(e.why) : '') + '</div>' +
+      [e.stock ? 'Stock: ' + esc(e.stock) : '', e.saw ? 'Saw: ' + esc(e.saw) : '', e.con ? 'Concerns: ' + esc(e.con) : '', e.lever ? 'Lever: ' + esc(e.lever) : '', e.price ? 'Price per serving GHS ' + esc(e.price) : ''].filter(String).map(function (t) { return '<div class="small">' + t + '</div>'; }).join('') +
+      (e.note ? '<div class="small" style="margin-top:2px">“' + esc(e.note) + '”</div>' : '') + (nx ? '<div><span class="tag blue">Next: ' + esc(dayLbl(nx.day)) + ' · ' + esc((nx.how || '').toLowerCase()) + (nx.bring ? ' – ' + esc(nx.bring) : '') + '</span></div>' : '') + '</div>'; }).join('') + '</div>' : '<p class="muted small">No visit or call recorded yet – the first one starts this history.</p>';
+  if (R.interv && R.interv.length) h += '<div class="psec">' + ico(ICO.info) + ' Actions taken</div>' + R.interv.map(function (a) { return '<div class="srow"><div class="grow"><b>' + esc(a.lever) + '</b> – ' + esc(a.items) + (a.cost ? ' · ' + ghs(a.cost) : '') + '<div class="small muted">' + esc(dayLbl(a.day)) + ' · ' + esc(a.by) + (a.vendor && H.k === 's' ? ' · ' + esc(a.vendor) : '') + '</div></div></div>'; }).join('');
+  var pin = S && S.pin ? S.pin : v0 ? vPin(v0) : null, btn = [];
+  btn.push('<a href="' + esc(mapUrl(pin, S ? S.name : title, S ? S.area : '')) + '" target="_blank"><button class="ic">' + ico(ICO.pin) + 'Map</button></a>');
+  if (D.me.role === 'Agent' && D.plan && D.plan.work && ((H.k === 's' && !(R.vendors || []).length) || v0)) btn.push(inPlanK(H.k, H.id) ? '<button disabled>✓ In today\'s plan</button>' : '<button data-act="histAdd">Add to today</button>');
+  if ((D.me.role === 'Agent' || D.me.role === 'Supervisor') && (H.k === 's' ? s0 : v0)) btn.push('<button class="main ic" data-act="visOpen" data-k="' + H.k + '" data-i="' + esc(H.id) + '">' + ico(ICO.plan) + 'Visit report</button>');
+  return h + '<div class="btns" style="flex-wrap:wrap">' + btn.join('') + '</div>';
+};
+ACT.histAdd = function () { if (!HIST) return; PICK = PICK || { q: '', uid: '', f: '' }; PICK.uid = ''; pickAddList([pickItem(HIST.k, HIST.id)]); };
+// where is this: a start or a visit place the manager taps
+var WHERE = null;
+ACT.where = function (b, e) { if (e) e.preventDefault(); WHERE = { lat: Number(b.dataset.lat), lng: Number(b.dataset.lng), n: b.dataset.n || '', area: null, addr: '' }; var my = WHERE; sheetOpen('where');
+  readOp('place', { lat: my.lat, lng: my.lng }, function (r) { if (WHERE !== my) return; my.area = r.error ? '' : r.area || ''; my.addr = r.addr || ''; drawSheet(); }, function () { if (WHERE !== my) return; my.area = ''; drawSheet(); }); };
+function distM(a, b) { var R = 6371000, r = Math.PI / 180, dLa = (b[0] - a[0]) * r, dLo = (b[1] - a[1]) * r, x = Math.sin(dLa / 2) * Math.sin(dLa / 2) + Math.cos(a[0] * r) * Math.cos(b[0] * r) * Math.sin(dLo / 2) * Math.sin(dLo / 2); return Math.round(2 * R * Math.asin(Math.min(1, Math.sqrt(x)))); }
+SHEETS.where = function () {
+  var W = WHERE; if (!W) return ''; var p = [W.lat, W.lng], ll = W.lat.toFixed(6) + ',' + W.lng.toFixed(6);
+  var near = (D.schools || []).filter(function (s) { return s.pin; }).map(function (s) { return { n: s.name, t: 'school', d: distM(p, s.pin) }; }).concat((D.vendors || []).filter(function (v) { return v.pin; }).map(function (v) { return { n: v.name + (v.school ? ' (' + v.school + ')' : ''), t: 'vendor', d: distM(p, v.pin) }; }))
+    .filter(function (x) { return x.d <= 3000; }).sort(function (a, b) { return a.d - b.d; }).slice(0, 5);
+  var dist = function (m) { return m < 1000 ? m + ' m' : (Math.round(m / 100) / 10) + ' km'; };
+  return shHead('pin', 'blue', 'Where is this?', esc(W.n)) + '<table class="dt"><tr><td class="k">Area</td><td>' + (W.area === null ? '<i class="spin dk"></i>looking it up…' : W.area ? '<b>' + esc(W.area) + '</b>' : '<span class="muted">not known – open the map</span>') + '</td></tr>' + (W.addr ? '<tr><td class="k">Address</td><td class="small">' + esc(W.addr) + '</td></tr>' : '') +
+    '<tr><td class="k">Nearest of ours</td><td>' + (near.length ? near.map(function (x) { return esc(x.n) + ' <span class="muted">· ' + x.t + ' · ' + dist(x.d) + '</span>'; }).join('<br>') : '<span class="muted">none of our pinned schools or vendors within 3 km</span>') + '</td></tr><tr><td class="k">Point</td><td class="small">' + esc(ll) + '</td></tr></table>' +
+    '<div class="btns" style="flex-wrap:wrap"><a href="https://www.google.com/maps/search/?api=1&query=' + ll + '" target="_blank"><button class="main ic">' + ico(ICO.pin) + 'Open the spot</button></a><a href="https://www.google.com/maps/search/schools/@' + ll + ',17z" target="_blank"><button class="ic">' + ico(ICO.school) + 'Schools near it</button></a></div>' +
+    '<div class="btns"><a href="https://www.google.com/maps/@?api=1&map_action=map&center=' + ll + '&zoom=19&basemap=satellite" target="_blank"><button>Satellite view</button></a></div>' +
+    '<div class="note" style="margin-top:12px">' + ico(ICO.info) + '<span>This is where her phone was at <b>Start my day</b> or at <b>Arrived</b> – not a live position. In Google Maps tap the red pin: the card shows the address and the place name. <b>Schools near it</b> lists the schools Google knows around the point, with their distance. Is the building a school? In <b>Satellite view</b> a school has a big yard or football field and long classroom blocks; Google marks many schools with a graduation-cap symbol. A phone outside is usually right to 10–30 m; inside a building it can be 100 m off.</span></div>';
+};
 // ---------------------------------------------------------------- the visit report (one minute, mostly taps)
 var VIS = null;
-var V_OUT = ['Ordered', 'Paid', 'Ordered and paid', 'No order'], V_NO = ['Has stock', 'No money', 'Slow sales', 'Not there', 'Closed', 'Sells another brand', 'Unhappy'], V_SAW = ['Indomie branding', 'Students buying at break', 'Spaghetti sold here'],
-  V_CON = ['Price too high', 'Profit too small', 'Students prefer another brand', 'Taste or quality', 'Late delivery', 'Credit too short'], V_LEV = ['Visibility boost', 'Vendor motivation', 'Doubt clearance', 'Student motivation'], V_STG = ['Visited', 'Interested', 'Vendor registered', 'Not interested'];
+var V_OUT = ['Ordered', 'Paid', 'Ordered and paid', 'No order', 'Other'], V_NO = ['Has stock', 'No money', 'Slow sales', 'Not there', 'Closed', 'Sells another brand', 'Unhappy', 'Other'], V_SAW = ['Indomie branding', 'Students buying at break', 'Spaghetti sold here', 'Other'],
+  V_CON = ['Price too high', 'Profit too small', 'Students prefer another brand', 'Taste or quality', 'Late delivery', 'Credit too short', 'Other'], V_LEV = ['Visibility boost', 'Vendor motivation', 'Doubt clearance', 'Student motivation'], V_STG = ['Visited', 'Interested', 'Vendor registered', 'Not interested'];
 ACT.visOpen = function (b) {
   var k = b.dataset.k, id = b.dataset.i, v = k === 'v' ? vend(id) : null, s = k === 's' ? schoolOf(id) : null; if (!v && !s) { say('Not found – refresh the page.'); return; }
-  var lv = (v && v.lv) || {}; SHEETK = '';
-  VIS = { k: k, id: id, kind: b.dataset.kind || '', name: v ? v.name : s.name, at: 0, g: null, gwhy: '', outcome: '', reason: '', stock: {}, saw: lv.saw ? lv.saw.split(', ') : [], con: lv.con ? lv.con.split(', ') : [], price: lv.price || '', spag: lv.spag || '', note: '', lever: '', iv: null,
+  var lv = (v && v.lv) || {}; SHEETK = ''; var known = function (txt, L) { return txt ? txt.split(', ').filter(function (x) { return L.indexOf(x) >= 0 && x !== 'Other'; }) : []; };
+  var sk = v && v.lastO ? v.lastO.lines.map(function (l) { return l.sku; }).filter(function (x, i, a) { return a.indexOf(x) === i && (D.skus || []).some(function (s2) { return s2.id === x; }); }) : [];
+  VIS = { k: k, id: id, kind: b.dataset.kind || '', name: v ? v.name : s.name, at: 0, g: null, gwhy: '', outcome: '', outOther: '', reason: '', reasonOther: '', skus: sk, units: {}, stock: {}, saw: known(lv.saw, V_SAW), sawOther: '', con: known(lv.con, V_CON), conOther: '', price: lv.price || '', spag: lv.spag || '', note: '', lever: '', iv: null,
+    next: s ? { date: addDays(D.today, 7), how: 'Visit', bring: '' } : null,
     sc: s ? { pupils: s.pupils || '', b1: s.b1 || '', b2: s.b2 || '', contact: s.contact || '', cphone: s.cphone || '', fv: s.fv || '', brands: s.brands || '', stage: s.st && s.st !== 'Lead' ? s.st : 'Visited', stageNote: '' } : null };
-  visDraw();
+  OVK = ''; visDraw();
 };
 function visLever() {
   var c = VIS.con, has = function (x) { return c.indexOf(x) >= 0; }, saw = function (x) { return VIS.saw.indexOf(x) >= 0; };
@@ -1723,13 +1988,15 @@ function vChips(group, list, sel, multi) { return '<div class="chips">' + list.m
 function visDraw() {
   var X = VIS; if (!X) return; var v = X.k === 'v' ? vend(X.id) : null;
   var h = '<div class="overlay"><div class="sheet"><div class="shd">' + (v ? avatar(v.name) : leadI('school', 'blue')) + '<div class="grow"><h3>' + esc(X.name) + '</h3><div class="sub">' + (v ? esc(v.school || '') : 'School visit – fill its profile') + '</div></div><button class="ib gh sm x ic" data-act="closeO" aria-label="Close">' + ico(ICO.x) + '</button></div>';
-  if (!X.at) return $('over').innerHTML = h + '<p class="sub">Tap when you are there – your time and the phone\'s location are saved' + (v && !v.pin ? ' (and her spot is pinned on the map)' : '') + '.</p><button class="main big ic" data-act="visArr">' + ico(ICO.pin) + 'I HAVE ARRIVED</button></div></div>';
+  if (!X.at) { overDraw(h + '<p class="sub">Tap when you are there – your time and the phone\'s location are saved' + (v && !v.pin ? ' (and her spot is pinned on the map)' : '') + '.</p><button class="main big ic" data-act="visArr">' + ico(ICO.pin) + 'I HAVE ARRIVED</button></div></div>', 'vis'); return; }
+  var oth = function (f, ph) { return '<input data-inp="vf" data-f="' + f + '" value="' + esc(X[f]) + '" placeholder="' + esc(ph) + '" style="margin:2px 0 6px">'; };
   h += '<div class="msg ok" style="margin:0 0 8px">Arrived ' + new Date(X.at).toTimeString().slice(0, 5) + (X.g ? ' · location saved' + (X.g.acc > 150 ? ' (rough – ' + Math.round(X.g.acc) + ' m)' : '') : ' · <b>no location</b> (' + esc(X.gwhy) + ')') + '</div>';
   if (v) {
-    h += '<div class="psec">What happened</div>' + vChips('outcome', V_OUT, X.outcome) + (X.outcome === 'No order' ? '<label>Why no order?</label>' + vChips('reason', V_NO, X.reason) : '');
-    h += '<div class="psec">Stock she has now (sachets)</div><div class="fgrid">' + (D.skus || []).map(function (s) { return '<label><span>' + esc(s.name || s.id) + '</span><input inputmode="numeric" data-inp="vstk" data-s="' + s.id + '" value="' + esc(X.stock[s.id] != null ? X.stock[s.id] : '') + '" placeholder="–"></label>'; }).join('') + '</div>';
-    h += '<div class="psec">What I saw</div>' + vChips('saw', V_SAW, X.saw, 1) + '<div class="fgrid"><label><span>Her price per serving (GHS)</span><input inputmode="decimal" data-inp="vf" data-f="price" value="' + esc(X.price) + '" placeholder="e.g. 5"></label>' + (X.saw.indexOf('Spaghetti sold here') >= 0 ? '<label><span>Spaghetti per serving (GHS)</span><input inputmode="decimal" data-inp="vf" data-f="spag" value="' + esc(X.spag) + '"></label>' : '') + '</div>';
-    h += '<div class="psec">Her concerns</div>' + vChips('con', V_CON, X.con, 1);
+    h += '<div class="psec">What happened</div>' + vChips('outcome', V_OUT, X.outcome) + (X.outcome === 'Other' ? oth('outOther', 'What happened?') : '') + (X.outcome === 'No order' ? '<label>Why no order?</label>' + vChips('reason', V_NO, X.reason) + (X.reason === 'Other' ? oth('reasonOther', 'Why did she not order?') : '') : '');
+    h += '<div class="psec">Her stock now</div><div class="small muted">Tap the products you counted, then the number – in sachets or cartons</div><div class="chips">' + (D.skus || []).map(function (s) { var on = X.skus.indexOf(s.id) >= 0; return '<button class="' + (on ? 'on' : '') + '" data-act="vsku" data-s="' + s.id + '">' + (on ? '✓ ' : '') + esc(skn(s.id)) + '</button>'; }).join('') + '</div>' +
+      X.skus.map(function (id) { var u = X.units[id] || 'sach'; return '<div class="stk"><span class="pkb">' + pk(id) + '</span><b class="grow ell">' + esc(sku(id).name || skn(id)) + '</b><input inputmode="numeric" data-inp="vstk" data-s="' + id + '" value="' + esc(X.stock[id] != null ? X.stock[id] : '') + '" placeholder="0"><div class="seg mini">' + [['sach', 'Sachets'], ['ctn', 'Cartons']].map(function (o) { return '<button class="' + (u === o[0] ? 'on' : '') + '" data-act="vunit" data-s="' + id + '" data-u="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div></div>'; }).join('');
+    h += '<div class="psec">What I saw</div>' + vChips('saw', V_SAW, X.saw, 1) + (X.saw.indexOf('Other') >= 0 ? oth('sawOther', 'What else did you see?') : '') + '<div class="fgrid"><label><span>Her price per serving (GHS)</span><input inputmode="decimal" data-inp="vf" data-f="price" value="' + esc(X.price) + '" placeholder="e.g. 5"></label>' + (X.saw.indexOf('Spaghetti sold here') >= 0 ? '<label><span>Spaghetti per serving (GHS)</span><input inputmode="decimal" data-inp="vf" data-f="spag" value="' + esc(X.spag) + '"></label>' : '') + '</div>';
+    h += '<div class="psec">Her concerns</div>' + vChips('con', V_CON, X.con, 1) + (X.con.indexOf('Other') >= 0 ? oth('conOther', 'What is her concern?') : '');
     var lv = visLever(); h += '<div class="psec">Lever</div>' + (lv ? '<p class="small muted" style="margin:0 0 4px">Suggested: <b>' + esc(lv[0]) + '</b> – ' + esc(lv[1]) + '.</p>' : '') + vChips('lever', V_LEV, X.lever);
   } else {
     var S = X.sc; h += '<div class="psec">School</div><label>Stage</label>' + vChips('stage', V_STG, S.stage) + (S.stage === 'Not interested' ? '<label>Why not?</label><input data-inp="vsc" data-f="stageNote" value="' + esc(S.stageNote) + '">' : '') + (S.stage === 'Interested' || S.stage === 'Vendor registered' ? '<p class="small muted">Register her vendor with <b>New vendor</b> (My vendors) and choose this school.</p>' : '') +
@@ -1738,9 +2005,10 @@ function visDraw() {
       '<div class="fgrid"><label><span>Food vendors there</span><input inputmode="numeric" data-inp="vsc" data-f="fv" value="' + esc(S.fv) + '"></label><label><span>Noodle brands sold</span><input data-inp="vsc" data-f="brands" value="' + esc(S.brands) + '" placeholder="e.g. Indomie, Tasty Tom"></label></div>';
   }
   h += '<div class="psec">Action taken today</div>' + (X.iv ? '<label>Lever</label>' + vChips('ivlev', V_LEV, X.iv.lever) + '<div class="fgrid"><label><span>What was given / done</span><input data-inp="viv" data-f="items" value="' + esc(X.iv.items) + '" placeholder="e.g. table mat, poster"></label><label><span>Cost (GHS)</span><input inputmode="decimal" data-inp="viv" data-f="cost" value="' + esc(X.iv.cost) + '"></label></div><button class="ghost" data-act="vivx">No action</button>' : '<button class="ghost" data-act="viv">+ I gave or did something (poster, promo, gift…)</button>');
-  h += '<label>Note (optional)</label><input data-inp="vf" data-f="note" value="' + esc(X.note) + '">';
+  h += '<label>Note – what she said, anything the next visitor should know</label><textarea rows="2" data-inp="vf" data-f="note">' + esc(X.note) + '</textarea>';
+  h += nextHtml(X, 'v');
   h += '<div class="btns" style="margin-top:16px"><button data-act="closeO">Cancel</button><button class="main" data-act="visSave">Save visit</button></div></div></div>';
-  $('over').innerHTML = h;
+  overDraw(h, 'vis');
 }
 ACT.visArr = function () { gps(function (g, why) { if (!VIS) return; VIS.at = Date.now(); VIS.g = g; VIS.gwhy = why || ''; visDraw(); }); };
 ACT.vchip = function (b) {
@@ -1749,24 +2017,30 @@ ACT.vchip = function (b) {
   else if (g === 'stage') X.sc.stage = val; else if (g === 'ivlev') X.iv.lever = val; else X[g] = X[g] === val ? '' : val;
   if (g === 'outcome' && X.outcome !== 'No order') X.reason = ''; visDraw();
 };
+ACT.vsku = function (b) { var X = VIS, id = b.dataset.s, i = X.skus.indexOf(id); if (i >= 0) { X.skus.splice(i, 1); delete X.stock[id]; } else X.skus.push(id); visDraw(); };
+ACT.vunit = function (b) { VIS.units[b.dataset.s] = b.dataset.u; visDraw(); };
 INP.vf = function (el) { VIS[el.dataset.f] = el.value; }; INP.vsc = function (el) { VIS.sc[el.dataset.f] = el.value; }; INP.viv = function (el) { VIS.iv[el.dataset.f] = el.value; };
 INP.vstk = function (el) { var t = String(el.value).replace(/\D/g, ''); if (t === '') delete VIS.stock[el.dataset.s]; else VIS.stock[el.dataset.s] = Number(t); };
 ACT.viv = function () { var lv = visLever(); VIS.iv = { lever: VIS.lever || (lv ? lv[0] : ''), items: '', cost: '' }; visDraw(); }; ACT.vivx = function () { VIS.iv = null; visDraw(); };
 ACT.visSave = function () {
-  var X = VIS; if (!X) return; var isV = X.k === 'v';
-  if (isV && !X.outcome) { say('Tap what happened: ordered, paid, both or no order.'); return; }
+  var X = VIS; if (!X) return; var isV = X.k === 'v', tx = function (s) { return String(s || '').trim(); };
+  if (isV && !X.outcome) { say('Tap what happened: ordered, paid, both, no order or other.'); return; }
+  if (isV && X.outcome === 'Other' && tx(X.outOther).length < 3) { say('What happened: write it in a few words.'); return; }
   if (isV && X.outcome === 'No order' && !X.reason) { say('Tap why she did not order.'); return; }
-  var pr = function (t) { t = String(t || '').trim(); return !t || (Number(t) > 0 && Number(t) <= 100); }; if (!pr(X.price) || !pr(X.spag)) { say('Prices: GHS per serving, e.g. 5 – or leave empty.'); return; }
-  if (X.iv && (!X.iv.lever || String(X.iv.items || '').trim().length < 2)) { say('Action taken: choose the lever and write what was given or done – or tap "No action".'); return; }
-  if (!isV && X.sc.stage === 'Not interested' && String(X.sc.stageNote || '').trim().length < 3) { say('Write why the school is not interested.'); return; }
+  if (isV && X.reason === 'Other' && tx(X.reasonOther).length < 3) { say('Why no order: write it in a few words.'); return; }
+  var pr = function (t) { t = tx(t); return !t || (Number(t) > 0 && Number(t) <= 100); }; if (!pr(X.price) || !pr(X.spag)) { say('Prices: GHS per serving, e.g. 5 – or leave empty.'); return; }
+  if (X.iv && (!X.iv.lever || tx(X.iv.items).length < 2)) { say('Action taken: choose the lever and write what was given or done – or tap "No action".'); return; }
+  if (!isV && X.sc.stage === 'Not interested' && tx(X.sc.stageNote).length < 3) { say('Write why the school is not interested.'); return; }
   if (!isV && X.sc.cphone && !/^0\d{9}$/.test(String(X.sc.cphone).replace(/\D/g, ''))) { say('The contact\'s phone has 10 numbers and starts with 0.'); return; }
-  var d = { kind: X.kind, at: X.at, lat: X.g ? X.g.lat : '', lng: X.g ? X.g.lng : '', acc: X.g ? X.g.acc : '', note: X.note };
-  if (isV) Object.assign(d, { vid: X.id, outcome: X.outcome, reason: X.reason, stock: X.stock, saw: X.saw, concerns: X.con, price: X.price, spag: X.saw.indexOf('Spaghetti sold here') >= 0 ? X.spag : '', lever: X.lever });
+  var nx = nextOk(X); if (nx === false) return;
+  var d = { kind: X.kind, at: X.at, lat: X.g ? X.g.lat : '', lng: X.g ? X.g.lng : '', acc: X.g ? X.g.acc : '', note: X.note, next: nx };
+  if (isV) { var stock = {}, units = {}; X.skus.forEach(function (id) { if (X.stock[id] != null) { stock[id] = X.stock[id]; units[id] = X.units[id] || 'sach'; } });
+    Object.assign(d, { vid: X.id, outcome: X.outcome, outOther: X.outcome === 'Other' ? tx(X.outOther) : '', reason: X.reason, reasonOther: X.reason === 'Other' ? tx(X.reasonOther) : '', stock: stock, units: units, saw: X.saw.filter(function (x) { return x !== 'Other'; }), sawOther: X.saw.indexOf('Other') >= 0 ? tx(X.sawOther) : '', concerns: X.con.filter(function (x) { return x !== 'Other'; }), conOther: X.con.indexOf('Other') >= 0 ? tx(X.conOther) : '', price: X.price, spag: X.saw.indexOf('Spaghetti sold here') >= 0 ? X.spag : '', lever: X.lever }); }
   else d.sid = X.id, d.school = { pupils: String(X.sc.pupils || '').replace(/\D/g, ''), b1: X.sc.b1, b2: X.sc.b2, contact: X.sc.contact, cphone: String(X.sc.cphone || '').replace(/\D/g, ''), fv: X.sc.fv, brands: X.sc.brands, stage: X.sc.stage, stageNote: X.sc.stageNote };
   if (X.iv) d.interv = { lever: X.iv.lever, items: X.iv.items, cost: X.iv.cost };
-  if (isV) { var v = vend(X.id); if (v) { if (X.g && !v.pin && X.g.acc <= 150) v.pin = [X.g.lat, X.g.lng]; v.lv = { day: D.today, out: X.outcome, saw: X.saw.join(', '), con: X.con.join(', '), price: X.price, spag: X.spag, lever: X.lever }; } }
-  else { var s = schoolOf(X.id); if (s) { s.st = X.sc.stage; s.b1 = X.sc.b1; s.b2 = X.sc.b2; if (X.g && !s.pin && X.g.acc <= 150) s.pin = [X.g.lat, X.g.lng]; } }
-  bgSave('visit', d, 'vs-' + uid(), 'visit – ' + X.name, null, true); VIS = null; $('over').innerHTML = ''; render();
+  if (isV) { var v = vend(X.id); if (v) { if (X.g && !v.pin && X.g.acc <= 150) v.pin = [X.g.lat, X.g.lng]; v.lv = { day: D.today, out: X.outcome === 'Other' ? tx(X.outOther) : X.outcome, saw: X.saw.join(', '), con: X.con.join(', '), price: X.price, spag: X.spag, lever: X.lever, by: D.me.first }; v.fu = nx ? { day: nx.date, how: nx.how, bring: nx.bring, by: D.me.first } : null; } }
+  else { var s = schoolOf(X.id); if (s) { s.st = X.sc.stage; s.b1 = X.sc.b1; s.b2 = X.sc.b2; s.lv = D.today; s.fu = nx ? { day: nx.date, how: nx.how, bring: nx.bring, by: D.me.first } : null; if (X.g && !s.pin && X.g.acc <= 150) s.pin = [X.g.lat, X.g.lng]; } }
+  bgSave('visit', d, 'vs-' + uid(), 'visit – ' + X.name, null, true); VIS = null; $('over').innerHTML = ''; OVK = ''; render();
 };
 // ---------------------------------------------------------------- the manager's Today: Team today and interventions
 function pgTeamDay() {
@@ -1774,17 +2048,24 @@ function pgTeamDay() {
   if (!T) return h + emptyHtml('Team today is not ready – pull down to refresh.');
   h += '<div class="sech">Team today <span>' + esc(dayLbl(T.day)) + '</span></div>';
   T.agents.forEach(function (a) {
-    var stp = a.status === 'Approved' ? ['Approved', 'green'] : a.status === 'Agreed' ? ['Waiting for you', 'amber'] : a.status === 'Suggested' ? ['Not agreed yet', 'grey'] : a.status ? [a.status, ''] : ['No plan yet', 'grey'];
-    h += '<div class="card" style="padding:12px 14px"><div class="row" style="flex-wrap:nowrap">' + avatar(a.name) + '<div class="grow"><b>' + esc(a.name) + '</b> <span class="pill ' + stp[1] + '">' + esc(stp[0]) + '</span><div class="small muted">' +
-      (a.start ? 'Started ' + esc(a.start.at) + (a.start.lat ? ' · <a href="https://www.google.com/maps/search/?api=1&query=' + a.start.lat + ',' + a.start.lng + '" target="_blank">where</a>' : '') : '<span class="t-amber">Day not started</span>') +
-      ' · visited ' + a.done + ' of ' + a.planned + (a.visits > a.done ? ' (+' + (a.visits - a.done) + ' other)' : '') + '</div>' +
-      (a.last ? '<div class="small">Last: <b>' + esc(a.last.name) + '</b> ' + esc(a.last.at) + ' – ' + esc(a.last.out) + (a.last.lat ? ' · <a href="https://www.google.com/maps/search/?api=1&query=' + a.last.lat + ',' + a.last.lng + '" target="_blank">map</a>' : '') + '</div>' : '') + (a.next ? '<div class="small">Next: ' + esc(a.next) + '</div>' : '') + '</div></div>';
-    if (a.items.length) h += '<div style="margin-top:8px">' + a.items.map(function (x, i) { return '<div class="small" style="padding:3px 0;border-top:1px solid var(--line)">' + (x.done ? '<span class="t-green">✓ ' + esc(x.done) + '</span> ' : x.skip ? '<span class="t-amber">skipped</span> ' : (i + 1) + '. ') + '<b>' + esc(x.name) + '</b>' + (x.k === 's' ? ' (new school)' : '') + ' <span class="muted">– ' + esc(x.skip || x.why || '') + '</span></div>'; }).join('') + '</div>';
-    h += '<div class="btns" style="margin-top:8px"><button class="ic" data-act="mgrAdd" data-u="' + a.uid + '">' + ico(ICO.plus) + 'Add a visit</button>' + (a.status === 'Agreed' ? '<button class="main" data-act="planOk" data-u="' + a.uid + '">Approve plan</button>' : '') + '</div></div>';
+    var stp = a.status === 'Approved' ? ['Approved', 'green'] : a.status === 'Agreed' ? ['Waiting for you', 'amber'] : a.status === 'Suggested' ? ['Not agreed yet', ''] : a.status ? [a.status, ''] : ['No plan yet', ''];
+    var items = a.items.filter(function (x) { return !x.rm; }), G = planGroups(items), goal = a.goal != null ? a.goal : items.filter(function (x) { return x.k === 's' && !x.skip; }).length, cv = a.cover || { all: 0, done: 0 };
+    h += '<div class="card" style="padding:12px 14px"><div class="row" style="flex-wrap:nowrap">' + avatar(a.name) + '<div class="grow"><b>' + esc(a.name) + '</b> <span class="tag ' + stp[1] + '">' + esc(stp[0]) + '</span><div class="small muted">' +
+      (a.start ? 'Started ' + esc(a.start.at) + (a.start.lat ? ' · <a href="#" data-act="where" data-lat="' + a.start.lat + '" data-lng="' + a.start.lng + '" data-n="' + esc(a.name + ' – Start my day ' + a.start.at) + '">where</a>' : ' · no location') : '<span class="t-amber">Day not started</span>') + '</div>' +
+      (a.last ? '<div class="small">Last: <b>' + esc(a.last.name) + '</b> ' + esc(a.last.at) + ' – ' + esc(a.last.out) + (a.last.lat ? ' · <a href="#" data-act="where" data-lat="' + a.last.lat + '" data-lng="' + a.last.lng + '" data-n="' + esc(a.name + ' – ' + (a.last.placeAt || a.last.at)) + '">where</a>' : '') + '</div>' : '') + (a.next ? '<div class="small">Next: ' + esc(a.next) + '</div>' : '') + '</div></div>' +
+      '<div class="tiles" style="margin:10px 0 4px"><div class="tile"><b>' + a.done + '/' + a.planned + '</b><span>visits' + (a.visits > a.done ? ' (+' + (a.visits - a.done) + ')' : '') + '</span></div><div class="tile"><b>' + (a.pros || 0) + '/' + goal + '</b><span>new schools</span></div><div class="tile"><b>' + cv.done + '/' + cv.all + '</b><span>month visited · ' + (a.calls || 0) + ' calls</span></div></div>' +
+      (a.anote ? '<div class="msg info small" style="margin:6px 0"><b>Her note:</b> ' + esc(a.anote) + '</div>' : '') + (a.note ? '<div class="small muted">Your note: ' + esc(a.note) + '</div>' : '');
+    G.forEach(function (g) {
+      h += '<div style="margin-top:8px">' + (g.items.length === 1 && g.items[0].x.name === g.name ? '' : '<div class="small" style="font-weight:700">' + esc(g.name) + '</div>') + g.items.map(function (y) { var x = y.x;
+        return '<div class="row small" style="flex-wrap:nowrap;padding:4px 0;border-top:1px solid var(--line)"><div class="grow" style="min-width:0">' + (x.done ? '<span class="t-green">✓ ' + esc(x.done) + '</span> ' : x.skip ? '<span class="t-amber">skipped</span> ' : '') + '<b>' + esc(x.name) + '</b>' + (x.by === 'Manager' ? ' <span class="tag">you</span>' : '') + '<div>' + tagPills((x.tags || []).filter(function (t) { return t !== 'cover'; })) + (x.skip ? ' <span class="muted">' + esc(x.skip) + '</span>' : '') + '</div></div>' +
+          (x.done ? '' : '<button class="ib gh sm" data-act="mgrRm" data-u="' + a.uid + '" data-k="' + x.k + '" data-i="' + esc(x.id) + '" data-n="' + esc(x.name) + '" aria-label="Take out" title="Take out">' + ico(ICO.x) + '</button>') + '</div>'; }).join('') + '</div>';
+    });
+    h += '<div class="btns" style="margin-top:8px"><button class="ic" data-act="mgrAdd" data-u="' + a.uid + '">' + ico(ICO.plus) + 'Add a stop</button>' + (a.status === 'Agreed' ? '<button class="main" data-act="planOk" data-u="' + a.uid + '">Approve plan</button>' : '') + '</div></div>';
   });
-  return h + '<p class="small muted">Live places: Google Maps → your picture → Location sharing. The app saves the place at "Start my day" and at each "Arrived".</p>';
+  return h + '<p class="small muted">"where" shows the place saved at Start my day and at each Arrived – not a live position. For live places: Google Maps → your picture → Location sharing.</p>';
 }
-ACT.mgrAdd = function (b) { PICK = { q: '', uid: b.dataset.u }; sheetOpen('pick'); };
+ACT.mgrAdd = function (b) { PICK = { q: '', uid: b.dataset.u, f: '' }; sheetOpen('pick'); };
+ACT.mgrRm = function (b) { var u = b.dataset.u, n = b.dataset.n; ask('Take ' + n + ' out of ' + agName(u) + '\'s plan today?\nShe is told by email and sees it in her app.', function () { bgSave('planok', { uid: u, remove: [{ k: b.dataset.k, id: b.dataset.i }] }, 'pr-' + uid(), 'taken out for ' + agName(u) + ': ' + n, null, true); }, 'TAKE OUT'); };
 ACT.planOk = function (b) {
   var u = b.dataset.u, a = (D.teamDay.agents || []).filter(function (x) { return x.uid === u; })[0]; if (!a) return;
   askIn('Approve ' + a.name + '\'s plan (' + a.planned + ' visits)?\nA note for her (optional):', '', '', function (n) { bgSave('planok', { uid: u, approve: 1, note: String(n || '').trim() }, 'pa-' + u + '-' + D.today + '-' + uid(), a.name + '\'s plan approved', null, true); }, 'APPROVE');
@@ -1810,16 +2091,16 @@ ACT.startday = function () {
 };
 function monthRow() {
   var M = D.myMonth; if (D.me.role !== 'Agent' || !M) return '';
-  return todoRow('mymonth', 'today', 'blue', 'My month: ' + M.ctn + ' of ' + M.target + ' cartons · ' + M.regsBought + ' of ' + M.vt + ' registered', 'On track for about ' + ghs(M.proj.incentive) + ' incentive' + (D.myDay && D.myDay.start ? ' · day started ' + (D.myDay.start === 'now' ? 'just now' : D.myDay.start) : ''), 0);
+  return todoRow('mymonth', 'today', 'blue', 'My month: ' + M.ctn + ' of ' + M.target + ' cartons · ' + M.regsBought + ' of ' + M.vt + ' new vendors', 'On track for about ' + ghs(M.proj.incentive) + ' incentive' + (D.myDay && D.myDay.start ? ' · day started ' + (D.myDay.start === 'now' ? 'just now' : D.myDay.start) : ''), 0);
 }
 SHEETS.mymonth = function () {
   var M = D.myMonth; if (!M) return ''; var p = M.proj, nd = p.need || {}, r = function (a, b) { return '<tr><td class="k">' + a + '</td><td>' + b + '</td></tr>'; }, bar = function (x, y, n80) { var w = Math.max(0, Math.min(100, y ? x / y * 100 : 0)); return '<div class="pbar"><i style="width:' + w + '%"></i>' + (n80 ? '<em style="left:80%"></em>' : '') + '</div>'; };
   var gate = function (now, n, what) { return n && now < n ? '<div class="small t-amber">Reach ' + n + ' ' + what + ' (80%) to earn this part – below that it pays nothing.</div>' : n ? '<div class="small t-green">Past 80% – this part pays.</div>' : ''; };
   var h = shHead('today', 'blue', 'My month – ' + esc(M.month), M.daysLeft + ' working day' + (M.daysLeft === 1 ? '' : 's') + ' left of ' + M.daysAll + ' (Monday–Friday)');
   h += '<div class="card" style="padding:12px 14px"><b>Cartons</b> <span class="right">' + M.ctn + ' of ' + M.target + '</span>' + bar(M.ctn, M.target, 1) + '<div class="small muted">' + (M.ctn >= M.target ? 'Target reached – well done!' : 'About ' + Math.ceil((M.target - M.ctn) / Math.max(1, M.daysLeft)) + ' a day to reach it · at this pace ' + p.projCtn) + '</div>' + gate(p.projCtn, nd.ctn, 'cartons') + '</div>';
-  h += '<div class="card" style="padding:12px 14px"><b>Registered vendors</b> <span class="right">' + M.regsBought + ' of ' + M.vt + '</span>' + bar(M.regsBought, M.vt, 1) + '<div class="small muted">A vendor counts as registered when her first carton is delivered.' + ((M.regsNames || []).length ? ' Registered: ' + M.regsNames.map(esc).join(', ') + '.' : '') + '</div>' + (M.regsWaiting.length ? '<div class="small" style="margin-top:4px"><b>Signed up – waiting for a first carton (' + M.regsWaiting.length + '):</b> ' + M.regsWaiting.map(esc).join(', ') + '</div>' : '') + gate(p.projRegs, nd.regs, 'registered vendors') + '</div>';
-  h += '<div class="card" style="padding:12px 14px"><b>Active vendors</b> <span class="right">' + p.activePct + '% of ' + M.at + '%</span>' + bar(p.activePct, M.at, 1) + '<div class="small muted">' + M.bought + ' of the ' + M.vendors + ' vendors in your list have bought this month' + (M.notBought.length ? ' · not yet: ' + M.notBought.slice(0, 12).map(esc).join(', ') + (M.notBought.length > 12 ? ' and ' + (M.notBought.length - 12) + ' more' : '') : '') + '</div>' + gate(p.activePct, nd.act, '% active') + '</div>';
-  h += '<div class="card" style="padding:12px 14px"><b>Incentive at this pace</b> <span class="right"><b>' + ghs(p.incentive) + '</b></span><table class="dt" style="margin-top:6px">' + r('Cartons (35%)', ghs(p.vol)) + r('Registered vendors (35%)', ghs(p.reg)) + r('Active (30%)', ghs(p.act)) + '</table><div class="small muted">Each part pays only when you reach at least 80% of its target. A projection from your figures so far – the manager confirms the final amount.</div></div>';
+  h += '<div class="card" style="padding:12px 14px"><b>New vendors (bought)</b> <span class="right">' + M.regsBought + ' of ' + M.vt + '</span>' + bar(M.regsBought, M.vt, 1) + '<div class="small muted">A new vendor counts when her first carton is delivered – signing up alone does not count.' + ((M.regsNames || []).length ? ' Counted: ' + M.regsNames.map(esc).join(', ') + '.' : '') + '</div>' + (M.regsWaiting.length ? '<div class="small" style="margin-top:4px"><b>Signed up – waiting for a first carton (' + M.regsWaiting.length + '):</b> ' + M.regsWaiting.map(esc).join(', ') + '</div>' : '') + gate(p.projRegs, nd.regs, 'new vendors') + '</div>';
+  h += '<div class="card" style="padding:12px 14px"><b>Active vendors</b> <span class="right">' + p.activePct + '% of ' + M.at + '%</span>' + bar(p.activePct, M.at, 1) + '<div class="small muted">' + M.bought + ' of all ' + M.vendors + ' vendors in your list (signed-up ones too) have bought this month' + (M.notBought.length ? ' · not yet: ' + M.notBought.slice(0, 12).map(esc).join(', ') + (M.notBought.length > 12 ? ' and ' + (M.notBought.length - 12) + ' more' : '') : '') + '</div>' + gate(p.activePct, nd.act, '% active') + '</div>';
+  h += '<div class="card" style="padding:12px 14px"><b>Incentive at this pace</b> <span class="right"><b>' + ghs(p.incentive) + '</b></span><table class="dt" style="margin-top:6px">' + r('Cartons (35%)', ghs(p.vol)) + r('New vendors (35%)', ghs(p.reg)) + r('Active (30%)', ghs(p.act)) + '</table><div class="small muted">Each part pays only when you reach at least 80% of its target. A projection from your figures so far – the manager confirms the final amount.</div></div>';
   return h;
 };
 function teamRow() {
@@ -1831,9 +2112,9 @@ SHEETS.team = function () {
   var h = shHead('user', 'blue', 'Team – ' + esc(T.month.slice(8) + ' ' + T.month.slice(0, 4)), T.gone + ' of ' + T.days + ' working days gone · only you see this');
   T.agents.forEach(function (a) {
     var c = a.conv, st = a.today;
-    h += '<div class="card" style="padding:12px 14px"><div class="row" style="flex-wrap:nowrap">' + avatar(a.name) + '<div class="grow"><b>' + esc(a.name) + '</b><div class="small muted">Today: ' + (st ? 'started ' + esc(st.hm) + (st.note ? ' <span class="t-amber">(' + esc(st.note) + ')</span>' : '') + (st.lat ? ' · <a href="https://www.google.com/maps/search/?api=1&query=' + st.lat + ',' + st.lng + '" target="_blank">where</a>' : ' · no location') : '<span class="t-amber">not started</span>') + '</div></div></div><table class="dt" style="margin-top:6px">' +
+    h += '<div class="card" style="padding:12px 14px"><div class="row" style="flex-wrap:nowrap">' + avatar(a.name) + '<div class="grow"><b>' + esc(a.name) + '</b><div class="small muted">Today: ' + (st ? 'started ' + esc(st.hm) + (st.note ? ' <span class="t-amber">(' + esc(st.note) + ')</span>' : '') + (st.lat ? ' · <a href="#" data-act="where" data-lat="' + st.lat + '" data-lng="' + st.lng + '" data-n="' + esc(a.name + ' started ' + st.hm) + '">where</a>' : ' · no location') : '<span class="t-amber">not started</span>') + '</div></div></div><table class="dt" style="margin-top:6px">' +
       r('Cartons', '<b>' + a.ctn + '</b> of ' + a.t.real + (a.t.shown !== a.t.real ? ' <span class="muted">(she sees ' + a.t.shown + ')</span>' : '') + ' · pace ' + a.proj.projCtn) +
-      r('Registered (bought)', '<b>' + a.regsBought + '</b> of ' + a.t.vendors + (a.t.vshown !== a.t.vendors ? ' <span class="muted">(she sees ' + a.t.vshown + ')</span>' : '') + ' · <span class="muted">' + a.regs + ' signed up this month, ' + (a.regsWaiting || []).length + ' waiting for a first carton</span>') +
+      r('New vendors (bought)', '<b>' + a.regsBought + '</b> of ' + a.t.vendors + (a.t.vshown !== a.t.vendors ? ' <span class="muted">(she sees ' + a.t.vshown + ')</span>' : '') + ' · <span class="muted">' + a.regs + ' signed up this month, ' + (a.regsWaiting || []).length + ' waiting for a first carton</span>') +
       r('Active', '<b>' + a.activePct + '%</b> of ' + a.t.active + '% <span class="muted">(' + a.bought + ' of ' + a.vendors + ')</span>') +
       r('Incentive (50/50)', '<b>' + ghs(a.real.now) + '</b> so far · ' + ghs(a.real.pace) + ' at this pace <span class="muted">(she sees ' + ghs(a.proj.incentive) + ')</span>' + (a.real.need ? '<div class="small muted">Each half pays from 80%: ' + a.real.need.ctn + ' cartons, ' + a.real.need.regs + ' registered.</div>' : '')) +
       r('Conveyance', '<b>' + ghs(c.due) + '</b> of ' + ghs(c.amount) + (c.penalty ? ' · lateness <b class="t-red">−' + ghs(c.penalty) + '</b>' : '') + (c.missing ? ' · <span class="t-amber">' + c.missing + ' day' + (c.missing === 1 ? '' : 's') + ' without a start</span>' : '')) + '</table>' +
