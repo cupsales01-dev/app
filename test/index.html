@@ -169,11 +169,18 @@ details summary{cursor:pointer;color:var(--mute)}
 .stk{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line)}.stk input{width:72px;text-align:center;padding:8px 4px}.seg.mini{flex:0 0 auto;padding:2px}.seg.mini button{flex:0 0 auto;font-size:12.5px;padding:6px 8px}
 .tl{border-left:2px solid var(--line);margin:6px 0 4px 8px;padding-left:12px}.tl .ev{position:relative;padding:6px 0 10px}.tl .ev:before{content:'';position:absolute;left:-18px;top:11px;width:10px;height:10px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 3px #fff}.tl .ev.c:before{background:var(--info)}
 .cashsum{background:linear-gradient(135deg,#F0FAF3 0%,#fff 70%)}
+svg.si{width:14px;height:14px;vertical-align:-2px;margin-right:4px}.t-purple{color:var(--pur)}.lead.t-purple{background:var(--pur2);color:var(--pur)}
+.who.psw{cursor:pointer;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:3px 4px 3px 10px}
+.backrow{margin:0 0 8px}.backrow button{padding:6px 12px;font-size:13.5px}
+.cmpt td{padding:5px 0;border-top:1px solid var(--line)}.cmpt td.r{text-align:right;white-space:nowrap}
+.hrow .end b{color:var(--pur)}
+:root{--pur:#7B3FC4;--pur2:#F1E9FB}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
 var API = "https://script.google.com/macros/s/AKfycbwfwQvxXKKKzOyVWyX7TLW8yRklo1nk8A-jSCmIHRlASAVWnLSRqYuqElmbGu_HCbBTTA/exec", TEST = "1", RK = (function () { var m = location.search.match(/[?&]r=([A-Za-z0-9]{16,24})/); return m ? m[1] : ""; })(), TOKEN = RK ? "" : (function () { var m = location.search.match(/[?&]t=([A-Za-z0-9]{20,40})/), t = m ? m[1] : ''; var k = 'cs_token_' + location.pathname; try { if (t) localStorage.setItem(k, t); else t = localStorage.getItem(k) || ''; } catch (e) { } return t; })();
 var STALE = false; // v2.4.9: showing the screen kept on this phone while the newest one loads
+var VIEW = '', LIVET = 0; // v2.5.17: whose screen the manager is looking at ('' = his own)
 var SESSION = '', QKEY = 'cs_q_' + TOKEN, CKEY = 'cs_d_' + TOKEN, OFFLINE = false, SKEY = 'cs_s_' + TOKEN, DKEY = 'cs_draft_' + TOKEN, D = null, SCREEN = '', TAB = '', MSG = null, BUSY = false, OPEN = {}, REL = {}, STOP = {};
 function ls(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { return null; } }
 function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
@@ -204,7 +211,8 @@ var INITN = 0; // v2.5.8: screens being fetched right now
 function syncShow() { var el = $('sync'); if (!el) { if (!document.body) return; el = document.createElement('div'); el.id = 'sync'; document.body.appendChild(el); } var on = D && !OFFLINE && !RK && (STALE || INITN > 0); var at = STALE ? ls(CKEY + '_at') || '' : ''; el.innerHTML = on ? '<div class="sync"><i class="spin"></i>Getting the newest…' + (at ? ' <span>(showing ' + esc(at) + ')</span>' : '') + '</div>' : ''; }
 function rpc(req, ok, fail) {
   if (req) req.pt = Date.now(); // v2.5.8: the system corrects times from a phone whose clock is wrong
-  if (req && req.op === 'init') { INITN++; setTimeout(syncShow, 0); var o0 = ok, f0 = fail; ok = function (x) { INITN = Math.max(0, INITN - 1); try { o0(x); } finally { syncShow(); } }; fail = function (e) { INITN = Math.max(0, INITN - 1); try { f0(e); } finally { syncShow(); } }; }
+  if (req && VIEW && req.op !== 'ping' && req.op !== 'login') req.v = VIEW; // v2.5.17: whose screen
+  if (req && req.op === 'init') { INITN++; setTimeout(syncShow, 0); var o0 = ok, f0 = fail; ok = function (x) { INITN = Math.max(0, INITN - 1); try { if (x && x.screens && String(x.view || '') !== VIEW) { if (VIEW && x.views && !x.views.some(function (y) { return (y.v || '') === VIEW; })) { VIEW = ''; CKEY = 'cs_d_' + TOKEN; DKEY = 'cs_draft_' + TOKEN; } else { if (req.poll) POLLING = false; return; } } o0(x); } finally { syncShow(); } }; /* v2.5.17: a screen of someone he left is not shown */ fail = function (e) { INITN = Math.max(0, INITN - 1); try { f0(e); } finally { syncShow(); } }; }
   if (window.google && google.script && google.script.run) { google.script.run.withSuccessHandler(ok).withFailureHandler(function (e) { if (!navigator.onLine) e = { message: 'no signal', offline: true }; fail(e); }).appCall(req); return; }
   if (!API) { fail({ message: 'Open this page from your CupSales link.' }); return; }
   var done = false, timer = setTimeout(function () { end(null, { message: 'no answer after 90 seconds', offline: true }); }, 90000);
@@ -228,6 +236,7 @@ function enqueue(op, data, sid, label) { var q = queue(); if (!q.some(function (
 var RECENT = []; // saves sent in the last minutes (a second identical tap is questioned)
 function dupKey(op, data) { var c = {}; Object.keys(data || {}).forEach(function (k) { if (k !== 'sure' && k !== 'note' && k !== 'logbook' && k !== 'rk') c[k] = data[k]; }); return op + '|' + JSON.stringify(c); }
 function bgSave(op, data, sid, label, b, noDupAsk) {
+  if (viewBlock(op)) return; // v2.5.17: an agent's screen is view only until Act for her
   data = actTag(op, data || {}); // v2.5.2
   var q = queue(); if (q.some(function (x) { return x.sid === sid; })) { toast('Already saved on this phone – ' + label + ' is being sent.'); return; }
   var k = dupKey(op, data);
@@ -296,6 +305,7 @@ document.addEventListener('visibilitychange', function () {
 window.addEventListener('online', function () { flush(); });
 setInterval(function () { if (queue().length) flush(); }, 60000);
 function call(op, data, sid, ok, fail) {
+  if (op !== 'init' && op !== 'login' && viewBlock(op)) return; // v2.5.17
   var slow = setTimeout(function () { if (op === 'init' && !D) $('main').innerHTML = '<div class="pin"><p class="muted">Still opening… the first time after an update can take up to a minute. Please wait.</p></div>'; }, 12000);
   rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: op, data: data || {}, sid: sid || '', wi: op !== 'init' && op !== 'helper' ? 1 : 0 }, function (r) {
     clearTimeout(slow);
@@ -303,7 +313,7 @@ function call(op, data, sid, ok, fail) {
       if (!r) { var m0 = 'The system sent back nothing. Close and open the link again. If it happens again, tell the manager.'; fail ? fail(m0) : show(m0, 'err'); return; }
       if (r.auth) { authScreen(r); return; }
       if (op !== 'init') bgRefresh(); // emails, forms and views are updated in the background
-      if (r.init) { NEXTD = r.init; NEXTD.__at = Date.now(); } // v2.4.4: the answer to a save already has the new screen
+      if (r.init && String(r.init.view || '') === VIEW) { NEXTD = r.init; NEXTD.__at = Date.now(); } // v2.4.4: the answer to a save already has the new screen
       if (r.error) { fail ? fail(r.error) : show(r.error, 'err'); return; }
       ok && ok(r);
     } catch (x) { var m1 = 'The page had a problem showing this (' + (x && x.message || x) + '). Close and open the link again; tell the manager if it repeats.'; if (fail) fail(m1); else $('main').innerHTML = '<div class="msg err">' + esc(m1) + '</div>'; }
@@ -348,9 +358,9 @@ function load(after) {
     if (NEXTD && !queue().length && Date.now() - (NEXTD.__at || 0) < 20000) { var r0 = NEXTD; NEXTD = null; D = r0; OFFLINE = false; ls(CKEY, JSON.stringify(r0)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })); if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB) TAB = firstTab(); render(); after && after(); return; }
     NEXTD = null;
     // v2.4.9: the screen kept on this phone shows at once ("Updating…"); the newest one replaces it when it arrives
-    if (!D) { var c0 = null; try { c0 = JSON.parse(ls(CKEY) || 'null'); } catch (x) { } if (c0 && c0.screens && c0.me) { D = c0; STALE = true; if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB || !TABS[SCREEN].some(function (t) { return t[0] === TAB; })) TAB = firstTab(); render(); } }
+    if (!D) { var c0 = null; try { c0 = JSON.parse(ls(CKEY) || 'null'); } catch (x) { } if (c0 && c0.screens && c0.me) { D = c0; STALE = true; if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB || !tabOk(TAB)) TAB = firstTab(); render(); } }
     var t0 = Date.now(); call('init', {}, '', function (r) {
-      r.__t0 = t0; var put = function () {
+      r.__t0 = t0; var put = function () { if (String(r.view || '') !== VIEW) return; // v2.5.17: he picked another screen meanwhile
         if (STALE && ($('dlg').innerHTML || $('over').innerHTML || (document.activeElement && /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)))) { setTimeout(put, 1200); return; }
         var was = STALE; STALE = false; D = r; OFFLINE = false; if (r.rev) REV = String(r.rev); ls(CKEY, JSON.stringify(r)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })); if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (!TAB) TAB = firstTab(); var y = window.scrollY; render(); if (was) window.scrollTo(0, y); after && after();
       }; put(); },
@@ -376,8 +386,9 @@ function authScreen(r) {
 }
 // ---------------------------------------------------------------- layout
 var TABS = { order: [['plan', 'My day'], ['new', 'New order'], ['today', 'Orders', 'today'], ['pays', 'Payments', 'cash'], ['vendors', 'My vendors']], release: [['release', 'Pending orders'], ['approved', 'Approved'], ['book', 'My book'], ['cash', 'Payments'], ['out', 'Out of stock']], route: [['route', 'Route'], ['done', 'Orders', 'today'], ['dpay', 'Payments', 'cash'], ['helpers', 'Helpers']] }; // v2.5.15: Orders and Payments are tabs of their own
+TABS.mgr = [['plan', 'Today'], ['appr', 'Approvals', 'approved'], ['helpi', 'Help items', 'gift'], ['money', 'Money', 'money'], ['vendors', 'Vendors']]; // v2.5.17: the manager's own work
 var SNAME = { order: 'Sales', release: 'Warehouse', route: 'Deliveries' };
-function firstTab() { return TABS[SCREEN][0][0]; }
+function firstTab() { return tabsOf()[0][0]; }
 var TABS0 = null;
 var LOGO = '<svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#FFC400"/><path d="M8.5 24h31a15.5 15.5 0 0 1-31 0z" fill="#fff"/><path d="M11.5 23.5c2-4.2 4 4.2 6 0s4 4.2 6 0 4 4.2 6 0 4 4.2 6 0" stroke="#D7141A" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M27 5.5l-5.5 15.5M33.5 7.5l-7.5 13.5" stroke="#7A3E00" stroke-width="2.6" stroke-linecap="round"/><rect x="16" y="37.5" width="16" height="3" rx="1.5" fill="#fff"/></svg>';
 function ico(p) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>'; }
@@ -414,6 +425,7 @@ var ICO = {
   right: '<path d="M9.5 5.5l6.5 6.5-6.5 6.5"/>', cake: '<path d="M4 20h16v-7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2z"/><path d="M4 15.5c1.5 1 3 1 4 0s2.5-1 4 0 2.5 1 4 0 2.5-1 4 0M12 11V7.5"/><path d="M12 3.5c.9 1 .9 2 0 3-.9-1-.9-2 0-3z"/>',
   info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.01"/>', user: '<circle cx="12" cy="8" r="4"/><path d="M4 20.5c1.2-4 4.3-6 8-6s6.8 2 8 6"/>',
   money: '<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/>', plus: '<path d="M12 5v14M5 12h14"/>',
+  gift: '<rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8.5h14V12M12 8v12.5M12 8c-1.6-3.6-5.6-4-5.6-1.4S10.2 8 12 8zM12 8c1.6-3.6 5.6-4 5.6-1.4S13.8 8 12 8z"/>',
   school: '<path d="M2 9.5l10-5 10 5-10 5z"/><path d="M6 11.5v5c3.5 2.2 8.5 2.2 12 0v-5M22 9.5v5"/>', truck: '<path d="M2 6h11v10H2zM13 9h4l3 3v4h-7z"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>'
 };
 /** v2.5.2: a status label with its symbol; round symbol buttons to call, WhatsApp and order. */
@@ -424,7 +436,7 @@ function waBtn(num, text, sm) { return num ? '<a class="ibl" href="https://wa.me
 function chev(o) { return ico(o ? ICO.up : ICO.down); }
 function emptyHtml(t) { return '<div class="empty"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#EEF0F3"/><path d="M12 33h40a20 20 0 0 1-40 0z" fill="#fff" stroke="#D5D9E0" stroke-width="2"/><path d="M16 32c2.5-5 5 5 7.5 0s5 5 7.5 0 5 5 7.5 0 5 5 7.5 0" stroke="#D7141A" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M36 8l-7 21M44 11l-10 18" stroke="#B9874C" stroke-width="3" stroke-linecap="round"/></svg><p>' + t + '</p></div>'; }
 function bar() {
-  return '<div class="bar"><div class="brand">' + LOGO + '<div><b>CupSales</b><i>' + (D ? esc(SNAME[SCREEN] || '') : 'Sales app') + '</i></div></div>' + (D ? '<span class="who"><span>' + esc(D.me.first) + ' · ' + esc(D.me.role) + '</span>' + avatar(D.me.first) + '</span>' : '') + '</div>' + (TEST || (D && D.test) ? '<div class="test">Test mode – practice only, nothing here is real</div>' : '');
+  return '<div class="bar"><div class="brand">' + LOGO + '<div><b>CupSales</b><i>' + (D ? esc(D.views && !VIEW ? 'Manager' : SNAME[SCREEN] || '') : 'Sales app') + '</i></div></div>' + (D ? whoHtml() : '') + '</div>' + (TEST || (D && D.test) ? '<div class="test">Test mode – practice only, nothing here is real</div>' : '');
 }
 function render() {
   if (!D) return;
@@ -433,7 +445,8 @@ function render() {
   $('foot').innerHTML = '';
   pendView();
   if (TAB === 'today') SUB.today = 'orders'; else if (TAB === 'pays') SUB.today = 'pay'; if (TAB === 'done') SUB.done = 'orders'; else if (TAB === 'dpay') SUB.done = 'pay'; // v2.5.15
-  var body = actBar() + remBar() + ({ plan: pgPlan, 'new': pgNew, vendors: pgVendors, today: pgToday, pays: pgToday, dpay: pgDone, release: pgRelease, approved: pgApproved, book: pgBook, cash: pgCash, out: pgOut, rtoday: pgRToday, route: pgRoute, done: pgDone, helpers: pgHelpers })[TAB]();
+  if (mgrMe() && TAB === 'pays') TAB = 'money'; // v2.5.17
+  var body = actBar() + remBar() + mgrBack() + ({ appr: pgAppr, helpi: pgHelpI, money: pgMoney, plan: pgPlan, 'new': pgNew, vendors: pgVendors, today: pgToday, pays: pgToday, dpay: pgDone, release: pgRelease, approved: pgApproved, book: pgBook, cash: pgCash, out: pgOut, rtoday: pgRToday, route: pgRoute, done: pgDone, helpers: pgHelpers })[TAB]();
   $('main').innerHTML = m + body; topbar(); syncShow(); // v2.5.3: the counts follow what is on the screen
   drawSheet(); decorate(); setTimeout(decorate, 0); // v2.5.2: also the footer buttons drawn just after
 }
@@ -441,7 +454,7 @@ function render() {
 var OVK = '';
 function overDraw(h, key) { var o = document.querySelector('#over .sheet'), st = o && OVK === key ? o.scrollTop : 0; $('over').innerHTML = h; OVK = key; var n = document.querySelector('#over .sheet'); if (n && st) n.scrollTop = st; }
 /** v2.5.9: a read that changes nothing (history, a place's name) – no save queue, no refresh. */
-function readOp(op, data, ok, fail) { rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: op, data: data || {} }, function (r) { if (!r) { if (fail) fail('No answer – try again.'); return; } if (r.auth) { if (fail) fail('Open the app again and sign in.'); return; } ok(r); }, function () { if (fail) fail('No connection – try again when you have signal.'); }); }
+function readOp(op, data, ok, fail) { data = data || {}; if (D && D.viewOf && (op === 'hist' || op === 'place')) data.actAs = D.viewOf.uid; rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: op, data: data }, function (r) { if (!r) { if (fail) fail('No answer – try again.'); return; } if (r.auth) { if (fail) fail('Open the app again and sign in.'); return; } ok(r); }, function () { if (fail) fail('No connection – try again when you have signal.'); }); }
 /** v2.5.3: details and decisions open in a sheet from the bottom; it is drawn again whenever the screen is. */
 var SHEETK = ''; // SHEETS: defined at the top of the page (first used there)
 function sheetOpen(k) { SHEETK = k; drawSheet(); }
@@ -459,15 +472,19 @@ function todoRow(k, icon, tone, title, sub, n) { return '<div class="li" data-ac
 function todoBox(rows) { rows = rows.filter(Boolean); return rows.length ? '<div class="todo">' + rows.join('') + '</div>' : ''; }
 /** v2.5.2: the manager sees Frank's and Prince's screens view-only; "Act for …" lets him save for them (marked as his). */
 var ACTF = {}, ACTBLOCK = ['relgo', 'decl', 'declgo', 'outsave', 'dgave', 'fpaid', 'frecv', 'stopopen', 'stopsave', 'hmake', 'pickgo', 'dispgo', 'sback'];
-function actWho() { return SCREEN === 'release' ? 'Frank' : SCREEN === 'route' ? 'Prince' : ''; }
-function actView() { return !!(D && D.me.role === 'Supervisor' && actWho() && !ACTF[SCREEN]); }
+function actWho() { return D && D.viewOf ? D.viewOf.first : SCREEN === 'release' ? 'Frank' : SCREEN === 'route' ? 'Prince' : ''; }
+function actView() { return !!(D && actWho() && (D.viewOf ? !ACTF.agent : D.me.role === 'Supervisor' && !ACTF[SCREEN])); }
 function actBar() {
+  if (D && D.viewOf) { var an = esc(D.viewOf.first); // v2.5.17: an agent's own screen
+    if (ACTF.agent) return '<div class="actbar on">' + ico(ICO.swap) + '<div class="grow"><b>Acting for ' + an + '</b><div class="small muted">Saved in her name as “' + esc(D.mgr ? D.mgr.first : 'Manager') + ' for ' + an + '”</div></div><button data-act="actf" data-s="0">Stop</button></div>';
+    return '<div class="actbar">' + ico(ICO.eye) + '<div class="grow"><b>' + an + '\'s screen</b> <span class="muted">· view only</span></div><button class="main" data-act="actf" data-s="1">Act for ' + an + '</button></div>'; }
   if (!D || D.me.role !== 'Supervisor' || !actWho()) return ''; var nm = actWho();
   if (ACTF[SCREEN]) return '<div class="actbar on">' + ico(ICO.swap) + '<div class="grow"><b>Acting for ' + nm + '</b><div class="small muted">Saved as “' + esc(D.me.first) + ' for ' + nm + '”</div></div><button data-act="actf" data-s="0">Stop</button></div>';
   return '<div class="actbar">' + ico(ICO.eye) + '<div class="grow"><b>' + nm + '\'s screen</b> <span class="muted">· view only</span></div><button class="main" data-act="actf" data-s="1">Act for ' + nm + '</button></div>';
 }
 /** The person the manager acts for, added to his saves made on that screen. */
 function actTag(op, data) {
+  if (D && D.viewOf) { if (ACTF.agent) data.actAs = D.viewOf.uid; return data; } // v2.5.17
   if (!D || D.me.role !== 'Supervisor') return data; var f = { release: 'USR-FRANK', outstock: 'USR-FRANK', decline: 'USR-FRANK', receive: 'USR-FRANK', stockback: 'USR-FRANK', stop: 'USR-PRINCE', helper: 'USR-PRINCE', dispatch: SCREEN === 'release' ? 'USR-FRANK' : 'USR-PRINCE' }[op];
   if (f && ACTF[f === 'USR-FRANK' ? 'release' : 'route']) data.actFor = f; return data;
 }
@@ -476,7 +493,7 @@ function topbar() {
   var t = bar(), B = badges();
   if (D.screens.length > 1) { t += '<div class="scrs">'; D.screens.forEach(function (s) { var n = scrCount(B, s); t += '<button class="' + (s === SCREEN ? 'on' : '') + '" data-scr="' + s + '">' + (ICO['s_' + s] ? ico(ICO['s_' + s]) : '') + SNAME[s] + (n ? '<span class="cnt' + (s === 'order' || ACTF[s] ? '' : ' g') + '">' + n + '</span>' : '') + '</button>'; }); t += '</div>'; }
   t += '<nav class="bnav">'; // v2.5.0: the screens of this role at the bottom, like a phone app; v2.5.3: with what waits on each
-  TABS[SCREEN].forEach(function (x) { if ((x[0] === 'helpers' || x[0] === 'dpay') && D.me.role === 'Helper') return; var n = (B[SCREEN] || {})[x[0]] || 0, ic = ICO[x[2] || x[0]], lb = x[0] === 'plan' && D.me.role !== 'Agent' ? 'Today' : x[0] === 'done' && D.me.role === 'Helper' ? 'My stops' : x[1]; t += '<button class="' + (x[0] === TAB ? 'on' : '') + '" data-tab="' + x[0] + '">' + (ic ? ico(ic) : '') + '<span>' + lb + '</span>' + (n ? '<span class="cnt' + (actView() ? ' g' : '') + (x[0] === 'new' ? ' dotc' : '') + '">' + (x[0] === 'new' ? '' : n > 99 ? '99+' : n) + '</span>' : '') + '</button>'; });
+  tabsOf().forEach(function (x) { if ((x[0] === 'helpers' || x[0] === 'dpay') && D.me.role === 'Helper') return; var n = (B[SCREEN] || {})[x[0]] || 0, ic = ICO[x[2] || x[0]], lb = x[0] === 'plan' && D.me.role !== 'Agent' ? 'Today' : x[0] === 'done' && D.me.role === 'Helper' ? 'My stops' : x[1]; t += '<button class="' + (x[0] === TAB ? 'on' : '') + '" data-tab="' + x[0] + '">' + (ic ? ico(ic) : '') + '<span>' + lb + '</span>' + (n ? '<span class="cnt' + (actView() ? ' g' : '') + (x[0] === 'new' ? ' dotc' : '') + '">' + (x[0] === 'new' ? '' : n > 99 ? '99+' : n) + '</span>' : '') + '</button>'; });
   $('top').innerHTML = t + '</nav>'; try { var bn = document.querySelector('.bnav'); if (bn) document.documentElement.style.setProperty('--bnh', bn.offsetHeight + 'px'); } catch (e) { }
 }
 /** v2.5.3: what waits for this person on each screen and tab – the red counts. */
@@ -487,6 +504,7 @@ function badges() {
     B.order['new'] = d0 && d0.vendors && d0.vendors.some(function (x) { return x.vid; }) ? 1 : 0; // an order started, not sent yet
     B.order.today = ordCount(); B.order.pays = payCount(); // v2.5.15
     B.order.plan = r === 'Agent' ? planLeft() : sup && D.teamDay ? D.teamDay.agents.filter(function (a) { return a.status === 'Agreed'; }).length : 0; // v2.5.8
+    if (sup) B.order = { 'new': B.order['new'], appr: apprCount(), helpi: needOpen() }; // v2.5.17: the manager's own tabs
   }
   if (has('release')) { B.release.release = (D.waiting || []).length; B.release.approved = (D.comingBack || []).length + (D.dispatched || []).filter(function (x) { return x.status === 'Approved'; }).length; if (r === 'Warehouse') B.release.cash = (D.toConfirm || []).length; }
   if (has('route')) { B.route.route = (D.stops || []).length; if (!sup) B.route.dpay = (D.toConfirm || []).length + rcptToSend(); }
@@ -509,14 +527,15 @@ function poll() {
     if (D.screens.indexOf(SCREEN) < 0) { SCREEN = D.screens[0]; TAB = firstTab(); }
     var y = window.scrollY; render(); window.scrollTo(0, y);
     var after = badgeFlat(), news = Object.keys(after).filter(function (k) { return after[k] > (before[k] || 0); });
-    if (news.length) toast('New: ' + news.map(function (k) { var p = k.split('.'), tb = (TABS[p[0]] || []).filter(function (x) { return x[0] === p[1]; })[0]; return (after[k] - (before[k] || 0)) + ' on ' + (D.screens.length > 1 ? SNAME[p[0]] + ' › ' : '') + (tb ? tb[1] : p[1]); }).join(', '));
+    if (news.length) toast('New: ' + news.map(function (k) { var p = k.split('.'), tb = ((p[0] === 'order' && D.me.role === 'Supervisor' ? TABS.mgr : TABS[p[0]]) || []).filter(function (x) { return x[0] === p[1]; })[0]; return (after[k] - (before[k] || 0)) + ' on ' + (D.screens.length > 1 ? SNAME[p[0]] + ' › ' : '') + (tb ? tb[1] : p[1]); }).join(', '));
   }, function () { });
 }
 /** v2.5.4: every half minute the phone asks "has anything changed?" (nothing is read for that); only then is the newest screen fetched. */
 var REV = null, SEENREV = '', LASTREV = '', PINGT = 0;
 function ping() {
   if (!D || RK || document.visibilityState === 'hidden') return; PINGT = Date.now();
-  rpc({ op: 'ping', t: TOKEN, since: REV || '' }, function (r) { if (!r || r.rev == null) return; SEENREV = String(r.rev); if (REV === null) { if (STALE || !D.rev) return; REV = String(D.rev); }
+  var lv = D.me.role === 'Agent' && !D.viewOf && Date.now() - LIVET > 55000; if (lv) LIVET = Date.now(); // v2.5.17: "she is using the app"
+  rpc({ op: 'ping', t: TOKEN, since: REV || '', live: lv ? 1 : 0 }, function (r) { if (!r || r.rev == null) return; SEENREV = String(r.rev); if (!D) return; if (REV === null) { if (STALE || !D.rev) return; REV = String(D.rev); }
     if (r.ev && r.ev.length && D && !STALE) { var top = EVSEEN > REV ? EVSEEN : REV, nw = r.ev.filter(function (e) { return String(e.r) > top && e.by !== D.me.uid; }); if (r.ev.length) EVSEEN = String(r.ev[r.ev.length - 1].r); if (nw.length) evApply(nw); } // v2.5.9: the change shows at once
     if (SEENREV !== REV) poll(); }, function () { });
 }
@@ -533,7 +552,7 @@ document.addEventListener('visibilitychange', onBack); window.addEventListener('
 function pendView() {
   if (!D) return;
   queue().concat(CONF.filter(function (c) { return (!D.__t0 || c.at > D.__t0) && Date.now() - c.at < 900000; })).forEach(function (x) { // v2.5.7: and the saves confirmed after this screen was fetched
-    var d = x.data || {};
+    var d = x.data || {}; if (!x.ev && String(d.actAs || '') !== (D.viewOf ? D.viewOf.uid : '')) return; // v2.5.17: saves of another screen
     if (D.waiting && D.srvNow) D.waiting.forEach(function (o) { if (o.t0) o.mins = Math.max(0, Math.round((D.srvNow - o.t0 + Date.now() - (D.__t0 || Date.now())) / 60000)); }); // v2.5.8
     if (x.op === 'release' && D.waiting) { var ids = (d.items || []).map(function (i) { return i.oid; }); D.waiting = D.waiting.filter(function (o) { return ids.indexOf(o.oid) < 0; }); }
     if (x.op === 'release' && D.myOrders) { var ri = (d.items || []).map(function (i) { return i.oid; }); D.myOrders.forEach(function (o) { if (ri.indexOf(o.oid) >= 0 && /^(Submitted|Sending)$/.test(o.status)) o.status = 'Released'; }); } // v2.5.9
@@ -594,7 +613,7 @@ document.addEventListener('input', function (e) { var f = INP[e.target.dataset.i
 document.addEventListener('change', function (e) { var f = CHG[e.target.dataset.chg]; if (f) f(e.target); });
 var ACT = {}, INP = {}, CHG = {};
 ACT.dlgCh = function (b) { var c = DLGCH[+b.dataset.i]; DLGCH = []; dlgClose(); if (c && c[1]) c[1](); }; // v2.4.9
-ACT.actf = function (b) { var nm = actWho(); if (b.dataset.s === '1') ask('Act for ' + nm + '?\nWhat you save here is recorded as done by you for ' + nm + ', and ' + nm + ' gets an email. ' + (nm === 'Frank' ? 'Frank\'s own count of the cash stays the control.' : ''), function () { ACTF[SCREEN] = true; render(); }, 'ACT FOR ' + nm.toUpperCase()); else { ACTF[SCREEN] = false; render(); } };
+ACT.actf = function (b) { if (D && D.viewOf) { actAgent(b.dataset.s === '1'); return; } var nm = actWho(); if (b.dataset.s === '1') ask('Act for ' + nm + '?\nWhat you save here is recorded as done by you for ' + nm + ', and ' + nm + ' gets an email. ' + (nm === 'Frank' ? 'Frank\'s own count of the cash stays the control.' : ''), function () { ACTF[SCREEN] = true; render(); }, 'ACT FOR ' + nm.toUpperCase()); else { ACTF[SCREEN] = false; render(); } };
 // ---------------------------------------------------------------- agent: new order (draft is kept on the phone until sent)
 function draft() { var d = null; try { d = JSON.parse(ls(DKEY) || 'null'); } catch (e) { } if (!d || !d.vendors) { d = { sid: uid(), vendors: [newV()] }; saveDraft(d); } return d; }
 function saveDraft(d) { ls(DKEY, JSON.stringify(d)); }
@@ -1243,18 +1262,19 @@ ACT.confirmC = function (b) {
 /** v2.4.6: the manager's Clement / Bernice card. */
 function suppliersHtml() {
   if (!D.suppliers || !D.suppliers.length || D.me.role !== 'Supervisor') return '';
-  return '<div class="card"><h3>Suppliers</h3>' + D.suppliers.map(function (x) {
-    var fld = x.field.reduce(function (t, w) { return t + w.amt; }, 0);
-    return '<div style="margin:10px 0;padding-bottom:10px;border-bottom:1px solid var(--line)"><div class="row"><div class="grow"><b style="font-size:17px">' + esc(x.name) + '</b></div><div class="right">' + (x.src === 'SRC-MARKET' ? '<span class="small muted">bought by the company</span>' : 'CupSales owes <b style="color:var(--red)">' + ghs(x.owed) + '</b>') + '</div></div>' +
-      '<table class="small"><tr><td>Vendors still owe for ' + esc(x.name) + ' goods</td><td class="right"><b>' + ghs(x.vendorsOwe) + '</b></td></tr>' +
-      '<tr><td>Paid by vendors, with ' + (x.field.length ? x.field.map(function (w) { return esc(w.name) + ' ' + ghs(w.amt); }).join(', ') : 'agents / Prince') + '</td><td class="right"><b>' + ghs(fld) + '</b></td></tr>' +
-      '<tr><td>Waiting at the HR office logbook</td><td class="right"><b>' + ghs(x.hr) + '</b></td></tr>' +
-      (x.frank > 0.004 ? '<tr><td style="color:var(--red)">With Frank (should go to the HR logbook)</td><td class="right"><b>' + ghs(x.frank) + '</b></td></tr>' : '') +
-      '<tr><td><b>' + (x.src === 'SRC-MARKET' ? 'With you – company money' : 'With you – ready to pay ' + esc(x.name)) + '</b></td><td class="right"><b>' + ghs(x.me) + '</b></td></tr>' +
-      (x.last.length ? '<tr><td class="muted" colspan="2">Last paid: ' + x.last.map(function (l) { return ghs(l.amt) + ' on ' + esc(dayLbl(l.at)); }).join(' · ') + '</td></tr>' : '') + '</table>' +
-      (x.st ? '<div class="sub" style="margin:8px 0 4px">Send ' + esc(x.name) + ' a statement on WhatsApp</div><div class="wrep"><a href="https://wa.me/?text=' + encodeURIComponent(x.st.sum) + '" target="_blank"><button class="main">' + ico(ICO.wa) + 'Summary</button></a><a href="https://wa.me/?text=' + encodeURIComponent(x.st.full) + '" target="_blank"><button>' + ico(ICO.wa) + 'Full statement</button></a></div>' : '') +
-      '<div class="row" style="margin-top:8px"><button data-act="suphr" data-s="' + x.src + '" data-n="' + esc(x.name) + '" data-a="' + x.hr + '"' + (x.hr > 0.004 ? ' class="main"' : '') + '>COLLECTED FROM HR</button>' + (x.src === 'SRC-MARKET' ? '<span class="small muted">Company money – nobody to pay</span>' : '<button data-act="suppay" data-s="' + x.src + '" data-n="' + esc(x.name) + '" data-a="' + x.me + '" data-o="' + x.owed + '"' + (x.me > 0.004 ? ' class="main"' : '') + '>PAID ' + esc(x.name.toUpperCase()) + '</button>') + '</div></div>';
-  }).join('') + '<p class="sub">Paying a supplier lowers what CupSales owes it. Vendors\' debts only go down when the vendor pays.</p></div>';
+  return '<div class="card"><h3>Suppliers</h3>' + D.suppliers.map(function (x) { return '<div style="margin:10px 0;padding-bottom:10px;border-bottom:1px solid var(--line)">' + supBlock(x) + '</div>'; }).join('') + '<p class="sub">Paying a supplier lowers what CupSales owes it. Vendors\' debts only go down when the vendor pays.</p></div>';
+}
+function supBlock(x) {
+  var fld = x.field.reduce(function (t, w) { return t + w.amt; }, 0);
+  return '<div class="row"><div class="grow"><b style="font-size:17px">' + esc(x.name) + '</b></div><div class="right">' + (x.src === 'SRC-MARKET' ? '<span class="small muted">bought by the company</span>' : 'CupSales owes <b style="color:var(--red)">' + ghs(x.owed) + '</b>') + '</div></div>' +
+    '<table class="small"><tr><td>Vendors still owe for ' + esc(x.name) + ' goods</td><td class="right"><b>' + ghs(x.vendorsOwe) + '</b></td></tr>' +
+    '<tr><td>Paid by vendors, with ' + (x.field.length ? x.field.map(function (w) { return esc(w.name) + ' ' + ghs(w.amt); }).join(', ') : 'agents / Prince') + '</td><td class="right"><b>' + ghs(fld) + '</b></td></tr>' +
+    '<tr><td>Waiting at the HR office logbook</td><td class="right"><b>' + ghs(x.hr) + '</b></td></tr>' +
+    (x.frank > 0.004 ? '<tr><td style="color:var(--red)">With Frank (should go to the HR logbook)</td><td class="right"><b>' + ghs(x.frank) + '</b></td></tr>' : '') +
+    '<tr><td><b>' + (x.src === 'SRC-MARKET' ? 'With you – company money' : 'With you – ready to pay ' + esc(x.name)) + '</b></td><td class="right"><b>' + ghs(x.me) + '</b></td></tr>' +
+    (x.last.length ? '<tr><td class="muted" colspan="2">Last paid: ' + x.last.map(function (l) { return ghs(l.amt) + ' on ' + esc(dayLbl(l.at)); }).join(' · ') + '</td></tr>' : '') + '</table>' +
+    (x.st ? '<div class="sub" style="margin:8px 0 4px">Send ' + esc(x.name) + ' a statement on WhatsApp</div><div class="wrep"><a href="https://wa.me/?text=' + encodeURIComponent(x.st.sum) + '" target="_blank"><button class="main">' + ico(ICO.wa) + 'Summary</button></a><a href="https://wa.me/?text=' + encodeURIComponent(x.st.full) + '" target="_blank"><button>' + ico(ICO.wa) + 'Full statement</button></a></div>' : '') +
+    '<div class="row" style="margin-top:8px"><button data-act="suphr" data-s="' + x.src + '" data-n="' + esc(x.name) + '" data-a="' + x.hr + '"' + (x.hr > 0.004 ? ' class="main"' : '') + '>COLLECTED FROM HR</button>' + (x.src === 'SRC-MARKET' ? '<span class="small muted">Company money – nobody to pay</span>' : '<button data-act="suppay" data-s="' + x.src + '" data-n="' + esc(x.name) + '" data-a="' + x.me + '" data-o="' + x.owed + '"' + (x.me > 0.004 ? ' class="main"' : '') + '>PAID ' + esc(x.name.toUpperCase()) + '</button>') + '</div>';
 }
 ACT.suphr = function (b) {
   var sid = sidFor('sh-' + b.dataset.s);
@@ -1758,7 +1778,7 @@ function pgBook() {
     '<h3 style="margin-top:14px">Debt in cartons – all unpaid orders</h3><div style="margin:6px 0">' + skl(B.owedSkus) + '</div>'; }) +
     '<div class="sub" style="margin:8px 2px 4px">Send today\'s report on WhatsApp</div><div class="wrep">' + (B.reportS ? '<a href="https://wa.me/?text=' + encodeURIComponent(B.reportS) + '" target="_blank"><button class="main">' + ico(ICO.wa) + 'Summary</button></a>' : '') +
     '<a href="https://wa.me/?text=' + encodeURIComponent(B.report) + '" target="_blank"><button>' + ico(ICO.wa) + 'Full report</button></a></div>';
-  h += delRangeHtml(B); // v2.5.7
+  h += delRangeHtml(B) + helpBookHtml(); // v2.5.7; v2.5.17: help items given
   var wp = (B.withPeople || []).reduce(function (t, p) { return t + p.total; }, 0);
   if (wp > 0.004) h += '<div class="msg info">' + ghs(wp) + ' already paid by vendors is still with ' + (B.withPeople || []).map(function (p) { return esc(p.name) + ' (' + ghs(p.total) + ')'; }).join(', ') + ' – see Payments.</div>';
   h += '<div class="sech">Order history <span>delivered, by day</span></div>' + filterBar('hist', 'Find a customer or school') + '<div id="flist">' + LISTR.hist() + '</div>';
@@ -1805,7 +1825,7 @@ function remWhen(r) { return (r.day === D.today ? 'Today' : r.day === addDays(D.
 function remBar() {
   if (!D || D.me.role === 'Helper' || !D.rems || TAB !== firstTab() || (D.me.role === 'Supervisor' && SCREEN !== 'order')) return '';
   var L = remsOpen(), due = L.filter(remNow()), td = L.filter(function (r) { return r.day === D.today; }), nx = L[0];
-  if (!L.length) return '<div class="small" style="margin:0 2px 8px"><a href="#" data-act="sheet" data-k="rems" style="text-decoration:none">' + ico(ICO.clock) + ' + Set a reminder</a></div>';
+  if (!L.length) return '<div class="small" style="margin:0 2px 8px"><a href="#" data-act="sheet" data-k="rems" style="text-decoration:none">' + sico(ICO.clock) + ' Set a reminder</a></div>'; /* v2.5.17: a small clock */
   return todoBox(['<div class="li" data-act="sheet" data-k="rems">' + leadI('clock', due.length ? 'red' : 'blue') + '<div class="grow"><div class="t">' + (due.length ? (due.length === 1 ? 'Now: ' + esc(due[0].about) : due.length + ' reminders due now') : 'Reminders' + (td.length ? ' · ' + td.length + ' today' : '')) + '</div><div class="s ell">' + (due.length ? due.map(function (r) { return esc(remWhen(r)); }).join(' · ') : 'Next: ' + esc(remWhen(nx)) + ' – ' + esc(nx.about)) + '</div></div>' + (due.length ? '<span class="cnt">' + due.length + '</span>' : '') + '<span class="go">' + ico(ICO.right) + '</span></div>']);
 }
 var REMF = null; // the reminder being written (or moved)
@@ -2296,8 +2316,157 @@ ACT.visSave = function () {
   if (isV && !ordered && amt > debt + 0.004) ask(X.name + (debt > 0.004 ? ' owes ' + ghs(debt) : ' owes nothing') + ' but you typed ' + ghs(amt) + '.\nSave it? The extra ' + ghs(amt - debt) + ' is kept apart for the manager.', go, 'YES, SAVE'); else go();
 };
 // ---------------------------------------------------------------- the manager's Today: Team today and interventions
+// ---------------------------------------------------------------- v2.5.17: the manager's own screen and the person switcher
+function mgrMe() { return !!(D && D.me.role === 'Supervisor' && SCREEN === 'order'); }
+function tabsOf() { return mgrMe() ? TABS.mgr : TABS[SCREEN]; }
+function tabOk(t) { return tabsOf().some(function (x) { return x[0] === t; }) || (mgrMe() && (t === 'new' || t === 'today')); }
+/** New order and All orders are opened from Today; a line at the top leads back. */
+function mgrBack() { return mgrMe() && (TAB === 'new' || TAB === 'today') ? '<div class="backrow"><button class="ghost" data-tab="plan">‹ Back to Today</button></div>' : ''; }
+function whoHtml() {
+  if (!D.views) return '<span class="who"><span>' + esc(D.me.first) + ' · ' + esc(D.me.role) + '</span>' + avatar(D.me.first) + '</span>';
+  var cur = D.views.filter(function (x) { return (x.v || '') === VIEW; })[0] || D.views[0], nm = cur ? cur.name : D.me.first;
+  return '<span class="who psw" data-act="sheet" data-k="psw" title="Look at someone\'s screen"><span>' + (VIEW ? esc(nm) + '\'s screen' : esc(nm) + ' · Me') + ' ▾</span>' + avatar(nm) + '</span>';
+}
+var VWORD = { Manager: 'Today, Approvals, Help items, Money, Vendors', Agent: 'Her own screen: My day, orders, payments, vendors', Warehouse: 'His screen: orders to approve, his book, payments', Deliveries: 'His screen: route, orders, payments, helpers' };
+SHEETS.psw = function () {
+  var V = D && D.views || []; if (!V.length) return '';
+  return shHead('user', 'blue', 'Whose screen?', 'Each person\'s own screen, as they see it – view only until you tap Act for. Your own work is on Me.') + '<div class="list">' + V.map(function (x) { var on = (x.v || '') === VIEW;
+    return '<div class="li" data-act="pswGo" data-v="' + esc(x.v || '') + '">' + avatar(x.name) + '<div class="grow"><div class="t">' + (x.v ? esc(x.name) : 'Me (' + esc(x.name) + ')') + '</div><div class="s">' + esc(VWORD[x.role] || x.role) + '</div></div>' + (on ? '<span class="tag green">Now</span>' : '<span class="go">' + ico(ICO.right) + '</span>') + '</div>'; }).join('') + '</div>';
+};
+ACT.pswGo = function (b) { SHEETK = ''; $('over').innerHTML = ''; var v = b.dataset.v || ''; if (v !== VIEW) setView(v); };
+/** v2.5.17: open someone's screen – the one kept on this phone at once, then the newest from the system. */
+function setView(v) {
+  POLLING = false; var V = (D && D.views) || [], x = V.filter(function (y) { return (y.v || '') === v; })[0]; if (!x) return;
+  VIEW = v; CKEY = 'cs_d_' + TOKEN + (v ? '_' + v : ''); DKEY = 'cs_draft_' + TOKEN + (/^USR-/.test(v) ? '_' + v : '');
+  D = null; NEXTD = null; LATERSEQ++; SCREEN = ''; TAB = ''; MSG = null; ACTF = {}; SHEETK = ''; STALE = false; REV = null;
+  $('main').innerHTML = '<p class="muted" style="padding:16px">Opening ' + (v ? esc(x.name) + '\'s screen' : 'your screen') + '…</p>'; window.scrollTo(0, 0);
+  load();
+}
+/** v2.5.17: an agent's screen is view only until the manager taps Act for her. */
+var ACTAS_OK = ['orders', 'cancel', 'visit', 'interv', 'call', 'plan', 'rem', 'dlvday', 'vprofile', 'school', 'register', 'entered']; // as on the system
+function viewBlock(op) { if (!D || !D.viewOf) return false; var n = D.viewOf.first;
+  if (ACTF.agent) { if (!op || ACTAS_OK.indexOf(op) >= 0) return false; say(op === 'startday' || op === 'endday' ? 'Only ' + n + ' can start or end her day, on her own phone.' : 'Only ' + n + ' can do this on her own phone – money she collects or hands over stays in her name.'); return true; } say(n + '\'s screen is view only.\nTap ACT FOR ' + n.toUpperCase() + ' at the top first.'); return true; }
+function actAgent(on) {
+  if (!on) { ACTF.agent = false; render(); return; }
+  var n = D.viewOf.first, me = D.mgr ? D.mgr.first : 'you';
+  var go = function (ago) { ask((ago >= 0 && ago < 120 ? n + ' is using the app right now – what you do may cross hers.\n\n' : '') + 'Act for ' + n + '?\nWhat you save here is saved in her name as “' + me + ' for ' + n + '”, and she gets an email. Her Start and End of day, and the money she collects and hands over, stay hers.', function () { ACTF.agent = true; render(); }, 'ACT FOR ' + n.toUpperCase()); };
+  toast('Checking whether ' + n + ' is using the app…'); readOp('live', { uid: D.viewOf.uid }, function (r) { go(r && r.ago != null ? r.ago : D.viewOf.live); }, function () { go(D.viewOf.live); });
+}
+function mtile(v, lbl, cls) { return '<div class="tile"><b' + (cls ? ' class="' + cls + '"' : '') + '>' + v + '</b><span>' + lbl + '</span></div>'; }
+function cmpTxt(a, b, money) { var f = function (n) { return money ? ghs(n) : String(Math.round(n * 10) / 10); }; return '<b>' + f(a) + '</b> <span class="' + (a > b ? 't-green' : a < b ? 't-red' : 'muted') + '">' + (a > b ? '▲' : a < b ? '▼' : '=') + '</span> <span class="small muted">last week ' + f(b) + '</span>'; }
+function tabRow(tab, icon, tone, t, sub, n, k) { return '<div class="li" data-act="goTab" data-t="' + tab + '"' + (k ? ' data-k="' + k + '"' : '') + '>' + leadI(icon, tone) + '<div class="grow"><div class="t">' + t + '</div>' + (sub ? '<div class="s ell">' + sub + '</div>' : '') + '</div>' + (n ? '<span class="cnt">' + n + '</span>' : '') + '<span class="go">' + ico(ICO.right) + '</span></div>'; }
+ACT.goTab = function (b) { TAB = b.dataset.t; if (b.dataset.k != null) APK = b.dataset.k; MSG = null; SHEETK = ''; render(); window.scrollTo(0, 0); };
+/** The top of the manager's Today: what needs him, today in numbers, this week against last week, the month. */
+function mgrTop() {
+  var h = needsYou(), ap = apprCount(), no = needOpen(), T = D.teamDay, S = D.stats;
+  h += todoBox([ap ? tabRow('appr', 'approved', 'amber', 'Approvals', apprSum(), ap) : '', no ? tabRow('helpi', 'gift', 'purple', 'Help items: ' + no + ' to give', 'Asked for at visits, not given yet', 0) : '']);
+  if (S) {
+    var t = S.today, w = S.week, p = S.prev, A = T ? T.agents : [], vd = 0, vp = 0, pros = 0; A.forEach(function (a) { vd += a.done || 0; vp += a.planned || 0; pros += a.pros || 0; });
+    h += '<div class="sech">Today <span>' + esc(dayLbl(D.today)) + '</span></div><div class="tiles">' + mtile(t.orders + ' · ' + t.octn, 'orders · cartons') + mtile(ghs(t.cash).replace('GHS ', ''), 'cash collected (GHS)') + mtile(t.dels + ' · ' + t.ctn, 'delivered · cartons') + '</div>' +
+      '<div class="tiles">' + mtile(vd + '/' + vp, 'visits done of planned') + mtile(pros, 'new schools visited') + mtile(t.calls, 'calls') + '</div>';
+    var ag = Math.max(1, S.agents || 1), lp = S.debt.total > 0.004 ? Math.round(S.debt.late / S.debt.total * 100) : 0, ov = function (x) { return x.visits ? Math.round(x.ordV / x.visits * 100) + '%' : '–'; };
+    h += fold('mwk', '<b>This week</b> <span class="small muted">' + esc(dayLbl(S.from)) + ' – today, against the same days last week</span><div class="small">Cartons ' + cmpTxt(w.ctn, p.ctn) + '</div>', function () {
+      return '<table class="cmpt" style="width:100%">' + [['Cartons delivered', cmpTxt(w.ctn, p.ctn)], ['Cash collected', cmpTxt(w.cash, p.cash, 1)], ['Orders taken', cmpTxt(w.orders, p.orders)], ['Visits per agent', cmpTxt(w.visits / ag, p.visits / ag)], ['Calls', cmpTxt(w.calls, p.calls)]].map(function (r) { return '<tr><td>' + r[0] + '</td><td class="r">' + r[1] + '</td></tr>'; }).join('') +
+        '<tr><td>Visits that ended in an order</td><td class="r"><b>' + ov(w) + '</b> <span class="small muted">last week ' + ov(p) + '</span></td></tr>' +
+        '<tr><td>Debt past the 7 days of credit</td><td class="r"><b class="' + (lp > 30 ? 't-red' : '') + '">' + lp + '%</b> <span class="small muted">of ' + ghs(S.debt.total) + '</span></td></tr></table>' +
+        '<p class="small muted" style="margin:6px 0 0">Last week = ' + esc(dayLbl(S.pfrom)) + ' – ' + esc(dayLbl(S.pto)) + ', the same days as this week so far.</p>'; });
+  }
+  var M = D.team; if (M) { var ct = 0, tg = 0; M.agents.forEach(function (a) { ct += a.ctn; tg += a.t.real; });
+    h += fold('mmon', '<b>Month – ' + esc(M.month.slice(8)) + '</b> <span class="small muted">' + M.gone + ' of ' + M.days + ' working days gone</span><div class="small">Team cartons <b>' + ct + '</b> of ' + tg + ' · ' + M.agents.map(function (a) { return esc(a.name) + ' ' + a.ctn + '/' + a.t.real; }).join(' · ') + '</div>', function () {
+      return M.agents.map(function (a) { var pc = a.t.real ? Math.min(100, a.ctn / a.t.real * 100) : 0;
+        return '<div style="margin:6px 0 10px"><div class="row" style="flex-wrap:nowrap"><b class="grow">' + esc(a.name) + '</b><span class="small">' + a.ctn + ' of ' + a.t.real + ' cartons · pace ' + a.proj.projCtn + '</span></div><div class="pbar"><i style="width:' + pc + '%"></i><em style="left:80%"></em></div><div class="small muted">New vendors ' + a.regsBought + ' of ' + a.t.vendors + ' · active ' + a.activePct + '% of ' + a.t.active + '% · incentive so far ' + ghs(a.real.now) + '</div></div>'; }).join('') +
+        '<p class="small muted" style="margin:0 0 8px">Your real targets – only you see these. The line marks 80%.</p><button class="big" data-act="sheet" data-k="team">Details, leave and targets</button>'; }); }
+  h += '<div class="btns" style="margin:4px 0 12px"><button class="ic" data-tab="new">' + ico(ICO['new']) + 'New order</button><button class="ic" data-tab="today">' + ico(ICO.today) + 'All orders</button></div>';
+  return h;
+}
+// ---------------------------------------------------------------- v2.5.17: Approvals – everything that waits for the manager, one list
+var APK = '';
+function apprPlans() { return D.teamDay ? D.teamDay.agents.filter(function (a) { return a.status === 'Agreed' && !a.leave; }) : []; }
+function apprKinds() { return [['plans', 'Day plans', apprPlans().length], ['pay', 'Payments', decNeeds().length], ['nd', 'Not delivered', ndList().length], ['out', 'Out of stock', outOpen()], ['other', 'Other', otherNeeds().length]]; }
+function apprCount() { if (!D || D.me.role !== 'Supervisor') return 0; return apprKinds().reduce(function (t, k) { return t + k[2]; }, 0); }
+var APK1 = { plans: 'day plan', pay: 'payment case', nd: 'not delivered', out: 'out of stock', other: 'other' };
+function apprSum() { return apprKinds().filter(function (k) { return k[2]; }).map(function (k) { return k[2] + ' ' + (k[2] === 1 ? APK1[k[0]] : k[0] === 'pay' ? 'payment cases' : k[1].toLowerCase()); }).join(' · '); }
+ACT.apk = function (b) { APK = b.dataset.s; MSG = null; render(); };
+function pgAppr() {
+  var K = apprKinds(), tot = K.reduce(function (t, k) { return t + k[2]; }, 0), cur = K.some(function (k) { return k[0] === APK && k[2]; }) ? APK : '', rm = remNeeds();
+  var remF = rm.length ? fold('rem', '<b>Reminders: ' + rm.length + '</b><div class="small muted">' + remSum(rm) + '</div>', function () { return needsList(rm); }) : '';
+  if (!tot) return '<div class="sech">Approvals</div>' + emptyHtml('Nothing waits for you now.') + remF;
+  var h = '<div class="sech">Approvals <span>' + tot + ' waiting</span></div><div class="pchips">' + [['', 'All', tot]].concat(K.filter(function (k) { return k[2]; })).map(function (k) { return '<button class="' + (cur === k[0] ? 'on' : '') + '" data-act="apk" data-s="' + k[0] + '">' + k[1] + ' <span class="cnt g">' + k[2] + '</span></button>'; }).join('') + '</div>';
+  var on = function (k) { return !cur || cur === k; };
+  var P = apprPlans(); if (P.length && on('plans')) h += '<div class="card"><h3>Day plans to approve</h3>' + P.map(function (a) { var it = a.items.filter(function (x) { return !x.rm && !x.skip; }), G = planGroups(it);
+    return '<div class="row" style="flex-wrap:nowrap;padding:8px 0;border-top:1px solid var(--line)">' + avatar(a.name) + '<div class="grow"><b>' + esc(a.name) + '</b><div class="small muted">' + it.length + ' visit' + (it.length === 1 ? '' : 's') + ' at ' + G.length + ' school' + (G.length === 1 ? '' : 's') + (a.start ? ' · started ' + esc(a.start.at) : '') + '</div>' + (a.anote ? '<div class="small">Her note: ' + esc(a.anote) + '</div>' : '') + '</div><div class="btns" style="margin:0;flex:0 0 auto"><button class="ghost" data-act="goTab" data-t="plan">Stops</button><button class="main" data-act="planOk" data-u="' + a.uid + '">Approve</button></div></div>'; }).join('') + '</div>';
+  if (decNeeds().length && on('pay')) h += '<div class="card"><h3>Payment cases</h3><p class="sub" style="margin-top:0">Tap a case, check both sides, then record what really happened.</p>' + needsList(decNeeds()) + '</div>';
+  if (on('nd') || on('out')) h += todoBox([on('nd') ? ndHtml() : '', on('out') ? outCardHtml() : '']);
+  if (otherNeeds().length && on('other')) h += '<div class="card"><h3>Other problems</h3>' + needsList(otherNeeds()) + '</div>';
+  return h + remF;
+}
+// ---------------------------------------------------------------- v2.5.17: Money – the manager's own money, suppliers one line each
+function pgMoney() {
+  var S = D.suppliers || [], C = (D.cash || []).filter(function (c) { return c.free > 0.004; }), mine = 0, owe = 0, hr = 0;
+  C.forEach(function (c) { mine += c.free; }); S.forEach(function (x) { if (x.src !== 'SRC-MARKET') owe += Number(x.owed) || 0; hr += Number(x.hr) || 0; });
+  var h = todoBox([claimsRow()]) + confirmHtml() + '<div class="tiles">' + mtile(ghs(mine).replace('GHS ', ''), 'with you (GHS)') + mtile(ghs(owe).replace('GHS ', ''), 'CupSales owes suppliers', owe > 0.004 ? 't-red' : '') + mtile(ghs(hr).replace('GHS ', ''), 'at the HR office') + '</div>';
+  var busy = function (x) { return (x.src !== 'SRC-MARKET' && x.owed > 0.004) || x.me > 0.004 || x.hr > 0.004 || x.frank > 0.004 || x.field.some(function (w) { return w.amt > 0.004; }); };
+  var act = S.filter(busy), done = S.filter(function (x) { return !busy(x); });
+  if (S.length) h += '<div class="sech">Suppliers</div>' + act.map(function (x) {
+    return fold('sp-' + x.src, '<div class="row" style="flex-wrap:nowrap"><div class="grow"><b>' + esc(x.name) + '</b><div class="small">' + (x.src === 'SRC-MARKET' ? '<span class="muted">company money</span>' : 'owes <b class="t-red">' + ghs(x.owed) + '</b>') + (x.me > 0.004 ? ' · ' + ghs(x.me) + ' with you' : '') + (x.hr > 0.004 ? ' · ' + ghs(x.hr) + ' at HR' : '') + '</div></div>' +
+      (x.src !== 'SRC-MARKET' && x.me > 0.004 && x.owed > 0.004 ? '<button class="main" data-act="suppay" data-s="' + x.src + '" data-n="' + esc(x.name) + '" data-a="' + x.me + '" data-o="' + x.owed + '">PAY</button>' : x.hr > 0.004 ? '<button class="main" data-act="suphr" data-s="' + x.src + '" data-n="' + esc(x.name) + '" data-a="' + x.hr + '">FROM HR</button>' : '') + '</div>', function () { return supBlock(x); }); }).join('') +
+    (done.length ? fold('supok', '<b>All settled</b> <span class="small muted">' + done.map(function (x) { return esc(x.name); }).join(' · ') + '</span>', function () { return done.map(function (x) { return '<div style="margin:6px 0 12px">' + supBlock(x) + '</div>'; }).join(''); }) : '');
+  var nr = rcptToSend(), secs = [['cash', 'Cash with you'], ['rcpt', 'Receipts' + (nr ? ' <span class="cnt">' + nr + '</span>' : '')], ['hist', 'History']], cur = PSEC.mon || 'cash';
+  h += '<div class="sech">Your payments</div>' + chips('mon', secs, cur);
+  if (cur === 'rcpt') h += filterBar('prcpt', 'Find a vendor') + '<div id="flist">' + LISTR.prcpt() + '</div>';
+  else if (cur === 'hist') h += filterBar('phist', 'Find a vendor or amount') + '<div id="flist">' + LISTR.phist() + '</div>';
+  else h += cashSecHtml();
+  return h + '<p class="small muted">Prince\'s and the agents\' money is on their own screens (tap your picture at the top).</p>';
+}
+// ---------------------------------------------------------------- v2.5.17: Help items – asked, given, still to give, and the effect
+var HF = { r: 'month', from: '', to: '', ag: '', sch: '', it: '', st: '' };
+function hRange() { var t = D.today, wd = new Date(t + 'T12:00:00Z').getUTCDay(), wk = addDays(t, -((wd + 6) % 7)), mo = t.slice(0, 8) + '01';
+  var r = HF.r === 'today' ? [t, t] : HF.r === 'week' ? [wk, t] : HF.r === 'month' ? [mo, t] : HF.r === 'all' ? [addDays(t, -120), t] : [HF.from || mo, HF.to || t]; return r[0] > r[1] ? [r[1], r[0]] : r; }
+function hRows(gOnly, noSt) { var R = (D.hlog && D.hlog.rows) || [], r = hRange();
+  return R.filter(function (x) { if ((gOnly && x.k !== 'G') || x.d < r[0] || x.d > r[1] || (HF.ag && x.a !== HF.ag) || (HF.sch && x.s !== HF.sch) || (HF.it && x.i !== HF.it)) return false; if (noSt || gOnly) return true;
+    return !HF.st || (HF.st === 'asked' && x.k === 'N') || (HF.st === 'given' && x.k === 'G') || (HF.st === 'open' && x.k === 'N' && !x.g); }); }
+function hOpts(f, gOnly) { var R = ((D.hlog && D.hlog.rows) || []).filter(function (x) { return !gOnly || x.k === 'G'; }), s = {}; R.forEach(function (x) { if (x[f]) s[x[f]] = 1; }); return Object.keys(s).sort(); }
+function hFilters(gOnly) {
+  var r = hRange(), sel = function (f, lbl, all, L) { return '<label><span>' + lbl + '</span><select data-chg="hf" data-f="' + f + '"><option value="">' + all + '</option>' + L.map(function (x) { return '<option value="' + esc(x[0]) + '"' + (HF[f] === x[0] ? ' selected' : '') + '>' + esc(x[1]) + '</option>'; }).join('') + '</select></label>'; }, two = function (L) { return L.map(function (x) { return [x, x]; }); };
+  return '<div class="seg wrap" style="margin:0 0 8px">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['all', '4 months'], ['dates', 'Dates']].map(function (x) { return '<button class="' + (HF.r === x[0] ? 'on' : '') + '" data-act="hfr" data-r="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>' +
+    (HF.r === 'dates' ? '<div class="fgrid"><label><span>From</span><input type="date" data-chg="hf" data-f="from" value="' + esc(r[0]) + '" max="' + esc(D.today) + '"></label><label><span>To</span><input type="date" data-chg="hf" data-f="to" value="' + esc(r[1]) + '" max="' + esc(D.today) + '"></label></div>' : '') +
+    '<div class="fgrid">' + sel('it', 'Item', 'All items', two(hOpts('i', gOnly))) + (gOnly ? '' : sel('st', 'Status', 'All', [['asked', 'Asked for'], ['given', 'Given'], ['open', 'Not given yet']])) + sel('ag', 'Agent', 'All agents', two(hOpts('a', gOnly))) + sel('sch', 'School', 'All schools', two(hOpts('s', gOnly))) + '</div>' +
+    '<div class="small muted" style="margin:0 0 8px">' + esc(r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) + '</div>';
+}
+CHG.hf = function (el) { HF[el.dataset.f] = el.value; render(); }; ACT.hfr = function (b) { HF.r = b.dataset.r; render(); };
+function hItems(L) { var c = {}, o = []; L.forEach(function (x) { if (!(x.i in c)) { c[x.i] = 0; o.push(x.i); } c[x.i] += x.k === 'G' ? x.q : 1; }); return o.map(function (i) { return c[i] + ' ' + i; }).join(', '); }
+function hList(L) {
+  var G = {}, keys = []; L.forEach(function (x) { var k = x.vid + '|' + x.d + '|' + x.k; if (!G[k]) { G[k] = []; keys.push(k); } G[k].push(x); });
+  if (!keys.length) return emptyHtml('Nothing for this choice.');
+  var more = keys.length > 150 ? keys.length - 150 : 0;
+  return '<div class="list">' + keys.slice(0, 150).map(function (k) { var L2 = G[k], x = L2[0], gv = x.k === 'G', open = L2.filter(function (y) { return !gv && !y.g; }).length, ko = 'hi-' + k, o = isOpen(ko);
+    var sub = (gv ? 'given ' + dayLbl(x.d) + ' by ' + x.a : 'asked ' + dayLbl(x.d) + ' (' + x.a + ')' + (open ? ' · ' + (open === L2.length ? 'not given yet' : open + ' not given yet') : ' · all given')) + (x.s ? ' · ' + x.s : '');
+    return '<div class="li hrow" data-act="tog" data-o="' + esc(ko) + '" data-s="' + (o ? 1 : 0) + '">' + leadI('gift', gv ? 'purple' : open ? 'amber' : 'green') + '<div class="grow"><div class="t ell">' + esc(x.v || x.vid) + '</div><div class="s ell">' + esc(hItems(L2)) + '</div><div class="s ell">' + esc(sub) + '</div>' +
+      (o ? '<table class="dt small" style="margin-top:6px">' + L2.map(function (y) { return '<tr><td class="k">' + esc(y.i) + '</td><td>' + (gv ? y.q + ' given' : y.g ? '<span class="t-green">✓ given ' + esc(dayLbl(y.g)) + '</span>' : '<span class="t-amber">not given yet</span>') + ' <span class="muted">· ' + esc(levW(y.l)) + '</span></td></tr>'; }).join('') + '</table>' : '') + '</div></div>'; }).join('') + '</div>' + (more ? '<p class="small muted">… and ' + more + ' more – choose fewer days or an item.</p>' : '');
+}
+function hDays(L) {
+  var by = {}, ds = []; L.forEach(function (x) { if (x.k !== 'G') return; if (!by[x.d]) { by[x.d] = []; ds.push(x.d); } by[x.d].push(x); });
+  if (!ds.length) return '<p class="small muted">No items given on these days.</p>';
+  return '<table class="dt">' + ds.map(function (d) { var n = by[d].reduce(function (t, x) { return t + x.q; }, 0), v = {}; by[d].forEach(function (x) { v[x.vid] = 1; }); return '<tr><td class="k">' + esc(dayLbl(d)) + '</td><td><b>' + n + '</b> item' + (n === 1 ? '' : 's') + ' to ' + Object.keys(v).length + ' vendor' + (Object.keys(v).length === 1 ? '' : 's') + '<div class="small muted">' + esc(hItems(by[d])) + '</div></td></tr>'; }).join('') + '</table>';
+}
+function pgHelpI() {
+  var H = D.hlog; if (!H) return emptyHtml('The help items are not ready – pull down to refresh.');
+  var A = hRows(false, true), asked = A.filter(function (x) { return x.k === 'N'; }), given = A.filter(function (x) { return x.k === 'G'; }), L = hRows(false, false);
+  var gq = given.reduce(function (t, x) { return t + x.q; }, 0), op = asked.filter(function (x) { return !x.g; }).length;
+  var h = '<div class="sech">Help items</div><div class="tiles">' + mtile(asked.length, 'asked for') + mtile(gq, 'given', 't-purple') + mtile(op, 'not given yet', op ? 't-amber' : '') + '</div>' + hFilters(false);
+  h += fold('hday', '<b>Given per day</b> <span class="small muted">' + gq + ' item' + (gq === 1 ? '' : 's') + ' in these days</span>', function () { return hDays(L); });
+  var e = H.eff; h += fold('heff', '<b>Does it work?</b> <span class="small muted">' + (e && e.n ? 'cartons a week, 4 weeks before → after' : 'results 4 weeks after the first item') + '</span>' + (e && e.n ? '<div class="small">Given items: <b>' + e.before + ' → ' + e.after + '</b> · given nothing: ' + e.obefore + ' → ' + e.oafter + '</div>' : ''), function () {
+    return (e && e.n ? '<table class="cmpt" style="width:100%"><tr><td>' + e.n + ' vendor' + (e.n === 1 ? '' : 's') + ' given items</td><td class="r"><b>' + e.before + ' → ' + e.after + '</b> ctn a week</td></tr><tr><td>' + e.on + ' vendors given nothing (same weeks)</td><td class="r">' + e.obefore + ' → ' + e.oafter + ' ctn a week</td></tr></table><p class="small muted">Before = the 4 weeks before her first item, after = the 4 weeks from that day. Judge on 5 or more vendors, not one.</p>' : '<p class="small muted">' + (e && e.waiting ? e.waiting + ' vendor' + (e.waiting === 1 ? '' : 's') + ' got items less than 4 weeks ago – their result shows 4 weeks after.' : 'No vendor has been given items yet.') + '</p>') +
+      ((D.interv && D.interv.list.length) || (D.needs2 && D.needs2.items && D.needs2.items.length) ? '<button class="big" data-act="sheet" data-k="interv">By item, and by way of helping</button>' : ''); });
+  return h + '<div class="sech">The list <span>' + L.length + ' row' + (L.length === 1 ? '' : 's') + '</span></div>' + hList(L) + '<p class="small muted">Each row is one vendor on one day. Tap it for the items. The Help_Log tab has every item, one row each.</p>';
+}
+/** Frank's book: the help items given, by day and item (he may be asked how many went out). */
+function helpBookHtml() {
+  if (!D.hlog) return ''; var L = hRows(true), n = L.reduce(function (t, x) { return t + x.q; }, 0);
+  return '<div class="sech">Help items given <span>aprons, posters, gifts…</span></div>' + fold('hbook', '<b>' + n + ' item' + (n === 1 ? '' : 's') + '</b> given ' + (HF.r === 'today' ? 'today' : HF.r === 'week' ? 'this week' : HF.r === 'month' ? 'this month' : HF.r === 'all' ? 'in 4 months' : 'in these days') + (HF.it ? ' · ' + esc(HF.it) : ''), function () { return hFilters(true) + '<h3 style="margin:8px 0 4px">Per day</h3>' + hDays(L) + '<h3 style="margin:12px 0 4px">Per vendor</h3>' + hList(L); });
+}
 function pgTeamDay() {
-  var T = D.teamDay, h = needsYou() + todoBox([teamRow(), (D.interv && D.interv.list.length) || needOpen() ? todoRow('interv', 'info', 'blue', 'Help for vendors' + (needOpen() ? ' – ' + needOpen() + ' to give' : ''), 'What vendors need, what was given, and the results after 4 weeks', 0) : '']);
+  var T = D.teamDay, h = mgrTop(); // v2.5.17
   if (!T) return h + emptyHtml('Team today is not ready – pull down to refresh.');
   h += '<div class="sech">Team today <span>' + esc(dayLbl(T.day)) + '</span></div>' + (T.hol ? '<div class="msg info">Public holiday: ' + esc(T.hol) + ' – no plans and no start needed today.</div>' : '');
   T.agents.slice().sort(function (a, b) { return (a.status === 'Agreed' ? 0 : 1) - (b.status === 'Agreed' ? 0 : 1); }).forEach(function (a) {
@@ -2330,11 +2499,10 @@ function needsYou() {
   if (pend.length) rows.push(row('wait', 'clock', 'amber', pend.length + ' order' + s(pend.length) + ' pending over a day', ct(pend) + ' ctn not approved by Frank yet'));
   if (appr.length) rows.push(row('appr', 'truck', 'amber', appr.length + ' approved, not picked up', ct(appr) + ' ctn still at the warehouse'));
   if (way.length) rows.push(row('disp', 'truck', 'red', way.length + ' on the way over 2 days', ct(way) + ' ctn not delivered – they count for targets only when delivered'));
-  if (ndn) rows.push(row('ndc', 'truck', 'red', ndn + ' not delivered – you decide', 'Try again or cancel'));
-  if (cases) rows.push(row('pay', 'money', 'red', cases + ' payment case' + s(cases) + ' to decide', 'Payments'));
+  // v2.5.17: payment cases and not delivered are on the Approvals line below
   return rows.length ? '<div class="sech">Needs you</div><div class="todo">' + rows.join('') + '</div>' : '';
 }
-ACT.needGo = function (b) { var k = b.dataset.s; TAB = k === 'pay' ? 'pays' : 'today'; if (k === 'pay') SUB.today = 'pay'; else { SUB.today = 'orders'; FL.today = k === 'ndc' ? {} : { st: k }; flSave(); } render(); if (k === 'ndc') sheetOpen('nd'); };
+ACT.needGo = function (b) { var k = b.dataset.s; if (k === 'pay' || k === 'ndc') { TAB = 'appr'; APK = k === 'pay' ? 'pay' : 'nd'; render(); window.scrollTo(0, 0); return; } TAB = 'today'; SUB.today = 'orders'; FL.today = { st: k }; flSave(); render(); window.scrollTo(0, 0); }; // v2.5.17: decisions are on Approvals
 ACT.mgrAdd = function (b) { PICK = { q: '', uid: b.dataset.u, f: '' }; sheetOpen('pick'); };
 ACT.mgrRm = function (b) { var u = b.dataset.u, n = b.dataset.n; ask('Take ' + n + ' out of ' + agName(u) + '\'s plan today?\nShe is told by email and sees it in her app.', function () { bgSave('planok', { uid: u, remove: [{ k: b.dataset.k, id: b.dataset.i }] }, 'pr-' + uid(), 'taken out for ' + agName(u) + ': ' + n, null, true); }, 'TAKE OUT'); };
 ACT.planOk = function (b) {
@@ -2827,6 +2995,7 @@ function goHash() {
 }
 function goHash2(h) {
   h = String(h || '').replace(/^#/, ''); if (!h || !D || goHash2.done === h) return; goHash2.done = h;
+  if (D.me.role === 'Supervisor' && D.screens.indexOf('order') >= 0 && /^(decide|nd|out|confirm)$/.test(h)) { SCREEN = 'order'; TAB = h === 'confirm' ? 'money' : 'appr'; APK = h === 'decide' ? 'pay' : h === 'confirm' ? '' : h; render(); return; } // v2.5.17
   if (h.indexOf('cancel=') === 0 && D.screens.indexOf('order') >= 0) {
     SCREEN = 'order'; TAB = 'today'; SUB.today = 'orders'; render(); var oid = decodeURIComponent(h.slice(7));
     var o = (D.myOrders || []).filter(function (x) { return x.oid === oid; })[0];

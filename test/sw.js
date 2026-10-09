@@ -1,5 +1,5 @@
 // Keeps the app page on the phone so it opens without signal. Data always comes from the network.
-var P = 'cupsales-' + self.registration.scope + '-', C = P + 'b603ee6f';
+var P = 'cupsales-' + self.registration.scope + '-', C = P + '95e6aee4';
 self.addEventListener('install', function (e) { self.skipWaiting(); e.waitUntil(caches.open(C).then(function (c) { return c.addAll(['./', 'index.html', 'manifest.webmanifest', 'icon-192.png']); })); });
 self.addEventListener('activate', function (e) { e.waitUntil(caches.keys().then(function (k) { return Promise.all(k.filter(function (x) { return x.indexOf(P) === 0 && x !== C; }).map(function (x) { return caches.delete(x); })); }).then(function () { return self.clients.claim(); })); });
 self.addEventListener('fetch', function (e) {
