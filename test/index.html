@@ -175,6 +175,10 @@ svg.si{width:14px;height:14px;vertical-align:-2px;margin-right:4px}.t-purple{col
 .cmpt td{padding:5px 0;border-top:1px solid var(--line)}.cmpt td.r{text-align:right;white-space:nowrap}
 .hrow .end b{color:var(--pur)}
 :root{--pur:#7B3FC4;--pur2:#F1E9FB}
+.hready{margin:8px 0 2px;padding:8px 10px;border-left:4px solid var(--pur);background:var(--pur2);border-radius:8px;font-size:13.5px}.hready .sb{margin-top:6px}
+.card.hstop{border-left:5px solid var(--pur)}.hstrip{margin-top:8px;padding:6px 10px;background:var(--pur2);color:var(--pur);border-radius:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13.5px}.hstrip b{color:var(--pur)}.hstrip .grow{min-width:140px}
+.rcpt{border:1px dashed var(--pur);border-radius:12px;padding:12px 14px;margin:6px 0 12px;background:#fff}.rcpt h3{color:var(--pur)}
+.hsel{width:100%;margin-top:6px}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -471,7 +475,7 @@ function leadI(icon, tone) { return '<span class="lead t-' + (tone || 'grey') + 
 function todoRow(k, icon, tone, title, sub, n) { return '<div class="li" data-act="sheet" data-k="' + k + '">' + leadI(icon, tone) + '<div class="grow"><div class="t">' + title + '</div>' + (sub ? '<div class="s ell">' + sub + '</div>' : '') + '</div>' + (n ? '<span class="cnt">' + n + '</span>' : '') + '<span class="go">' + ico(ICO.right) + '</span></div>'; }
 function todoBox(rows) { rows = rows.filter(Boolean); return rows.length ? '<div class="todo">' + rows.join('') + '</div>' : ''; }
 /** v2.5.2: the manager sees Frank's and Prince's screens view-only; "Act for …" lets him save for them (marked as his). */
-var ACTF = {}, ACTBLOCK = ['relgo', 'decl', 'declgo', 'outsave', 'dgave', 'fpaid', 'frecv', 'stopopen', 'stopsave', 'hmake', 'pickgo', 'dispgo', 'sback'];
+var ACTF = {}, ACTBLOCK = ['relgo', 'decl', 'declgo', 'outsave', 'dgave', 'fpaid', 'frecv', 'stopopen', 'stopsave', 'hmake', 'pickgo', 'dispgo', 'sback', 'hgOpen', 'hrgo', 'hcar', 'hbk', 'hstGo'];
 function actWho() { return D && D.viewOf ? D.viewOf.first : SCREEN === 'release' ? 'Frank' : SCREEN === 'route' ? 'Prince' : ''; }
 function actView() { return !!(D && actWho() && (D.viewOf ? !ACTF.agent : D.me.role === 'Supervisor' && !ACTF[SCREEN])); }
 function actBar() {
@@ -582,6 +586,7 @@ function pendView() {
     if (x.op === 'claim' && D.claims) D.claims = D.claims.filter(function (c) { return c.id !== d.id; }); // v2.5.6
     if ((x.op === 'claimdec' || x.op === 'dupcancel') && D.needs) D.needs = D.needs.filter(function (n) { return n.eid !== d.eid; });
     if (x.op === 'stockback' && D.comingBack) D.comingBack = D.comingBack.filter(function (c) { return c.did ? (d.dids || []).indexOf(c.did) < 0 : (d.oids || []).indexOf(c.oid) < 0; });
+    hPend(x, d); // v2.5.18: help items
     if (x.op === 'stop' && D.stops) { var so = d.oids || []; D.stops = D.stops.filter(function (s) { if (s.id !== d.vid) return true; if (d.what === 'NONE' || !so.length) return false; s.orders = s.orders.filter(function (o) { return so.indexOf(o.oid) < 0; }); return s.orders.length > 0; }); } // v2.5.7: a recorded stop leaves the list at once
     if (x.op === 'startday' && D.myDay) D.myDay.start = D.myDay.start || 'now';
     if (x.op === 'plan' && D.plan && d.items && D.plan.day === d.day) { D.plan.items = d.items; D.plan.status = d.live && D.plan.status === 'Approved' ? 'Approved' : 'Agreed'; D.plan.suggested = false; if (d.note !== undefined) D.plan.anote = d.note; if (d.goal !== undefined) D.plan.goal = d.goal; } // v2.5.8
@@ -1704,7 +1709,8 @@ function relHold(s, o) {
   else if (o.mins >= 2880) { s.on = false; s.hold = 'old'; }
   return s;
 }
-function pgRelease() {
+function pgRelease() { return hRelRows() + pgRelease0(); } // v2.5.18: help items to release
+function pgRelease0() {
   if (!D.waiting.length) return emptyHtml('No orders pending. New orders appear here as soon as agents send them.');
   var h = '<div class="note">' + ico(ICO.info) + '<span>Ticked orders go from Omni Haven. Change only what is different, then Approve.</span></div>', n = 0;
   D.waiting.forEach(function (o) {
@@ -1967,7 +1973,7 @@ function pgPlan() {
   } else if (P.status === 'Agreed' || P.status === 'Approved') h += '<button class="ghost" style="margin-top:6px" data-act="plEdit">Change my note or new-school promise</button>';
   if (!(D.myDay && D.myDay.end)) h += endDayHtml(); // v2.5.15
   var miss = G.filter(function (g) { var s = g.k.indexOf('S:') === 0 ? schoolOf(g.k.slice(2)) : null; return !(s && s.pin) && !itemPin(g.items[0].x); }).length; if (miss) h += '<p class="small muted">' + miss + ' stop' + (miss === 1 ? ' has' : 's have') + ' no pin yet – the map searches the name; your first "Arrived" there pins it.</p>';
-  return h + otherVisits(L);
+  return h + otherVisits(L) + hReadyRest(L); // v2.5.18
 }
 /** v2.5.12: the folded school line – what is left to do there, in a few signs. */
 var PSTOP = '';
@@ -1977,6 +1983,7 @@ function stopSigns(g) {
   var p = [];
   if (owe > 0.004) p.push('<b class="t-red">collect ' + ghs(owe) + '</b>');
   if (n.out) p.push(n.out + ' due to re-order'); if (n.signup) p.push(n.signup + ' signed up, not bought'); if (n.follow) p.push(n.follow + ' follow-up');
+  if (g.items.some(function (y) { return y.x.k === 'v' && hReadyOf(y.x.id).length; })) p.push('<span class="t-purple">help items ready</span>'); // v2.5.18
   if (g.items.some(function (y) { return y.x.by === 'Manager'; })) p.push('added by the manager');
   if (done) p.push('<span class="t-green">' + done + ' of ' + g.items.length + ' done</span>');
   else if (g.items.length && !left.length) p.push('<span class="t-amber">skipped</span>');
@@ -1993,7 +2000,7 @@ function planRow(x, i) {
   return '<div class="pv' + (v ? ' done' : '') + (x.skip ? ' skip' : '') + '">' + (vv ? avatar(vv.name) : leadI('school', 'blue')) + '<div class="grow" style="min-width:0"><div><b' + (vv ? ' data-act="vdet" data-v="' + vv.id + '" style="cursor:pointer"' : '') + '>' + esc(vv ? x.name : (x.tags || []).indexOf('follow') >= 0 ? 'Follow-up visit' : 'Prospect visit') + '</b>' + (x.by === 'Manager' ? ' <span class="tag">by the manager</span>' : '') + '</div>' +
     '<div>' + tagPills(shown) + '</div>' + (vv ? vFacts(vv) : '<div class="fx">' + esc(x.why || '') + '</div>') +
     (x.by === 'Manager' && x.why && x.why !== 'Added by the manager' ? '<div class="fx">Manager: ' + esc(x.why) + '</div>' : '') +
-    (x.skip ? '<div class="fx t-amber">Skipped: ' + esc(x.skip) + '</div>' : '') + (v ? '<div class="fx t-green">✓ ' + esc(v.at) + ' – ' + esc(v.out) + (v.why ? ' (' + esc(v.why) + ')' : '') + '</div>' : '') +
+    (x.skip ? '<div class="fx t-amber">Skipped: ' + esc(x.skip) + '</div>' : '') + (v ? '<div class="fx t-green">✓ ' + esc(v.at) + ' – ' + esc(v.out) + (v.why ? ' (' + esc(v.why) + ')' : '') + '</div>' : '') + (vv ? hReadyHtml(vv.id) : '') +
     '<div class="sb">' + (x.skip ? '<button class="ghost" data-act="plUnskip" data-i="' + i + '">Put back</button>' : '<button class="' + (v ? 'ghost' : 'main') + '" data-act="visOpen" data-k="' + x.k + '" data-i="' + esc(x.id) + '" data-kind="' + esc(x.kind || '') + '">' + (v ? 'Visit again' : 'Arrived – report') + '</button>' +
       (vv && vv.phone && !v ? '<a href="tel:' + esc(vv.phone) + '"><button class="ghost ic">' + ico(ICO.phone) + 'Call</button></a>' : '') + (x.k === 's' ? '<button class="ghost" data-act="hist" data-k="s" data-i="' + esc(x.id) + '">History</button>' : '') + (vv && !(vv.prof && vv.prof.school) ? '<button class="ghost" data-act="profOpen" data-v="' + vv.id + '">Set her school</button>' : '') +
       (v ? '' : mine ? '<button class="ghost" data-act="plDel" data-i="' + i + '">Remove</button>' : '<button class="ghost" data-act="plSkip" data-i="' + i + '">Skip</button>')) + '</div></div></div>';
@@ -2316,6 +2323,130 @@ ACT.visSave = function () {
   if (isV && !ordered && amt > debt + 0.004) ask(X.name + (debt > 0.004 ? ' owes ' + ghs(debt) : ' owes nothing') + ' but you typed ' + ghs(amt) + '.\nSave it? The extra ' + ghs(amt - debt) + ' is kept apart for the manager.', go, 'YES, SAVE'); else go();
 };
 // ---------------------------------------------------------------- the manager's Today: Team today and interventions
+// ---------------------------------------------------------------- v2.5.18: help items – released by the manager or Frank, Prince brings them
+function hKeyC(x) { return x.item === 'Other' ? 'Other|' + x.lever + '|' + String(x.detail || '').replace(/^'/, '').toLowerCase() : String(x.item); }
+function hNameC(x) { return x.item === 'Other' ? String(x.detail || 'Other').replace(/^'/, '') : String(x.item); }
+function hTxtC(L) { return (L || []).map(function (x) { return (x.qty > 1 ? x.qty + ' × ' : '') + hNameC(x); }).join(', '); }
+function hRider() { return (D.hrel && D.hrel.rider) || D.hrider || 'Prince'; }
+/** Every list a release can be on (manager, Frank, the agent, Prince). */
+function hLists() { return [D.hrel ? D.hrel.ready : null, D.hready, D.hstops].filter(Boolean); }
+function hFind(rid) { var r = null; hLists().forEach(function (L) { L.forEach(function (x) { if (!r && x.rid === rid) r = x; }); }); return r; }
+/** A save not answered yet already shows: released, given, taken back, who brings it. */
+function hPend(x, d) {
+  if (x.op === 'hrel' && D.hrel) { var R0 = D.hrel, ks = (d.items || []).map(hKeyC), vo = (R0.open || []).filter(function (v) { return v.vid === d.vid; })[0]; R0.ready = R0.ready || [];
+    if (!R0.ready.some(function (r) { return r.sid0 === x.sid; })) R0.ready.push({ sid0: x.sid, rid: '', vid: d.vid, name: vo ? vo.name : '', school: vo ? vo.school : '', agent: vo ? vo.agent : '', items: d.items || [], txt: hTxtC(d.items), day: D.today, by: D.me.first, cname: d.carrier === 'agent' ? (vo ? vo.agent : 'the agent') : R0.rider, crole: d.carrier === 'agent' ? 'Agent' : 'Rider' });
+    R0.open = (R0.open || []).map(function (v) { return v.vid !== d.vid ? v : Object.assign({}, v, { items: v.items.filter(function (i) { return ks.indexOf(hKeyC(i)) < 0; }) }); }).filter(function (v) { return v.items.length; }); }
+  if ((x.op === 'hgive' || x.op === 'hback') && d.rid) { if (D.hrel) D.hrel.ready = (D.hrel.ready || []).filter(function (r) { return r.rid !== d.rid; }); if (D.hready) D.hready = D.hready.filter(function (r) { return r.rid !== d.rid; }); if (D.hstops) D.hstops = D.hstops.filter(function (r) { return r.rid !== d.rid; }); }
+  if (x.op === 'hcarry' && d.rid) { hLists().forEach(function (L) { L.forEach(function (r) { if (r.rid !== d.rid) return; r.crole = d.to === 'agent' ? 'Agent' : 'Rider'; r.cname = d.to === 'agent' ? r.agent : hRider(); }); }); if (D.hstops && d.to === 'agent') D.hstops = D.hstops.filter(function (r) { return r.rid !== d.rid; }); }
+}
+/** The manager's Help items tab and Frank's Pending orders: release, on the way, given lately, the items store. */
+function hRelRows() {
+  var R = D.hrel; if (!R) return ''; var O = R.open || [], rd = R.ready || [], gv = (R.given || []).filter(function (g) { return g.st === 'Given'; }), st = R.store || [];
+  var ni = O.reduce(function (t, v) { return t + v.items.length; }, 0), pr = rd.filter(function (x) { return x.crole === 'Rider'; }).length, low = st.filter(function (s) { return s.left <= 0; }).length;
+  return todoBox([O.length ? todoRow('hrel', 'gift', 'purple', 'Release help items: ' + O.length + ' vendor' + (O.length === 1 ? '' : 's'), ni + ' item' + (ni === 1 ? '' : 's') + ' asked for at visits – ' + esc(R.rider) + ' brings them', ni) : '',
+    rd.length ? todoRow('hready', 'truck', 'purple', 'On the way: ' + rd.length + ' vendor' + (rd.length === 1 ? '' : 's'), [pr ? pr + ' with ' + esc(R.rider) : '', rd.length - pr ? (rd.length - pr) + ' given by the agent' : ''].filter(String).join(' · '), 0) : '',
+    gv.length ? todoRow('hgiven', 'check', 'green', 'Given in the last 2 weeks: ' + gv.length, 'with what she checked', 0) : '',
+    todoRow('hstore', 'box', low ? 'amber' : 'blue', 'Items store', st.length ? st.slice(0, 4).map(function (s) { return s.left + ' ' + esc(s.item); }).join(' · ') + (st.length > 4 ? ' …' : '') : 'Count the items in when they arrive', 0)]);
+}
+var HRS = {}; // per vendor on the release sheet: items not ticked, how many, who brings it, items added
+function hrsOf(vid) { return HRS[vid] || (HRS[vid] = { off: {}, q: {}, who: 'rider', add: [] }); }
+function hAllItems() { var H = D.help || HELPD, o = []; Object.keys(H).forEach(function (l) { (H[l] || []).forEach(function (i) { if (i !== 'Other') o.push([l, i]); }); }); return o; }
+SHEETS.hrel = function () {
+  var R = D.hrel; if (!R || !(R.open || []).length) return ''; var stk = {}; (R.store || []).forEach(function (s) { stk[s.item] = s.left; });
+  return shHead('gift', 'purple', 'Release help items', 'Tick what goes out for each vendor, then tap RELEASE. ' + esc(R.rider) + ' brings it on his next stop there.') + R.open.map(function (v) {
+    var s = hrsOf(v.vid), L = v.items.concat(s.add), n = 0, nq = 0;
+    var rows = L.map(function (x) { var k = hKeyC(x), on = !s.off[k], q = s.q[k] || x.qty || 1, nm = hNameC(x), left = stk[nm]; if (on) { n++; nq += q; }
+      return '<div class="row" style="flex-wrap:nowrap;padding:4px 0"><label class="grow" style="display:flex;gap:8px;align-items:center;margin:0"><input type="checkbox" class="chk" data-chg="hron" data-v="' + esc(v.vid) + '" data-k="' + esc(k) + '"' + (on ? ' checked' : '') + '><span>' + esc(nm) + (left != null ? ' <span class="small ' + (left < q ? 't-red' : 'muted') + '">· ' + left + ' in the store</span>' : '') + '</span></label>' +
+        (on ? '<div class="step"><button data-act="hrq" data-v="' + esc(v.vid) + '" data-k="' + esc(k) + '" data-d="-1" aria-label="One less">−</button><input readonly value="' + q + '"><button data-act="hrq" data-v="' + esc(v.vid) + '" data-k="' + esc(k) + '" data-d="1" aria-label="One more">+</button></div>' : '') + '</div>'; }).join('');
+    var have = L.map(hKeyC), opts = hAllItems().filter(function (p) { return have.indexOf(p[1]) < 0; });
+    return '<div class="card" style="margin:10px 0"><b style="font-size:15.5px">' + esc(v.name) + '</b><div class="small muted">' + esc([v.school, v.agent, 'asked ' + dayLbl(v.day)].filter(String).join(' · ')) + '</div>' + rows +
+      (opts.length ? '<select class="hsel" data-chg="hradd" data-v="' + esc(v.vid) + '"><option value="">+ Another item…</option>' + opts.map(function (p) { return '<option value="' + esc(p[0] + '|' + p[1]) + '">' + esc(p[1]) + '</option>'; }).join('') + '</select>' : '') +
+      '<div class="small" style="margin:10px 0 4px">Who brings it?</div><div class="seg">' + [['rider', esc(R.rider) + ', next stop there'], ['agent', esc(v.agent || 'The agent') + ', at her visit']].map(function (w) { return '<button class="' + (s.who === w[0] ? 'on' : '') + '" data-act="hrwho" data-v="' + esc(v.vid) + '" data-w="' + w[0] + '">' + w[1] + '</button>'; }).join('') + '</div>' +
+      '<button class="main big" style="margin-top:10px" data-act="hrgo" data-v="' + esc(v.vid) + '"' + (n ? '' : ' disabled') + '>RELEASE ' + nq + ' ITEM' + (nq === 1 ? '' : 'S') + '</button></div>'; }).join('');
+};
+function hrVend(vid) { return ((D.hrel && D.hrel.open) || []).filter(function (v) { return v.vid === vid; })[0]; }
+CHG.hron = function (el) { var s = hrsOf(el.dataset.v); s.off[el.dataset.k] = !el.checked; drawSheet(); };
+CHG.hradd = function (el) { var p = String(el.value || '').split('|'); if (p.length < 2) return; var s = hrsOf(el.dataset.v); s.add.push({ lever: p[0], item: p.slice(1).join('|'), detail: '', qty: 1 }); drawSheet(); };
+ACT.hrq = function (b) { var s = hrsOf(b.dataset.v), v = hrVend(b.dataset.v), k = b.dataset.k, x = v ? v.items.concat(s.add).filter(function (y) { return hKeyC(y) === k; })[0] : null; s.q[k] = Math.max(1, Math.min(999, (s.q[k] || (x && x.qty) || 1) + Number(b.dataset.d))); drawSheet(); };
+ACT.hrwho = function (b) { hrsOf(b.dataset.v).who = b.dataset.w; drawSheet(); };
+ACT.hrgo = function (b) {
+  var v = hrVend(b.dataset.v); if (!v) return; var s = hrsOf(v.vid), L = v.items.concat(s.add).filter(function (x) { return !s.off[hKeyC(x)]; }).map(function (x) { return { lever: x.lever, item: x.item, detail: x.detail || '', qty: s.q[hKeyC(x)] || x.qty || 1 }; });
+  if (!L.length) { say('Tick at least one item.'); return; } var who = s.who === 'agent' ? (v.agent || 'the agent') + ' gives it at her visit' : hRider() + ' brings it on his next stop there';
+  ask('Release for ' + v.name + ':\n' + hTxtC(L) + '?\n\n' + who + '.', function () { var vid = v.vid; delete HRS[vid]; bgSave('hrel', { vid: vid, items: L, carrier: s.who === 'agent' ? 'agent' : 'rider' }, 'hr-' + uid(), 'released for ' + v.name, null, true); }, 'RELEASE');
+};
+SHEETS.hready = function () {
+  var R = D.hrel, rd = R ? R.ready || [] : []; if (!rd.length) return '';
+  return shHead('truck', 'purple', 'On the way', 'Released, not given yet. Tap who brings it to change it.') + '<div class="list">' + rd.map(function (r) { var pr = r.crole === 'Rider';
+    return '<div class="li" style="flex-wrap:wrap">' + leadI('gift', 'purple') + '<div class="grow"><div class="t">' + esc(r.name) + '</div><div class="s">' + esc(r.txt) + '</div><div class="s">' + esc((pr ? r.cname + ' brings it' : r.agent + ' gives it') + ' · released ' + dayLbl(r.day) + (r.by ? ' by ' + r.by : '')) + '</div>' +
+      (r.rid ? '<div class="sb" style="margin-top:6px"><button class="ghost" data-act="hcar" data-r="' + esc(r.rid) + '" data-t="' + (pr ? 'agent' : 'rider') + '">' + esc(pr ? (r.agent || 'The agent') + ' gives it' : hRider() + ' brings it') + '</button><button class="ghost" style="color:var(--red)" data-act="hbk" data-r="' + esc(r.rid) + '">Take back</button></div>' : '<div class="s t-amber">sending…</div>') + '</div></div>'; }).join('') + '</div>';
+};
+SHEETS.hgiven = function () {
+  var G = (D.hrel && D.hrel.given) || []; if (!G.length) return '';
+  return shHead('check', 'green', 'Given in the last 2 weeks', 'Who gave it, and how the vendor checked it') + '<div class="list">' + G.map(function (g) { var ok = g.st === 'Given';
+    return liRow('', leadI(ok ? 'gift' : 'x', ok ? 'green' : 'grey'), esc(g.name), esc(ok ? (g.gtxt || g.txt) + ' · ' + dayLbl(g.gat) + ' by ' + g.gby : 'Taken back: ' + g.txt + ' · ' + dayLbl(g.gat)), '', ok ? esc(g.chk) : '', ok ? 'green' : 'grey'); }).join('') + '</div>';
+};
+var HST = { item: '', qty: '' };
+SHEETS.hstore = function () {
+  var R = D.hrel; if (!R) return ''; var st = R.store || [], names = hAllItems().map(function (p) { return p[1]; }); st.forEach(function (s) { if (names.indexOf(s.item) < 0) names.push(s.item); });
+  return shHead('box', 'blue', 'Items store', 'Aprons, posters, gifts… – no cartons, no money. Released items go out of it; items not given come back.') +
+    (st.length ? '<table class="dt" style="width:100%"><tr><td class="k"><b>Item</b></td><td class="right"><b>Came in</b></td><td class="right"><b>Out</b></td><td class="right"><b>There now</b></td></tr>' + st.map(function (s) { return '<tr><td class="k">' + esc(s.item) + '</td><td class="right">' + s.inn + '</td><td class="right">' + (s.out - s.back) + '</td><td class="right"><b class="' + (s.left <= 0 ? 't-red' : '') + '">' + s.left + '</b></td></tr>'; }).join('') + '</table>' : '<p class="small muted">Nothing counted in yet. When items arrive, write them here – the store then counts down as items are released.</p>') +
+    '<h3 style="margin:14px 0 4px">Items came in, or you counted them</h3><label>Item</label><select data-chg="hsti"><option value="">Choose…</option>' + names.map(function (n) { return '<option' + (HST.item === n ? ' selected' : '') + '>' + esc(n) + '</option>'; }).join('') + '</select>' +
+    '<label>How many</label><input inputmode="numeric" data-inp="hstq" value="' + esc(HST.qty) + '" placeholder="e.g. 20">' +
+    '<div class="btns" style="margin-top:10px"><button class="main" data-act="hstGo" data-k="in">CAME IN</button><button data-act="hstGo" data-k="count">COUNTED – THERE ARE NOW</button></div>';
+};
+CHG.hsti = function (el) { HST.item = el.value; }; INP.hstq = function (el) { HST.qty = el.value.replace(/\D/g, ''); };
+ACT.hstGo = function (b) { var c = b.dataset.k === 'count', q = parseInt(HST.qty, 10);
+  if (!HST.item) { say('Choose the item.'); return; } if (!(q >= (c ? 0 : 1))) { say('Write how many' + (c ? ' there are now.' : ' came in.')); return; }
+  ask((c ? 'You counted ' + q + ' × ' + HST.item + ' in the store now?' : q + ' × ' + HST.item + ' came into the items store?'), function () { var it = HST.item; bgSave('hstore', { act: c ? 'count' : 'in', item: it, qty: q }, 'hs-' + uid(), (c ? 'counted ' : 'into the store: ') + q + ' × ' + it, null, true); HST = { item: '', qty: '' }; }, c ? 'SAVE THE COUNT' : 'SAVE'); };
+ACT.hbk = function (b) { var r = hFind(b.dataset.r); if (!r) return; ask('Take back ' + r.txt + ' for ' + r.name + '?\nThe items go back to the store, and her ask shows again under Release.', function () { bgSave('hback', { rid: r.rid }, 'hb-' + r.rid, 'took back ' + r.name + '\'s items', null, true); }, 'TAKE BACK'); };
+ACT.hcar = function (b) { var r = hFind(b.dataset.r); if (!r) return; var to = b.dataset.t === 'agent' ? 'agent' : 'rider';
+  bgSave('hcarry', { rid: r.rid, to: to }, 'hc-' + r.rid + '-' + to + '-' + uid(), to === 'agent' ? (D.me.role === 'Agent' ? 'you give ' + r.name + ' her items' : r.agent + ' gives ' + r.name + ' her items') : hRider() + ' brings ' + r.name + '\'s items', null, true); };
+/** The agent: on her stop – what is ready for that vendor and who brings it. */
+function hReadyOf(vid) { return (D.hready || []).filter(function (r) { return r.vid === vid; }); }
+function hReadyHtml(vid) {
+  return hReadyOf(vid).map(function (r) { var mine = r.crole === 'Agent';
+    return '<div class="hready"><div>' + sico(ICO.gift) + '<b>Ready for ' + esc(r.name) + ':</b> ' + esc(r.txt) + ' – ' + (mine ? 'you give it (collect it from Frank)' : esc(r.cname || hRider()) + ' brings it') + '</div><div class="sb">' +
+      (mine ? '<button class="main" data-act="hgOpen" data-r="' + esc(r.rid) + '">GIVEN</button><button class="ghost" data-act="hcar" data-r="' + esc(r.rid) + '" data-t="rider">' + esc(hRider()) + ' brings it</button>' : '<button class="ghost" data-act="hcar" data-r="' + esc(r.rid) + '" data-t="agent">I\'ll give it myself</button>') + '</div></div>'; }).join('');
+}
+/** Her vendors with items ready who are not on today's plan. */
+function hReadyRest(L) {
+  var on = {}; (L || []).forEach(function (x) { if (x.k === 'v') on[x.id] = 1; }); var R = (D.hready || []).filter(function (r) { return !on[r.vid]; }); if (!R.length) return '';
+  var vs = []; R.forEach(function (r) { if (vs.indexOf(r.vid) < 0) vs.push(r.vid); });
+  return fold('hrest', '<b>Help items ready for ' + vs.length + ' more vendor' + (vs.length === 1 ? '' : 's') + '</b> <span class="small muted">not on today\'s plan</span>', function () { return vs.map(function (vid) { var r = hReadyOf(vid)[0]; return '<div style="margin:4px 0 10px"><b>' + esc(r.name) + '</b> <span class="small muted">' + esc(r.school || '') + '</span>' + hReadyHtml(vid) + '</div>'; }).join(''); });
+}
+/** Prince: the strip on a carton stop, and the stops with help items only (purple). */
+function hStrip(vid) { return (D.hstops || []).filter(function (r) { return r.vid === vid; }).map(function (r) { return '<div class="hstrip">' + sico(ICO.gift) + '<span class="grow"><b>+ ' + esc(r.txt) + '</b> (help items)</span><button class="main" data-act="hgOpen" data-r="' + esc(r.rid) + '">GIVEN</button></div>'; }).join(''); }
+function hOnlyN() { var on = {}, n = {}; routeStops().forEach(function (s) { on[s.id] = 1; }); (D.hstops || []).forEach(function (r) { if (!on[r.vid]) n[r.vid] = 1; }); return Object.keys(n).length; } // v2.5.18: help-only stops
+function hStopsHtml() {
+  var H = D.hstops || []; if (!H.length) return ''; var onR = {}; routeStops().forEach(function (s) { onR[s.id] = 1; });
+  var only = H.filter(function (r) { return !onR[r.vid]; }), all = {}; H.forEach(function (r) { r.items.forEach(function (x) { var n = hNameC(x); all[n] = (all[n] || 0) + (x.qty || 1); }); });
+  var h = '<div class="sumline" style="margin-top:10px">' + sico(ICO.gift) + 'Help items to bring: ' + Object.keys(all).map(function (n) { return '<b>' + all[n] + '</b> ' + esc(n); }).join(' · ') + ' <span class="muted">– collect them from Frank</span></div>';
+  var vids = []; only.forEach(function (r) { if (vids.indexOf(r.vid) < 0) vids.push(r.vid); }); if (!vids.length) return h;
+  return h + '<div class="sech">Help items only <span>' + vids.length + ' stop' + (vids.length === 1 ? '' : 's') + ' · no money to collect</span></div>' + vids.map(function (vid) { var L = only.filter(function (r) { return r.vid === vid; }), r = L[0];
+    return '<div class="card hstop"><div class="row" style="flex-wrap:nowrap">' + leadI('gift', 'purple') + '<div class="grow"><h3 class="ell" style="margin:0">' + esc(r.name) + '</h3><div class="sub ell">' + esc([r.school, 'agent ' + r.agent].filter(String).join(' · ')) + '</div></div>' + callBtn(r.phone) + '</div>' +
+      L.map(function (x) { return '<div style="margin-top:8px">' + x.items.map(function (y) { return '<span class="pill" style="background:var(--pur2);color:var(--pur)">' + (y.qty || 1) + ' ' + esc(hNameC(y)) + '</span>'; }).join('') + '</div><button class="main big" style="margin-top:8px" data-act="hgOpen" data-r="' + esc(x.rid) + '">GIVEN' + (L.length > 1 ? ': ' + esc(x.txt) : '') + '</button>'; }).join('') + '</div>'; }).join('');
+}
+/** The receipt: she checks it on the phone with the person who brings it (or gets it on WhatsApp). */
+var HG = { rid: '', q: {} };
+ACT.hgOpen = function (b) { if (viewBlock('hgive')) return; HG = { rid: b.dataset.r, q: {} }; sheetOpen('hgive'); };
+function hGiveList(r) { return r.items.map(function (x, i) { return { x: x, i: i, q: HG.q[i] != null ? HG.q[i] : (x.qty || 1) }; }); }
+function hGiveTxt(r) { var G = hGiveList(r).filter(function (y) { return y.q > 0; }).map(function (y) { return Object.assign({}, y.x, { qty: y.q }); }); return 'Indomie gave you: ' + hTxtC(G) + '\n' + r.name + ' – ' + dayLbl(D.today) + ', by ' + D.me.first + '.\nThank you for selling Indomie! – CupSales'; }
+SHEETS.hgive = function () {
+  var r = hFind(HG.rid); if (!r) return ''; var G = hGiveList(r), n = G.reduce(function (t, y) { return t + y.q; }, 0), wa = waNum(r.phone);
+  return shHead('gift', 'purple', 'Give ' + esc(r.name) + ' her items', 'Show her this, let her check it, then tap.') +
+    '<div class="rcpt"><div class="small muted">CupSales · Indomie</div><h3 style="margin:4px 0 6px">Indomie gave you</h3>' + G.map(function (y) {
+      return '<div class="row" style="flex-wrap:nowrap;padding:4px 0"><span class="grow"><b>' + esc(hNameC(y.x)) + '</b>' + (y.q < (y.x.qty || 1) ? ' <span class="small t-amber">' + ((y.x.qty || 1) - y.q) + ' back to the store</span>' : '') + '</span><div class="step"><button data-act="hgq" data-i="' + y.i + '" data-d="-1" aria-label="One less">−</button><input readonly value="' + y.q + '"><button data-act="hgq" data-i="' + y.i + '" data-d="1" aria-label="One more">+</button></div></div>'; }).join('') +
+    '<div class="small muted" style="margin-top:6px">' + esc(r.name) + ' · ' + esc(dayLbl(D.today)) + ' · by ' + esc(D.me.first) + '</div></div>' +
+    '<button class="main big" data-act="hgGo" data-h="seen"' + (n ? '' : ' disabled') + '>SHE CHECKED IT WITH ME</button>' + (wa ? '<button class="big" style="margin-top:8px" data-act="hgGo" data-h="wa"' + (n ? '' : ' disabled') + '>' + ico(ICO.wa) + 'Send it to her on WhatsApp</button>' : '') +
+    '<p class="small muted">Not there today? Close this – the items stay on your list for the next stop.</p>';
+};
+ACT.hgq = function (b) { var r = hFind(HG.rid); if (!r) return; var i = +b.dataset.i, x = r.items[i]; if (!x) return; var q = HG.q[i] != null ? HG.q[i] : (x.qty || 1); HG.q[i] = Math.max(0, Math.min(x.qty || 1, q + Number(b.dataset.d))); drawSheet(); };
+ACT.hgGo = function (b) {
+  var r = hFind(HG.rid); if (!r || !r.rid) return; var how = b.dataset.h === 'wa' ? 'wa' : 'seen', G = hGiveList(r);
+  if (how === 'wa') { var wa = waNum(r.phone); window.open('https://wa.me/' + (wa || '') + '?text=' + encodeURIComponent(hGiveTxt(r)), '_blank'); }
+  SHEETK = ''; $('over').innerHTML = ''; var rid = r.rid; HG = { rid: '', q: {} };
+  bgSave('hgive', { rid: rid, items: G.map(function (y) { return { k: y.i, q: y.q }; }), how: how }, 'hg-' + rid, 'gave ' + r.name + ' her items', null, true);
+};
 // ---------------------------------------------------------------- v2.5.17: the manager's own screen and the person switcher
 function mgrMe() { return !!(D && D.me.role === 'Supervisor' && SCREEN === 'order'); }
 function tabsOf() { return mgrMe() ? TABS.mgr : TABS[SCREEN]; }
@@ -2343,9 +2474,9 @@ function setView(v) {
   load();
 }
 /** v2.5.17: an agent's screen is view only until the manager taps Act for her. */
-var ACTAS_OK = ['orders', 'cancel', 'visit', 'interv', 'call', 'plan', 'rem', 'dlvday', 'vprofile', 'school', 'register', 'entered']; // as on the system
+var ACTAS_OK = ['orders', 'cancel', 'visit', 'interv', 'call', 'plan', 'rem', 'dlvday', 'vprofile', 'school', 'register', 'entered', 'hcarry']; // as on the system
 function viewBlock(op) { if (!D || !D.viewOf) return false; var n = D.viewOf.first;
-  if (ACTF.agent) { if (!op || ACTAS_OK.indexOf(op) >= 0) return false; say(op === 'startday' || op === 'endday' ? 'Only ' + n + ' can start or end her day, on her own phone.' : 'Only ' + n + ' can do this on her own phone – money she collects or hands over stays in her name.'); return true; } say(n + '\'s screen is view only.\nTap ACT FOR ' + n.toUpperCase() + ' at the top first.'); return true; }
+  if (ACTF.agent) { if (!op || ACTAS_OK.indexOf(op) >= 0) return false; say(op === 'hgive' ? 'Only ' + n + ' can record items she gives, on her own phone, with the vendor.' : op === 'startday' || op === 'endday' ? 'Only ' + n + ' can start or end her day, on her own phone.' : 'Only ' + n + ' can do this on her own phone – money she collects or hands over stays in her name.'); return true; } say(n + '\'s screen is view only.\nTap ACT FOR ' + n.toUpperCase() + ' at the top first.'); return true; }
 function actAgent(on) {
   if (!on) { ACTF.agent = false; render(); return; }
   var n = D.viewOf.first, me = D.mgr ? D.mgr.first : 'you';
@@ -2359,7 +2490,7 @@ ACT.goTab = function (b) { TAB = b.dataset.t; if (b.dataset.k != null) APK = b.d
 /** The top of the manager's Today: what needs him, today in numbers, this week against last week, the month. */
 function mgrTop() {
   var h = needsYou(), ap = apprCount(), no = needOpen(), T = D.teamDay, S = D.stats;
-  h += todoBox([ap ? tabRow('appr', 'approved', 'amber', 'Approvals', apprSum(), ap) : '', no ? tabRow('helpi', 'gift', 'purple', 'Help items: ' + no + ' to give', 'Asked for at visits, not given yet', 0) : '']);
+  h += todoBox([ap ? tabRow('appr', 'approved', 'amber', 'Approvals', apprSum(), ap) : '', no ? tabRow('helpi', 'gift', 'purple', 'Help items: ' + no + ' to release', 'Asked for at visits – release them, ' + esc((D.hrel && D.hrel.rider) || 'Prince') + ' brings them', 0) : '']);
   if (S) {
     var t = S.today, w = S.week, p = S.prev, A = T ? T.agents : [], vd = 0, vp = 0, pros = 0; A.forEach(function (a) { vd += a.done || 0; vp += a.planned || 0; pros += a.pros || 0; });
     h += '<div class="sech">Today <span>' + esc(dayLbl(D.today)) + '</span></div><div class="tiles">' + mtile(t.orders + ' · ' + t.octn, 'orders · cartons') + mtile(ghs(t.cash).replace('GHS ', ''), 'cash collected (GHS)') + mtile(t.dels + ' · ' + t.ctn, 'delivered · cartons') + '</div>' +
@@ -2434,7 +2565,7 @@ function hFilters(gOnly) {
     '<div class="small muted" style="margin:0 0 8px">' + esc(r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) + '</div>';
 }
 CHG.hf = function (el) { HF[el.dataset.f] = el.value; render(); }; ACT.hfr = function (b) { HF.r = b.dataset.r; render(); };
-function hItems(L) { var c = {}, o = []; L.forEach(function (x) { if (!(x.i in c)) { c[x.i] = 0; o.push(x.i); } c[x.i] += x.k === 'G' ? x.q : 1; }); return o.map(function (i) { return c[i] + ' ' + i; }).join(', '); }
+function hItems(L) { var c = {}, o = []; L.forEach(function (x) { if (!(x.i in c)) { c[x.i] = 0; o.push(x.i); } c[x.i] += x.q || 1; }); /* v2.5.18: how many she asked for, too */ return o.map(function (i) { return c[i] + ' ' + i; }).join(', '); }
 function hList(L) {
   var G = {}, keys = []; L.forEach(function (x) { var k = x.vid + '|' + x.d + '|' + x.k; if (!G[k]) { G[k] = []; keys.push(k); } G[k].push(x); });
   if (!keys.length) return emptyHtml('Nothing for this choice.');
@@ -2453,7 +2584,7 @@ function pgHelpI() {
   var H = D.hlog; if (!H) return emptyHtml('The help items are not ready – pull down to refresh.');
   var A = hRows(false, true), asked = A.filter(function (x) { return x.k === 'N'; }), given = A.filter(function (x) { return x.k === 'G'; }), L = hRows(false, false);
   var gq = given.reduce(function (t, x) { return t + x.q; }, 0), op = asked.filter(function (x) { return !x.g; }).length;
-  var h = '<div class="sech">Help items</div><div class="tiles">' + mtile(asked.length, 'asked for') + mtile(gq, 'given', 't-purple') + mtile(op, 'not given yet', op ? 't-amber' : '') + '</div>' + hFilters(false);
+  var h = '<div class="sech">Help items</div>' + hRelRows() + '<div class="tiles">' + mtile(asked.length, 'asked for') + mtile(gq, 'given', 't-purple') + mtile(op, 'not given yet', op ? 't-amber' : '') + '</div>' + hFilters(false);
   h += fold('hday', '<b>Given per day</b> <span class="small muted">' + gq + ' item' + (gq === 1 ? '' : 's') + ' in these days</span>', function () { return hDays(L); });
   var e = H.eff; h += fold('heff', '<b>Does it work?</b> <span class="small muted">' + (e && e.n ? 'cartons a week, 4 weeks before → after' : 'results 4 weeks after the first item') + '</span>' + (e && e.n ? '<div class="small">Given items: <b>' + e.before + ' → ' + e.after + '</b> · given nothing: ' + e.obefore + ' → ' + e.oafter + '</div>' : ''), function () {
     return (e && e.n ? '<table class="cmpt" style="width:100%"><tr><td>' + e.n + ' vendor' + (e.n === 1 ? '' : 's') + ' given items</td><td class="r"><b>' + e.before + ' → ' + e.after + '</b> ctn a week</td></tr><tr><td>' + e.on + ' vendors given nothing (same weeks)</td><td class="r">' + e.obefore + ' → ' + e.oafter + ' ctn a week</td></tr></table><p class="small muted">Before = the 4 weeks before her first item, after = the 4 weeks from that day. Judge on 5 or more vendors, not one.</p>' : '<p class="small muted">' + (e && e.waiting ? e.waiting + ' vendor' + (e.waiting === 1 ? '' : 's') + ' got items less than 4 weeks ago – their result shows 4 weeks after.' : 'No vendor has been given items yet.') + '</p>') +
@@ -2510,7 +2641,8 @@ ACT.planOk = function (b) {
   askIn('Approve ' + a.name + '\'s plan (' + a.planned + ' visits)?\nA note for her (optional):', '', '', function (n) { bgSave('planok', { uid: u, approve: 1, note: String(n || '').trim() }, 'pa-' + u + '-' + D.today + '-' + uid(), a.name + '\'s plan approved', null, true); }, 'APPROVE');
 };
 /** v2.5.14: how many needs are still open (not given since the visit that said it). */
-function needOpen() { var N = D.needs2; return N && N.items ? N.items.reduce(function (t, g) { return t + g.open; }, 0) : 0; }
+function needOpen() { if (D.hrel) return (D.hrel.open || []).reduce(function (t, v) { return t + v.items.length; }, 0); var N = D.needs2; // v2.5.18: asked for, not released yet
+  return N && N.items ? N.items.reduce(function (t, g) { return t + g.open; }, 0) : 0; }
 var NEEDK = '';
 ACT.needK = function (b) { NEEDK = NEEDK === b.dataset.i ? '' : b.dataset.i; drawSheet(); };
 /** v2.5.14: what vendors need – one line per item with the number still to give; tap for the vendors. */
@@ -2825,10 +2957,10 @@ function spreadRet(s, st) {
 function pgRoute() { return pgRoute0() + laterHtml(); } // v2.5.15
 function pgRoute0() {
   var R = routeStops(), P = pickStops();
-  if (!R.length && !P.length) return emptyHtml('Nothing to deliver right now.');
+  if (!R.length && !P.length && !(D.hstops || []).length) return emptyHtml('Nothing to deliver right now.'); // v2.5.18: or help items to bring
   var dn = D.done || [], dc = dn.reduce(function (t, x) { return t + x.cash; }, 0), nd = dn.filter(function (x) { return /^(Not delivered|Refused)/.test(x.status); }).length;
-  return (D.me.role === 'Helper' ? '<div class="msg info">Helper link for ' + esc(D.me.first) + ' – works today only.</div>' : '') + '<div class="tiles"><div class="tile"><b>' + R.length + '</b><span>stop' + (R.length === 1 ? '' : 's') + ' to go</span></div><div class="tile"><b>' + (dn.length - nd) + '</b><span>delivered' + (nd ? ' · ' + nd + ' not' : '') + '</span></div><div class="tile"><b>' + ghs(dc).replace('GHS ', '') + '</b><span>cash (GHS)</span></div></div>' + todoBox([pickHtml(P)]) +
-    (function () { var ld = {}; R.forEach(function (s) { s.orders.forEach(function (o) { o.lines.forEach(function (l) { ld[l.sku] = (ld[l.sku] || 0) + l.qty; }); }); }); var k = Object.keys(ld); return k.length ? '<div class="sumline">On your bike: ' + k.map(function (x) { return '<b>' + ld[x] + '</b> ' + esc(skn(x)); }).join(' · ') + '</div>' : ''; })() + (R.length ? filterBar('route', 'Find a vendor or school') + '<div id="flist">' + LISTR.route() + '</div>' : '<p class="muted" style="margin:4px 2px">Pick up the orders above first – then they show here to deliver.</p>');
+  return (D.me.role === 'Helper' ? '<div class="msg info">Helper link for ' + esc(D.me.first) + ' – works today only.</div>' : '') + '<div class="tiles"><div class="tile"><b>' + (R.length + hOnlyN()) + '</b><span>stop' + (R.length + hOnlyN() === 1 ? '' : 's') + ' to go</span></div><div class="tile"><b>' + (dn.length - nd) + '</b><span>delivered' + (nd ? ' · ' + nd + ' not' : '') + '</span></div><div class="tile"><b>' + ghs(dc).replace('GHS ', '') + '</b><span>cash (GHS)</span></div></div>' + todoBox([pickHtml(P)]) +
+    (function () { var ld = {}; R.forEach(function (s) { s.orders.forEach(function (o) { o.lines.forEach(function (l) { ld[l.sku] = (ld[l.sku] || 0) + l.qty; }); }); }); var k = Object.keys(ld); return k.length ? '<div class="sumline">On your bike: ' + k.map(function (x) { return '<b>' + ld[x] + '</b> ' + esc(skn(x)); }).join(' · ') + '</div>' : ''; })() + (R.length ? filterBar('route', 'Find a vendor or school') + '<div id="flist">' + LISTR.route() + '</div>' : P.length ? '<p class="muted" style="margin:4px 2px">Pick up the orders above first – then they show here to deliver.</p>' : '') + hStopsHtml(); // v2.5.18
 }
 /** v2.5.2: part of a stop – the orders already picked up (disp) or still at the warehouse; amounts worked out again. */
 function stopPart(s, disp) {
@@ -2871,6 +3003,7 @@ LISTR.route = function () {
     var st = STOP[s.id] || (STOP[s.id] = { open: false, what: '', ret: {}, cash: '', claim: false, cagent: '', camt: '', cwhen: '', reason: '', note: '', sid: uid() });
     h += '<div class="card"><div class="row" style="flex-wrap:nowrap">' + avatar(s.name) + '<div class="grow"><h3 class="ell" style="margin:0">' + esc(s.name) + '</h3><div class="sub ell">agent ' + esc(s.orders[0].agent) + (s.orders.some(function (o) { return o.tries; }) ? ' · <span class="t-amber">tried before</span>' : '') + '</div></div>' + callBtn(s.phone) + '</div>';
     s.orders.forEach(function (o) { h += '<div style="margin-top:8px">' + o.lines.map(function (l) { return '<span class="pill pk">' + pk(l.sku) + l.qty + ' ' + esc(skn(l.sku)) + '</span>'; }).join('') + '<div class="small muted">' + esc(o.pay) + (/Omni/.test(o.from) ? '' : ' · from ' + esc(o.from)) + (s.orders.length > 1 && o.date ? ' · ordered ' + esc(dayLbl(o.date)) : '') + '</div></div>'; });
+    h += hStrip(s.id); // v2.5.18: her help items, at the same stop
     if (st.what === 'LESS') spreadRet(s, st); h += stopAsk(s, st);
     if (queue().some(function (x) { return x.op === 'stop' && x.data.vid === s.id; })) h += '<div class="msg" style="background:var(--green2);color:var(--green)">✓ Saved on this phone – ' + (noSig() ? 'sent when there is signal. Go on to the next stop.' : 'sending to the system. Go on to the next stop.') + '</div>';
     else if (!st.open) h += '<button class="main big" data-act="stopopen" data-v="' + s.id + '">Record delivery</button>';
