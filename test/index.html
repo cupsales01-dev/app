@@ -630,6 +630,7 @@ document.addEventListener('click', function (e) {
   if (!b) { if (typeof PSTOP === 'string' && PSTOP && !e.target.closest('.stopc,.ndlist,.nstop,#over,#dlg,#toast,input,textarea,select,label,a,button')) stopFold(); return; } // v2.5.12
   if (b.dataset.scr) { SCREEN = b.dataset.scr; TAB = firstTab(); MSG = null; ACTF = {}; SHEETK = ''; render(); window.scrollTo(0, 0); return; } // v2.5.2: "Act for …" goes off when the manager leaves the screen
   if (b.dataset.tab) { TAB = b.dataset.tab; MSG = null; SHEETK = ''; OUTK = null; ENTK = {}; render(); window.scrollTo(0, 0); return; }
+  if (b.closest('.ndpv') && NDPVBLOCK.indexOf(b.dataset.act) >= 0) { say('This is a preview of ' + dayLbl(b.closest('.ndpv').dataset.d) + '. This button works on the day itself.'); return; } // v2.5.19
   if (actView() && ACTBLOCK.indexOf(b.dataset.act) >= 0) { say(actWho() + '\'s screen is view only. Tap ACT FOR ' + actWho().toUpperCase() + ' at the top first.'); return; } // v2.5.2
   var f = ACT[b.dataset.act]; if (f) f(b, e);
 });
@@ -1824,15 +1825,17 @@ function renderKeep() { var el = document.querySelector('.stopc.on .sh'), k = el
 /** v2.5.15: End my day – her day in one card, then tomorrow's plan (a preview, made fresh in the morning). */
 function endDayHtml() {
   var Y = D.myDay, P = D.plan; if (D.me.role !== 'Agent' || !Y || !Y.workday || !Y.start || !P || !P.work) return '';
-  if (!Y.end) { var left = planLeft(), N0 = P.next; return '<div class="card" style="margin-top:14px"><h3>End of the day</h3><p class="sub" style="margin-top:0">' + (left ? left + ' visit' + (left === 1 ? '' : 's') + ' still open – skip them first, or end the day anyway.' : 'All visits done or skipped.') + ' The manager gets your day in one email, and you see tomorrow\'s plan.</p><button class="' + (left ? 'ghost' : 'main') + ' big" data-act="endday">End my day</button></div>' + (N0 && (N0.items || []).length ? fold('nextpv', '<b>Tomorrow – ' + esc(dayLbl(N0.day)) + '</b> <span class="small muted">preview · ' + (N0.items || []).length + ' visits</span><div class="small muted">Worked out again from the newest payments and deliveries each time you open the app</div>', function () { return nextPlanHtml(N0, true); }) : ''); } // v2.5.16: from 3 pm
+  if (!Y.end) { var left = planLeft(), N0 = P.next; return '<div class="card" style="margin-top:14px"><h3>End of the day</h3><p class="sub" style="margin-top:0">' + (left ? left + ' visit' + (left === 1 ? '' : 's') + ' still open – skip them first, or end the day anyway.' : 'All visits done or skipped.') + ' The manager gets your day in one email, and you see tomorrow\'s plan.</p><button class="' + (left ? 'ghost' : 'main') + ' big" data-act="endday">End my day</button></div>' + (N0 && (N0.items || []).length ? fold('nextpv', '<b>' + nextWord(N0) + ' – ' + esc(dayLbl(N0.day)) + '</b> <span class="small muted">preview · ' + (N0.items || []).length + ' visits</span><div class="small muted">Worked out again from the newest payments and deliveries each time you open the app</div>', function () { return nextPlanHtml(N0, true); }) : ''); } // v2.5.16: from 3 pm
   var s = Y.sum || {}, h = '<div class="card" style="margin-top:14px;border-color:var(--green)"><h3>✓ Day ended ' + esc(Y.end === 'now' ? 'just now' : 'at ' + Y.end) + '</h3>';
   if (Y.sum) h += '<div class="kpis"><div><b>' + s.visits + (s.planned ? '/' + s.planned : '') + '</b><span>visits</span></div><div><b>' + s.orders + '</b><span>orders · ' + s.ctn + ' ctn</span></div><div><b>' + ghs(s.cash).replace('GHS ', '') + '</b><span>cash (GHS)</span></div></div><div class="small muted" style="margin-top:6px">New schools ' + s.schools + ' · calls ' + s.calls + ' · orders worth ' + ghs(s.value) + '</div>';
   h += '<button class="ghost" style="margin-top:8px" data-act="endday">End again (I did more)</button></div>';
-  var N = P.next; if (!N) return h + '<p class="small muted">Tomorrow\'s plan shows here after a refresh – pull down.</p>';
+  var N = P.next; if (!N) return h + '<p class="small muted">The next day\'s plan shows here after a refresh – pull down.</p>';
   return h + nextPlanHtml(N);
 }
+/** v2.5.19: "Tomorrow" on Thursday, "Monday" on Friday or Saturday. */
+function nextWord(N) { return N.day === addDays(D.today, 1) ? 'Tomorrow' : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][new Date(N.day + 'T12:00:00Z').getUTCDay()]; }
 function nextPlanHtml(N, bare) { var G = planGroups(N.items || []);
-  return (bare ? '' : '<div class="sech">Tomorrow – ' + esc(dayLbl(N.day)) + ' <span>a preview – made fresh in the morning</span></div>') + (bare ? '<div>' : '<div class="card">') + '<p class="small" style="margin-top:0"><b>' + (N.items || []).length + ' visits</b> at ' + G.length + ' stop' + (G.length === 1 ? '' : 's') + (N.calls ? ' · ' + N.calls + ' call' + (N.calls === 1 ? '' : 's') : '') + '</p>' +
+  return (bare ? '' : '<div class="sech">' + nextWord(N) + ' – ' + esc(dayLbl(N.day)) + ' <span>a preview – made fresh in the morning</span></div>') + (bare ? '<div>' : '<div class="card">') + '<p class="small" style="margin-top:0"><b>' + (N.items || []).length + ' visits</b> at ' + G.length + ' stop' + (G.length === 1 ? '' : 's') + (N.calls ? ' · ' + N.calls + ' call' + (N.calls === 1 ? '' : 's') : '') + '</p>' +
     G.map(function (g, i) { return '<div class="row small" style="flex-wrap:nowrap;border-top:1px solid var(--line);padding:6px 0"><span class="nb">' + (i + 1) + '</span><div class="grow" style="min-width:0"><b>' + esc(g.name) + '</b><div class="muted ell">' + g.items.map(function (y) { return esc(y.x.k === 'v' ? y.x.name : 'Prospect visit'); }).join(', ') + '</div></div></div>'; }).join('') + '</div>';
 }
 ACT.endday = function () {
@@ -1954,7 +1957,7 @@ function pgPlan() {
   if (ND) return pgPlanND(); // v2.5.19
   var P = D.plan; var h = todoBox([startRow(), monthRow()]);
   if (!P) return h + emptyHtml('Your plan is not ready – pull down to refresh.');
-  if (P.leave || P.hol || (!P.work && !(P.items || []).length)) return h + emptyHtml(P.leave ? 'You are on leave today – no plan.' : P.hol ? 'Public holiday today: ' + String(P.hol).replace(/\s*\(.*\)$/, '') + ' – no plan.' : 'No plan on Saturday and Sunday – working days are Monday to Friday.') + otherVisits([]);
+  if (P.leave || P.hol || (!P.work && !(P.items || []).length)) return h + emptyHtml(P.leave ? 'You are on leave today – no plan.' : P.hol ? 'Public holiday today: ' + String(P.hol).replace(/\s*\(.*\)$/, '') + ' – no plan.' : 'No plan on Saturday and Sunday – working days are Monday to Friday.') + (P.next && D.me.role === 'Agent' ? nextPlanHtml(P.next) : '') + otherVisits([]); // v2.5.19
   var L = planItems(), go = L.filter(function (x) { return !x.skip && !x.rm; }), done = go.filter(function (x) { return visitOf(x); }).length, edited = !!(PLANX && PLANX.day === P.day);
   var calls = P.calls || [], cdone = calls.filter(callOf).length, pros = (P.visits || []).filter(function (v) { return v.sid && !v.vid; }).length, goal = planGoal();
   var kind = P.school === false ? 'School holiday – calls and debts' : P.peak ? 'Peak day – re-orders and debts' : 'New schools and collection day';
@@ -2000,12 +2003,14 @@ function pgPlan() {
 function pgPlanND() {
   var P = D.plan, Y = D.myDay || {}, h = '';
   if (!P) return ndNeeds([]) + emptyHtml('Your plan is not ready – pull down to refresh.') + ndSwitch();
+  if (!P.work && P.next && P.next.full && !NDPV && !(P.items || []).length) return ndPreview(P); // v2.5.19: a day off – the next working day, view only
+  var dkey = (NDPV ? 'pv' : '') + P.day; if (NDLAST !== dkey) { PSTOP = ''; NDALL = false; NDLAST = dkey; } // review: what was open in the preview does not stay open on the day
   if (P.leave || P.hol || (!P.work && !(P.items || []).length)) return ndNeeds([]) + emptyHtml(P.leave ? 'You are on leave today – no plan.' : P.hol ? 'Public holiday today: ' + String(P.hol).replace(/\s*\(.*\)$/, '') + ' – no plan.' : 'No plan on Saturday and Sunday – working days are Monday to Friday.') + otherVisits([]) + ndSwitch();
   var L = planItems(), G = planGroups(L), kind = P.school === false ? 'School holiday – calls and debts' : P.peak ? 'Peak day – re-orders and debts' : 'New schools and collection day';
   var gi = -1; G.some(function (g, i) { if (ndOpenIn(g).length) { gi = i; return true; } return false; });
   h += '<div class="ndd">' + esc(dayLbl(P.day)) + ' · ' + esc(kind) + (P.status === 'Approved' ? ' · <span class="t-green">approved by the manager</span>' : '') + '</div>';
   if (P.note) h += '<div class="msg info" style="margin-bottom:10px"><b>Manager:</b> ' + esc(P.note) + '</div>';
-  h += ndNeeds(L);
+  if (!NDPV) h += ndNeeds(L); // v2.5.19: in the preview it is drawn above, on today's data
   if (gi < 0 && !Y.start && Y.workday && D.me.role === 'Agent') h += '<div class="card nstop"><div class="ey">Your day</div><div class="nven">No stop left on the plan' + (P.calls && P.calls.length ? ' – calls only' : '') + '</div><button class="main big" style="margin-top:12px" data-act="startday">START MY DAY</button></div>'; // review: a day of calls only still starts
   if (PLANX && PLANX.day === P.day && !planLive() && !PLANX.noteOnly) h += '<div class="msg info" style="margin-bottom:10px">Your changes are kept on this phone and sent when you tap START MY DAY. <a href="#" data-act="plUndo">Undo them</a></div>';
   if (Y.end || gi < 0) h += endDayHtml(); // her day and tomorrow first – or End my day when every stop is done
@@ -2017,7 +2022,18 @@ function pgPlanND() {
   if (calls.length) h += fold('ndcalls', '<b>' + calls.length + ' call' + (calls.length === 1 ? '' : 's') + ' to make</b>' + (cdone ? ' <span class="small t-green">· ' + cdone + ' done</span>' : '') + '<div class="small muted">Vendors who order by phone</div>', function () { return '<div class="stopc" style="margin:0;box-shadow:none;border:0">' + calls.map(callRow).join('') + '</div>'; });
   var rmd = L.filter(function (x) { return x.rm; }); if (rmd.length) h += '<p class="small muted">Taken out by the manager: ' + rmd.map(function (x) { return esc(x.name); }).join(', ') + '</p>';
   h += '<div class="btns"><button class="ic" data-act="ndAdd">' + ico(ICO.plus) + 'Add a stop</button>' + (Y.start && !Y.end && gi >= 0 ? '<button class="ghost" data-act="endday">End my day</button>' : '') + '</div>';
-  return h + otherVisits(L) + ndSwitch();
+  return h + (NDPV ? '' : otherVisits(L)) + ndSwitch();
+}
+/** v2.5.19: on a day off, the next working day drawn as My day will look – view only. Nothing here is saved. */
+var NDPV = false, NDLAST = '', NDPVBLOCK = ['startday', 'visOpen', 'plSkip', 'plDel', 'plUnskip', 'plUndo', 'endday', 'ndAdd', 'plAdd', 'schHere', 'plEdit', 'plAgree', 'plGoal', 'callLog'];
+function ndPreview(P) {
+  var N = P.next, keep = [D.plan, D.myDay, PLANX], h = '';
+  var you = D.viewOf ? D.viewOf.first + ' is' : 'You are', why = P.leave ? you + ' on leave today' : P.hol ? 'Public holiday today: ' + String(P.hol).replace(/\s*\(.*\)$/, '') : 'No work on Saturday and Sunday';
+  NDPV = true; PLANX = null;
+  D.plan = { day: N.day, work: true, school: N.school, peak: N.peak, items: N.full || [], calls: N.callL || [], visits: [], called: [], cover: P.cover, status: '', note: '', preview: 1 };
+  D.myDay = { workday: true };
+  try { h = pgPlanND(); } finally { D.plan = keep[0]; D.myDay = keep[1]; PLANX = keep[2]; NDPV = false; }
+  return ndNeeds([]) + '<div class="msg info" style="margin-bottom:10px"><b>' + esc(why) + '.</b> Here is ' + (D.viewOf ? 'the' : 'your') + ' plan for <b>' + esc(dayLbl(N.day)) + '</b> – a preview to look around. Nothing you tap in the plan is saved. On the day it is made again from the newest payments and deliveries, so it can change a little.</div><div class="ndpv" data-d="' + esc(N.day) + '">' + h + '</div>' + otherVisits([]); // review: what needs her today and today's visits stay real
 }
 /** A stop whose school is not known yet is named after its vendors ("TO BE UPDATED" told her nothing). */
 function ndName(g) { if (g.name && !/^(TO BE UPDATED|School not recorded)$/i.test(String(g.name).trim())) return g.name; var n = g.items.filter(function (y) { return y.x.k === 'v'; }).map(function (y) { return y.x.name; }); return (n.length ? n.slice(0, 2).join(', ') + (n.length > 2 ? ' +' + (n.length - 2) : '') : 'A stop') + ' – school not set'; }
