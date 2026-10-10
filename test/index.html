@@ -1955,7 +1955,7 @@ var DAYN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'S
 function pgPlan() {
   if (D.me.role === 'Supervisor') return pgTeamDay();
   if (ND) return pgPlanND(); // v2.5.19
-  var P = D.plan; var h = todoBox([startRow(), monthRow()]);
+  var P = D.plan; var h = (P && P.practice ? '<div class="msg info" style="margin-bottom:8px"><b>Practice day.</b> ' + esc(dayLbl(P.day)) + ' works like a normal Monday on the test system, so you can try everything.</div>' : '') + todoBox([startRow(), monthRow()]);
   if (!P) return h + emptyHtml('Your plan is not ready – pull down to refresh.');
   if (P.leave || P.hol || (!P.work && !(P.items || []).length)) return h + emptyHtml(P.leave ? 'You are on leave today – no plan.' : P.hol ? 'Public holiday today: ' + String(P.hol).replace(/\s*\(.*\)$/, '') + ' – no plan.' : 'No plan on Saturday and Sunday – working days are Monday to Friday.') + (P.next && D.me.role === 'Agent' ? nextPlanHtml(P.next) : '') + otherVisits([]); // v2.5.19
   var L = planItems(), go = L.filter(function (x) { return !x.skip && !x.rm; }), done = go.filter(function (x) { return visitOf(x); }).length, edited = !!(PLANX && PLANX.day === P.day);
@@ -2006,9 +2006,9 @@ function pgPlanND() {
   if (!P.work && P.next && P.next.full && !NDPV && !(P.items || []).length) return ndPreview(P); // v2.5.19: a day off – the next working day, view only
   var dkey = (NDPV ? 'pv' : '') + P.day; if (NDLAST !== dkey) { PSTOP = ''; NDALL = false; NDLAST = dkey; } // review: what was open in the preview does not stay open on the day
   if (P.leave || P.hol || (!P.work && !(P.items || []).length)) return ndNeeds([]) + emptyHtml(P.leave ? 'You are on leave today – no plan.' : P.hol ? 'Public holiday today: ' + String(P.hol).replace(/\s*\(.*\)$/, '') + ' – no plan.' : 'No plan on Saturday and Sunday – working days are Monday to Friday.') + otherVisits([]) + ndSwitch();
-  var L = planItems(), G = planGroups(L), kind = P.school === false ? 'School holiday – calls and debts' : P.peak ? 'Peak day – re-orders and debts' : 'New schools and collection day';
+  var L = planItems(), G = planGroups(L), kind = P.practice ? 'Practice day – works like a Monday' : P.school === false ? 'School holiday – calls and debts' : P.peak ? 'Peak day – re-orders and debts' : 'New schools and collection day';
   var gi = -1; G.some(function (g, i) { if (ndOpenIn(g).length) { gi = i; return true; } return false; });
-  h += '<div class="ndd">' + esc(dayLbl(P.day)) + ' · ' + esc(kind) + (P.status === 'Approved' ? ' · <span class="t-green">approved by the manager</span>' : '') + '</div>';
+  h += (P.practice ? '<div class="msg info" style="margin-bottom:8px"><b>Practice day.</b> ' + esc(dayLbl(P.day)) + ' works like a normal Monday on the test system, so you can try everything.</div>' : '') + '<div class="ndd">' + esc(dayLbl(P.day)) + ' · ' + esc(kind) + (P.status === 'Approved' ? ' · <span class="t-green">approved by the manager</span>' : '') + '</div>';
   if (P.note) h += '<div class="msg info" style="margin-bottom:10px"><b>Manager:</b> ' + esc(P.note) + '</div>';
   if (!NDPV) h += ndNeeds(L); // v2.5.19: in the preview it is drawn above, on today's data
   if (gi < 0 && !Y.start && Y.workday && D.me.role === 'Agent') h += '<div class="card nstop"><div class="ey">Your day</div><div class="nven">No stop left on the plan' + (P.calls && P.calls.length ? ' – calls only' : '') + '</div><button class="main big" style="margin-top:12px" data-act="startday">START MY DAY</button></div>'; // review: a day of calls only still starts
