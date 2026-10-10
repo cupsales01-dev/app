@@ -168,6 +168,23 @@ details summary{cursor:pointer;color:var(--mute)}
 .spin.dk{border-color:rgba(0,0,0,.12);border-top-color:var(--blue);vertical-align:-2px;margin-right:6px}
 .stk{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line)}.stk input{width:72px;text-align:center;padding:8px 4px}.seg.mini{flex:0 0 auto;padding:2px}.seg.mini button{flex:0 0 auto;font-size:12.5px;padding:6px 8px}
 .tl{border-left:2px solid var(--line);margin:6px 0 4px 8px;padding-left:12px}.tl .ev{position:relative;padding:6px 0 10px}.tl .ev:before{content:'';position:absolute;left:-18px;top:11px;width:10px;height:10px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 3px #fff}.tl .ev.c:before{background:var(--info)}
+/* v2.5.19: the rebuilt My day */
+.ndd{font-size:12.5px;color:var(--mute);margin:0 2px 8px}
+.nstop{border:2px solid var(--red);background:#fff;padding:14px 14px 12px;margin:0 0 12px}
+.nstop .ey{font-size:11.5px;font-weight:700;letter-spacing:.5px;color:var(--mute);text-transform:uppercase}
+.nstop .nsch{font-size:18px;font-weight:800;margin:4px 0 2px;line-height:1.25}
+.nstop .nven{font-size:15px;font-weight:650;cursor:pointer}
+.nstop .ncol{font-size:15px;font-weight:750;margin-top:4px}
+.nstop .nwhy{font-size:12.5px;color:var(--mute);margin-top:2px}
+.nstop .nbt{display:flex;gap:6px;margin-top:12px;flex-wrap:nowrap}.nstop .nbt>*{flex:1 1 0;min-width:0}.nstop .nbt .grow2{flex:2.2 1 0}
+.nstop .nbt button{width:100%;padding:11px 6px;font-size:14px}.nstop .nbt a{text-decoration:none}
+.nstop .nmore{margin-top:10px;font-size:13px;color:var(--info);cursor:pointer}
+.nstop .pv{padding-left:0;padding-right:0}
+.ndprog{display:block;cursor:pointer;padding:10px 14px;margin:0 0 12px}.ndprog .l1{font-size:13.5px;font-weight:650}.ndprog .l2{font-size:12.5px;color:var(--mute);margin-top:2px}
+.ndlist{padding:0;overflow:hidden;margin:0 0 12px}.ndrow{display:flex;align-items:center;gap:10px;padding:11px 12px;border-top:1px solid var(--line);cursor:pointer}.ndrow:first-child{border-top:0}
+.ndrow .nb{width:24px;height:24px;flex:0 0 24px;border-radius:50%;background:var(--grey2);color:var(--ink);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px}.ndrow .nb.ok{background:var(--green);color:#fff}
+.ndrow b{font-size:14.5px}.ndrow.dn{opacity:.7}.ndopen{border-top:1px solid var(--line);background:#FCFCFD}
+.ndsw{text-align:center;margin:18px 0 6px}
 .cashsum{background:linear-gradient(135deg,#F0FAF3 0%,#fff 70%)}
 svg.si{width:14px;height:14px;vertical-align:-2px;margin-right:4px}.t-purple{color:var(--pur)}.lead.t-purple{background:var(--pur2);color:var(--pur)}
 .who.psw{cursor:pointer;border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:3px 4px 3px 10px}
@@ -396,6 +413,8 @@ function firstTab() { return tabsOf()[0][0]; }
 var TABS0 = null;
 var LOGO = '<svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="23" fill="#FFC400"/><path d="M8.5 24h31a15.5 15.5 0 0 1-31 0z" fill="#fff"/><path d="M11.5 23.5c2-4.2 4 4.2 6 0s4 4.2 6 0 4 4.2 6 0 4 4.2 6 0" stroke="#D7141A" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M27 5.5l-5.5 15.5M33.5 7.5l-7.5 13.5" stroke="#7A3E00" stroke-width="2.6" stroke-linecap="round"/><rect x="16" y="37.5" width="16" height="3" rx="1.5" fill="#fff"/></svg>';
 function ico(p) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>'; }
+/** v2.5.19: the rebuilt My day – a trial, switched on with ?nd=1 in the link (kept on this phone), off with ?nd=0. */
+var ND = (function () { try { var m = location.search.match(/[?&]nd=([01])/); if (m) localStorage.setItem('cs_nd', m[1]); return localStorage.getItem('cs_nd') === '1'; } catch (e) { return false; } })();
 var ICO = {
   'new': '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
   vendors: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c1.9.7 3.1 2.4 3.5 5.2"/>',
@@ -608,7 +627,7 @@ function decorate() {
 document.addEventListener('click', function (e) {
   if (e.target.classList && e.target.classList.contains('overlay')) { if (e.target.parentNode && e.target.parentNode.id === 'dlg') ACT.dlgNo(); else { $('over').innerHTML = ''; SHEETK = ''; } return; } // v2.4.9: tap outside = close
   var b = e.target.closest('[data-scr],[data-tab],[data-act]');
-  if (!b) { if (typeof PSTOP === 'string' && PSTOP && !e.target.closest('.stopc,#over,#dlg,#toast,input,textarea,select,label,a,button')) stopFold(); return; } // v2.5.12
+  if (!b) { if (typeof PSTOP === 'string' && PSTOP && !e.target.closest('.stopc,.ndlist,.nstop,#over,#dlg,#toast,input,textarea,select,label,a,button')) stopFold(); return; } // v2.5.12
   if (b.dataset.scr) { SCREEN = b.dataset.scr; TAB = firstTab(); MSG = null; ACTF = {}; SHEETK = ''; render(); window.scrollTo(0, 0); return; } // v2.5.2: "Act for …" goes off when the manager leaves the screen
   if (b.dataset.tab) { TAB = b.dataset.tab; MSG = null; SHEETK = ''; OUTK = null; ENTK = {}; render(); window.scrollTo(0, 0); return; }
   if (actView() && ACTBLOCK.indexOf(b.dataset.act) >= 0) { say(actWho() + '\'s screen is view only. Tap ACT FOR ' + actWho().toUpperCase() + ' at the top first.'); return; } // v2.5.2
@@ -1604,7 +1623,7 @@ function cashTable1(c) {
 }
 ACT.handover = function (b) {
   var to = /→ Frank/.test(b.dataset.r) ? 'Frank' : /→ Joshua/.test(b.dataset.r) ? 'the manager' : 'the HR office logbook';
-  var go = function (amt, lb) { bgSave('handover', { src: b.dataset.src, amount: num(amt), logbook: lb }, 'ho-' + b.dataset.src + '-' + num(amt) + '-' + b.dataset.a + '-' + D.today, 'hand over ' + ghs(num(amt)) + ' to ' + to, b); };
+  var go = function (amt, lb) { bgSave('handover', { src: b.dataset.src, amount: num(amt), logbook: lb }, 'ho-' + b.dataset.src + '-' + num(amt) + '-' + b.dataset.a + '-' + D.today + '-' + (D.me.uid || ''), 'hand over ' + ghs(num(amt)) + ' to ' + to, b); };
   askIn('Hand over to ' + to + '. Amount (GHS):', b.dataset.a, 'decimal', function (amt) { if (!(num(amt) > 0)) { say('Type the amount, e.g. 620.'); return; }
     if (to !== 'the HR office logbook') { go(amt, ''); return; }
     askIn('HR logbook page or number where the office signed:', '', '', function (lb) { if (!String(lb).trim()) { say('Write the logbook page or number.'); return; } go(amt, lb); }, 'SAVE'); }, 'HAND OVER');
@@ -1829,7 +1848,7 @@ function remsOpen() { return (D.rems || []).filter(function (r) { return !r.done
 function remNow() { var hm = new Date().toTimeString().slice(0, 5); return function (r) { return r.day < D.today || (r.day === D.today && (!r.time || r.time <= hm)); }; }
 function remWhen(r) { return (r.day === D.today ? 'Today' : r.day === addDays(D.today, 1) ? 'Tomorrow' : dayLbl(r.day)) + (r.time ? ' ' + r.time : ''); }
 function remBar() {
-  if (!D || D.me.role === 'Helper' || !D.rems || TAB !== firstTab() || (D.me.role === 'Supervisor' && SCREEN !== 'order')) return '';
+  if (!D || D.me.role === 'Helper' || !D.rems || TAB !== firstTab() || (D.me.role === 'Supervisor' && SCREEN !== 'order') || (ND && D.me.role === 'Agent')) return ''; // v2.5.19: in Needs you
   var L = remsOpen(), due = L.filter(remNow()), td = L.filter(function (r) { return r.day === D.today; }), nx = L[0];
   if (!L.length) return '<div class="small" style="margin:0 2px 8px"><a href="#" data-act="sheet" data-k="rems" style="text-decoration:none">' + sico(ICO.clock) + ' Set a reminder</a></div>'; /* v2.5.17: a small clock */
   return todoBox(['<div class="li" data-act="sheet" data-k="rems">' + leadI('clock', due.length ? 'red' : 'blue') + '<div class="grow"><div class="t">' + (due.length ? (due.length === 1 ? 'Now: ' + esc(due[0].about) : due.length + ' reminders due now') : 'Reminders' + (td.length ? ' · ' + td.length + ' today' : '')) + '</div><div class="s ell">' + (due.length ? due.map(function (r) { return esc(remWhen(r)); }).join(' · ') : 'Next: ' + esc(remWhen(nx)) + ' – ' + esc(nx.about)) + '</div></div>' + (due.length ? '<span class="cnt">' + due.length + '</span>' : '') + '<span class="go">' + ico(ICO.right) + '</span></div>']);
@@ -1932,6 +1951,7 @@ function planGroups(L) { var G = [], at = {}; L.forEach(function (x, i) { if (x.
 var DAYN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 function pgPlan() {
   if (D.me.role === 'Supervisor') return pgTeamDay();
+  if (ND) return pgPlanND(); // v2.5.19
   var P = D.plan; var h = todoBox([startRow(), monthRow()]);
   if (!P) return h + emptyHtml('Your plan is not ready – pull down to refresh.');
   if (P.leave || P.hol || (!P.work && !(P.items || []).length)) return h + emptyHtml(P.leave ? 'You are on leave today – no plan.' : P.hol ? 'Public holiday today: ' + String(P.hol).replace(/\s*\(.*\)$/, '') + ' – no plan.' : 'No plan on Saturday and Sunday – working days are Monday to Friday.') + otherVisits([]);
@@ -1975,6 +1995,114 @@ function pgPlan() {
   var miss = G.filter(function (g) { var s = g.k.indexOf('S:') === 0 ? schoolOf(g.k.slice(2)) : null; return !(s && s.pin) && !itemPin(g.items[0].x); }).length; if (miss) h += '<p class="small muted">' + miss + ' stop' + (miss === 1 ? ' has' : 's have') + ' no pin yet – the map searches the name; your first "Arrived" there pins it.</p>';
   return h + otherVisits(L) + hReadyRest(L); // v2.5.18
 }
+// ---------------------------------------------------------------- v2.5.19: the rebuilt My day (Section 1 of the fresh start)
+/** My day in one screen: what needs her, the next stop, how far she is, the other stops folded. */
+function pgPlanND() {
+  var P = D.plan, Y = D.myDay || {}, h = '';
+  if (!P) return ndNeeds([]) + emptyHtml('Your plan is not ready – pull down to refresh.') + ndSwitch();
+  if (P.leave || P.hol || (!P.work && !(P.items || []).length)) return ndNeeds([]) + emptyHtml(P.leave ? 'You are on leave today – no plan.' : P.hol ? 'Public holiday today: ' + String(P.hol).replace(/\s*\(.*\)$/, '') + ' – no plan.' : 'No plan on Saturday and Sunday – working days are Monday to Friday.') + otherVisits([]) + ndSwitch();
+  var L = planItems(), G = planGroups(L), kind = P.school === false ? 'School holiday – calls and debts' : P.peak ? 'Peak day – re-orders and debts' : 'New schools and collection day';
+  var gi = -1; G.some(function (g, i) { if (ndOpenIn(g).length) { gi = i; return true; } return false; });
+  h += '<div class="ndd">' + esc(dayLbl(P.day)) + ' · ' + esc(kind) + (P.status === 'Approved' ? ' · <span class="t-green">approved by the manager</span>' : '') + '</div>';
+  if (P.note) h += '<div class="msg info" style="margin-bottom:10px"><b>Manager:</b> ' + esc(P.note) + '</div>';
+  h += ndNeeds(L);
+  if (gi < 0 && !Y.start && Y.workday && D.me.role === 'Agent') h += '<div class="card nstop"><div class="ey">Your day</div><div class="nven">No stop left on the plan' + (P.calls && P.calls.length ? ' – calls only' : '') + '</div><button class="main big" style="margin-top:12px" data-act="startday">START MY DAY</button></div>'; // review: a day of calls only still starts
+  if (PLANX && PLANX.day === P.day && !planLive() && !PLANX.noteOnly) h += '<div class="msg info" style="margin-bottom:10px">Your changes are kept on this phone and sent when you tap START MY DAY. <a href="#" data-act="plUndo">Undo them</a></div>';
+  if (Y.end || gi < 0) h += endDayHtml(); // her day and tomorrow first – or End my day when every stop is done
+  if (gi >= 0) h += ndNext(G[gi], gi, G.length);
+  else if (!G.length) h += '<div class="card"><p class="muted" style="margin:0">No visits suggested today – tap Add a stop.</p></div>';
+  h += ndProgress(L);
+  h += ndStops(G, gi);
+  var calls = P.calls || [], cdone = calls.filter(callOf).length;
+  if (calls.length) h += fold('ndcalls', '<b>' + calls.length + ' call' + (calls.length === 1 ? '' : 's') + ' to make</b>' + (cdone ? ' <span class="small t-green">· ' + cdone + ' done</span>' : '') + '<div class="small muted">Vendors who order by phone</div>', function () { return '<div class="stopc" style="margin:0;box-shadow:none;border:0">' + calls.map(callRow).join('') + '</div>'; });
+  var rmd = L.filter(function (x) { return x.rm; }); if (rmd.length) h += '<p class="small muted">Taken out by the manager: ' + rmd.map(function (x) { return esc(x.name); }).join(', ') + '</p>';
+  h += '<div class="btns"><button class="ic" data-act="ndAdd">' + ico(ICO.plus) + 'Add a stop</button>' + (Y.start && !Y.end && gi >= 0 ? '<button class="ghost" data-act="endday">End my day</button>' : '') + '</div>';
+  return h + otherVisits(L) + ndSwitch();
+}
+/** A stop whose school is not known yet is named after its vendors ("TO BE UPDATED" told her nothing). */
+function ndName(g) { if (g.name && !/^(TO BE UPDATED|School not recorded)$/i.test(String(g.name).trim())) return g.name; var n = g.items.filter(function (y) { return y.x.k === 'v'; }).map(function (y) { return y.x.name; }); return (n.length ? n.slice(0, 2).join(', ') + (n.length > 2 ? ' +' + (n.length - 2) : '') : 'A stop') + ' – school not set'; }
+/** The vendors (or prospect visits) of a stop still to do: not visited, not skipped. */
+function ndOpenIn(g) { return g.items.filter(function (y) { return !y.x.skip && !y.x.rm && !visitOf(y.x); }); }
+/** What needs her now – each one line, tap to act. Nothing to do = nothing shown. */
+function ndNeeds(L) {
+  var rows = [], due = remsOpen().filter(remNow());
+  if (due.length) rows.push(todoRow('rems', 'clock', 'red', due.length === 1 ? 'Now: ' + esc(due[0].about) : due.length + ' reminders due now', due.map(function (r) { return esc(remWhen(r)); }).join(' · '), due.length));
+  else if (remsOpen().length) { var nx = remsOpen()[0], td = remsOpen().filter(function (r) { return r.day === D.today; }).length; rows.push(todoRow('rems', 'clock', 'blue', 'Reminders' + (td ? ' · ' + td + ' today' : ''), 'Next: ' + esc(remWhen(nx)) + ' – ' + esc(nx.about), 0)); }
+  rows.push(claimsRow());
+  var free = 0, to = []; (D.cash || []).forEach(function (c) { if (c.src !== 'Unallocated' && c.route && c.free > 0.004) { free += c.free; if (to.indexOf(cashTo(c)) < 0) to.push(cashTo(c)); } });
+  if (free > 0.004 && D.collected) rows.push('<div class="li" data-act="sheet" data-k="hand">' + leadI('money', 'amber') + '<div class="grow"><div class="t">' + ghs(free) + ' to hand over</div><div class="s">Cash with you – tap to give it to ' + esc(to.join(' and ')) + '</div></div><span class="go">' + ico(ICO.right) + '</span></div>');
+  var rc = rcptToSend(); if (rc) rows.push('<div class="li" data-act="goTab" data-t="pays">' + leadI('wa', 'blue') + '<div class="grow"><div class="t">' + rc + ' receipt' + (rc === 1 ? '' : 's') + ' to send</div><div class="s">The vendor checks what she paid</div></div><span class="cnt">' + rc + '</span><span class="go">' + ico(ICO.right) + '</span></div>');
+  var hv = ndHelpRest(L); if (hv.length) rows.push(todoRow('ndhelp', 'gift', 'purple', 'Help items ready for ' + hv.length + ' more vendor' + (hv.length === 1 ? '' : 's'), 'Not on today\'s plan – ' + hv.map(function (v) { return esc(hReadyOf(v)[0].name); }).join(', '), 0));
+  return todoBox(rows);
+}
+function ndHelpRest(L) { var on = {}, vs = []; (L || []).forEach(function (x) { if (x.k === 'v') on[x.id] = 1; }); (D.hready || []).forEach(function (r) { if (!on[r.vid] && vs.indexOf(r.vid) < 0) vs.push(r.vid); }); return vs; }
+SHEETS.ndhelp = function () { var vs = ndHelpRest(planItems()); if (!vs.length) return ''; return shHead('gift', 'purple', 'Help items ready', 'For vendors who are not on today\'s plan') + vs.map(function (vid) { var r = hReadyOf(vid)[0]; return '<div style="margin:4px 0 10px"><b>' + esc(r.name) + '</b> <span class="small muted">' + esc(r.school || '') + '</span>' + hReadyHtml(vid) + '</div>'; }).join(''); };
+/** The next stop – the biggest thing on the screen. Before the day starts its button is START MY DAY. */
+function ndNext(g, gi, n) {
+  var open = ndOpenIn(g), y = open[0], x = y.x, vv = x.k === 'v' ? vend(x.id) : null, Y = D.myDay || {};
+  var s = g.k.indexOf('S:') === 0 ? schoolOf(g.k.slice(2)) : null, pin = s && s.pin ? s.pin : itemPin(x), started = !!Y.start, gk = 'ps:' + g.k;
+  var h = '<div class="card nstop"><div class="ey">Next stop · ' + (gi + 1) + ' of ' + n + '</div><div class="nsch">' + esc(ndName(g)) + '</div>' + (s && brkTxt(s) ? '<div class="nwhy" style="margin:-2px 0 4px">' + esc(brkTxt(s)) + '</div>' : '');
+  if (vv) {
+    var tags = (x.tags && x.tags.length ? x.tags : vTags(vv)).filter(function (t, i, a) { return TAGS[t] && a.indexOf(t) === i && t !== 'owes' && t !== 'way' && t !== 'pros' && !(t === 'cover' && a.length > 1); });
+    var m = MONS[+D.today.slice(5, 7) - 1], why = tags.map(function (t) { return t === 'notbought' ? 'Not bought in ' + m : TAGS[t][0]; });
+    why.push(vv.last ? 'last order ' + dayLbl(vv.last) : 'no order yet'); if (vv.open) why.push(vv.open + ' ctn on the way');
+    h += '<div class="nven" data-act="vdet" data-v="' + esc(vv.id) + '">' + esc(x.name) + '</div>' +
+      (vv.debt > 0.004 ? '<div class="ncol ' + lateCls(vv) + '">Collect ' + ghs(vv.debt) + ' · ' + lateTxt(vv) + '</div>' : '<div class="ncol t-green">Owes nothing</div>') +
+      '<div class="nwhy">' + esc(why.join(' · ')) + '</div>' + (vv.fu && vv.fu.day <= D.today && vv.fu.bring ? '<div class="nwhy">Bring: <b>' + esc(vv.fu.bring) + '</b></div>' : '');
+  } else h += '<div class="nven">' + esc((x.tags || []).indexOf('follow') >= 0 ? 'Follow-up visit' : 'Prospect visit – a new school') + '</div>' + (x.why ? '<div class="nwhy">' + esc(x.why) + '</div>' : '');
+  if (x.by === 'Manager') h += '<div class="nwhy"><span class="tag">Added by the manager</span>' + (x.why && x.why !== 'Added by the manager' ? ' ' + esc(x.why) : '') + '</div>';
+  if (vv) h += hReadyHtml(vv.id);
+  if ((vv && !(vv.prof && vv.prof.school)) || s) h += '<div class="small" style="margin-top:8px">' + [vv && !(vv.prof && vv.prof.school) ? '<a href="#" data-act="profOpen" data-v="' + esc(vv.id) + '">Set her school</a>' : '', s ? '<a href="#" data-act="hist" data-k="s" data-i="' + esc(s.id) + '">School history</a>' : ''].filter(String).join(' · ') + '</div>';
+  var map = s || pin || g.k.indexOf('V:') !== 0 ? '<a href="' + esc(mapUrl(pin, s ? s.name : g.name, s ? s.area : '')) + '" target="_blank"><button class="ghost">Map</button></a>' : '';
+  var call = vv && vv.phone ? '<a href="tel:' + esc(vv.phone) + '"><button class="ghost">Call</button></a>' : '';
+  var skip = '<button class="ghost" data-act="' + (x.kind === 'added' && !x.by ? 'plDel' : 'plSkip') + '" data-i="' + y.i + '">' + (x.kind === 'added' && !x.by ? 'Remove' : 'Skip') + '</button>';
+  if (!started && Y.workday) h += '<button class="main big" style="margin-top:12px" data-act="startday">START MY DAY</button><div class="nbt" style="margin-top:6px">' + call + skip + map + '</div><div class="small muted" style="margin-top:6px">Tap START MY DAY when you reach your first school.</div>';
+  else h += '<div class="nbt"><span class="grow2"><button class="main" data-act="visOpen" data-k="' + x.k + '" data-i="' + esc(x.id) + '" data-kind="' + esc(x.kind || '') + '">Arrived</button></span>' + call + skip + map + '</div>';
+  var rest = g.items.length - 1;
+  if (rest > 0) {
+    var dn = g.items.filter(function (z) { return visitOf(z.x); }).length, sk = g.items.filter(function (z) { return z.x.skip; }).length, more = open.length - 1;
+    h += '<div class="nmore" data-act="pstop" data-o="' + esc(gk) + '">' + (PSTOP === gk ? 'Hide the other vendors here' : [more ? more + ' more vendor' + (more === 1 ? '' : 's') + ' at this school' : '', dn ? dn + ' done' : '', sk ? sk + ' skipped' : ''].filter(String).join(' · ') + ' ›') + '</div>';
+    if (PSTOP === gk) h += '<div class="stopc" style="margin:8px 0 0;box-shadow:none">' + g.items.filter(function (z) { return z !== y; }).map(function (z) { return planRow(z.x, z.i); }).join('') + '</div>';
+  }
+  return h + '</div>';
+}
+/** One line: today's visits and what is left to collect; under it the month, tap for My month. */
+function ndProgress(L) {
+  var P = D.plan, go = L.filter(function (x) { return !x.skip && !x.rm; }), done = go.filter(function (x) { return visitOf(x); }).length, M = D.myMonth;
+  var toC = 0, nC = 0; go.forEach(function (x) { if (x.k !== 'v' || visitOf(x)) return; var v = vend(x.id); if (v && v.debt > 0.004) { toC += v.debt; nC++; } });
+  var calls = P.calls || [], l1 = done + ' of ' + go.length + ' visit' + (go.length === 1 ? '' : 's') + ' done' + (calls.length ? ' · ' + calls.filter(callOf).length + ' of ' + calls.length + ' call' + (calls.length === 1 ? '' : 's') : '') + (toC > 0.004 ? ' · ' + ghs(toC) + ' still to collect' : '');
+  var goal = planGoal(), pros = (P.visits || []).filter(function (v) { return v.sid && !v.vid; }).length; if (goal > 0 || pros) l1 += ' · ' + pros + ' of ' + goal + ' new school' + (goal === 1 ? '' : 's');
+  var cov = P.cover || { all: 0, done: 0 }, l3 = cov.all ? '<div class="l2" data-act="plAdd" data-f="cover">Visited ' + cov.done + ' of ' + cov.all + ' vendors this month – each one at least once ›</div>' : '';
+  var l2 = M ? MONS[+D.today.slice(5, 7) - 1] + ': ' + M.ctn + ' of ' + M.target + ' cartons · ' + M.regsBought + ' of ' + M.vt + ' new vendors ›' : '';
+  return '<div class="card ndprog"' + (M ? ' data-act="sheet" data-k="mymonth"' : '') + '><div class="l1">' + l1 + '</div>' + (l2 ? '<div class="l2">' + l2 + '</div>' : '') + l3 + '</div>';
+}
+/** The other stops, one line each in walking order; the first 3 shown, the rest on tap; finished ones at the bottom. */
+var NDALL = false;
+function ndStops(G, gi) {
+  var todo = [], fin = []; G.forEach(function (g, i) { if (i === gi) return; (ndOpenIn(g).length ? todo : fin).push(i); });
+  if (!todo.length && !fin.length) return '';
+  var show = NDALL ? todo : todo.slice(0, 3), row = function (i) {
+    var g = G[i], gk = 'ps:' + g.k, on = PSTOP === gk, ok = !ndOpenIn(g).length, s = g.k.indexOf('S:') === 0 ? schoolOf(g.k.slice(2)) : null, pin = s && s.pin ? s.pin : itemPin(g.items[0].x);
+    var vs = g.items.filter(function (y) { return y.x.k === 'v'; }).length;
+    var r = '<div class="ndrow' + (ok ? ' dn' : '') + '" data-act="pstop" data-o="' + esc(gk) + '"><span class="nb' + (ok ? ' ok' : '') + '">' + (ok ? '✓' : i + 1) + '</span><div class="grow" style="min-width:0"><b class="ell" style="display:block">' + esc(ndName(g)) + '</b>' + (on ? '<div class="small muted">' + (vs ? vs + ' vendor' + (vs === 1 ? '' : 's') : 'Prospect school') + (s ? brkLine(s) : '') + '</div>' : stopSigns(g)) + '</div><span class="ar">' + chev(on) + '</span></div>';
+    if (on) r += '<div class="ndopen">' + g.items.map(function (y) { return planRow(y.x, y.i); }).join('') + (s || pin || g.k.indexOf('V:') !== 0 ? '<div class="small" style="padding:8px 14px 10px"><a href="' + esc(mapUrl(pin, s ? s.name : g.name, s ? s.area : '')) + '" target="_blank">Map</a>' + (s ? ' · <a href="#" data-act="hist" data-k="s" data-i="' + esc(s.id) + '">School history</a>' : '') + '</div>' : '') + '</div>';
+    return r;
+  };
+  var h = '';
+  if (todo.length) h += '<div class="sech">Then <span>' + todo.length + ' more stop' + (todo.length === 1 ? '' : 's') + ' · tap a school for its vendors</span></div><div class="card ndlist">' + show.map(row).join('') + (todo.length > 3 ? '<div class="ndrow" data-act="ndAll" style="justify-content:center;color:var(--info);font-size:13.5px">' + (NDALL ? 'Show fewer' : '+ ' + (todo.length - 3) + ' more stop' + (todo.length - 3 === 1 ? '' : 's')) + '</div>' : '') + '</div>';
+  if (fin.length) h += '<div class="sech">Done or skipped <span>' + fin.length + '</span></div><div class="card ndlist">' + fin.map(row).join('') + '</div>';
+  return h;
+}
+ACT.ndAll = function () { NDALL = !NDALL; render(); };
+/** Add a stop – one button for everything that adds to her day. */
+ACT.ndAdd = function () {
+  var pins = []; planGroups(planItems()).forEach(function (g) { if (!ndOpenIn(g).length) return; var s = g.k.indexOf('S:') === 0 ? schoolOf(g.k.slice(2)) : null, p = s && s.pin ? s.pin : itemPin(g.items[0].x); if (p) pins.push(p); });
+  dlgChoose('Add to today', [['A vendor or school from my list', function () { ACT.plAdd(); }], ['The school I am at now', function () { ACT.schHere(); }], ['Schools near me (map)', function () { window.open('https://www.google.com/maps/search/schools+near+me/', '_blank'); }]]
+    .concat(pins.length ? [['Route through my stops (map)', function () { window.open(routeUrlP(pins), '_blank'); }]] : [])
+    .concat([['A reminder', function () { ACT.remNew(); }], ['Cancel', null, 'ghost']]));
+};
+function ndSwitch() { return D.me.role === 'Agent' && !D.viewOf ? '<div class="ndsw small"><a href="#" data-act="ndOff">Back to the old My day</a></div>' : ''; }
+ACT.ndOff = function () { try { localStorage.setItem('cs_nd', '0'); } catch (e) { } ND = false; render(); window.scrollTo(0, 0); };
 /** v2.5.12: the folded school line – what is left to do there, in a few signs. */
 var PSTOP = '';
 function stopSigns(g) {
@@ -2083,7 +2211,7 @@ function pickAddList(list) {
   if (PICK.uid) { var u = PICK.uid; askIn('Why should ' + agName(u) + ' visit ' + (list.length === 1 ? list[0].name : list.length + ' vendors at ' + (list[0].school || 'this school')) + '? (she sees this)', '', '', function (t) { var w = String(t || '').trim() || 'Added by the manager'; list.forEach(function (it) { it.why = w; }); bgSave('planok', { uid: u, add: list }, 'po-' + uid(), 'added for ' + agName(u) + ': ' + list.map(function (x) { return x.name; }).join(', '), null, true); PICK = null; SHEETK = ''; $('over').innerHTML = ''; }, 'ADD'); return; }
   var L = planEdit(); list.forEach(function (it) { if (!L.some(function (x) { return x.k === it.k && x.id === it.id; })) L.push(it); });
   var live = planLive(); planSync('added ' + list.map(function (x) { return x.name; }).join(', '));
-  toast('Added: ' + list.map(function (x) { return x.name; }).join(', ') + (live ? '' : '\nAgree the plan when you are ready.')); render();
+  toast('Added: ' + list.map(function (x) { return x.name; }).join(', ') + (live ? '' : ND ? '\nSent when you tap START MY DAY.' : '\nAgree the plan when you are ready.')); render();
 }
 ACT.pickAdd = function (b) { pickAddList([pickItem(b.dataset.k, b.dataset.i)]); };
 ACT.pickAll = function (b) { var ids = (PICK.groups || {})[b.dataset.g] || []; pickAddList(ids.filter(function (id) { return !inPlanK('v', id); }).map(function (id) { return pickItem('v', id); })); };
@@ -2264,7 +2392,7 @@ ACT.visArr = function () { var my = VIS; if (!my || my.finding) return; my.findi
 /** v2.5.15: her plan changes not sent yet go before the start (the start agrees the plan). */
 function planFlushX() { var P = D.plan; if (!P || !PLANX || PLANX.day !== P.day) return; var L = PLANX.items, nt = String(PLANX.note || '').trim(); if (JSON.stringify(L) === JSON.stringify(P.items || []) && nt === String(P.anote || '').trim() && (PLANX.goal == null || PLANX.goal === P.goal)) { PLANX = null; return; } // nothing changed: an approved plan stays approved
   P.items = L; bgSave('plan', { day: P.day, items: L, note: nt, goal: planGoal() }, 'pl-' + uid(), 'plan for today', null, true); PLANX = null; }
-function dayAuto(g, why) { var Y = D.myDay; if (D.me.role !== 'Agent' || !Y || !Y.workday || Y.start) return; planFlushX(); Y.start = 'now'; toast('Your day started – ' + new Date().toTimeString().slice(0, 5)); bgSave('startday', { lat: g ? g.lat : '', lng: g ? g.lng : '', acc: g ? g.acc : '', pt: Date.now(), why: why || '' }, 'sd-' + D.today, 'day started at your first visit', null, true); }
+function dayAuto(g, why) { var Y = D.myDay; if (D.me.role !== 'Agent' || !Y || !Y.workday || Y.start) return; planFlushX(); Y.start = 'now'; toast('Your day started – ' + new Date().toTimeString().slice(0, 5)); bgSave('startday', { lat: g ? g.lat : '', lng: g ? g.lng : '', acc: g ? g.acc : '', pt: Date.now(), why: why || '' }, 'sd-' + D.today + '-' + (D.me.uid || ''), 'day started at your first visit', null, true); }
 ACT.visAway = function () { var X = VIS; if (!X) return; // v2.5.14: asked first – one tap by mistake no longer saves
   ask(X.name + ' is not there?\nThe visit is saved as "not there". Nothing else is asked.', function () { if (VIS !== X) return; Object.assign(X, { out: ['No order'], reason: 'Not there', saw: [], con: [], price: '', spag: '', skus: [], stock: {}, levs: [], need: {}, needO: {}, gv: null, amt: '' }); ACT.visSave(); }, 'YES, NOT THERE'); };
 ACT.vchip = function (b) {
@@ -2665,7 +2793,7 @@ function startRow() {
   return '<div class="li" data-act="startday">' + leadI('done', 'green') + '<div class="grow"><div class="t">Start my day</div><div class="s">Tap when you reach your first school</div></div><span class="go">' + ico(ICO.right) + '</span></div>';
 }
 ACT.startday = function () {
-  var go = function (pos, why) { var c = pos && pos.coords; planFlushX(); bgSave('startday', { lat: c ? c.latitude : '', lng: c ? c.longitude : '', acc: c ? c.accuracy : '', pt: Date.now(), why: why || '' }, 'sd-' + D.today, 'day started', null, true); };
+  var go = function (pos, why) { var c = pos && pos.coords; planFlushX(); bgSave('startday', { lat: c ? c.latitude : '', lng: c ? c.longitude : '', acc: c ? c.accuracy : '', pt: Date.now(), why: why || '' }, 'sd-' + D.today + '-' + (D.me.uid || ''), 'day started', null, true); };
   ask('Start your day now (' + new Date().toTimeString().slice(0, 5) + ')?\nYour time and where your phone is are saved.', function () {
     if (!navigator.geolocation) { go(null, 'no location on this phone'); return; } toast('Finding your location…');
     var done = false; var t = setTimeout(function () { if (!done) { done = true; go(null, 'location took too long'); } }, 12000);
