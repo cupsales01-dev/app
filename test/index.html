@@ -212,6 +212,65 @@ details summary{cursor:pointer;color:var(--mute)}
 .ndlist{padding:0;overflow:hidden;margin:0 0 12px}.ndrow{display:flex;align-items:center;gap:10px;padding:11px 12px;border-top:1px solid var(--line);cursor:pointer}.ndrow:first-child{border-top:0}
 .ndrow .nb{width:24px;height:24px;flex:0 0 24px;border-radius:50%;background:var(--grey2);color:var(--ink);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12.5px}.ndrow .nb.ok{background:var(--green);color:#fff}
 .ndrow b{font-size:14.5px}.ndrow.dn{opacity:.7}.ndopen{border-top:1px solid var(--line);background:#FCFCFD}
+/* v2.6.1: Today (summary style) */
+.t2h{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 2px 8px}.t2h b{font-size:18px;font-weight:800}.t2h .pill{font-size:12px;white-space:nowrap}
+.t2task{display:flex;justify-content:space-between;align-items:center;background:#FFF8E1;border:1.5px solid #F3DF9A;color:#8A5300;border-radius:12px;padding:11px 14px;font-weight:700;margin:0 0 10px;cursor:pointer}.t2task span{font-size:18px}
+.t2tm{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:0 0 10px;cursor:pointer;box-shadow:var(--sh)}.t2tm b{flex:1}.t2tm>span:last-child{color:var(--mute);font-size:18px}
+.t2info{border-radius:12px;padding:10px 12px;margin:0 0 10px;font-size:13.5px}.t2info.amber{background:#FFF8E1;color:#7A4A06}.t2info.green{background:var(--green2);color:#14532d}.t2info.blue{background:var(--info2);color:#1e3a8a}.t2info a{display:block;margin-top:4px;font-weight:700;color:inherit;text-decoration:underline;cursor:pointer}.t2info.green a{display:inline}
+.t2tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 8px}
+.t2tab{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:9px 10px 8px;text-align:left;color:var(--ink);box-shadow:var(--sh);display:flex;flex-direction:column;gap:2px;min-height:0}
+.t2tab b{font-size:14.5px}.t2tab span{font-size:11.5px;color:var(--mute);font-weight:600}.t2tab span.g{color:var(--green)}.t2tab span.a{color:var(--amber)}.t2tab span.r{color:var(--red)}
+.t2tab.on{border-color:var(--blue);border-bottom-width:4px;color:var(--blue)}
+.t2hint{font-size:12.5px;color:var(--mute);margin:4px 2px}.t2hint.c{text-align:center;margin:14px 0}
+.t2panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;margin:0 0 12px;box-shadow:var(--sh)}
+.t2ph{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--mute);margin:2px 2px 8px}.t2ph a{color:var(--blue);font-weight:700;cursor:pointer}
+.t2list{display:flex;flex-direction:column;gap:6px;margin:0 0 8px}
+.t2r{background:#fff;border:1px solid var(--line);border-left:5px solid #C9CDD4;border-radius:10px;touch-action:pan-y;transition:transform .12s}.t2r.drag{transition:none;z-index:3;position:relative;box-shadow:0 8px 20px rgba(0,0,0,.18)}.t2r.swiping{transition:none;background:#FFF5F5}
+.t2r.e-ok{border-left-color:var(--green)}.t2r.e-mg{border-left-color:#2563EB}.t2r.e-no{border-left-color:var(--red)}.t2r.e-out{border-left-color:#C9CDD4;opacity:.75}.t2r.on{border-color:#C9CDD4}
+.t2rh{display:flex;align-items:center;gap:8px;padding:10px 10px;cursor:pointer;min-height:44px}.t2rh b{font-size:14.5px}.t2rh .ar{color:var(--mute)}
+.t2hd{color:#9AA1AC;font-size:16px;cursor:grab;touch-action:none;padding:4px 2px;user-select:none}
+.t2n{width:22px;height:22px;flex:0 0 22px;border-radius:50%;border:1.5px solid #9AA1AC;display:grid;place-items:center;font-size:11.5px;font-weight:800;color:var(--ink)}.t2n.ok{background:var(--green);border-color:var(--green);color:#fff}
+.t2d{padding:0 10px 10px;border-top:1px solid var(--line)}.t2dn{font-weight:700;margin-top:8px}
+.t2chips{margin:8px 0 4px}.t2chips .tag{font-size:11.5px}
+.t2lv{display:flex;gap:8px;align-items:flex-start;background:#F7F8FA;border-radius:10px;padding:8px 10px;font-size:12.5px;margin:6px 0}.t2lv>div{flex:1}.t2lv a{color:var(--blue);font-weight:700;white-space:nowrap;cursor:pointer}
+.t2why{font-size:12.5px;color:var(--mute);margin:4px 0}
+.t2b2{display:flex;gap:8px;margin-top:8px}.t2b2>*{flex:1 1 0;min-width:0}.t2b3{display:flex;gap:6px;margin-top:8px}.t2b3>*{flex:1 1 0;min-width:0;font-size:13px;padding:10px 4px}
+button.gr,a.gr{background:var(--green);color:#fff}button.gr.glow,a.main2.glow{position:relative}
+.ghost2,a.ghost2b{background:#fff;border:1.5px solid #D5D9E0;color:var(--ink);border-radius:10px;padding:10px 8px;font-weight:700;text-align:center;display:block;text-decoration:none;box-shadow:none}.msg.warn{background:#FFF4D6;color:#6B4A00;border:1px solid #F3D98B}.ghost2 svg,a.ghost2b svg{width:18px;height:18px;vertical-align:-4px;margin-right:4px;flex:none}
+a.main2{display:flex;align-items:center;justify-content:center;gap:6px;background:#fff;border:1.5px solid var(--green);color:var(--green);border-radius:10px;padding:10px 8px;font-weight:700;text-decoration:none}a.main2 svg{width:16px;height:16px}
+.t2hint{font-size:12px}.t2mr{text-align:right;margin-top:6px}.t2mr a{color:var(--blue);font-weight:700;cursor:pointer}
+.t2add{width:100%;background:#fff;border:1.5px dashed #C9CDD4;color:var(--ink);border-radius:10px;padding:11px;font-weight:700;margin:4px 0 6px;box-shadow:none}.t2add.red{border-color:var(--blue);color:var(--blue)}
+.t2fold{font-weight:700;font-size:13.5px;padding:8px 4px;cursor:pointer;color:var(--ink)}
+.t2close{text-align:center;color:var(--mute);font-weight:700;font-size:13px;padding:8px 0 2px;border-top:1px solid var(--line);margin-top:6px;cursor:pointer}
+.t2key{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--mute);margin:0 2px 8px;flex-wrap:wrap}.t2key i{width:10px;height:10px;border-radius:3px;display:inline-block;margin-left:6px}.t2key i:first-child{margin-left:0}.t2key .k0{background:#C9CDD4}.t2key .k1{background:var(--green)}.t2key .k2{background:#2563EB}.t2key .k3{background:var(--red)}
+.t2sum{font-size:13px;color:var(--mute);margin:2px 2px 8px}
+.t2seg{display:flex;background:var(--grey2);border-radius:10px;padding:3px;margin:0 0 10px}.t2seg button{flex:1;background:none;color:var(--mute);box-shadow:none;padding:8px 4px;border-radius:8px;font-weight:700;min-height:0}.t2seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.t2stp{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:0 0 8px}.t2stp .step b{min-width:28px;text-align:center;font-size:16px}
+.t2note{background:var(--green2);color:#14532d;border-radius:10px;padding:8px 10px;font-size:13px;margin:8px 0;cursor:pointer}.t2note a{font-weight:700;text-decoration:underline}
+.t2okline{background:var(--green2);color:#14532d;border-radius:10px;padding:9px 12px;font-weight:700;font-size:13.5px;margin:8px 0}
+.t2sub2{font-weight:700;font-size:13.5px;margin:10px 2px 6px}
+.t2tray{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 0 6px;margin:4px 0;-webkit-mask-image:linear-gradient(to right,#000 85%,transparent);mask-image:linear-gradient(to right,#000 85%,transparent)}.t2tray::-webkit-scrollbar{display:none}
+.t2tray button{flex:0 0 auto;white-space:nowrap;background:#fff;border:1.5px solid #D5D9E0;color:var(--ink);font-weight:700;font-size:12.5px;border-radius:999px;padding:6px 11px;min-height:0;box-shadow:none}.t2tray button.on{background:var(--ink);border-color:var(--ink);color:#fff}.t2tray button b{font-weight:800;opacity:.7}
+.t2bfs{background:#F7F8FA;border-radius:10px;padding:10px 12px;margin:10px 0 8px;font-size:13.5px}.t2bf{display:flex;justify-content:space-between;padding:3px 0}.t2bf a{font-weight:700;cursor:pointer}
+button.off{opacity:.45}
+.t2next{background:#fff;border:2px solid var(--blue);border-radius:14px;padding:12px;margin:0 0 10px}.t2next .ey{font-size:11px;font-weight:800;letter-spacing:.08em;color:var(--mute);text-transform:uppercase}.t2next .nsch{font-size:19px;font-weight:800;line-height:1.2;margin:2px 0}.t2next .nven{font-weight:700;margin-top:2px}
+.t2lvl{display:inline-block;color:var(--blue);font-weight:700;font-size:13px;margin:4px 0;cursor:pointer}
+.t2here{margin-top:10px;width:100%;font-size:17px;letter-spacing:.3px}
+.t2q{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}.t2q a{display:flex;flex-direction:column;align-items:center;gap:3px;border:1.5px solid var(--line);border-radius:10px;padding:8px 2px;font-size:12px;font-weight:700;color:var(--ink);text-decoration:none;cursor:pointer;text-align:center}.t2q a svg{width:20px;height:20px}.t2q a.off{opacity:.35}
+.t2more{margin-top:8px;border-top:1px solid var(--line)}.t2mo{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)}
+.t2fin{background:#fff;border:1.5px solid var(--green);border-radius:14px;padding:12px;margin:0 0 10px}.t2fin>button{width:100%;margin-top:8px}
+.t2dash{border:1.5px dashed #C9CDD4;border-radius:12px;padding:10px;margin:6px 0}
+.t2sig{width:36px;height:36px;border-radius:50%;background:#fff;border:1.5px solid #D5D9E0;color:var(--ink);display:grid;place-items:center;padding:0;flex:0 0 36px;box-shadow:none;min-height:0}.t2sig svg{width:18px;height:18px}.t2sig.gr{background:var(--green);border-color:var(--green);color:#fff}
+.glow{animation:t2glow 1s ease-in-out 3;box-shadow:0 0 0 4px rgba(226,0,26,.22)}@keyframes t2glow{0%,100%{box-shadow:0 0 0 0 rgba(226,0,26,0)}50%{box-shadow:0 0 0 6px rgba(226,0,26,.28)}}
+@media (prefers-reduced-motion:reduce){.glow{animation:none}}
+.t2undo{position:fixed;left:12px;right:12px;bottom:calc(var(--bnh,64px) + 10px);max-width:600px;margin:0 auto;background:#1F2430;color:#fff;border-radius:12px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;z-index:8;font-size:14px}.t2undo button{background:none;color:#FFC400;font-weight:800;box-shadow:none;padding:4px 8px;min-height:0}
+.t2sh{display:flex;justify-content:space-between;align-items:center;padding:0 0 8px;margin:0 0 8px;border-bottom:1px solid var(--line)}.t2sh b{font-size:16px}.t2sh a{color:var(--blue);font-weight:700;cursor:pointer}
+.t2tk{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0 0 8px}.t2q2{font-weight:700;font-size:13.5px;margin-top:8px}
+button.red2{background:var(--red);color:#fff;width:100%;margin-top:8px}
+.sheet.half2{max-height:52vh;padding:14px 0 0;overflow:hidden;display:flex;flex-direction:column}.sheet.half2 .sbody{overflow-y:auto;padding:0 44px calc(14px + env(safe-area-inset-bottom)) 16px;scrollbar-width:none;flex:1;min-height:0}.sheet.half2 .sbody::-webkit-scrollbar{display:none}
+.srail{position:absolute;right:6px;top:44px;bottom:16px;width:28px;display:flex;flex-direction:column;align-items:center;gap:4px}.srail.none{display:none}
+.srail button{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:11px;font-weight:800;box-shadow:0 1px 3px rgba(0,0,0,.18);padding:0;min-height:0}
+.srail .trk{flex:1;width:6px;border-radius:9px;background:var(--grey2);position:relative}.srail .trk i{position:absolute;left:-3px;width:12px;border-radius:9px;background:var(--blue);min-height:18px}
 .ndsw{text-align:center;margin:18px 0 6px}
 .cashsum{background:linear-gradient(135deg,#F0FAF3 0%,#fff 70%)}
 svg.si{width:14px;height:14px;vertical-align:-2px;margin-right:4px}.t-purple{color:var(--pur)}.lead.t-purple{background:var(--pur2);color:var(--pur)}
@@ -475,7 +534,7 @@ var ICO = {
   cart: '<circle cx="9" cy="20" r="1.5"/><circle cx="17.5" cy="20" r="1.5"/><path d="M2.5 3.5H5l2.4 12h11.2l2-8.5H6.2"/><path d="M13 8.5v4M11 10.5h4"/>',
   filter: '<path d="M3.5 5h17l-6.5 8v5.5l-4 2V13z"/>',
   wa: '<path d="M20.5 11.6a8.5 8.5 0 0 1-12.4 7.5L3.5 20.5l1.4-4.4a8.5 8.5 0 1 1 15.6-4.5z"/><path d="M9 8.6c-.4 2.9 3.1 6.6 6.2 6.5l1-1.6-2.2-1.1-1 .9c-.8-.4-1.7-1.3-2.1-2.1l.9-1-1.1-2.2z"/>',
-  down: '<path d="M6 9.5l6 6 6-6"/>', up: '<path d="M6 14.5l6-6 6 6"/>',
+  down: '<path d="M6 9.5l6 6 6-6"/>', up: '<path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/>', chup: '<path d="M6 14.5l6-6 6 6"/>',
   check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>', clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
   box: '<path d="M3.5 7.5L12 3.5l8.5 4v9L12 20.5l-8.5-4z"/><path d="M3.5 7.5L12 11.5l8.5-4M12 11.5v9"/>',
   x: '<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>', alert: '<path d="M12 3.5l9 16h-18z"/><path d="M12 10v4.2M12 17.2v.01"/>',
@@ -493,7 +552,7 @@ function sico(p) { return ico(p).replace('<svg ', '<svg class="si" '); }
 function stPill(s) { return '<span class="pill ' + (s[1] || '') + '" style="white-space:nowrap;display:inline-flex;align-items:center">' + (s[2] && ICO[s[2]] ? sico(ICO[s[2]]) : '') + esc(s[0]) + '</span>'; }
 function callBtn(phone, sm) { return phone ? '<a class="ibl" href="tel:' + esc(phone) + '" aria-label="Call ' + esc(phone) + '" title="Call ' + esc(phone) + '"><span class="ib call' + (sm ? ' sm' : '') + '">' + ico(ICO.phone) + '</span></a>' : ''; }
 function waBtn(num, text, sm) { return num ? '<a class="ibl" href="https://wa.me/' + num + (text ? '?text=' + encodeURIComponent(text) : '') + '" target="_blank" aria-label="WhatsApp" title="WhatsApp"><span class="ib wa' + (sm ? ' sm' : '') + '">' + ico(ICO.wa) + '</span></a>' : ''; }
-function chev(o) { return ico(o ? ICO.up : ICO.down); }
+function chev(o) { return ico(o ? ICO.chup : ICO.down); }
 function emptyHtml(t) { return '<div class="empty"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="#EEF0F3"/><path d="M12 33h40a20 20 0 0 1-40 0z" fill="#fff" stroke="#D5D9E0" stroke-width="2"/><path d="M16 32c2.5-5 5 5 7.5 0s5 5 7.5 0 5 5 7.5 0 5 5 7.5 0" stroke="#D7141A" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M36 8l-7 21M44 11l-10 18" stroke="#B9874C" stroke-width="3" stroke-linecap="round"/></svg><p>' + t + '</p></div>'; }
 function bar() {
   return '<div class="bar"><div class="brand">' + LOGO + '<div><b>CupSales</b><i>' + (D ? esc(D.views && !VIEW ? 'Manager' : SNAME[SCREEN] || '') : 'Sales app') + '</i></div></div>' + (D ? whoHtml() : '') + '</div>' + (TEST || (D && D.test) ? '<div class="test">Test mode – practice only, nothing here is real</div>' : '');
@@ -518,11 +577,14 @@ function readOp(op, data, ok, fail) { data = data || {}; if (D && D.viewOf && (o
 /** v2.5.3: details and decisions open in a sheet from the bottom; it is drawn again whenever the screen is. */
 var SHEETK = ''; // SHEETS: defined at the top of the page (first used there)
 function sheetOpen(k) { SHEETK = k; drawSheet(); }
+var HALFK = { tasks: 1, tlast: 1, tmore: 1, cant: 1, near: 1, tclf: 1, calllog: 1, pick: 1, rems: 1, hand: 1, claims: 1, ndhelp: 1, hist: 1 }; // v2.6.1: half sheets
 function drawSheet() {
-  if (!SHEETK) return; var f = SHEETS[SHEETK], old = document.querySelector('#over .sheet'), st = old ? old.scrollTop : 0, body = f ? f() : '';
+  if (!SHEETK) return; var half = !!HALFK[SHEETK] && T2 && D && D.me && D.me.role === 'Agent', f = SHEETS[SHEETK], old = document.querySelector('#over .sheet .sbody') || document.querySelector('#over .sheet'), st = old ? old.scrollTop : 0, body = f ? f() : '';
   if (!body) { SHEETK = ''; $('over').innerHTML = ''; return; }
-  $('over').innerHTML = '<div class="overlay"><div class="sheet">' + body + '</div></div>'; var nw = document.querySelector('#over .sheet'); if (nw) nw.scrollTop = st; decorate();
+  $('over').innerHTML = '<div class="overlay"><div class="sheet' + (half ? ' half2' : '') + '">' + (half ? '<div class="sbody">' + body + '</div><div class="srail"><button data-act="srail" data-d="-1" aria-label="Up">▲</button><div class="trk"><i></i></div><button data-act="srail" data-d="1" aria-label="Down">▼</button></div>' : body) + '</div></div>'; var nw = document.querySelector('#over .sheet .sbody') || document.querySelector('#over .sheet'); if (nw) nw.scrollTop = st; decorate(); if (half) railSet();
 }
+function railSet() { var sb = document.querySelector('#over .sbody'), rl = document.querySelector('#over .srail'); if (!sb || !rl) return; var over = sb.scrollHeight - sb.clientHeight; rl.className = 'srail' + (over > 4 ? '' : ' none'); if (over <= 4) return; var tk = rl.querySelector('.trk'), th = tk.querySelector('i'), H = tk.clientHeight, h = Math.max(18, Math.round(H * sb.clientHeight / sb.scrollHeight)); th.style.height = h + 'px'; th.style.top = Math.round((H - h) * sb.scrollTop / over) + 'px';
+  rl.querySelectorAll('button')[0].disabled = sb.scrollTop <= 2; rl.querySelectorAll('button')[1].disabled = sb.scrollTop >= over - 2; if (!sb.dataset.r) { sb.dataset.r = 1; sb.addEventListener('scroll', railSet); } }
 function shHead(icon, tone, title, sub) { return '<div class="shd">' + (icon ? '<span class="lead t-' + tone + '">' + ico(ICO[icon]) + '</span>' : '') + '<div class="grow"><h3>' + title + '</h3>' + (sub ? '<div class="sub">' + sub + '</div>' : '') + '</div><button class="ib gh sm x" data-act="closeO" aria-label="Close" title="Close">' + ico(ICO.x) + '</button></div>'; }
 /** v2.5.3: one row of a list – symbol or picture, title, a short second line, and what matters most on the right. */
 function liRow(attrs, lead, title, sub, endB, endS, tone) { return '<div class="li"' + attrs + '>' + lead + '<div class="grow"><div class="t ell">' + title + '</div>' + (sub ? '<div class="s ell">' + sub + '</div>' : '') + '</div>' + (endB || endS ? '<div class="end">' + (endB ? '<b>' + endB + '</b>' : '') + (endS ? '<div class="st t-' + (tone || 'grey') + '">' + endS + '</div>' : '') + '</div>' : '<span class="go">' + ico(ICO.right) + '</span>') + '</div>'; }
@@ -564,7 +626,7 @@ function badges() {
     var d0 = null; try { d0 = JSON.parse(ls(DKEY) || 'null'); } catch (e) { }
     B.order['new'] = d0 && d0.vendors && d0.vendors.some(function (x) { return x.vid; }) ? 1 : 0; // an order started, not sent yet
     B.order.today = ordCount(); B.order.pays = payCount(); // v2.5.15
-    B.order.plan = r === 'Agent' ? planLeft() : sup && D.teamDay ? D.teamDay.agents.filter(function (a) { return a.status === 'Agreed'; }).length : 0; // v2.5.8
+    B.order.plan = r === 'Agent' ? (T2 ? tTaskN() : planLeft()) : sup && D.teamDay ? D.teamDay.agents.filter(function (a) { return a.status === 'Agreed' || (a.tmr && a.tmr.status === 'Agreed'); }).length : 0; // v2.5.8 (v2.6.1: and tomorrow's)
     if (sup) B.order = { 'new': B.order['new'], appr: apprCount(), helpi: needOpen() }; // v2.5.17: the manager's own tabs
   }
   if (has('release')) { B.release.release = (D.waiting || []).length; B.release.approved = (D.comingBack || []).length + (D.dispatched || []).filter(function (x) { return x.status === 'Approved'; }).length; if (r === 'Warehouse') B.release.cash = (D.toConfirm || []).length; }
@@ -646,7 +708,10 @@ function pendView() {
     hPend(x, d); // v2.5.18: help items
     if (x.op === 'stop' && D.stops) { var so = d.oids || []; D.stops = D.stops.filter(function (s) { if (s.id !== d.vid) return true; if (d.what === 'NONE' || !so.length) return false; s.orders = s.orders.filter(function (o) { return so.indexOf(o.oid) < 0; }); return s.orders.length > 0; }); } // v2.5.7: a recorded stop leaves the list at once
     if (x.op === 'startday' && D.myDay) D.myDay.start = D.myDay.start || 'now';
-    if (x.op === 'plan' && D.plan && d.items && D.plan.day === d.day) { D.plan.items = d.items; D.plan.status = d.live && D.plan.status === 'Approved' ? 'Approved' : 'Agreed'; D.plan.suggested = false; if (d.note !== undefined) D.plan.anote = d.note; if (d.goal !== undefined) D.plan.goal = d.goal; } // v2.5.8
+    if (x.op === 'plan' && D.plan && D.plan.tmr && D.plan.tmr.day === d.day) { var TT = D.plan.tmr; if (d.act === 'takeback') { if (TT.status === 'Agreed') { TT.status = 'Suggested'; TT.takenBack = (TT.takenBack || 0) + 1; TT.agreedAt = ''; } } else if (d.items) { TT.items = d.items; if (d.calls) TT.calls = d.calls; if (d.known !== undefined) TT.known = d.known; if (d.goal !== undefined) TT.goal = d.goal; if (d.note !== undefined) TT.anote = d.note; TT.status = 'Agreed'; TT.sentBy = 'Agent'; if (!TT.agreedAt) { var hh = new Date().getHours(); TT.agreedAt = (hh % 12 || 12) + ':' + ('0' + new Date().getMinutes()).slice(-2) + (hh < 12 ? ' am' : ' pm'); } } } // v2.6.1
+    if (x.op === 'plan' && D.plan && D.plan.day === d.day && d.act === 'takeback' && D.plan.status === 'Agreed') D.plan.status = 'Suggested';
+    if (x.op === 'cantvisit' && D.plan && D.plan.day === d.day) (D.plan.items || []).forEach(function (y) { if (y.k === d.k && y.id === d.id) { y.skip = d.note; y.skipWhy = (d.why || []).join(', '); } });
+    if (x.op === 'plan' && D.plan && d.items && D.plan.day === d.day) { D.plan.items = d.items; if (d.calls) D.plan.calls = d.calls; if (d.known !== undefined) D.plan.known = d.known; D.plan.status = d.live && D.plan.status === 'Approved' ? 'Approved' : 'Agreed'; D.plan.suggested = false; if (d.note !== undefined) D.plan.anote = d.note; if (d.goal !== undefined) D.plan.goal = d.goal; } // v2.5.8
     if (x.op === 'visit' && D.plan && !(D.plan.visits || []).some(function (v) { return v.sid0 === x.sid; })) { D.plan.visits = (D.plan.visits || []).concat([{ sid0: x.sid, vid: d.vid || '', sid: d.sid || '', at: d.at ? new Date(d.at).toTimeString().slice(0, 5) : '', out: d.outcome || 'School visit', why: d.reason || '', ohMiss: d.oh ? d.oh.miss || [] : [], ohSd: !!(d.oh && (d.oh.ticked || []).indexOf('Start day') >= 0) }]); }
     if (x.op === 'planok' && D.teamDay) D.teamDay.agents.forEach(function (a) { if (a.uid !== d.uid) return; if (d.approve && a.status === 'Agreed') a.status = 'Approved'; (d.add || []).forEach(function (z) { if (!a.items.some(function (y) { return y.k === z.k && y.id === z.id && !y.rm; })) { a.items.push(Object.assign({ by: 'Manager', done: '' }, z)); a.planned++; } });
       (d.remove || []).forEach(function (r) { a.items.forEach(function (y) { if (y.k === r.k && y.id === r.id) y.rm = 'Manager'; }); }); a.planned = a.items.filter(function (y) { return !y.skip && !y.rm; }).length; }); // v2.5.9: + taken out
@@ -1530,9 +1595,9 @@ CHG.htk = function (el) { (HTK[el.dataset.s] = HTK[el.dataset.s] || {})[el.datas
 ACT.hsel = function (b) {
   var c = (D.cash || []).filter(function (x) { return x.src === b.dataset.src; })[0]; if (!c) return; var t = HTK[c.src] || {}, items = (c.items || []).filter(function (x) { return t[x.id] !== false && x.id; }); SHEETK = ''; $('over').innerHTML = '';
   if ((c.items || []).length && !items.length) { say('No payment ticked – clear the search or tick a payment.'); return; }
-  var amt = items.length ? Math.round(items.reduce(function (s, x) { return s + x.amt; }, 0) * 100) / 100 : c.free, to = cashTo(c);
-  var go = function (lb) { var hk = 'ho-' + c.src + '-' + items.map(function (x) { return x.id; }).join(',') + '-' + amt; bgSave('handover', { src: c.src, amount: amt, logbook: lb, items: items.map(function (x) { return { id: x.id, amt: x.amt }; }) }, SIDS[hk] || (SIDS[hk] = 'ho-' + uid()), 'hand over ' + ghs(amt) + ' to ' + to, b); HTK[c.src] = {}; };
-  ask('Hand over ' + ghs(amt) + ' to ' + to + '?' + (items.length ? '\n' + items.map(function (x) { return vnOf(x.text) + ' ' + ghs(x.amt); }).join('\n') : ''), function () {
+  var amt = items.length ? Math.round(items.reduce(function (s, x) { return s + x.amt; }, 0) * 100) / 100 : c.free, to = cashTo(c), mo = b.dataset.m === '1' && to === 'Frank'; // v2.6.1: MoMo
+  var go = function (lb) { var hk = 'ho-' + c.src + '-' + items.map(function (x) { return x.id; }).join(',') + '-' + amt; bgSave('handover', { src: c.src, amount: amt, logbook: lb, items: items.map(function (x) { return { id: x.id, amt: x.amt }; }), momo: mo ? 1 : undefined }, SIDS[hk] || (SIDS[hk] = 'ho-' + uid()), (mo ? 'MoMo ' : 'hand over ') + ghs(amt) + ' to ' + to, b); HTK[c.src] = {}; };
+  ask((mo ? 'Send ' + ghs(amt) + ' to Frank by MoMo?' + (D.momo ? '\n' + D.momo : '') : 'Hand over ' + ghs(amt) + ' to ' + to + '?') + (items.length ? '\n' + items.map(function (x) { return vnOf(x.text) + ' ' + ghs(x.amt); }).join('\n') : ''), function () {
     if (to !== 'the HR office logbook') { go(''); return; }
     askIn('HR logbook page or number where the office signed:', '', '', function (lb) { if (!String(lb).trim()) { say('Write the logbook page or number.'); return; } go(lb); }, 'SAVE'); }, 'HAND OVER');
 };
@@ -1857,7 +1922,7 @@ function vPin(v) { if (!v) return null; if (v.pin) return v.pin; var s = schoolO
 function itemPin(x) { return x.k === 'v' ? vPin(vend(x.id)) : (schoolOf(x.id) || {}).pin || null; }
 function itemArea(x) { if (x.k === 's') { var s = schoolOf(x.id); return s ? s.area : ''; } return ''; }
 /** v2.5.15: once she started her day her plan is agreed – a skip, a stop added or taken out is saved at once. */
-function planLive() { var P = D.plan, Y = D.myDay; return !!(D.me.role === 'Agent' && P && P.work && !P.leave && Y && Y.start); }
+function planLive() { var P = D.plan, Y = D.myDay; return !!(D.me.role === 'Agent' && P && P.work && !P.leave && ((Y && Y.start) || (T2 && (P.status === 'Approved' || P.status === 'Agreed')))); } // v2.6.1: no START button – an approved plan is live
 function planSync(label) { if (!planLive() || !PLANX) return; var L = PLANX.items; D.plan.items = L; if (!PLANX.noteOnly) PLANX = null; bgSave('plan', { day: D.plan.day, items: L, live: 1 }, 'pl-' + uid(), label, null, true); }
 /** v2.5.15: draw again with the open school where it was on the screen (a skip used to move the page). */
 function renderKeep() { var el = document.querySelector('.stopc.on .sh'), k = el && el.dataset.o, y0 = el ? el.getBoundingClientRect().top : 0; render(); if (!k) return; var n = document.querySelector('.stopc .sh[data-o="' + k + '"]'); if (n) window.scrollBy(0, n.getBoundingClientRect().top - y0); }
@@ -1890,7 +1955,7 @@ function remsOpen() { return (D.rems || []).filter(function (r) { return !r.done
 function remNow() { var hm = new Date().toTimeString().slice(0, 5); return function (r) { return r.day < D.today || (r.day === D.today && (!r.time || r.time <= hm)); }; }
 function remWhen(r) { return (r.day === D.today ? 'Today' : r.day === addDays(D.today, 1) ? 'Tomorrow' : dayLbl(r.day)) + (r.time ? ' ' + r.time : ''); }
 function remBar() {
-  if (!D || D.me.role === 'Helper' || !D.rems || TAB !== firstTab() || (D.me.role === 'Supervisor' && SCREEN !== 'order') || (ND && D.me.role === 'Agent')) return ''; // v2.5.19: in Needs you
+  if (!D || D.me.role === 'Helper' || !D.rems || TAB !== firstTab() || (D.me.role === 'Supervisor' && SCREEN !== 'order') || ((ND || T2) && D.me.role === 'Agent')) return ''; // v2.5.19: in Needs you; v2.6.1: in Calls and Tasks
   var L = remsOpen(), due = L.filter(remNow()), td = L.filter(function (r) { return r.day === D.today; }), nx = L[0];
   if (!L.length) return '<div class="small" style="margin:0 2px 8px"><a href="#" data-act="sheet" data-k="rems" style="text-decoration:none">' + sico(ICO.clock) + ' Set a reminder</a></div>'; /* v2.5.17: a small clock */
   return todoBox(['<div class="li" data-act="sheet" data-k="rems">' + leadI('clock', due.length ? 'red' : 'blue') + '<div class="grow"><div class="t">' + (due.length ? (due.length === 1 ? 'Now: ' + esc(due[0].about) : due.length + ' reminders due now') : 'Reminders' + (td.length ? ' · ' + td.length + ' today' : '')) + '</div><div class="s ell">' + (due.length ? due.map(function (r) { return esc(remWhen(r)); }).join(' · ') : 'Next: ' + esc(remWhen(nx)) + ' – ' + esc(nx.about)) + '</div></div>' + (due.length ? '<span class="cnt">' + due.length + '</span>' : '') + '<span class="go">' + ico(ICO.right) + '</span></div>']);
@@ -1989,10 +2054,11 @@ function vFacts(v) {
 }
 function stopKeyOf(x) { if (x.stop) return x.stop; if (x.k === 's') return 'S:' + x.id; var v = vend(x.id), sid = v && v.prof && v.prof.school; return sid ? 'S:' + sid : v && v.school ? 'Z:' + norm(v.school) : 'V:' + x.id; }
 function stopName(k, x) { if (k.indexOf('S:') === 0) { var s = schoolOf(k.slice(2)); if (s) return s.name; } if (x.k === 's') return x.name; return x.school || 'School not recorded'; }
-function planGroups(L) { var G = [], at = {}; L.forEach(function (x, i) { if (x.rm) return; var k = stopKeyOf(x); if (at[k] === undefined) { at[k] = G.length; G.push({ k: k, name: stopName(k, x), items: [] }); } G[at[k]].items.push({ x: x, i: i }); }); return G; }
+function planGroups(L) { var G = [], at = {}; L.forEach(function (x, i) { if (x.rm || x.out) return; var k = stopKeyOf(x); if (at[k] === undefined) { at[k] = G.length; G.push({ k: k, name: stopName(k, x), items: [] }); } G[at[k]].items.push({ x: x, i: i }); }); return G; }
 var DAYN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 function pgPlan() {
   if (D.me.role === 'Supervisor') return pgTeamDay();
+  if (T2 && D.me.role === 'Agent') return pgDay2(); // v2.6.1: the new Today
   if (ND) return pgPlanND(); // v2.5.19
   var P = D.plan; var h = monthCard() + (P && P.practice ? '<div class="msg info" style="margin-bottom:8px"><b>Practice day.</b> ' + esc(dayLbl(P.day)) + ' works like a normal Monday on the test system, so you can try everything.</div>' : '') + todoBox([startRow(), monthNums() ? '' : monthRow()]); // v2.6.0: the month card is on top
   if (!P) return h + emptyHtml('Your plan is not ready – pull down to refresh.');
@@ -2037,6 +2103,419 @@ function pgPlan() {
   var miss = G.filter(function (g) { var s = g.k.indexOf('S:') === 0 ? schoolOf(g.k.slice(2)) : null; return !(s && s.pin) && !itemPin(g.items[0].x); }).length; if (miss) h += '<p class="small muted">' + miss + ' stop' + (miss === 1 ? ' has' : 's have') + ' no pin yet – the map searches the name; your first "Arrived" there pins it.</p>';
   return h + otherVisits(L) + hReadyRest(L); // v2.5.18
 }
+// ---------------------------------------------------------------- v2.6.1: Today (Section 1 "My day v4", summary style)
+// From 3 pm she checks the next working day's plan (Visits, Prospects, Calls), sends it to the manager and can take it back
+// while it waits. At 5:00 am it starts (approved by itself if the manager did not answer). On the day each tab is a list of
+// names with one sign; a tap opens the details first (and makes the matching button glow), a second tap acts.
+var T2 = (function () { try { var m = location.search.match(/[?&]today=(old|new)/); if (m) localStorage.setItem('cs_today', m[1]); return localStorage.getItem('cs_today') !== 'old'; } catch (e) { return true; } })();
+var TDV = '', TTAB = null, TTABD = '', TROW = '', TGLOW = '', TPSUB = '', TFOLD = {}, TDRAFT = null, TUNDO = null, TDRAGGED = 0, TREG = null;
+function tLive(x) { return !x.rm && !x.out; }
+function tKey(x) { return x.k + ':' + x.id; }
+function tStoreK(day) { return 'cs_plan_' + day + '_' + ((D.viewOf && D.viewOf.uid) || D.me.uid || ''); }
+function tBase(T) { return [(T.status || ''), T.takenBack || 0, (T.items || []).map(function (x) { return x.id + (x.by || '') + (x.rm || ''); }).join(','), (T.calls || []).map(function (x) { return x.id + (x.by || '') + (x.rm || ''); }).join(',')].join('|'); }
+/** The plan she is checking (not sent yet): kept on this phone until she sends it, so a refresh in the evening keeps her ticks. */
+function tDraft(T) {
+  if (TDRAFT && TDRAFT.day === T.day && TDRAFT.base === tBase(T)) return TDRAFT;
+  var s = null; try { s = JSON.parse(localStorage.getItem(tStoreK(T.day)) || 'null'); } catch (e) { s = null; }
+  if (!s || s.base !== tBase(T)) s = { day: T.day, base: tBase(T), items: JSON.parse(JSON.stringify(T.items || [])), calls: JSON.parse(JSON.stringify(T.calls || [])), known: T.known, goal: T.goal, note: T.anote || '', conf: (T.takenBack && T.known != null) ? { p: 1 } : {} }; // the plan changed on the system: start from it (taken back: she had confirmed it)
+  TDRAFT = s; return s;
+}
+function tSave() { try { if (TDRAFT) localStorage.setItem(tStoreK(TDRAFT.day), JSON.stringify(TDRAFT)); } catch (e) { } }
+function tDrop(day) { TDRAFT = null; try { localStorage.removeItem(tStoreK(day)); } catch (e) { } }
+/** Which plan is on the screen: today's while it has visits left; tomorrow's (from 3 pm) once today is done, ended or a day off. */
+function tOpenToday() { var P = D.plan, Y = D.myDay || {}; if (!P || !P.work || P.leave || P.hol || Y.end) return false; return planItems().some(function (x) { return tLive(x) && !x.skip && !visitOf(x); }); }
+function tView() { var P = D.plan; if (!P) return null; var T = P.tmr; if (TDV === 'tmr' && T) return T; if (TDV === 'today' && P.work) return P; return T && !tOpenToday() ? T : P; }
+function tEditable(T) { return D.me.role === 'Agent' && T && (T.status === '' || T.status === 'Suggested') && (T !== D.plan || D.plan.work); }
+function tPill(T, ed) {
+  if (ed) return T.takenBack ? ['Taken back · not sent', 'blue'] : ['Plan · not sent', 'blue'];
+  if (T.status === 'Agreed') return ['Waiting for manager', 'amber'];
+  if (T.status === 'Approved') return T.sentBy === 'Auto 5 am' ? ['Not checked by agent', 'amber'] : ['Approved', 'green'];
+  return ['', ''];
+}
+/** The day line: "Plan for Mon 12 Oct" until it is approved, then "Mon 12 Oct", with its coloured status on the right. */
+function tHead(T, ed) { var p = tPill(T, ed); return '<div class="t2h"><b>' + (ed || T.status === 'Agreed' ? 'Plan for ' : '') + esc(dayLbl(T.day)) + '</b>' + (p[0] ? '<span class="pill ' + p[1] + '">' + esc(p[0]) + '</span>' : '') + '</div>'; }
+// ---------------------------------------------------------------- the tasks: one amber row, one half sheet
+function tCashL() { return (D.cash || []).filter(function (c) { return c.src !== 'Unallocated' && c.route && c.free > 0.004; }); }
+function tRcptL() { var d3 = addDays(D.today, -3); return (D.receipts || []).filter(function (r) { return !r.sent && !r.answer && (!r.day || r.day >= d3); }); }
+function tTaskN() { var n = tCashL().length + tRcptL().length + myClaims().length + (remsOpen().filter(remNow()).length ? 1 : 0) + (ndHelpRest(planItems()).length ? 1 : 0); return n; }
+function tTaskRow() { var n = tTaskN(); if (!n) return ''; return '<div class="t2task" data-act="sheet" data-k="tasks">' + n + (n === 1 ? ' task needs you' : ' tasks need you') + '<span>›</span></div>'; }
+SHEETS.tasks = function () {
+  var n = tTaskN(); if (!n) return ''; var h = '<div class="t2sh"><b>Tasks</b><a data-act="closeO">Close</a></div>';
+  tCashL().forEach(function (c) { var fr = /→ Frank/.test(c.route || '');
+    h += '<div class="t2tk"><b>' + ghs(c.free) + ' cash with you</b><div class="small muted">' + esc(c.money) + ' money' + ((c.items || []).length ? ' · ' + c.items.length + ' payment' + (c.items.length === 1 ? '' : 's') : '') + '</div>' +
+      (fr ? '<div class="t2q2">How are you giving it to Frank?</div><div class="t2b2"><button class="main gr" data-act="hsel" data-src="' + esc(c.src) + '">Cash in hand</button><button class="main gr" data-act="hsel" data-m="1" data-src="' + esc(c.src) + '">MoMo</button></div>' + (D.momo ? '<div class="small muted" style="margin-top:6px">' + esc(D.momo) + '</div>' : '')
+        : '<button class="main gr" style="width:100%;margin-top:8px" data-act="hsel" data-src="' + esc(c.src) + '">Give it to ' + esc(cashTo(c)) + '</button>') + '<div class="small" style="margin-top:6px"><a data-act="sheet" data-k="hand">Choose the payments ›</a></div></div>'; });
+  tRcptL().forEach(function (r) { h += '<div class="t2tk"><b>Receipt to send</b><div class="small muted">' + esc(r.vendor) + ' checks what she paid · ' + esc(rcptWhat(r)) + '</div><div class="t2b3"><button class="main gr" data-act="trc" data-v="WA" data-k="' + esc(r.key) + '">WhatsApp</button><button class="main gr" data-act="trc" data-v="SMS" data-k="' + esc(r.key) + '">Text</button><button class="ghost2" data-act="trc" data-v="P" data-k="' + esc(r.key) + '">She checked it with me</button></div></div>'; });
+  if (tRcptL().length) h += '<div class="small muted">"She checked it with me": nothing is sent.</div>';
+  var cl = myClaims(); if (cl.length) h += '<div class="t2tk" data-act="sheet" data-k="claims"><b>' + (cl.length === 1 ? esc(cl[0].vendor) + ' says she paid you ' + ghs(cl[0].amount) : cl.length + ' vendors say they paid you') + '</b><div class="small muted">Tap to answer ›</div></div>';
+  var due = remsOpen().filter(remNow()); if (due.length) h += '<div class="t2tk" data-act="sheet" data-k="rems"><b>' + (due.length === 1 ? 'Reminder: ' + esc(due[0].about) : due.length + ' reminders due now') + '</b><div class="small muted">Tap to see ›</div></div>';
+  var hv = ndHelpRest(planItems()); if (hv.length) h += '<div class="t2tk" data-act="sheet" data-k="ndhelp"><b>Help items ready for ' + hv.length + ' vendor' + (hv.length === 1 ? '' : 's') + ' not on today\'s plan</b><div class="small muted">Tap to see ›</div></div>';
+  return h;
+};
+ACT.trc = function (b) { var r = (D.receipts || []).filter(function (x) { return x.key === b.dataset.k; })[0]; if (!r) return; if (!r.rk) r.rk = rkNew(); SHEETK = ''; $('over').innerHTML = ''; if (b.dataset.v === 'P') rcptPerson(r); else rcptSend(r, b.dataset.v); render(); };
+// ---------------------------------------------------------------- the three tabs
+function tGroups(L) { return planGroups(L); }
+function tCounts(T, ed, Dr) {
+  var day = !ed && T.status === 'Approved', L = ed ? Dr.items : T === D.plan ? planItems() : T.items || [], C = (ed ? Dr.calls : T.calls || []).filter(tLive), G = tGroups(L);
+  var pros = L.filter(function (x) { return x.k === 's' && tLive(x); }), known = ed ? tKnown(Dr) : T.known != null ? T.known : pros.length, goal = ed ? tGoal(T, Dr) : T.goal || 0;
+  if (ed) { var gc = G.filter(function (g) { return g.items.every(function (y) { return y.x.ok; }); }).length, cc = C.filter(function (x) { return x.ok; }).length;
+    return { v: !G.length ? ['None', ''] : gc === G.length ? [G.length + ' approved ✓', 'g'] : gc ? [(G.length - gc) + ' to check', 'a'] : [G.length + ' suggested', ''],
+      p: Dr.conf.p ? [(known + goal) + ' planned ✓', 'g'] : [(known + goal) + ' suggested', ''], c: !C.length ? ['None', ''] : cc === C.length ? [C.length + ' approved ✓', 'g'] : cc ? [(C.length - cc) + ' to check', 'a'] : [C.length + ' suggested', ''] }; }
+  if (!day) return { v: [G.length + ' approved ✓', 'g'], p: [(known + goal) + ' planned ✓', 'g'], c: [C.length + ' approved ✓', 'g'] };
+  var gd = G.filter(function (g) { return !ndOpenIn(g).length && g.items.some(function (y) { return visitOf(y.x); }); }).length, nv = G.filter(function (g) { return g.items.every(function (y) { return y.x.skip && !visitOf(y.x); }); }).length;
+  var pd = pros.filter(visitOf).length, pAll = (D.plan.visits || []).filter(function (v) { return v.sid && !v.vid; }).length;
+  return { v: nv ? [gd + ' of ' + G.length + ' done · ' + nv + ' not visited', 'r'] : [gd + ' of ' + G.length + ' done', gd === G.length && G.length ? 'g' : ''], p: [Math.max(pd, pAll) + ' of ' + (known + goal) + ' done', ''], c: [C.filter(callOf).length + ' of ' + C.length + ' done', ''] };
+}
+function tTabs(T, ed, Dr) {
+  var c = tCounts(T, ed, Dr), nm = { v: 'Visits', p: 'Prospects', c: 'Calls' };
+  return '<div class="t2tabs">' + ['v', 'p', 'c'].map(function (k) { return '<button class="t2tab' + (TTAB === k ? ' on' : '') + '" data-act="ttab" data-k="' + k + '"><b>' + nm[k] + '</b><span class="' + c[k][1] + '">' + esc(c[k][0]) + '</span></button>'; }).join('') + '</div>';
+}
+ACT.ttab = function (b) { var k = b.dataset.k; TTAB = TTAB === k ? null : k; TROW = ''; TGLOW = ''; render(); if (TTAB) { var el = document.querySelector('.t2tabs'); if (el && el.getBoundingClientRect().top < 0) el.scrollIntoView(); } };
+ACT.trow = function (b) { if (Date.now() - TDRAGGED < 500) return; TROW = TROW === b.dataset.r ? '' : b.dataset.r; TGLOW = ''; render(); };
+ACT.tfold = function (b) { TFOLD[b.dataset.f] = !TFOLD[b.dataset.f]; render(); };
+ACT.tdv = function (b) { TDV = b.dataset.v; TTAB = null; TROW = ''; render(); window.scrollTo(0, 0); };
+ACT.tpsub = function (b) { TPSUB = b.dataset.v; TREG = null; render(); };
+function tKeyLine(day) { return '<div class="t2key"><i class="k0"></i>To do<i class="k1"></i>Done' + (day ? '<i class="k3"></i>Not visited' : '') + '<i class="k2"></i>From manager</div>'; }
+// chips: what matters about her (owes, re-order due, likely out...), in short words
+var T2TAG = { out: ['Re-order due', 'amber'], notbought: ['Not bought this month', 'amber'], dormant: ['Stopped buying', 'red'], risk: ['Slowing', 'amber'], signup: ['No first carton yet', 'blue'], target: ['Counts for your target', 'green'], way: ['Order on the way', 'blue'], 'new': ['New vendor', 'green'], follow: ['Follow-up', 'blue'], check: ['Check result', 'blue'], cover: ['Not visited this month', ''] };
+function tChips(x, v) {
+  var c = [];
+  if (v) { if (v.debt > 0.004) c.push(['Owes ' + ghs(v.debt).replace('GHS ', '') + (v.days ? ' · ' + v.days + ' days' : ''), lateCls(v) === 't-red' ? 'red' : 'amber']);
+    var tg = (x.tags && x.tags.length ? x.tags : vTags(v)).filter(function (t, i, a) { return T2TAG[t] && a.indexOf(t) === i && !(t === 'cover' && a.length > 1) && !(t === 'notbought' && a.indexOf('dormant') >= 0); });
+    tg.forEach(function (t) { c.push(T2TAG[t]); }); if (v.likes && v.likes.day) c.push(['Likes stock ' + v.likes.day + (v.likes.from ? ' · ' + v.likes.from + (v.likes.to ? ' to ' + v.likes.to : '') : ''), '']); }
+  else { var s = schoolOf(x.id); if (s) { var g = STG[s.st || 'Lead'] || [s.st, '']; c.push([g[0] || 'Not visited', g[1] || '']); } if ((x.tags || []).indexOf('follow') >= 0) c.push(['Follow-up due', 'blue']); }
+  if (x.by === 'Manager') c.push(['From manager', 'blue']);
+  return c.length ? '<div class="t2chips">' + c.map(function (z) { return '<span class="tag ' + z[1] + '">' + esc(z[0]) + '</span>'; }).join('') + '</div>' : '';
+}
+/** "Last visit Tue 6 Oct: GHS 500 cash · no order, she had stock · asked for exercise books" + See all. */
+function tLastTxt(v) { var l = v && v.lv; if (!l) return ''; var p = [];
+  if (l.paid > 0) p.push(ghs(l.paid) + ' paid'); if (l.out) p.push(String(l.out).toLowerCase() + (l.why ? ' (' + String(l.why).toLowerCase() + ')' : '')); if (l.stock) p.push('stock: ' + l.stock); if (l.help) p.push('asked for ' + String(l.help).toLowerCase()); if (l.note) p.push('"' + l.note + '"');
+  return p.join(' · '); }
+function tLast(x, v) {
+  if (v) { var l = v.lv; return '<div class="t2lv"><div>' + (l ? '<b>Last visit ' + esc(dayLbl(l.day)) + (l.by && l.by !== D.me.first ? ' by ' + esc(l.by) : '') + ':</b> ' + esc(tLastTxt(v)) : 'No visit yet') + '</div><a data-act="hist" data-k="v" data-i="' + esc(v.id) + '">See all ›</a></div>'; }
+  var s = schoolOf(x.id); var lx = s && s.lvx; return '<div class="t2lv"><div>' + (s && s.lv ? '<b>Last visit ' + esc(dayLbl(s.lv)) + (lx && lx.by ? ' by ' + esc(lx.by) : '') + (lx && lx.note ? ':</b> ' + esc(lx.note) : '</b>') : esc(x.why || 'Not visited yet')) + '</div><a data-act="hist" data-k="s" data-i="' + esc(x.id) + '">See all ›</a></div>';
+}
+function tStopDet(g, mode) {
+  var h = '<div class="t2d">';
+  g.items.forEach(function (y) { var x = y.x, v = x.k === 'v' ? vend(x.id) : null; if (g.items.length > 1) h += '<div class="t2dn">' + esc(v ? x.name : 'Prospect visit') + '</div>'; h += tChips(x, v) + tLast(x, v); if (x.by === 'Manager' && x.why && x.why !== 'Added by the manager') h += '<div class="small">Manager: ' + esc(x.why) + '</div>'; });
+  if (mode === 'edit') h += '<div class="t2b2"><button class="main gr" data-act="tvOk" data-g="' + esc(g.k) + '">✓ Approve</button>' + (g.items.some(function (y) { return y.x.by === 'Manager'; }) ? '<span class="small muted" style="align-self:center">Added by the manager</span>' : '<button class="ghost2" data-act="tvOut" data-g="' + esc(g.k) + '">✕ Remove</button>') + '</div><div class="t2hint">Hold ⠿ and slide to move it.</div>';
+  return h + '</div>';
+}
+// ---------------------------------------------------------------- checking the plan (before it is sent)
+function tVisEdit(T, Dr) {
+  var G = tGroups(Dr.items), h = '<div class="t2ph"><span>Tap a school to check it</span>' + (G.length ? '<a data-act="tvAll">Approve all</a>' : '') + '</div><div class="t2list">';
+  G.forEach(function (g, gi) { var ok = g.items.every(function (y) { return y.x.ok; }), r = 'v:' + g.k, on = TROW === r, mg = g.items.some(function (y) { return y.x.by === 'Manager'; });
+    h += '<div class="t2r ' + (ok ? 'e-ok' : mg ? 'e-mg' : 'e-todo') + (on ? ' on' : '') + '" data-drag="v" data-swipe="v" data-k="' + esc(g.k) + '"><div class="t2rh" data-act="trow" data-r="' + esc(r) + '"><span class="t2hd" data-dh="1">⠿</span><span class="t2n' + (ok ? ' ok' : '') + '">' + (ok ? '✓' : gi + 1) + '</span><b class="grow ell">' + esc(ndName(g)) + '</b><span class="ar">' + chev(on) + '</span></div>' + (on ? tStopDet(g, 'edit') : '') + '</div>'; });
+  h += '</div>' + (G.length ? '' : '<p class="small muted">No school visits – add one if you need it.</p>');
+  h += tRemoved(Dr.items, 'v') + '<button class="t2add' + (Dr.addV ? ' red' : '') + '" data-act="tvAdd" data-t="tmr">' + (Dr.addV ? '+ Add another vendor' : '+ Tap to add a vendor') + '</button>';
+  return h;
+}
+function tRemoved(L, kind) {
+  var R = L.filter(function (x) { return x.out && !x.rm; }), M = L.filter(function (x) { return x.rm; }), h = '';
+  if (R.length) { var f = 'rm' + kind; h += '<div class="t2fold" data-act="tfold" data-f="' + f + '">Removed (' + R.length + ') ' + (TFOLD[f] ? '▴' : '▾') + '</div>';
+    if (TFOLD[f]) h += '<div class="t2list">' + R.map(function (x) { return '<div class="t2r e-out"><div class="t2rh"><b class="grow ell">' + esc(x.name) + '</b><button class="ghost" data-act="tPut" data-t="' + kind + '" data-k="' + esc(tKey(x)) + '">Put back</button></div></div>'; }).join('') + '</div>'; }
+  if (M.length) h += '<p class="small muted">Taken out by the manager: ' + M.map(function (x) { return esc(x.name); }).join(', ') + '</p>';
+  return h;
+}
+function tDr() { var T = tView(); return T && tEditable(T) ? tDraft(T) : null; }
+function tGrpItems(Dr, gk) { return Dr.items.filter(function (x) { return tLive(x) && stopKeyOf(x) === gk; }); }
+ACT.tvOk = function (b) { var Dr = tDr(); if (!Dr) return; tGrpItems(Dr, b.dataset.g).forEach(function (x) { x.ok = 1; }); tSave(); var G = tGroups(Dr.items), i = -1; G.some(function (g, j) { if (g.k === b.dataset.g) { i = j; return true; } return false; });
+  var nx = G.slice(i + 1).concat(G.slice(0, i)).filter(function (g) { return !g.items.every(function (y) { return y.x.ok; }); })[0]; TROW = nx ? 'v:' + nx.k : ''; render(); };
+function tOut(kind, keys, name) { var Dr = tDr(); if (!Dr) return; var L = kind === 'c' ? Dr.calls : Dr.items, done = [];
+  L.forEach(function (x) { if (keys.indexOf(kind === 'c' ? tKey(x) : stopKeyOf(x)) >= 0 && tLive(x) && x.by !== 'Manager') { x.out = 1; delete x.ok; done.push(x); } }); if (!done.length) { say('The manager added this one – it stays. On the day, use Can\'t visit if you cannot go.'); render(); return; } tSave(); TROW = '';
+  TUNDO = { t: Date.now(), txt: 'Removed: ' + name, fn: function () { done.forEach(function (x) { delete x.out; }); tSave(); } }; render(); setTimeout(function () { if (TUNDO && Date.now() - TUNDO.t >= 5900) { TUNDO = null; render(); } }, 6000); }
+ACT.tvOut = function (b) { var Dr = tDr(); if (!Dr) return; var g = tGroups(Dr.items).filter(function (z) { return z.k === b.dataset.g; })[0]; tOut('v', [b.dataset.g], g ? ndName(g) : ''); };
+ACT.tundo = function () { if (TUNDO) { TUNDO.fn(); TUNDO = null; render(); } };
+ACT.tPut = function (b) { var Dr = tDr(); if (!Dr) return; (b.dataset.t === 'c' ? Dr.calls : Dr.items).forEach(function (x) { if (tKey(x) === b.dataset.k) delete x.out; }); tSave(); render(); };
+ACT.tvAll = function () { var Dr = tDr(); if (!Dr) return; Dr.items.forEach(function (x) { if (tLive(x)) x.ok = 1; }); tSave(); TROW = ''; render(); };
+ACT.tvAdd = function (b) { PICK = { q: '', uid: '', f: '', tgt: b.dataset.t || 'tmr' }; sheetOpen('pick'); };
+/** Drag ⠿ to move a school or a call; slide a row left to remove it (Undo comes up). */
+var TDRAG = null, TSW = null;
+document.addEventListener('pointerdown', function (e) {
+  var t = e.target; if (!t.closest) return; var hd = t.closest('[data-dh]');
+  if (hd) { var row = hd.closest('[data-drag]'); if (!row) return; e.preventDefault(); TDRAG = { row: row, list: row.parentNode, kind: row.dataset.drag, y0: e.clientY, moved: false }; row.classList.add('drag'); try { hd.setPointerCapture(e.pointerId); } catch (x) { } return; }
+  var sw = t.closest('[data-swipe]'); if (sw && !t.closest('button,a,input,textarea')) TSW = { row: sw, x0: e.clientX, y0: e.clientY, dx: 0, on: false };
+});
+document.addEventListener('pointermove', function (e) {
+  if (TDRAG) { e.preventDefault(); var dy = e.clientY - TDRAG.y0; if (Math.abs(dy) > 5) TDRAG.moved = true; TDRAG.row.style.transform = 'translateY(' + dy + 'px)'; return; }
+  if (TSW) { var dx = e.clientX - TSW.x0, dy2 = e.clientY - TSW.y0; if (!TSW.on && Math.abs(dy2) > 12 && Math.abs(dy2) > Math.abs(dx)) { TSW = null; return; } if (dx < -12 && Math.abs(dx) > Math.abs(dy2)) TSW.on = true; if (TSW.on) { TSW.dx = Math.min(0, dx); TSW.row.style.transform = 'translateX(' + TSW.dx + 'px)'; TSW.row.classList.add('swiping'); } }
+}, { passive: false });
+function tDragEnd(e) {
+  if (TDRAG) { var t = TDRAG; TDRAG = null; t.row.style.transform = ''; t.row.classList.remove('drag'); if (!t.moved) return; TDRAGGED = Date.now();
+    var rows = [].slice.call(t.list.children).filter(function (r) { return r.dataset && r.dataset.drag === t.kind; }), keys = rows.map(function (r) { return r.dataset.k; }), me = t.row.dataset.k, y = e.clientY;
+    var rest = rows.filter(function (r) { return r !== t.row; }), at = rest.length; for (var i = 0; i < rest.length; i++) { var bb = rest[i].getBoundingClientRect(); if (y < bb.top + bb.height / 2) { at = i; break; } }
+    var order = rest.map(function (r) { return r.dataset.k; }); order.splice(at, 0, me); if (order.join('|') !== keys.join('|')) tReorder(t.kind, order); return; }
+  if (TSW) { var s = TSW; TSW = null; s.row.style.transform = ''; s.row.classList.remove('swiping'); if (s.on) TDRAGGED = Date.now(); if (s.dx < -80) { var k = s.row.dataset.k; if (s.row.dataset.swipe === 'c') { var c = (tDr() || { calls: [] }).calls.filter(function (x) { return tKey(x) === k; })[0]; tOut('c', [k], c ? c.name : ''); } else { var Dr = tDr(), g = Dr ? tGroups(Dr.items).filter(function (z) { return z.k === k; })[0] : null; tOut('v', [k], g ? ndName(g) : ''); } } }
+}
+document.addEventListener('pointerup', tDragEnd); document.addEventListener('pointercancel', function () { if (TDRAG) { TDRAG.row.style.transform = ''; TDRAG.row.classList.remove('drag'); TDRAG = null; } if (TSW) { TSW.row.style.transform = ''; TSW.row.classList.remove('swiping'); TSW = null; } });
+function tReorder(kind, order) { var Dr = tDr(); if (!Dr) return;
+  if (kind === 'c') { var C = Dr.calls.slice(); Dr.calls = order.map(function (k) { return C.filter(function (x) { return tKey(x) === k; })[0]; }).filter(Boolean).concat(C.filter(function (x) { return order.indexOf(tKey(x)) < 0; })); }
+  else { var L = Dr.items.slice(); Dr.items = [].concat.apply([], order.map(function (k) { return L.filter(function (x) { return tLive(x) && stopKeyOf(x) === k; }); })).concat(L.filter(function (x) { return !tLive(x) || order.indexOf(stopKeyOf(x)) < 0; })); }
+  tSave(); render(); }
+// prospects: how many known and new schools, which ones, register a school
+function tKnown(Dr) { var n = Dr.items.filter(function (x) { return x.k === 's' && tLive(x); }).length; return Dr.known != null ? Math.max(Dr.known, 0) : n; }
+function tGoal(T, Dr) { return Dr.goal != null ? Dr.goal : T.school === false ? 0 : 2; }
+function tProsEdit(T, Dr) {
+  var sub = TPSUB || 'plan', known = tKnown(Dr), goal = tGoal(T, Dr), ch = Dr.items.filter(function (x) { return x.k === 's' && tLive(x); });
+  var h = '<div class="t2sum">' + known + ' known · ' + goal + ' new · ' + (known + goal) + ' school visit' + (known + goal === 1 ? '' : 's') + '</div>' + tSeg([['plan', 'Plan'], ['sug', 'Suggested'], ['reg', 'Register']], sub);
+  if (sub === 'plan') {
+    h += tStep('Known schools', 'From Suggested', 'known', known) + tStep('New schools', 'You find them on the day', 'goal', goal);
+    if (known > ch.length) h += '<div class="small t-amber" style="margin:6px 2px">Choose ' + (known - ch.length) + ' more in <a data-act="tpsub" data-v="sug">Suggested ›</a></div>';
+    h += Dr.noteOn ? '<textarea rows="2" data-inp="tnote" placeholder="e.g. I will also try two schools near Suame roundabout">' + esc(Dr.note || '') + '</textarea><button class="ghost" data-act="tnoteDone">Done</button>' : Dr.note ? '<div class="t2note" data-act="tnoteOn">Note: ' + esc(Dr.note) + ' <a>Change</a></div>' : '<div class="small" style="margin:8px 2px"><a data-act="tnoteOn">+ Add a note for the manager</a></div>';
+    h += Dr.conf.p ? '<div class="t2okline">✓ ' + (known + goal) + ' school visit' + (known + goal === 1 ? '' : 's') + ' confirmed</div>' : '<button class="main gr big" data-act="tpConf">✓ Confirm ' + (known + goal) + ' school visit' + (known + goal === 1 ? '' : 's') + '</button>';
+  } else if (sub === 'sug') h += tProsSug(T, Dr, ch);
+  else h += tRegister(true);
+  return h;
+}
+function tSeg(L, on) { return '<div class="t2seg">' + L.map(function (x) { return '<button class="' + (x[0] === on ? 'on' : '') + '" data-act="tpsub" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>'; }
+function tStep(t, s, f, n) { return '<div class="t2stp"><div class="grow"><b>' + t + '</b><div class="small muted">' + s + '</div></div><div class="step"><button data-act="tpk" data-f="' + f + '" data-d="-1" aria-label="One less">−</button><b>' + n + '</b><button data-act="tpk" data-f="' + f + '" data-d="1" aria-label="One more">+</button></div></div>'; }
+ACT.tpk = function (b) { var T = tView(), Dr = tDr(); if (!Dr) return; var f = b.dataset.f, cur = f === 'known' ? tKnown(Dr) : tGoal(T, Dr); Dr[f] = Math.max(0, Math.min(15, cur + Number(b.dataset.d))); delete Dr.conf.p; tSave(); render(); };
+ACT.tnoteOn = function () { var Dr = tDr(); if (!Dr) return; Dr.noteOn = 1; render(); var el = document.querySelector('[data-inp="tnote"]'); if (el) el.focus(); };
+ACT.tnoteDone = function () { var Dr = tDr(); if (!Dr) return; delete Dr.noteOn; Dr.note = String(Dr.note || '').trim(); tSave(); render(); };
+INP.tnote = function (el) { var Dr = tDr(); if (Dr) { Dr.note = el.value; tSave(); } };
+ACT.tpConf = function () { var Dr = tDr(); if (!Dr) return; Dr.conf.p = 1; tSave(); TTAB = 'c'; render(); };
+var TPF = '', TPQ = '';
+function tNearStops(Dr) { var P = []; tGroups(Dr.items).forEach(function (g) { var s = g.k.indexOf('S:') === 0 ? schoolOf(g.k.slice(2)) : null, p = s && s.pin ? s.pin : itemPin(g.items[0].x); if (p) P.push(p); }); return P; }
+function tProsSug(T, Dr, ch) {
+  var on = {}; ch.forEach(function (x) { on[x.id] = 1; }); var pins = tNearStops(Dr), areas = {}; tGroups(Dr.items).forEach(function (g) { var s = g.k.indexOf('S:') === 0 ? schoolOf(g.k.slice(2)) : null; if (s && s.area) areas[s.area] = 1; });
+  var near = function (s) { return (s.area && areas[s.area]) || (s.pin && pins.some(function (p) { return tDist(p, s.pin) <= 2000; })); };
+  var F = { near: near, int: function (s) { return s.st === 'Interested'; }, vis: function (s) { return !!s.lv || s.st === 'Visited'; }, never: function (s) { return !s.lv && (s.st || 'Lead') === 'Lead'; } };
+  var S = (D.schools || []).filter(function (s) { return !s.n && (!s.ag || s.ag === D.me.uid || (D.viewOf && s.ag === D.viewOf.uid)) && !on[s.id] && s.st !== 'Not interested'; }), q = norm(TPQ);
+  var h = '<div class="t2sub2">Chosen (' + ch.length + ')</div>' + (ch.length ? '<div class="t2list">' + ch.map(function (x) { var s = schoolOf(x.id); return '<div class="t2r e-ok"><div class="t2rh"><b class="grow ell">' + esc(x.name) + '<span class="small muted"> · ' + esc((s && s.area) || x.school || '') + '</span></b>' + (x.by === 'Manager' ? '<span class="small muted">From manager</span>' : '<button class="ghost" data-act="tsRm" data-i="' + esc(x.id) + '">Remove</button>') + '</div></div>'; }).join('') + '</div>' : '<p class="small muted">None chosen yet.</p>');
+  h += '<input class="srch" data-inp="tpq" value="' + esc(TPQ) + '" placeholder="Search a school or area" autocomplete="off">';
+  h += '<div class="t2tray">' + [['', 'All'], ['near', 'Near your visits'], ['int', 'Showed interest'], ['vis', 'Visited before'], ['never', 'Never visited']].map(function (f) { var n = f[0] ? S.filter(F[f[0]]).length : S.length; return '<button class="' + (TPF === f[0] ? 'on' : '') + '" data-act="tpf" data-v="' + f[0] + '">' + f[1] + ' <b>' + n + '</b></button>'; }).join('') + '</div>';
+  var L = S.filter(function (s) { return (!TPF || F[TPF](s)) && (!q || norm(s.name + ' ' + s.area).indexOf(q) >= 0); });
+  L.sort(function (a, b) { var ra = (near(a) ? 0 : 2) + (a.st === 'Interested' ? 0 : 1), rb = (near(b) ? 0 : 2) + (b.st === 'Interested' ? 0 : 1); return ra - rb || (a.name < b.name ? -1 : 1); });
+  h += '<div id="tpsl">' + tProsRows(L) + '</div>';
+  return h;
+}
+function tProsRows(L) { return L.length ? '<div class="t2list">' + L.slice(0, 30).map(function (s) { var lx = s.lvx;
+  return '<div class="t2r"><div class="t2rh"><div class="grow" style="min-width:0"><b class="ell" style="display:block">' + esc(s.name) + '</b><div class="small muted ell">' + esc(s.area || '') + (s.lv ? ' · last visit ' + esc(dayLbl(s.lv)) + (lx && lx.by ? ' by ' + esc(lx.by) : '') + (lx && lx.note ? ': ' + esc(lx.note) : '') : ' · never visited') + '</div></div><button class="main gr" style="padding:7px 12px" data-act="tsAdd" data-i="' + esc(s.id) + '">+ Add</button></div></div>'; }).join('') + '</div>' + (L.length > 30 ? '<p class="small muted">Type part of a name to see more.</p>' : '') : '<p class="small muted">No school matches.</p>'; }
+INP.tpq = function (el) { TPQ = el.value; var b = $('tpsl'); if (!b) return; var T = tView(), Dr = tDr(); if (!Dr) return; var tmp = document.createElement('div'); tmp.innerHTML = tProsSug(T, Dr, Dr.items.filter(function (x) { return x.k === 's' && tLive(x); })); var n = tmp.querySelector('#tpsl'); if (n) b.innerHTML = n.innerHTML; };
+ACT.tpf = function (b) { TPF = b.dataset.v; render(); };
+ACT.tsAdd = function (b) { var Dr = tDr(), s = schoolOf(b.dataset.i); if (!Dr || !s) return; var was = Dr.items.filter(function (x) { return x.k === 's' && x.id === s.id; })[0];
+  if (was) delete was.out; else Dr.items.push({ k: 's', id: s.id, name: s.name, school: s.area || '', why: s.st === 'Interested' ? 'Interested – find and register a vendor' : s.lv ? 'Visited before – next step' : 'New school – introduce CupSales', kind: 'pros', tags: ['pros'], stop: 'S:' + s.id, ok: 1 });
+  var n = Dr.items.filter(function (x) { return x.k === 's' && tLive(x); }).length; if (Dr.known == null || Dr.known < n) Dr.known = Math.min(15, n); delete Dr.conf.p; tSave(); render(); };
+ACT.tsRm = function (b) { var Dr = tDr(); if (!Dr) return; Dr.items.forEach(function (x) { if (x.k === 's' && x.id === b.dataset.i && x.by !== 'Manager') x.out = 1; }); var n = Dr.items.filter(function (x) { return x.k === 's' && tLive(x); }).length; if (Dr.known != null && Dr.known > n) Dr.known = n; delete Dr.conf.p; tSave(); render(); };
+// calls
+function tCallEdit(T, Dr) {
+  var C = Dr.calls.filter(tLive), h = '<div class="t2ph"><span>Tap a vendor to check</span>' + (C.length ? '<a data-act="tcAll">Approve all</a>' : '') + '</div><div class="t2list">';
+  C.forEach(function (c, i) { var r = 'c:' + tKey(c), on = TROW === r, v = c.k === 'v' ? vend(c.id) : null;
+    h += '<div class="t2r ' + (c.ok ? 'e-ok' : c.by === 'Manager' ? 'e-mg' : 'e-todo') + (on ? ' on' : '') + '" data-drag="c" data-swipe="c" data-k="' + esc(tKey(c)) + '"><div class="t2rh" data-act="trow" data-r="' + esc(r) + '"><span class="t2hd" data-dh="1">⠿</span><span class="t2n' + (c.ok ? ' ok' : '') + '">' + (c.ok ? '✓' : i + 1) + '</span><b class="grow ell">' + esc(c.name) + (c.school ? '<span class="small muted"> · ' + esc(c.school) + '</span>' : '') + '</b><span class="ar">' + chev(on) + '</span></div>' +
+      (on ? '<div class="t2d">' + tChips(c, v) + '<div class="t2why">' + esc(c.why || '') + (c.usual ? ' · usually about ' + c.usual + ' ctn' : '') + '</div><div class="t2b2"><button class="main gr" data-act="tcOk" data-k="' + esc(tKey(c)) + '">✓ Approve</button>' + (c.by === 'Manager' ? '<span class="small muted" style="align-self:center">Added by the manager</span>' : '<button class="ghost2" data-act="tcOut" data-k="' + esc(tKey(c)) + '">✕ Remove</button>') + '</div><div class="t2hint">Hold ⠿ and slide to move it.</div></div>' : '') + '</div>'; });
+  h += '</div>' + (C.length ? '' : '<p class="small muted">No calls suggested.</p>') + tRemoved(Dr.calls, 'c') + '<button class="t2add' + (Dr.addC ? ' red' : '') + '" data-act="tvAdd" data-t="call">' + (Dr.addC ? '+ Add another vendor to call' : '+ Tap to add a vendor to call') + '</button>';
+  return h + tBefore(T, Dr);
+}
+ACT.tcOk = function (b) { var Dr = tDr(); if (!Dr) return; var C = Dr.calls.filter(tLive); C.forEach(function (x) { if (tKey(x) === b.dataset.k) x.ok = 1; }); tSave(); var nx = C.filter(function (x) { return !x.ok; })[0]; TROW = nx ? 'c:' + tKey(nx) : ''; render(); };
+ACT.tcOut = function (b) { var Dr = tDr(); if (!Dr) return; var c = Dr.calls.filter(function (x) { return tKey(x) === b.dataset.k; })[0]; tOut('c', [b.dataset.k], c ? c.name : ''); };
+ACT.tcAll = function () { var Dr = tDr(); if (!Dr) return; Dr.calls.forEach(function (x) { if (tLive(x)) x.ok = 1; }); tSave(); TROW = ''; render(); };
+function tChecks(T, Dr) { var G = tGroups(Dr.items), C = Dr.calls.filter(tLive);
+  return { v: G.filter(function (g) { return !g.items.every(function (y) { return y.x.ok; }); }).length, p: Dr.conf.p ? 0 : 1, c: C.filter(function (x) { return !x.ok; }).length }; }
+function tBefore(T, Dr) { var k = tChecks(T, Dr), all = !k.v && !k.p && !k.c;
+  var row = function (t, n, tab, w) { return '<div class="t2bf"><span>' + t + '</span>' + (n ? '<a class="t-amber" data-act="ttab" data-k="' + tab + '">' + w + ' ›</a>' : '<b class="t-green">✓</b>') + '</div>'; };
+  return '<div class="t2bfs"><b>Before you send</b>' + row('Visits', k.v, 'v', k.v + ' not checked') + row('Prospects', k.p, 'p', 'Not confirmed') + row('Calls', k.c, 'c', k.c + ' not checked') + '</div>' +
+    '<button class="main big' + (all ? '' : ' off') + '" data-act="tSend">SEND PLAN TO MANAGER</button>'; }
+ACT.tSend = function () { var T = tView(), Dr = tDr(); if (!Dr) return; var k = tChecks(T, Dr);
+  if (k.v || k.p || k.c) { say('Check each tab first:' + (k.v ? '\nVisits: ' + k.v + ' not checked' : '') + (k.p ? '\nProspects: not confirmed' : '') + (k.c ? '\nCalls: ' + k.c + ' not checked' : '')); TTAB = k.v ? 'v' : k.p ? 'p' : 'c'; render(); return; }
+  var G = tGroups(Dr.items), C = Dr.calls.filter(tLive), known = tKnown(Dr), goal = tGoal(T, Dr);
+  ask('Send your plan for ' + dayLbl(T.day) + ' to the manager?\n' + G.length + ' visit' + (G.length === 1 ? '' : 's') + ' · ' + (known + goal) + ' school visit' + (known + goal === 1 ? '' : 's') + ' · ' + C.length + ' call' + (C.length === 1 ? '' : 's') + (T !== D.plan ? '\n\nIf the manager does not answer, it starts at 5:00 am.' : ''), function () {
+    var it = JSON.parse(JSON.stringify(Dr.items)), cl = JSON.parse(JSON.stringify(Dr.calls)), day = T.day;
+    bgSave('plan', { day: day, items: it, calls: cl, known: known, goal: goal, note: String(Dr.note || '').trim() }, 'pl-' + uid(), 'plan for ' + dayLbl(day) + ' sent to the manager', null, true); tDrop(day); TTAB = null; TROW = ''; render(); }, 'SEND'); };
+ACT.tBack = function () { var T = tView(); if (!T) return; ask('Take your plan for ' + dayLbl(T.day) + ' back to change it?\nThe manager is told. Send it again when it is ready.', function () { bgSave('plan', { day: T.day, act: 'takeback' }, 'tb-' + uid(), 'plan taken back', null, true); render(); }, 'TAKE IT BACK'); };
+// ---------------------------------------------------------------- waiting for the manager / looking at it (no changes)
+function tVisView(T) { var G = tGroups(T.items || []);
+  return '<div class="t2list">' + G.map(function (g) { var r = 'v:' + g.k, on = TROW === r, mg = g.items.some(function (y) { return y.x.by === 'Manager'; }); return '<div class="t2r ' + (mg ? 'e-mg' : 'e-ok') + (on ? ' on' : '') + '"><div class="t2rh" data-act="trow" data-r="' + esc(r) + '"><span class="t2n ok">✓</span><b class="grow ell">' + esc(ndName(g)) + '</b><span class="ar">' + chev(on) + '</span></div>' + (on ? tStopDet(g, 'view') : '') + '</div>'; }).join('') + '</div>' + tRemoved(T.items || [], 'vv'); }
+function tProsView(T) { var P = (T.items || []).filter(function (x) { return x.k === 's' && tLive(x); }), known = T.known != null ? T.known : P.length, goal = T.goal || 0;
+  return '<div class="t2sum">' + known + ' known · ' + goal + ' new · ' + (known + goal) + ' school visits</div>' + (P.length ? '<div class="t2list">' + P.map(function (x) { return '<div class="t2r e-ok"><div class="t2rh"><span class="t2n ok">✓</span><b class="grow ell">' + esc(x.name) + '</b></div></div>'; }).join('') + '</div>' : '') + (T.anote ? '<div class="t2note">Note: ' + esc(T.anote) + '</div>' : ''); }
+function tCallView(T) { var C = (T.calls || []).filter(tLive); return C.length ? '<div class="t2list">' + C.map(function (c) { return '<div class="t2r ' + (c.by === 'Manager' ? 'e-mg' : 'e-ok') + '"><div class="t2rh"><span class="t2n ok">✓</span><b class="grow ell">' + esc(c.name) + (c.school ? '<span class="small muted"> · ' + esc(c.school) + '</span>' : '') + '</b></div></div>'; }).join('') + '</div>' : '<p class="small muted">No calls.</p>'; }
+// ---------------------------------------------------------------- the day: next stop, done, later; prospects; calls
+function tSig(r, g, icon, label, tone) { return '<button class="t2sig ' + (tone || '') + '" data-act="tsig" data-r="' + esc(r) + '" data-g="' + g + '" aria-label="' + esc(label) + '" title="' + esc(label) + '">' + ico(ICO[icon] || ICO.info) + '</button>'; }
+ACT.tsig = function (b) { if (TROW === b.dataset.r && TGLOW === b.dataset.g) { var el = document.querySelector('.t2d [data-glow="' + b.dataset.g + '"]'); if (el) { if (el.tagName === 'A') { if (el.href && /^tel:/.test(el.getAttribute('href'))) location.href = el.href; else el.click(); } else el.click(); } return; } TROW = b.dataset.r; TGLOW = b.dataset.g; render(); };
+function tGl(g) { return TGLOW === g ? ' glow' : ''; }
+function tVisDay(T) {
+  var L = planItems(), G = tGroups(L), gi = -1; G.some(function (g, i) { if (ndOpenIn(g).length) { gi = i; return true; } return false; });
+  var h = tKeyLine(true);
+  if (gi >= 0) h += tNext(G[gi], gi, G.length);
+  var fin = G.filter(function (g, i) { return i !== gi && !ndOpenIn(g).length; }), later = G.filter(function (g, i) { return i !== gi && ndOpenIn(g).length; });
+  if (gi < 0) h += tFinished(G);
+  if (fin.length) { var fo = TFOLD.vd !== undefined ? TFOLD.vd : fin.length <= 3; h += '<div class="t2fold" data-act="tfoldd" data-f="vd" data-d="' + (fo ? 1 : 0) + '">Done (' + fin.length + ') ' + (fo ? '▴' : '▾') + '</div>';
+    if (fo) h += '<div class="t2list">' + fin.map(function (g) { var nv = g.items.every(function (y) { return y.x.skip && !visitOf(y.x); }), sk = g.items.filter(function (y) { return y.x.skip; })[0];
+      return '<div class="t2r ' + (nv ? 'e-no' : 'e-ok') + '"><div class="t2rh"><b class="grow ell">' + esc(ndName(g)) + (nv ? '<span class="small t-red" style="display:block;font-weight:500">Not visited' + (sk && sk.x.skip ? ': ' + esc(sk.x.skip) : '') + '</span>' : '') + '</b>' + (nv ? '<button class="ghost" data-act="tGoBack" data-g="' + esc(g.k) + '">Go back</button>' : '<span class="t-green">✓</span>') + '</div></div>'; }).join('') + '</div>'; }
+  if (later.length) { h += '<div class="t2sub2">Later (' + later.length + ')</div><div class="t2list">' + later.map(function (g) { var r = 'v:' + g.k, on = TROW === r, y = ndOpenIn(g)[0], x = y.x, v = x.k === 'v' ? vend(x.id) : null, mg = g.items.some(function (z) { return z.x.by === 'Manager'; });
+    return '<div class="t2r ' + (mg ? 'e-mg' : 'e-todo') + (on ? ' on' : '') + '"><div class="t2rh" data-act="trow" data-r="' + esc(r) + '"><b class="grow ell">' + esc(ndName(g)) + '</b>' + tSig(r, 'up', 'up', 'Go here next') + '</div>' +
+      (on ? '<div class="t2d">' + tChips(x, v) + tLast(x, v) + '<div class="t2b2"><button class="main gr' + tGl('up') + '" data-glow="up" data-act="tNextGo" data-g="' + esc(g.k) + '">Go here next</button><button class="ghost2" data-act="hist" data-k="' + x.k + '" data-i="' + esc(x.id) + '">More ›</button></div></div>' : '') + '</div>'; }).join('') + '</div>'; }
+  h += '<button class="t2add" data-act="tAddDay">+ Add a stop</button>';
+  return h;
+}
+ACT.tfoldd = function (b) { TFOLD[b.dataset.f] = b.dataset.d !== '1'; render(); };
+function tNext(g, gi, n) {
+  var open = ndOpenIn(g), y = open[0], x = y.x, v = x.k === 'v' ? vend(x.id) : null, s = g.k.indexOf('S:') === 0 ? schoolOf(g.k.slice(2)) : null, pin = s && s.pin ? s.pin : itemPin(x), Y = D.myDay || {};
+  var h = '<div class="t2next"><div class="ey">Next stop · ' + (gi + 1) + ' of ' + n + '</div><div class="nsch">' + esc(ndName(g)) + '</div>' + (s && brkTxt(s) ? '<div class="small muted">' + esc(brkTxt(s)) + '</div>' : '');
+  if (open.length > 1 || (v && g.name !== x.name && !/^(TO BE UPDATED|School not recorded)$/i.test(String(g.name)))) h += '<div class="nven">' + esc(v ? x.name : 'Prospect visit') + '</div>';
+  h += tChips(x, v);
+  var lv = v ? v.lv : null; h += v ? (lv ? '<a class="t2lvl" data-act="tlast" data-v="' + esc(v.id) + '">Last visit ' + esc(dayLbl(lv.day)) + ' ›</a>' : '<div class="small muted">No visit yet</div>') : tLast(x, null);
+  if (v && v.fu && v.fu.day <= D.today && v.fu.bring) h += '<div class="small">Bring: <b>' + esc(v.fu.bring) + '</b></div>';
+  if (x.by === 'Manager' && x.why && x.why !== 'Added by the manager') h += '<div class="small">Manager: ' + esc(x.why) + '</div>';
+  if (v) h += hReadyHtml(v.id);
+  h += '<button class="main big t2here" data-act="visOpen" data-k="' + x.k + '" data-i="' + esc(x.id) + '" data-kind="' + esc(x.kind || '') + '">I\'M HERE</button>';
+  var ph = v && v.phone ? v.phone : s && s.cphone ? s.cphone : '';
+  h += '<div class="t2q">' + (ph ? '<a href="tel:' + esc(ph) + '"><span>' + ico(ICO.phone) + '</span>Call</a>' : '<a class="off"><span>' + ico(ICO.phone) + '</span>Call</a>') + '<a href="' + esc(mapUrl(pin, s ? s.name : g.name, s ? s.area : '')) + '" target="_blank"><span>' + ico(ICO.pin) + '</span>Map</a><a data-act="tnear"><span>' + ico(ICO.school) + '</span>Nearby</a><a data-act="tcant" data-g="' + esc(g.k) + '"><span>' + ico(ICO.x) + '</span>Can\'t visit</a></div>';
+  if (open.length > 1) h += '<div class="t2more">' + open.slice(1).map(function (z) { return '<div class="t2mo"><b class="grow ell">' + esc(z.x.k === 'v' ? z.x.name : 'Prospect visit') + '</b><button class="ghost" data-act="visOpen" data-k="' + z.x.k + '" data-i="' + esc(z.x.id) + '" data-kind="' + esc(z.x.kind || '') + '">I\'m here</button></div>'; }).join('') + '</div>';
+  if (!Y.start && Y.workday) h += '<div class="small muted" style="margin-top:6px">Your day starts when you tap I\'M HERE at your first school.</div>';
+  return h + '</div>';
+}
+function tFinished(G) { var Y = D.myDay || {}, nv = G.filter(function (g) { return g.items.every(function (y) { return y.x.skip && !visitOf(y.x); }); }), dn = G.length - nv.length;
+  var h = '<div class="t2fin"><b>Visits finished</b><div class="small">' + dn + ' done' + (nv.length ? ' · <span class="t-red">' + nv.length + ' not visited</span>' : '') + '</div>';
+  if ((D.plan.items || []).some(function (x) { return x.k === 's' && tLive(x) && !visitOf(x); }) || (D.plan.goal || 0) > 0) h += '<button class="main gr" data-act="ttab" data-k="p">Next: prospect schools ›</button>';
+  if (Y.start && !Y.end) h += '<button class="ghost2" style="margin-top:8px;width:100%" data-act="endday">End my day</button>';
+  return h + '</div>'; }
+ACT.tGoBack = function (b) { var L = planEdit(); L.forEach(function (x) { if (stopKeyOf(x) === b.dataset.g && x.skip && !visitOf(x)) { delete x.skip; delete x.skipWhy; delete x.skipAt; delete x.skipDist; delete x.skipLat; delete x.skipLng; delete x.skipLoc; } }); planSync('going back'); render(); };
+/** Go here next: the school moves up, before the next stop (saved at once). */
+ACT.tNextGo = function (b) { var L = planEdit(), G = tGroups(L), gk = b.dataset.g, cur = G.filter(function (g) { return ndOpenIn(g).length; })[0]; if (!cur || cur.k === gk) return;
+  var mv = L.filter(function (x) { return stopKeyOf(x) === gk; }), rest = L.filter(function (x) { return stopKeyOf(x) !== gk; }), at = rest.indexOf(cur.items[0].x); if (at < 0) return;
+  var nm = (G.filter(function (g) { return g.k === gk; })[0] || {}).name || ''; PLANX.items = rest.slice(0, at).concat(mv, rest.slice(at)); TROW = ''; TGLOW = ''; planSync('next: ' + nm); render(); window.scrollTo(0, 0); };
+ACT.tAddDay = function () { dlgChoose('Add to today', [['A vendor or school from my list', function () { ACT.plAdd(); }], ['Schools near me', function () { ACT.tnear(); }], ['The school I am at now', function () { ACT.schHere(); }], ['A reminder', function () { ACT.remNew(); }], ['Cancel', null, 'ghost']]); };
+function tProsDay(T) {
+  var sub = TPSUB === 'reg' ? 'reg' : 'today', P = planItems().filter(function (x) { return x.k === 's' && tLive(x); }), goal = D.plan.goal || 0;
+  var h = tSeg([['today', 'Today'], ['reg', 'Register']], sub); if (sub === 'reg') return h + tRegister(false);
+  h += tKeyLine(false) + '<div class="t2list">' + P.map(function (x) { var r = 'p:' + x.id, on = TROW === r, dn = visitOf(x), s = schoolOf(x.id);
+    return '<div class="t2r ' + (dn ? 'e-ok' : x.skip ? 'e-no' : x.by === 'Manager' ? 'e-mg' : 'e-todo') + (on ? ' on' : '') + '"><div class="t2rh" data-act="trow" data-r="' + esc(r) + '"><b class="grow ell">' + esc(x.name) + '</b>' + (dn ? '<span class="t-green">✓</span>' : tSig(r, 'here', 'pin', 'I\'m here', 'gr')) + '</div>' +
+      (on ? '<div class="t2d">' + (s && s.area ? '<div class="small muted">' + esc(s.area) + '</div>' : '') + tLast(x, null) + (dn ? '' : '<div class="t2b2"><button class="main gr' + tGl('here') + '" data-glow="here" data-act="visOpen" data-k="s" data-i="' + esc(x.id) + '" data-kind="' + esc(x.kind || '') + '">I\'m here</button><a class="ghost2b" href="' + esc(mapUrl(s && s.pin, x.name, s ? s.area : '')) + '" target="_blank">Map</a></div>') + '<div class="t2mr"><a data-act="hist" data-k="s" data-i="' + esc(x.id) + '">More ›</a></div></div>' : '') + '</div>'; }).join('') + '</div>';
+  var newDone = (D.plan.visits || []).filter(function (v) { return v.sid && !v.vid && !P.some(function (x) { return x.id === v.sid; }); }).length;
+  if (goal > newDone) h += '<div class="t2dash"><b>' + (goal - newDone) + ' new school' + (goal - newDone === 1 ? '' : 's') + ' to find</b><div class="t2b2"><button class="ghost2" data-act="tnear" data-f="pros">Near me</button><button class="main gr" data-act="tpsub" data-v="reg">+ Register</button></div></div>';
+  else if (goal) h += '<div class="t2okline">✓ ' + newDone + ' new school' + (newDone === 1 ? '' : 's') + ' found today</div>';
+  return h;
+}
+function tCallDay(T) {
+  var C = (D.plan.calls || []).filter(tLive), h = tKeyLine(false) + '<div class="t2list">';
+  C.forEach(function (c) { var r = 'c:' + tKey(c), on = TROW === r, dn = callOf(c), v = c.k === 'v' ? vend(c.id) : null, ph = c.phone || (v && v.phone) || '';
+    h += '<div class="t2r ' + (dn ? 'e-ok' : c.by === 'Manager' ? 'e-mg' : 'e-todo') + (on ? ' on' : '') + '"><div class="t2rh" data-act="trow" data-r="' + esc(r) + '"><div class="grow" style="min-width:0"><b class="ell" style="display:block">' + esc(c.name) + (c.school ? ' · ' + esc(c.school) : '') + '</b>' + (dn ? '<div class="small muted">' + esc(String(dn.out || '').replace(/^Call – /, '')) + (dn.at ? ' · ' + esc(dn.at) : '') + '</div>' : '') + '</div>' +
+      (dn ? '<span class="t-green">✓</span>' : (ph ? tSig(r, 'call', 'phone', 'Call') : '') + tSig(r, 'log', 'book', 'Log the call')) + '</div>' +
+      (on ? '<div class="t2d">' + tChips(c, v) + '<div class="t2why">' + esc(c.why || '') + '</div><div class="t2b2">' + (ph ? '<a class="main2' + tGl('call') + '" data-glow="call" href="tel:' + esc(ph) + '">' + ico(ICO.phone) + ' Call</a>' : '') + '<button class="main gr' + tGl('log') + '" data-glow="log" data-act="callLog" data-k="' + c.k + '" data-i="' + esc(c.id) + '">' + (dn ? 'Log again' : 'Log call') + '</button></div><div class="t2mr"><a data-act="tmore" data-k="' + c.k + '" data-i="' + esc(c.id) + '">More ›</a></div></div>' : '') + '</div>'; });
+  h += '</div>' + (C.length ? '' : '<p class="small muted">No calls on the plan today.</p>');
+  h += '<div class="t2sub2">Not on the plan</div><div class="t2b2"><button class="ghost2" data-act="tclFree">' + ico(ICO.book) + ' Log a call</button><button class="ghost2" data-act="remNew">' + ico(ICO.clock) + ' Reminder</button></div>';
+  var R = remsOpen(); if (R.length) { h += '<div class="t2fold" data-act="tfold" data-f="rem">⏰ My reminders (' + R.length + ') ' + (TFOLD.rem ? '▴' : '▾') + '</div>'; if (TFOLD.rem) h += '<div class="t2list">' + R.map(function (r) { var late = remNow()(r); return '<div class="t2r ' + (late ? 'e-no' : 'e-todo') + '"><div class="t2rh"><div class="grow" style="min-width:0"><b class="ell" style="display:block">' + esc(r.about) + '</b><div class="small ' + (late ? 't-red' : 'muted') + '">' + esc(remWhen(r)) + (r.vendor ? ' · ' + esc(r.vendor) : '') + '</div></div><button class="ghost" data-act="remDone" data-i="' + esc(r.id) + '">Done</button></div></div>'; }).join('') + '</div>'; }
+  return h;
+}
+// ---------------------------------------------------------------- the whole screen
+function pgDay2() {
+  var P = D.plan, Y = D.myDay || {}, h = monthCard();
+  if (!P) return h + emptyHtml('Your plan is not ready – pull down to refresh.');
+  var T = tView(), today = T === P; if (TTABD !== T.day) { TTABD = T.day; TTAB = null; TROW = ''; TPSUB = ''; }
+  if (today && (P.leave || P.hol || (!P.work && !(P.items || []).length))) return h + tTaskRow() + emptyHtml(P.leave ? 'You are on leave today.' : P.hol ? 'Public holiday today: ' + String(P.hol).replace(/\s*\(.*\)$/, '') + '.' : 'No work on Saturday and Sunday.') + (P.tmr ? '<div class="t2tm" data-act="tdv" data-v="tmr"><b>Plan for ' + esc(dayLbl(P.tmr.day)) + '</b><span>›</span></div>' : '') + otherVisits([]);
+  var ed = tEditable(T), Dr = ed ? tDraft(T) : null, dayMode = today && !ed && T.status === 'Approved';
+  if (P.practice && today) h += '<div class="msg info" style="margin-bottom:8px"><b>Practice day.</b> ' + esc(dayLbl(P.day)) + ' works like a normal Monday on the test system.</div>';
+  h += tHead(T, ed) + tTaskRow();
+  if (!today && Y.end) h += '<div class="t2okline">✓ Day ended' + (Y.sum ? ': ' + Y.sum.visits + ' visit' + (Y.sum.visits === 1 ? '' : 's') + ' · ' + Y.sum.orders + ' order' + (Y.sum.orders === 1 ? '' : 's') + ' · ' + ghs(Y.sum.cash) + ' collected' : '') + '</div>';
+  if (!today && P.work && tOpenToday()) h += '<div class="small" style="margin:-4px 2px 8px"><a data-act="tdv" data-v="today">‹ Back to today</a></div>';
+  if (today && P.tmr) { var tp = tPill(P.tmr, tEditable(P.tmr)); h += '<div class="t2tm" data-act="tdv" data-v="tmr"><b>Plan for ' + esc(dayLbl(P.tmr.day)) + '</b><span class="pill ' + tp[1] + '">' + esc(tp[0]) + '</span><span>›</span></div>'; }
+  if (T.status === 'Agreed' && !ed) h += '<div class="t2info amber">Sent at ' + esc(T.agreedAt || '') + '. If the manager does not answer, it starts at 5:00 am.<a data-act="tBack">Take it back ›</a></div>';
+  if (T.status === 'Approved') {
+    var ch = (T.items || []).concat(T.calls || []).filter(function (x) { return x.by === 'Manager' || x.rm === 'Manager'; });
+    if (T.sentBy === 'Auto 5 am') h += '<div class="t2info amber">No plan was sent, so this plan started at 5:00 am.</div>';
+    else h += '<div class="t2info green">' + (T.approvedBy === 'auto' ? 'Started at 5:00 am – the manager did not answer.' : 'Approved' + (T.approvedAt ? ' at ' + esc(T.approvedAt) : '') + '.') + (ch.length ? ' <a data-act="tfold" data-f="chg">' + ch.length + ' change' + (ch.length === 1 ? '' : 's') + ' ' + (TFOLD.chg ? '▴' : '▾') + '</a>' + (TFOLD.chg ? '<div>' + ch.map(function (x) { return esc((x.rm === 'Manager' ? 'Took out: ' : (T.calls || []).indexOf(x) >= 0 ? 'Added a call: ' : 'Added: ') + x.name); }).join('<br>') + '</div>' : '') : '') + '</div>';
+  }
+  if (T.note) h += '<div class="t2info blue"><b>Manager:</b> ' + esc(T.note) + '</div>';
+  h += tTabs(T, ed, Dr);
+  if (!TTAB) h += '<div class="t2hint c">' + (ed ? 'Check each tab, then send from Calls.' : dayMode ? 'Tap Visits to start.' : 'You can look, not change.') + '</div>';
+  else {
+    var body = ed ? (TTAB === 'v' ? tVisEdit(T, Dr) : TTAB === 'p' ? tProsEdit(T, Dr) : tCallEdit(T, Dr)) : dayMode ? (TTAB === 'v' ? tVisDay(T) : TTAB === 'p' ? tProsDay(T) : tCallDay(T)) : (TTAB === 'v' ? tVisView(T) : TTAB === 'p' ? tProsView(T) : tCallView(T));
+    h += '<div class="t2panel">' + body + '<div class="t2close" data-act="ttab" data-k="' + TTAB + '">▲ Close</div></div>';
+  }
+  if (TUNDO && Date.now() - TUNDO.t < 6000) h += '<div class="t2undo">' + esc(TUNDO.txt) + '<button data-act="tundo">Undo</button></div>';
+  return h + (today ? otherVisits(planItems()) : '');
+}
+// ---------------------------------------------------------------- half sheets: last visit, more, can't visit, nearby, log a call
+var TLV = null;
+ACT.tlast = function (b) { TLV = b.dataset.v; sheetOpen('tlast'); };
+SHEETS.tlast = function () { var v = vend(TLV); if (!v) return ''; var l = v.lv || {}, tr = function (k, x) { return x ? '<tr><td class="k">' + esc(k) + '</td><td>' + x + '</td></tr>' : ''; };
+  return '<div class="t2sh"><b>' + esc(v.name) + '</b><a data-act="closeO">Close</a></div>' + (v.lv ? '<table class="dt">' + tr('Last visit', esc(dayLbl(l.day)) + (l.by ? ' · ' + esc(l.by) : '')) + tr('What happened', esc(l.out + (l.why ? ' (' + l.why + ')' : ''))) + tr('Paid', l.paid > 0 ? ghs(l.paid) : '') + tr('Stock then', esc(l.stock || '')) + tr('Saw', esc(l.saw || '')) + tr('Her worry', esc(l.con || '')) + tr('Asked for', esc(l.help || '')) + tr('Note', l.note ? esc(l.note) : '') + tr('Next', v.fu ? esc(dayLbl(v.fu.day) + ' · ' + String(v.fu.how || '').toLowerCase() + (v.fu.bring ? ' – ' + v.fu.bring : '')) : '') + '</table>' : '<p class="muted">No visit yet.</p>') + '<button class="ghost2" style="width:100%" data-act="hist" data-k="v" data-i="' + esc(v.id) + '">See all visits ›</button>'; };
+var TMORE = null;
+ACT.tmore = function (b) { TMORE = { k: b.dataset.k, id: b.dataset.i }; sheetOpen('tmore'); };
+SHEETS.tmore = function () { if (!TMORE) return ''; var v = TMORE.k === 'v' ? vend(TMORE.id) : null, s = TMORE.k === 's' ? schoolOf(TMORE.id) : null, c = ((D.plan || {}).calls || []).filter(function (x) { return x.k === TMORE.k && x.id === TMORE.id; })[0] || {};
+  var tr = function (k, x) { return x ? '<tr><td class="k">' + esc(k) + '</td><td>' + x + '</td></tr>' : ''; };
+  return '<div class="t2sh"><b>' + esc(v ? v.name : s ? s.name : c.name || '') + '</b><a data-act="closeO">Close</a></div><table class="dt">' + (v ? tr('Last order', v.last ? esc(dayLbl(v.last)) + (v.since !== '' ? ' (' + v.since + ' days ago)' : '') : 'No order yet') + tr('Usually', c.usual ? 'about ' + c.usual + ' ctn' : '') + tr('Likes stock', v.likes && v.likes.day ? esc(v.likes.day + (v.likes.from ? ' · ' + v.likes.from + (v.likes.to ? ' to ' + v.likes.to : '') : '')) : '') + tr('Last call', v.lc ? esc(dayLbl(v.lc.day) + ' · ' + String(v.lc.out || '').toLowerCase()) : 'None yet') + tr('Owes', v.debt > 0.004 ? '<b class="' + lateCls(v) + '">' + ghs(v.debt) + '</b> · ' + esc(lateTxt(v)) : 'Nothing') : tr('Area', esc((s && s.area) || '')) + tr('Contact', s && s.contact ? esc(s.contact) : '')) + '</table><button class="ghost2" style="width:100%" data-act="hist" data-k="' + TMORE.k + '" data-i="' + esc(TMORE.id) + '">See all ›</button>'; };
+var CANT = null, CANT_WHY = ['School closed', 'She is not there', 'Not enough time', 'Transport problem', 'Rain', 'I am not well'];
+ACT.tcant = function (b) { var g = tGroups(planItems()).filter(function (z) { return z.k === b.dataset.g; })[0]; if (!g) return; var my = CANT = { g: g.k, name: ndName(g), why: [], note: '', geo: null, gwhy: '', finding: 1 }; sheetOpen('cant');
+  gps(function (p, why) { if (CANT !== my) return; my.finding = 0; my.geo = p; my.gwhy = why || ''; if (SHEETK === 'cant') drawSheet(); }); };
+SHEETS.cant = function () { var X = CANT; if (!X) return ''; var g = tGroups(planItems()).filter(function (z) { return z.k === X.g; })[0]; if (!g) return '';
+  var s = g.k.indexOf('S:') === 0 ? schoolOf(g.k.slice(2)) : null, pin = s && s.pin ? s.pin : itemPin(g.items[0].x), dist = X.geo && pin ? tDist([X.geo.lat, X.geo.lng], pin) : null;
+  return '<div class="t2sh"><b>Can\'t visit ' + esc(X.name) + '</b><a data-act="closeO">Close</a></div><div class="small muted">Why? Tap any that fit (optional)</div><div class="t2tray">' + CANT_WHY.map(function (w) { return '<button class="' + (X.why.indexOf(w) >= 0 ? 'on' : '') + '" data-act="tcw" data-v="' + esc(w) + '">' + esc(w) + '</button>'; }).join('') + '</div>' +
+    '<label>Write why (needed)</label><textarea rows="2" data-inp="tcantn" placeholder="e.g. The gate was locked, the head teacher travelled">' + esc(X.note) + '</textarea>' +
+    '<div class="small ' + (X.geo ? 'muted' : 't-amber') + '" style="margin:6px 2px">' + (X.finding ? 'Finding where you are…' : X.geo ? 'Your location is saved with it.' + (dist != null ? ' You are ' + tDistTxt(dist) + ' from the school.' : '') : 'Location not found (' + esc(X.gwhy) + ') – it is saved without it.') + '</div>' +
+    '<button class="main big red2" data-act="tcantgo"' + (X.finding ? ' disabled' : '') + '>Save · not visited today</button>'; };
+ACT.tcw = function (b) { var X = CANT; if (!X) return; var i = X.why.indexOf(b.dataset.v); if (i >= 0) X.why.splice(i, 1); else X.why.push(b.dataset.v); drawSheet(); };
+INP.tcantn = function (el) { if (CANT) CANT.note = el.value; };
+ACT.tcantgo = function () { var X = CANT; if (!X) return; var note = String(X.note || '').replace(/\s+/g, ' ').trim(); if (note.length < 3) { say('Write why you cannot visit (a few words).'); return; }
+  var at = new Date().toTimeString().slice(0, 5), L = planItems(); var its = L.filter(function (x) { return stopKeyOf(x) === X.g && tLive(x) && !x.skip && !visitOf(x); }); if (!its.length) { SHEETK = ''; $('over').innerHTML = ''; return; }
+  its.forEach(function (x) { x.skip = note; x.skipWhy = X.why.join(', '); x.skipAt = at; (D.plan.items || []).forEach(function (y) { if (y !== x && y.k === x.k && y.id === x.id) { y.skip = note; y.skipWhy = x.skipWhy; y.skipAt = at; } });
+    bgSave('cantvisit', { day: D.plan.day, k: x.k, id: x.id, why: X.why, note: note, lat: X.geo ? X.geo.lat : '', lng: X.geo ? X.geo.lng : '', acc: X.geo ? X.geo.acc : '', gwhy: X.gwhy }, 'cv-' + uid(), 'not visited: ' + x.name, null, true); });
+  CANT = null; SHEETK = ''; $('over').innerHTML = ''; render(); };
+function tDist(a, b) { var R = 6371000, r = Math.PI / 180, dLa = (b[0] - a[0]) * r, dLo = (b[1] - a[1]) * r, h = Math.sin(dLa / 2) * Math.sin(dLa / 2) + Math.cos(a[0] * r) * Math.cos(b[0] * r) * Math.sin(dLo / 2) * Math.sin(dLo / 2); return Math.round(2 * R * Math.asin(Math.min(1, Math.sqrt(h)))); }
+function tDistTxt(m) { return m < 1000 ? Math.round(m / 10) * 10 + ' m' : (Math.round(m / 100) / 10) + ' km'; }
+var NEAR = null;
+ACT.tnear = function (b) { var my = NEAR = { g: null, r: 1000, f: (b && b.dataset && b.dataset.f) || '', err: '' }; sheetOpen('near'); gps(function (p, why) { if (NEAR !== my) return; my.g = p; my.err = p ? '' : why || 'location not found'; if (SHEETK === 'near') drawSheet(); }); };
+SHEETS.near = function () { var N = NEAR; if (!N) return ''; var h = '<div class="t2sh"><b>Nearby</b><a data-act="closeO">Close</a></div>';
+  if (!N.g) return h + '<p class="muted">' + (N.err ? 'Your location was not found (' + esc(N.err) + ').' : '<i class="spin dk"></i>Finding where you are…') + '</p>' + '<a class="ghost2b" href="https://www.google.com/maps/search/schools+near+me/" target="_blank">Look on Google Maps ›</a>';
+  var me = [N.g.lat, N.g.lng], ag = (D.viewOf && D.viewOf.uid) || D.me.uid, L = [];
+  (D.schools || []).forEach(function (s) { if (s.pin) L.push({ k: 's', id: s.id, name: s.name, sub: s.n ? s.n + ' vendor' + (s.n === 1 ? '' : 's') : (STG[s.st || 'Lead'] || [s.st])[0] || 'Prospect', type: s.n ? 'ours' : 'pros', never: !s.lv && !s.n, pin: s.pin }); });
+  (D.vendors || []).forEach(function (v) { if (v.agent !== ag) return; var p = vPin(v); if (p) L.push({ k: 'v', id: v.id, name: v.name, sub: v.school || 'Our vendor', type: 'ours', never: !v.lv, pin: p }); });
+  L.forEach(function (x) { x.d = tDist(me, x.pin); }); var W = L.filter(function (x) { return x.d <= N.r; });
+  var F = { '': function () { return true; }, never: function (x) { return x.never; }, pros: function (x) { return x.type === 'pros'; }, ours: function (x) { return x.type === 'ours'; } };
+  h += '<div class="t2tray">' + [[500, '500 m'], [1000, '1 km'], [2000, '2 km'], [5000, '5 km']].map(function (r) { return '<button class="' + (N.r === r[0] ? 'on' : '') + '" data-act="tnr" data-v="' + r[0] + '">' + r[1] + '</button>'; }).join('') + '</div>';
+  h += '<div class="t2tray">' + [['', 'All'], ['never', 'Never visited'], ['pros', 'Prospects'], ['ours', 'Our vendors']].map(function (f) { return '<button class="' + (N.f === f[0] ? 'on' : '') + '" data-act="tnf" data-v="' + f[0] + '">' + f[1] + ' <b>' + W.filter(F[f[0]]).length + '</b></button>'; }).join('') + '</div>';
+  var R = W.filter(F[N.f] || F['']).sort(function (a, b) { return a.d - b.d; }).slice(0, 40), inP = function (x) { return planItems().some(function (y) { return y.k === x.k && y.id === x.id && tLive(y); }); };
+  h += R.length ? '<div class="t2list">' + R.map(function (x) { return '<div class="t2r ' + (x.type === 'pros' ? 'e-mg' : 'e-todo') + '"><div class="t2rh"><div class="grow" style="min-width:0"><b class="ell" style="display:block">' + esc(x.name) + '</b><div class="small muted ell">' + tDistTxt(x.d) + ' · ' + esc(x.sub) + '</div></div><a class="ghost" href="' + esc(mapUrl(x.pin)) + '" target="_blank">Directions</a>' + (inP(x) ? '<span class="small t-green">✓ today</span>' : '<button class="ghost" data-act="tnadd" data-k="' + x.k + '" data-i="' + esc(x.id) + '">+ Add</button>') + '</div></div>'; }).join('') + '</div>' : '<p class="muted small">Nothing with a saved place within ' + tDistTxt(N.r) + '.</p>';
+  return h + '<p class="small muted">Only schools and vendors with a saved place are listed.</p><a class="ghost2b" href="https://www.google.com/maps/search/schools/@' + N.g.lat + ',' + N.g.lng + ',15z" target="_blank">Not in our list? Look on Google Maps ›</a>'; };
+ACT.tnr = function (b) { NEAR.r = Number(b.dataset.v); drawSheet(); };
+ACT.tnf = function (b) { NEAR.f = b.dataset.v; drawSheet(); };
+ACT.tnadd = function (b) { var it = pickItem(b.dataset.k, b.dataset.i); if (!it) return; PICK = { q: '', uid: '', f: '' }; pickAddList([it]); PICK = null; drawSheet(); };
+/** Log a call that is not on the plan: who (search her vendors), then the same sheet. */
+var TCF = null;
+ACT.tclFree = function () { TCF = { q: '' }; sheetOpen('tclf'); };
+SHEETS.tclf = function () { if (!TCF) return ''; var ag = (D.viewOf && D.viewOf.uid) || D.me.uid, q = norm(TCF.q), V = (D.vendors || []).filter(function (v) { return v.agent === ag && (!q || norm(v.name + ' ' + v.school + ' ' + v.phone).indexOf(q) >= 0); }).sort(function (a, b) { return a.name < b.name ? -1 : 1; });
+  return '<div class="t2sh"><b>Log a call</b><a data-act="closeO">Close</a></div><input class="srch" data-inp="tclq" value="' + esc(TCF.q) + '" placeholder="Who? Type her name" autocomplete="off"><div id="tclr">' + tclRows(V) + '</div><div class="small muted" style="margin-top:6px">Someone new? <a data-act="regOpen">Register her as a vendor ›</a></div>'; };
+function tclRows(V) { return V.length ? '<div class="t2list">' + V.slice(0, 25).map(function (v) { return '<div class="t2r e-todo" data-act="tclPick" data-i="' + esc(v.id) + '"><div class="t2rh"><b class="grow ell">' + esc(v.name) + '<span class="small muted"> · ' + esc(v.school || '') + '</span></b><span class="ar">›</span></div></div>'; }).join('') + '</div>' : '<p class="small muted">No vendor matches.</p>'; }
+INP.tclq = function (el) { TCF.q = el.value; var ag = (D.viewOf && D.viewOf.uid) || D.me.uid, q = norm(TCF.q), b = $('tclr'); if (b) b.innerHTML = tclRows((D.vendors || []).filter(function (v) { return v.agent === ag && (!q || norm(v.name + ' ' + v.school + ' ' + v.phone).indexOf(q) >= 0); }).sort(function (a, b2) { return a.name < b2.name ? -1 : 1; })); };
+ACT.tclPick = function (b) { TCF = null; ACT.callLog({ dataset: { k: 'v', i: b.dataset.i, free: '1' } }); };
+// ---------------------------------------------------------------- Register: a school (still convincing / ready) or a new vendor
+var T2MET = ['Head teacher', 'Owner', 'Canteen / food vendor', 'Teacher', 'Other'], T2AGR = ['Come back', 'Free sample first', 'Meet the owner', 'Price list', 'Nothing yet'];
+function tRegister(plan) {
+  var R = TREG || (TREG = { type: '', q: '', form: false, name: '', area: '', stage: 'Visited', met: [], agreed: [], who: '', contact: '', cphone: '', note: '', g: null, finding: 0 });
+  var h = '<div class="t2tray">' + [['conv', 'New school, still convincing'], ['ready', 'New school, ready to work with us'], ['vend', 'New vendor at a school']].map(function (x) { return '<button class="' + (R.type === x[0] ? 'on' : '') + '" data-act="trt" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
+  if (!R.type) return h + '<p class="small muted">Tap what you are registering.</p>';
+  if (R.type === 'vend') return h + '<p class="small">A food vendor who will sell Indomie at a school.</p><button class="main gr big" data-act="regOpen">Register a new vendor ›</button>';
+  if (!R.form) { var q = norm(R.q), S = q.length >= 2 ? (D.schools || []).filter(function (s) { return norm(s.name + ' ' + s.area).indexOf(q) >= 0; }).slice(0, 8) : [];
+    return h + '<label>Search the school list first</label><input class="srch" data-inp="trq" value="' + esc(R.q) + '" placeholder="School name" autocomplete="off"><div id="trr">' + tRegRows(S, plan) + '</div><button class="t2add" data-act="trForm">+ Not in the list: add it</button>'; }
+  h += '<label>School name</label><input data-inp="trf" data-f="name" value="' + esc(R.name) + '"><label>Area</label><input data-inp="trf" data-f="area" value="' + esc(R.area) + '" placeholder="e.g. Suame">';
+  h += '<button class="ghost2" style="width:100%;margin-top:8px" data-act="trGeo">' + (R.finding ? 'Finding where you are…' : R.g ? '✓ Place saved (' + Math.round(R.g.acc) + ' m)' : 'Save where I am') + '</button>';
+  if (R.type === 'conv') h += '<label>Stage</label><div class="t2tray">' + [['Lead', 'Not visited yet'], ['Visited', 'Visited'], ['Interested', 'Interested']].map(function (x) { return '<button class="' + (R.stage === x[0] ? 'on' : '') + '" data-act="trs" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
+  h += '<label>Who did you meet?</label><div class="t2tray">' + T2MET.map(function (x) { return '<button class="' + (R.met.indexOf(x) >= 0 ? 'on' : '') + '" data-act="trm" data-f="met" data-v="' + esc(x) + '">' + esc(x) + '</button>'; }).join('') + '</div>';
+  if (R.type === 'conv') h += '<label>What was agreed?</label><div class="t2tray">' + T2AGR.map(function (x) { return '<button class="' + (R.agreed.indexOf(x) >= 0 ? 'on' : '') + '" data-act="trm" data-f="agreed" data-v="' + esc(x) + '">' + esc(x) + '</button>'; }).join('') + '</div>';
+  else h += '<label>Who sells there?</label><div class="t2tray">' + ['The canteen', 'A vendor'].map(function (x) { return '<button class="' + (R.who === x ? 'on' : '') + '" data-act="trw" data-v="' + esc(x) + '">' + esc(x) + '</button>'; }).join('') + '</div><div class="fgrid"><label><span>Contact name</span><input data-inp="trf" data-f="contact" value="' + esc(R.contact) + '"></label><label><span>Phone</span><input inputmode="tel" data-inp="trf" data-f="cphone" value="' + esc(R.cphone) + '" placeholder="0244…"></label></div>';
+  h += '<label>Note (optional)</label><textarea rows="2" data-inp="trf" data-f="note">' + esc(R.note) + '</textarea><div class="t2b2" style="margin-top:10px"><button class="ghost2" data-act="trBack">Back</button><button class="main gr" data-act="trSave">Save</button></div>' + (R.type === 'ready' ? '<div class="small muted" style="margin-top:6px">The manager is told the school is ready.</div>' : '');
+  return h;
+}
+function tRegRows(S, plan) { return S.map(function (s) { return '<div class="t2r e-todo"><div class="t2rh"><div class="grow" style="min-width:0"><b class="ell" style="display:block">' + esc(s.name) + '</b><div class="small muted">' + esc(s.area || '') + (s.n ? ' · ' + s.n + ' vendor' + (s.n === 1 ? '' : 's') : '') + '</div></div>' + (plan ? '<button class="ghost" data-act="tsAdd" data-i="' + esc(s.id) + '">Use this school</button>' : '<button class="ghost" data-act="visOpen" data-k="s" data-i="' + esc(s.id) + '" data-kind="pros">I\'m here</button>') + '</div></div>'; }).join('') + (S.length ? '<div class="small muted">"Use this school" keeps its history.</div>' : ''); }
+ACT.trt = function (b) { TREG.type = b.dataset.v; TREG.form = false; render(); };
+INP.trq = function (el) { TREG.q = el.value; var q = norm(el.value), b = $('trr'); if (b) b.innerHTML = tRegRows(q.length >= 2 ? (D.schools || []).filter(function (s) { return norm(s.name + ' ' + s.area).indexOf(q) >= 0; }).slice(0, 8) : [], !!tDr()); };
+ACT.trForm = function () { TREG.form = true; if (!TREG.name) TREG.name = TREG.q; render(); };
+ACT.trBack = function () { TREG.form = false; render(); };
+INP.trf = function (el) { TREG[el.dataset.f] = el.value; };
+ACT.trs = function (b) { TREG.stage = b.dataset.v; render(); };
+ACT.trw = function (b) { TREG.who = b.dataset.v; render(); };
+ACT.trm = function (b) { var L = TREG[b.dataset.f], i = L.indexOf(b.dataset.v); if (i >= 0) L.splice(i, 1); else L.push(b.dataset.v); render(); };
+ACT.trGeo = function () { var R = TREG; R.finding = 1; render(); gps(function (g, why) { R.finding = 0; R.g = g; if (!g) say('Your location was not found (' + why + '). The school is saved without its place.'); render(); }); };
+ACT.trSave = function () { var R = TREG; if (!R) return; var name = String(R.name || '').replace(/\s+/g, ' ').trim(); if (name.length < 3) { say('Write the school\'s name.'); return; }
+  if (R.type === 'ready' && !R.who) { say('Who sells there – the canteen or a vendor?'); return; } if (R.cphone && !/^0\d{9}$/.test(String(R.cphone).replace(/\D/g, ''))) { say('The phone has 10 numbers and starts with 0.'); return; }
+  var sn = (R.type === 'ready' ? 'Ready to work with us – ' + R.who.toLowerCase() : '') + (R.met.length ? (R.type === 'ready' ? ' · ' : '') + 'Met ' + R.met.join(', ').toLowerCase() : '') + (R.agreed.length ? ' · agreed: ' + R.agreed.join(', ').toLowerCase() : '');
+  var d = { name: name, area: String(R.area || '').trim(), stage: R.type === 'ready' ? 'Interested' : R.stage, stageNote: sn.replace(/^ · /, '').slice(0, 100), note: R.note, lat: R.g ? R.g.lat : '', lng: R.g ? R.g.lng : '', acc: R.g ? R.g.acc : '', here: tDr() ? 0 : 1, ready: R.type === 'ready' ? 1 : 0 };
+  if (R.type === 'ready') { d.contact = R.contact; d.cphone = String(R.cphone || '').replace(/\D/g, ''); }
+  bgSave('school', d, 'sh-' + uid(), 'school ' + (d.here ? 'visited' : 'added') + ': ' + name, null, true); if (d.here && D.plan) D.plan.visits = (D.plan.visits || []).concat([{ vid: '', sid: 'new-' + uid(), name: name, at: new Date().toTimeString().slice(0, 5), out: 'School visit – added here', why: '' }]);
+  TREG = null; render(); toast('Saved: ' + name + (tDr() ? '\nAfter the refresh it is in Suggested – add it there.' : '')); };
+ACT.srail = function (b) { var sb = document.querySelector('#over .sbody'); if (sb) sb.scrollBy({ top: Number(b.dataset.d) * sb.clientHeight * 0.7, behavior: 'smooth' }); };
+// the Undo bar goes after 6 seconds
+setInterval(function () { if (TUNDO && Date.now() - TUNDO.t >= 6000) { TUNDO = null; if (TAB === 'plan') render(); } }, 1500);
 // ---------------------------------------------------------------- v2.5.19: the rebuilt My day (Section 1 of the fresh start)
 /** My day in one screen: what needs her, the next stop, how far she is, the other stops folded. */
 function pgPlanND() {
@@ -2196,7 +2675,7 @@ function callRow(c) {
     '<div class="sb">' + (c.phone ? '<a href="tel:' + esc(c.phone) + '"><button class="' + (dn ? 'ghost' : 'main') + ' ic">' + ico(ICO.phone) + 'Call</button></a>' : '') + (wa ? '<a href="https://wa.me/' + wa + '" target="_blank"><button class="ghost ic">' + ico(ICO.wa) + 'WhatsApp</button></a>' : '') + '<button class="ghost" data-act="callLog" data-k="' + c.k + '" data-i="' + esc(c.id) + '">' + (dn ? 'Log again' : 'Log the call') + '</button></div></div></div>';
 }
 function routeUrlP(P) { var p = P.slice(0, 9).map(function (q) { return q[0] + ',' + q[1]; }); var dest = p.pop(); return 'https://www.google.com/maps/dir/?api=1&destination=' + dest + (p.length ? '&waypoints=' + encodeURIComponent(p.join('|')) : ''); }
-function planLeft() { var P = D.plan; if (!P || !P.work) return 0; return planItems().filter(function (x) { return !x.skip && !x.rm && !visitOf(x); }).length; }
+function planLeft() { var P = D.plan; if (!P || !P.work) return 0; return planItems().filter(function (x) { return !x.skip && !x.rm && !x.out && !visitOf(x); }).length; }
 function brkLine(s) { var t = brkTxt(s); return t ? ' · ' + esc(t) : ''; }
 function routeUrl(L) { var p = L.slice(0, 9).map(function (x) { var q = itemPin(x); return q[0] + ',' + q[1]; }); var dest = p.pop(); return 'https://www.google.com/maps/dir/?api=1&destination=' + dest + (p.length ? '&waypoints=' + encodeURIComponent(p.join('|')) : ''); }
 function otherVisits(L) {
@@ -2229,14 +2708,14 @@ var PKF = [['', 'All'], ['owes', 'Owes'], ['out', 'Due to re-order'], ['target',
 ACT.plAdd = function (b) { PICK = { q: '', uid: '', f: (b && b.dataset && b.dataset.f) || '' }; sheetOpen('pick'); };
 SHEETS.pick = function () {
   if (!PICK) return '';
-  return shHead('plus', 'blue', PICK.uid ? 'Add a stop for ' + esc(agName(PICK.uid)) : 'Add to today\'s plan', 'Filter by reason, then add a vendor, a whole school or a prospect school') +
+  return shHead('plus', 'blue', PICK.tgt === 'call' ? 'Add a vendor to call' : PICK.tgt ? 'Add to your plan for ' + esc(dayLbl((tView() || {}).day || '')) : PICK.uid ? 'Add a stop for ' + esc(agName(PICK.uid)) : 'Add to today\'s plan', 'Filter by reason, then add a vendor, a whole school or a prospect school') +
     '<input data-inp="pickq" value="' + esc(PICK.q) + '" placeholder="Name, school or area" autocomplete="off" autocapitalize="off" spellcheck="false" class="srch"><div class="pchips" style="margin-top:8px">' + PKF.map(function (x) { return '<button class="' + ((PICK.f || '') === x[0] ? 'on' : '') + '" data-act="pickf" data-f="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div><div id="pickr">' + pickList() + '</div>' +
     (PICK.uid ? '' : '<button class="big" style="margin-top:10px" data-act="closeO">Done</button>');
 };
-function inPlanK(k, id) { var L; if (PICK && PICK.uid) { var a = ((D.teamDay || {}).agents || []).filter(function (z) { return z.uid === PICK.uid; })[0]; L = a ? a.items : []; } else L = planItems(); var x = L.filter(function (y) { return y.k === k && y.id === id; })[0]; return x ? (x.rm ? 'rm' : 'in') : ''; }
+function inPlanK(k, id) { var L; if (PICK && PICK.tgt) { var Dr = tDr(), y = Dr ? (PICK.tgt === 'call' ? Dr.calls : Dr.items).filter(function (z) { return z.k === k && z.id === id; })[0] : null; return y ? (y.out ? '' : y.rm ? 'rm' : 'in') : ''; } if (PICK && PICK.uid) { var a = ((D.teamDay || {}).agents || []).filter(function (z) { return z.uid === PICK.uid; })[0]; L = a ? a.items : []; } else L = planItems(); var x = L.filter(function (y) { return y.k === k && y.id === id; })[0]; return x ? (x.rm ? 'rm' : 'in') : ''; }
 function pickList() {
   var q = norm(PICK.q), f = PICK.f || '', ag = PICK.uid; PICK.groups = {};
-  if (f === 'pros') {
+  if (f === 'pros' && PICK.tgt !== 'call') {
     var S = (D.schools || []).filter(function (s) { return (!ag || !s.ag || s.ag === ag) && !s.n && (!q || norm(s.name + ' ' + s.area).indexOf(q) >= 0); });
     var rank = function (s) { return s.fu && s.fu.day <= D.today ? 0 : s.st === 'Interested' ? 1 : s.st === 'Visited' ? 2 : s.st === 'Not interested' ? 4 : 3; };
     S.sort(function (a, b) { return rank(a) - rank(b) || (a.name < b.name ? -1 : 1); });
@@ -2263,6 +2742,8 @@ function pickItem(k, id) { var v = k === 'v' ? vend(id) : null, s = k === 's' ? 
   return { k: k, id: id, name: v ? v.name : s.name, school: v ? v.school || '' : s.area || '', kind: 'added', why: v ? 'Added' : s.st === 'Interested' ? 'Interested – find and register a vendor' : s.st === 'Visited' ? 'Visited before – next step' : 'New school – introduce CupSales', tags: v ? vTags(v) : ['pros'].concat(s.fu && s.fu.day <= D.today ? ['follow'] : []), stop: v ? stopKeyOf({ k: 'v', id: id }) : 'S:' + id }; }
 function pickAddList(list) {
   list = list.filter(Boolean); if (!list.length) return;
+  if (PICK.tgt) { var Dr = tDr(); if (!Dr) return; var cl = PICK.tgt === 'call', TL = cl ? Dr.calls : Dr.items; list.forEach(function (it) { if (cl && it.k !== 'v') return; var was = TL.filter(function (x) { return x.k === it.k && x.id === it.id; })[0]; if (was) { delete was.out; was.ok = 1; return; } it.ok = 1; if (cl) { var vv = vend(it.id); it.phone = vv ? vv.phone : ''; it.why = 'Added by you'; delete it.stop; delete it.kind; } TL.push(it); });
+    if (cl) Dr.addC = 1; else Dr.addV = 1; tSave(); toast('Added: ' + list.map(function (x) { return x.name; }).join(', ')); render(); drawSheet(); return; } // v2.6.1
   if (PICK.uid) { var u = PICK.uid; askIn('Why should ' + agName(u) + ' visit ' + (list.length === 1 ? list[0].name : list.length + ' vendors at ' + (list[0].school || 'this school')) + '? (she sees this)', '', '', function (t) { var w = String(t || '').trim() || 'Added by the manager'; list.forEach(function (it) { it.why = w; }); bgSave('planok', { uid: u, add: list }, 'po-' + uid(), 'added for ' + agName(u) + ': ' + list.map(function (x) { return x.name; }).join(', '), null, true); PICK = null; SHEETK = ''; $('over').innerHTML = ''; }, 'ADD'); return; }
   var L = planEdit(); list.forEach(function (it) { if (!L.some(function (x) { return x.k === it.k && x.id === it.id; })) L.push(it); });
   var live = planLive(); planSync('added ' + list.map(function (x) { return x.name; }).join(', '));
@@ -2286,18 +2767,27 @@ function gps(cb) {
 // ---------------------------------------------------------------- v2.5.9: calls, reminders, the lasting history, where is this
 var CALLX = null, CALL_OUT = ['Ordered', 'Will order later', 'Paid / will pay', 'No answer', 'Not now', 'Other'];
 ACT.callLog = function (b) { var k = b.dataset.k, id = b.dataset.i, c = ((D.plan || {}).calls || []).filter(function (x) { return x.k === k && x.id === id; })[0], v = k === 'v' ? vend(id) : null, s = k === 's' ? schoolOf(id) : null;
-  CALLX = { k: k, id: id, name: c ? c.name : v ? v.name : s ? s.name : id, phone: c ? c.phone : v ? v.phone : s ? s.cphone : '', out: '', note: '', next: null }; sheetOpen('calllog'); };
-SHEETS.calllog = function () { var X = CALLX; if (!X) return '';
-  return shHead('phone', 'green', esc(X.name), 'What came of the call?') + (X.phone ? '<a href="tel:' + esc(X.phone) + '" style="text-decoration:none"><button class="ic" style="margin-bottom:6px">' + ico(ICO.phone) + 'Call ' + esc(X.phone) + '</button></a>' : '') +
-    '<div class="chips">' + CALL_OUT.map(function (o) { return '<button class="' + (X.out === o ? 'on' : '') + '" data-act="clo" data-v="' + esc(o) + '">' + esc(o) + '</button>'; }).join('') + '</div>' +
-    (X.out === 'Ordered' && X.k === 'v' ? '<p class="small muted">After saving, her New order opens.</p>' : '') +
-    '<label>Note' + (X.out === 'Other' ? '' : ' (optional)') + '</label><input data-inp="clnt" value="' + esc(X.note) + '">' + nextHtml(X, 'cl') +
-    '<div class="btns"><button data-act="closeO">Cancel</button><button class="main" data-act="clSave">Save</button></div>';
+  CALLX = { k: k, id: id, name: c ? c.name : v ? v.name : s ? s.name : id, phone: c ? c.phone : v ? v.phone : s ? s.cphone : '', out: '', note: '', next: null, free: b.dataset.free === '1', dir: 'out' }; sheetOpen('calllog'); };
+var CALL_SHOW = [['Ordered', 'She ordered'], ['Will order later', 'Will order later'], ['Has stock', 'Has stock, not now'], ['No answer', 'No answer'], ['Other', 'Other']];
+SHEETS.calllog = function () { var X = CALLX; if (!X) return ''; // v2.6.1: the v4 shape
+  var n = X.next, cb = function (L) { return '<div class="t2tray">' + L.map(function (o) { var on = n && n.date === o[0] && (n.time || '') === (o[1] || ''); return '<button class="' + (on ? 'on' : '') + '" data-act="clnx" data-d="' + o[0] + '" data-t="' + (o[1] || '') + '">' + o[2] + '</button>'; }).join('') + '<button class="' + (n && n.pick ? 'on' : '') + '" data-act="clnx" data-d="pick">Pick a date</button>' + (n ? '<button data-act="nxx" data-p="cl">No reminder</button>' : '') + '</div>' + (n && n.pick ? '<input type="date" data-inp="nx" data-p="cl" data-f="date" value="' + esc(n.date) + '" min="' + D.today + '">' : '') + (n ? '<div class="small muted">Reminder: ' + esc(dayLbl(n.date)) + (n.time ? ' at ' + esc(n.time) : '') + '</div>' : ''); };
+  var hr = new Date().getHours(), d1 = addDays(D.today, 1), d2 = addDays(D.today, 2), d7 = addDays(D.today, 7), h1 = ('0' + Math.min(23, hr + 1)).slice(-2) + ':00';
+  return '<div class="t2sh"><b>' + esc(X.name) + '</b><a data-act="closeO">Close</a></div>' + (X.phone ? '<a class="main2" href="tel:' + esc(X.phone) + '">' + ico(ICO.phone) + ' Call ' + esc(X.phone) + '</a>' : '') +
+    (X.free ? '<div class="t2tray" style="margin-top:8px">' + [['out', 'I called her'], ['in', 'She called me']].map(function (o) { return '<button class="' + (X.dir === o[0] ? 'on' : '') + '" data-act="cldir" data-v="' + o[0] + '">' + o[1] + '</button>'; }).join('') + '</div>' : '') +
+    '<div class="t2q2">What came of the call?</div><div class="t2tray">' + CALL_SHOW.map(function (o) { return '<button class="' + (X.out === o[0] ? 'on' : '') + '" data-act="clo" data-v="' + esc(o[0]) + '">' + esc(o[1]) + '</button>'; }).join('') + '</div>' +
+    (X.out === 'Ordered' && X.k === 'v' ? '<div class="small">After Save her New order opens.</div>' : '') +
+    (X.out === 'Will order later' || X.out === 'Has stock' ? '<div class="t2q2">Call her back</div>' + cb([[d1, '', 'Tomorrow'], [d2, '', 'In 2 days'], [d7, '', 'Next week']]) : '') +
+    (X.out === 'No answer' ? '<div class="t2q2">Try again</div>' + cb((hr < 22 ? [[D.today, h1, 'In 1 hour']] : []).concat(hr < 14 ? [[D.today, '14:00', 'This afternoon']] : [], [[d1, '08:00', 'Tomorrow 8 am']])) : '') +
+    (X.out === 'Other' || X.noteOn || X.note ? '<label>Note' + (X.out === 'Other' ? ' (needed)' : '') + '</label><input data-inp="clnt" value="' + esc(X.note) + '">' : '<div class="small" style="margin:8px 2px"><a data-act="clNote">+ Add a note</a></div>') +
+    '<button class="main gr big" style="margin-top:10px" data-act="clSave">Save</button>';
 };
-ACT.clo = function (b) { CALLX.out = b.dataset.v; if (CALLX.out === 'Will order later' && !CALLX.next) CALLX.next = { date: addDays(D.today, 2), how: 'Call', bring: '' }; drawSheet(); };
+ACT.cldir = function (b) { CALLX.dir = b.dataset.v; drawSheet(); };
+ACT.clNote = function () { CALLX.noteOn = 1; drawSheet(); };
+ACT.clnx = function (b) { var X = CALLX; if (!X) return; if (b.dataset.d === 'pick') X.next = { date: (X.next && X.next.date) || addDays(D.today, 1), how: 'Call', bring: '', time: '', pick: 1 }; else X.next = { date: b.dataset.d, how: 'Call', bring: '', time: b.dataset.t || '' }; drawSheet(); };
+ACT.clo = function (b) { CALLX.out = b.dataset.v; if (CALLX.out === 'Will order later' && !CALLX.next) CALLX.next = { date: addDays(D.today, 2), how: 'Call', bring: '' }; if (CALLX.out === 'Ordered' || CALLX.out === 'Other') CALLX.next = null; drawSheet(); };
 INP.clnt = function (el) { CALLX.note = el.value; };
 ACT.clSave = function () { var X = CALLX; if (!X) return; if (!X.out) { say('Tap what came of the call.'); return; } if (X.out === 'Other' && String(X.note).trim().length < 3) { say('Write what came of the call.'); return; } var nx = nextOk(X); if (nx === false) return;
-  var d = { outcome: X.out, note: X.note, next: nx }; if (X.k === 'v') d.vid = X.id; else d.sid = X.id;
+  var d = { outcome: X.out, note: X.note, next: nx, dir: X.dir || 'out' }; if (X.k === 'v') d.vid = X.id; else d.sid = X.id; // v2.6.1: who called
   SHEETK = ''; $('over').innerHTML = ''; CALLX = null; bgSave('call', d, 'cl-' + uid(), 'call – ' + X.name + ': ' + X.out.toLowerCase(), null, true);
   if (X.out === 'Ordered' && X.k === 'v') setTimeout(function () { ACT.orderV({ dataset: { v: X.id } }); }, 60); };
 function nextHtml(X, p) { var n = X.next;
@@ -2799,19 +3289,28 @@ function helpBookHtml() {
   if (!D.hlog) return ''; var L = hRows(true), n = L.reduce(function (t, x) { return t + x.q; }, 0);
   return '<div class="sech">Help items given <span>aprons, posters, gifts…</span></div>' + fold('hbook', '<b>' + n + ' item' + (n === 1 ? '' : 's') + '</b> given ' + (HF.r === 'today' ? 'today' : HF.r === 'week' ? 'this week' : HF.r === 'month' ? 'this month' : HF.r === 'all' ? 'in 4 months' : 'in these days') + (HF.it ? ' · ' + esc(HF.it) : ''), function () { return hFilters(true) + '<h3 style="margin:8px 0 4px">Per day</h3>' + hDays(L) + '<h3 style="margin:12px 0 4px">Per vendor</h3>' + hList(L); });
 }
+/** v2.6.1: her plan for the next working day on her card – what she sent, and Approve (or it starts by itself at 5:00 am). */
+function mTmr(a) { var t = a.tmr; if (!t) return ''; var wait = t.status === 'Agreed', k = 'tmr-' + a.uid;
+  var sum = t.visits.length + ' visit' + (t.visits.length === 1 ? '' : 's') + ' · ' + t.calls.length + ' call' + (t.calls.length === 1 ? '' : 's') + (t.schools ? ' · ' + t.schools + ' school' + (t.schools === 1 ? '' : 's') : '');
+  return '<div class="msg ' + (wait ? 'warn' : 'ok') + ' small" style="margin:8px 0 4px"><b>Plan for ' + esc(dayLbl(t.day)) + ':</b> ' + (wait ? 'waiting for you' + (t.tb ? ' (sent again)' : '') : 'approved ✓') + '<div>' + sum + ' <a href="#" data-act="tog" data-s="0" data-o="' + k + '">' + (isOpen(k, false) ? 'Hide ▴' : 'See it ▾') + '</a></div>' +
+    (isOpen(k, false) ? '<ol style="margin:6px 0 0 18px;padding:0">' + t.visits.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ol>' + (t.calls.length ? '<div style="margin-top:4px">Calls: ' + esc(t.calls.join(', ')) + '</div>' : '') : '') +
+    (t.anote ? '<div style="margin-top:4px"><b>Her note:</b> ' + esc(t.anote) + '</div>' : '') +
+    (wait ? '<button class="main gr" style="margin-top:8px" data-act="tmrOk" data-u="' + esc(a.uid) + '">✓ Approve ' + esc(a.name) + '\'s plan for ' + esc(dayLbl(t.day)) + '</button><div class="muted" style="margin-top:4px">If you do not answer, it starts by itself at 5:00 am.</div>' : '') + '</div>'; }
+ACT.tmrOk = function (b) { var u = b.dataset.u, a = (D.teamDay.agents || []).filter(function (x) { return x.uid === u; })[0]; if (!a || !a.tmr) return; var t = a.tmr;
+  askIn('Approve ' + a.name + '\'s plan for ' + dayLbl(t.day) + ' (' + t.visits.length + ' visits, ' + t.calls.length + ' calls)?\nA note for her (optional):', '', '', function (n) { t.status = 'Approved'; bgSave('planok', { uid: u, day: t.day, approve: 1, note: String(n || '').trim() }, 'pt-' + u + '-' + t.day + '-' + uid(), a.name + '\'s plan for ' + dayLbl(t.day) + ' approved', null, true); render(); }, 'APPROVE'); };
 function pgTeamDay() {
   var T = D.teamDay, h = mgrTop(); // v2.5.17
   if (!T) return h + emptyHtml('Team today is not ready – pull down to refresh.');
   h += '<div class="sech">Team today <span>' + esc(dayLbl(T.day)) + '</span></div>' + (T.hol ? '<div class="msg info">Public holiday: ' + esc(T.hol) + ' – no plans and no start needed today.</div>' : '');
-  T.agents.slice().sort(function (a, b) { return (a.status === 'Agreed' ? 0 : 1) - (b.status === 'Agreed' ? 0 : 1); }).forEach(function (a) {
-    var stp = a.status === 'Approved' ? ['Approved', 'green'] : a.status === 'Agreed' ? ['Waiting for you', 'amber'] : a.status === 'Suggested' ? ['Not agreed yet', ''] : a.status === 'Not opened' ? ['Has not opened the app today', 'amber'] : a.status ? [a.status, ''] : ['No plan yet', '']; if (a.leave) stp = ['On leave', 'blue']; else if (T.hol) stp = ['Public holiday', 'blue'];
+  T.agents.slice().sort(function (a, b) { var w = function (x) { return x.status === 'Agreed' || (x.tmr && x.tmr.status === 'Agreed') ? 0 : 1; }; return w(a) - w(b); }).forEach(function (a) {
+    var stp = a.status === 'Approved' && a.sentBy === 'Auto 5 am' ? ['Not checked by ' + a.name + ' · started 5 am', 'amber'] : a.status === 'Approved' ? ['Approved', 'green'] : a.status === 'Agreed' ? ['Waiting for you', 'amber'] : a.status === 'Suggested' ? ['Not agreed yet', ''] : a.status === 'Not opened' ? ['Has not opened the app today', 'amber'] : a.status ? [a.status, ''] : ['No plan yet', '']; if (a.leave) stp = ['On leave', 'blue']; else if (T.hol) stp = ['Public holiday', 'blue'];
     var items = a.items.filter(function (x) { return !x.rm; }), G = planGroups(items), goal = a.goal != null ? a.goal : items.filter(function (x) { return x.k === 's' && !x.skip; }).length, cv = a.cover || { all: 0, done: 0 };
     h += '<div class="card" style="padding:12px 14px"><div class="row" style="flex-wrap:nowrap">' + avatar(a.name) + '<div class="grow"><b>' + esc(a.name) + '</b> <span class="tag ' + stp[1] + '">' + esc(stp[0]) + '</span><div class="small muted">' +
       (a.start ? 'Started ' + esc(a.start.at) + (a.start.lat ? ' · <a href="#" data-act="where" data-lat="' + a.start.lat + '" data-lng="' + a.start.lng + '" data-n="' + esc(a.name + ' – Start my day ' + a.start.at) + '">where</a>' : ' · no location') : a.leave ? '<span class="t-blue">' + esc(a.leave) + '</span>' : T.hol ? '<span class="muted">Public holiday</span>' : '<span class="t-amber">Day not started</span>') + '</div>' +
       (a.last ? '<div class="small">Last: <b>' + esc(a.last.name) + '</b> ' + esc(a.last.at) + ' – ' + esc(a.last.out) + (a.last.lat ? ' · <a href="#" data-act="where" data-lat="' + a.last.lat + '" data-lng="' + a.last.lng + '" data-n="' + esc(a.name + ' – ' + (a.last.placeAt || a.last.at)) + '">where</a>' : '') + '</div>' : '') + (a.next ? '<div class="small">Next: ' + esc(a.next) + '</div>' : '') + '</div></div>' +
       '<div class="tiles" style="margin:10px 0 4px"><div class="tile"><b>' + a.done + '/' + a.planned + '</b><span>visits' + (a.visits > a.done ? ' (+' + (a.visits - a.done) + ')' : '') + '</span></div><div class="tile"><b>' + (a.pros || 0) + '/' + goal + '</b><span>new schools</span></div><div class="tile"><b>' + cv.done + '/' + cv.all + '</b><span>month visited · ' + (a.calls || 0) + ' calls</span></div></div>' +
       (a.status === 'Not opened' ? '<div class="small muted" style="margin:6px 0">Below is what the app will suggest to her. You can add or take out stops already.</div>' : '') +
-      (a.ohMiss ? '<div class="small t-amber" style="margin:4px 0"><span class="ohdot"></span>Omni Haven: ' + a.ohMiss + ' visit' + (a.ohMiss === 1 ? '' : 's') + ' not fully ticked</div>' : '') + (a.anote ? '<div class="msg info small" style="margin:6px 0"><b>Her note:</b> ' + esc(a.anote) + '</div>' : '') + (a.note ? '<div class="small muted">Your note: ' + esc(a.note) + '</div>' : '');
+      (a.ohMiss ? '<div class="small t-amber" style="margin:4px 0"><span class="ohdot"></span>Omni Haven: ' + a.ohMiss + ' visit' + (a.ohMiss === 1 ? '' : 's') + ' not fully ticked</div>' : '') + (a.anote ? '<div class="msg info small" style="margin:6px 0"><b>Her note:</b> ' + esc(a.anote) + '</div>' : '') + (a.note ? '<div class="small muted">Your note: ' + esc(a.note) + '</div>' : '') + mTmr(a);
     var tk = 'td-' + a.uid, tOpen = isOpen(tk, false), hb = h; h = ''; // v2.5.12: her stops on tap, folded at first
     G.forEach(function (g) {
       h += '<div style="margin-top:8px">' + (g.items.length === 1 && g.items[0].x.name === g.name ? '' : '<div class="small" style="font-weight:700">' + esc(g.name) + '</div>') + g.items.map(function (y) { var x = y.x;
