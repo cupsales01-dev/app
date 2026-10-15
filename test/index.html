@@ -35,6 +35,30 @@ a{color:var(--blue)}b{font-weight:650}
 .bnav button{flex:1 1 0;min-width:0;background:none;color:#7B8290;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;line-height:1.15;font-weight:600;padding:6px 2px 5px;border-radius:10px;text-align:center;box-shadow:none;position:relative}
 .bnav button svg{width:23px;height:23px;padding:2px 10px;box-sizing:content-box;border-radius:999px;transition:background .15s}.bnav button.on{color:var(--blue)}.bnav button.on svg{background:var(--blue2)}
 .bnav .cnt{position:absolute;top:1px;left:50%;margin-left:6px;box-shadow:0 0 0 2px #fff}
+.mcard{display:flex;flex-direction:column;gap:8px;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-left:5px solid var(--green);border-radius:var(--r);padding:11px 12px 10px;margin:0 0 12px;box-shadow:var(--sh);color:var(--ink);font:inherit}
+.mcard.amb{border-left-color:#D97706}.mcard.red{border-left-color:var(--red)}
+.mcard .mh{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:14.5px}.mcard .mh span{color:var(--blue);display:flex}.mcard .mh svg{width:20px;height:20px}
+.mcard .m3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.mcard .mn{display:flex;flex-direction:column;gap:3px;min-width:0}
+.mcard .mn b{font-size:22px;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums}.mcard .mn b small{font-size:12px;color:var(--mute);font-weight:700}.mcard .mn>span{font-size:11.5px;color:var(--mute);font-weight:700;line-height:1.2}
+.mcard .mfoot{font-size:12px;font-weight:700;color:var(--green)}.mcard.amb .mfoot{color:var(--amber)}.mcard.red .mfoot{color:var(--red)}
+.pbar6{height:6px;border-radius:9px;background:#ECECF0;position:relative;overflow:visible}.pbar6 i{display:block;height:100%;border-radius:9px;background:var(--green)}.pbar6 em{position:absolute;top:-2px;bottom:-2px;width:2px;background:#14171C;border-radius:1px}
+.pg6{display:flex;align-items:center;gap:10px;margin:-4px 0 12px}.pg6 b{font-size:17px}.back6{display:flex;align-items:center;gap:2px;background:none;color:var(--blue);font-weight:800;font-size:14px;padding:6px 6px 6px 0;box-shadow:none}.back6 svg{width:20px;height:20px}
+.card6{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:11px 12px;margin:0 0 10px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:6px}
+.brow{display:flex;flex-direction:column;gap:4px;padding:6px 0;border-top:1px solid var(--line)}.brow:first-of-type{border-top:0}
+.bars6{display:flex;align-items:flex-end;gap:3px;height:92px;padding-top:6px;overflow-x:auto}.bars6 div{flex:1 0 14px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:2px;height:100%}
+.bars6 i{display:block;width:100%;background:#86C99C;border-radius:3px 3px 0 0;min-height:1px}.bars6 .t i{background:repeating-linear-gradient(-45deg,#86C99C,#86C99C 3px,#C8E8D3 3px,#C8E8D3 6px)}.bars6 small{font-size:9.5px;color:var(--mute);font-weight:700}.bars6 b{font-size:9.5px}
+.link6{background:none;box-shadow:none;color:var(--blue);font-weight:700;font-size:13px;padding:4px 0;align-self:flex-start}
+.sumrow6{display:flex;justify-content:space-between;padding:6px 2px;border-top:1px solid var(--line);font-size:14px}
+.seg6{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:#ECEDF1;border-radius:12px;padding:3px;gap:3px;margin:4px 0 8px}.seg6 button{background:none;box-shadow:none;color:var(--mute);font-weight:700;font-size:13.5px;padding:8px 2px;border-radius:9px}.seg6 button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.ckey6{display:flex;gap:12px;flex-wrap:wrap;font-size:11.5px;color:var(--mute);font-weight:600;margin:0 2px 6px}.ckey6 i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.k-none{--k:#C9C9D1}.k-slow{--k:#D97706}.k-stop{--k:var(--red)}.k-buy{--k:var(--green)}.k-new{--k:#2563EB}.ckey6 i{background:var(--k)}
+.vrows6{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}.vrow6{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--k);border-radius:12px;padding:6px 8px 6px 12px;min-height:48px}.vrow6 b{font-size:14.5px}
+.fold6{width:100%;display:flex;justify-content:center;background:#fff;border:1.5px dashed #C9C9D1;color:var(--ink);box-shadow:none;border-radius:12px;font-weight:700;font-size:13.5px;padding:9px;margin:0 0 10px}
+.lev6{width:100%;display:flex;align-items:center;gap:8px;text-align:left;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:0 0 10px;box-shadow:none;color:var(--ink);font:inherit}.lev6 svg{width:18px;height:18px;color:var(--mute)}
+.bnav.b6{display:grid;grid-template-columns:repeat(5,1fr);align-items:end;padding:6px 2px calc(7px + env(safe-area-inset-bottom))}
+.bnav.b6 button{padding:3px 0 1px;font-size:10.5px;line-height:1.1;gap:3px}.bnav.b6 button svg{width:22px;height:22px;padding:3px 13px;stroke-width:1.8}.bnav.b6 button.on svg{stroke-width:2.3}
+.bnav.b6 .fab{width:52px;height:52px;border-radius:50%;background:var(--blue);color:#fff;margin-top:-26px;box-shadow:0 4px 12px rgba(226,0,26,.35);border:4px solid #fff;display:grid;place-items:center}
+.bnav.b6 .fab svg,.bnav.b6 button.on .fab svg{width:26px;height:26px;padding:0;background:none;stroke-width:2.6}.bnav.b6 .fabw.on{color:var(--blue)}
 main{padding:12px 12px 120px;max-width:640px;margin:0 auto}
 /* surfaces */
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:0 0 12px;box-shadow:var(--sh)}
@@ -116,6 +140,10 @@ input[type=date],input[type=time]{min-height:42px;-webkit-appearance:none;appear
 /* sheets and boxes */
 .overlay{position:fixed;inset:0;background:rgba(16,20,28,.45);z-index:9;display:flex;align-items:flex-end;justify-content:center}
 .sheet{background:#fff;border-radius:20px 20px 0 0;padding:22px 16px calc(16px + env(safe-area-inset-bottom));max-height:90vh;overflow:auto;width:100%;max-width:640px;position:relative}
+.sheet.half{max-height:60vh}.ohb{width:38px;height:38px;border-radius:10px;background:#0E6E5C;color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center;flex:none}
+.ohck{display:flex;flex-direction:column;gap:8px;margin:6px 0 10px}.ohck button{display:flex;align-items:center;gap:12px;text-align:left;font:inherit;font-weight:600;padding:13px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;color:inherit}
+.ohck button.on{border-color:#1E8E3E;background:#EEF8F0}.ohck .bx{width:24px;height:24px;border-radius:7px;border:2px solid #9AA3AE;display:grid;place-items:center;font-weight:800;color:#fff;flex:none}.ohck button.on .bx{background:#1E8E3E;border-color:#1E8E3E}
+button.wide{width:100%}.ohdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#E8A33D;margin-right:5px;vertical-align:1px}
 .sheet:before{content:'';position:absolute;top:8px;left:50%;width:38px;height:4px;margin-left:-19px;border-radius:4px;background:#D5D9E0}
 .shd{display:flex;align-items:center;gap:12px;margin:0 0 10px}.shd h3{margin:0;font-size:18px}.shd .x{margin-left:auto}
 .dt{border-collapse:collapse;width:100%;font-size:14px}.dt td{padding:9px 2px;border-bottom:1px solid var(--line);vertical-align:top}.dt tr:last-child td{border-bottom:0}.dt .k{color:var(--mute);width:40%}
@@ -124,7 +152,7 @@ table{border-collapse:collapse;width:100%;font-size:14px}td{padding:7px 4px;bord
 .menu{position:absolute;right:8px;top:46px;z-index:8;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(16,24,40,.2);min-width:200px;overflow:hidden}
 .menu button{display:block;width:100%;text-align:left;background:#fff;color:var(--ink);font-weight:500;border-radius:0;padding:13px 16px;border-bottom:1px solid var(--line)}.menu button:last-child{border-bottom:0}.menu button.warn{color:var(--red)}.menu .no{padding:12px 16px;font-size:13px;color:var(--mute)}
 .mback{position:fixed;inset:0;z-index:7}.kebab{background:transparent;color:var(--mute);font-size:22px;line-height:1;padding:4px 10px}
-.toast{position:fixed;left:12px;right:12px;top:10px;max-width:600px;margin:0 auto;background:#1F2430;color:#fff;padding:12px 14px;border-radius:12px;z-index:40;font-size:14.5px;box-shadow:0 8px 24px rgba(0,0,0,.25);white-space:pre-line}.toast.err{background:var(--red)}
+.toast{pointer-events:none;position:fixed;left:12px;right:12px;top:10px;max-width:600px;margin:0 auto;background:#1F2430;color:#fff;padding:12px 14px;border-radius:12px;z-index:40;font-size:14.5px;box-shadow:0 8px 24px rgba(0,0,0,.25);white-space:pre-line}.toast.err{background:var(--red)}
 .foot{position:fixed;left:0;right:0;bottom:var(--bnh,62px);background:#fff;border-top:1px solid var(--line);padding:10px 12px;z-index:6}
 .foot .in{max-width:640px;margin:0 auto;display:flex;gap:10px;align-items:center}
 main{padding-bottom:170px}
@@ -210,7 +238,7 @@ function num(s) { var t = String(s == null ? '' : s).replace(/[,\s]/g, ''); retu
 function uid() { return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
 function $(id) { return document.getElementById(id); }
 function sku(id) { for (var i = 0; i < D.skus.length; i++) if (D.skus[i].id === id) return D.skus[i]; return { id: id, title: id, price: 0 }; }
-var SKN = { RCO: '70g OC', RCC: '70g CHK' }; // v2.4.9: the names used in the company (codes stay RCO / RCC)
+var SKN = { RCO: 'OC', RCC: 'CHK' }; // v2.6.0: the Omni Haven codes (stored codes stay RCO / RCC)
 function skn(id) { return SKN[id] || id; }
 function isOut(id) { return D.out && D.out.skus && D.out.skus.indexOf(id) >= 0; }
 /** v2.4.7: where a product Omni does not have comes from: a source id, 'NONE' (nobody has it) or '' (the manager has not said yet). */
@@ -305,12 +333,17 @@ function flush(after) {
 var LATERSEQ = 0; // v2.4.8
 var POLLING = false; var CONF = []; // v2.5.7: saves the system confirmed – shown as done until a screen fetched after them arrives
 var OKS = []; // what the system said about the saves just sent – shown on top of the new screen
+var TOUCHT = 0, TOUCHON = 0, LASTACT = 0; // v2.5.21: the screen is not redrawn under a finger (while it touches, and just after it lifts, when the tap lands)
+['touchstart', 'pointerdown'].forEach(function (ev) { window.addEventListener(ev, function () { TOUCHON = TOUCHT = Date.now(); }, { capture: true, passive: true }); });
+['touchmove', 'scroll'].forEach(function (ev) { window.addEventListener(ev, function () { TOUCHT = Date.now(); }, { capture: true, passive: true }); });
+['touchend', 'touchcancel', 'pointerup', 'pointercancel'].forEach(function (ev) { window.addEventListener(ev, function () { TOUCHON = 0; TOUCHT = Date.now(); }, { capture: true, passive: true }); });
+function touching() { var n = Date.now(); return (TOUCHON && n - TOUCHON < 10000) || n - TOUCHT < 600; }
 /** When the queue is empty: show the newest screen (from the last save's answer, or ask for it) – never while the person is typing. */
 function later() {
   topbar();
   if (queue().length) return;
-  var busy = function () { var a = document.activeElement; return $('dlg').innerHTML || $('over').innerHTML || (a && /INPUT|SELECT|TEXTAREA/.test(a.tagName)); };
-  var my = ++LATERSEQ, t0 = Date.now(); var apply = function (d) { if (my !== LATERSEQ) return; if (busy()) { setTimeout(function () { apply(d); }, 1500); return; } d.__t0 = d.__t0 || d.__at || t0; D = d; if (d.rev && !d.__at) REV = String(d.rev); else if (LASTREV) REV = LASTREV; OFFLINE = false; ls(CKEY, JSON.stringify(d)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })); if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (OKS.length) MSG = { t: OKS.splice(0).join('\n'), k: 'ok' }; var y = window.scrollY; render(); window.scrollTo(0, y); };
+  var busy = function () { var a = document.activeElement; return touching() || $('dlg').innerHTML || $('over').innerHTML || (a && /INPUT|SELECT|TEXTAREA/.test(a.tagName)); };
+  var my = ++LATERSEQ, t0 = Date.now(); var apply = function (d) { if (my !== LATERSEQ || queue().length || (D && D.__t0 > (d.__at || t0))) return; if (busy()) { setTimeout(function () { apply(d); }, touching() ? 400 : 1500); return; } d.__t0 = d.__t0 || d.__at || t0; D = d; if (d.rev && !d.__at) REV = String(d.rev); else if (LASTREV) REV = LASTREV; OFFLINE = false; ls(CKEY, JSON.stringify(d)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })); if (!SCREEN || D.screens.indexOf(SCREEN) < 0) SCREEN = D.screens[0]; if (OKS.length) MSG = { t: OKS.splice(0).join('\n'), k: 'ok' }; var y = window.scrollY; render(); window.scrollTo(0, y); };
   if (NEXTD && Date.now() - (NEXTD.__at || 0) < 60000) { var d0 = NEXTD; NEXTD = null; apply(d0); return; }
   NEXTD = null; rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: 'init', data: {} }, function (r) { if (r && !r.error && !r.auth && r.screens && !queue().length) apply(r); }, function () { });
 }
@@ -406,7 +439,7 @@ function authScreen(r) {
   $('pin').focus();
 }
 // ---------------------------------------------------------------- layout
-var TABS = { order: [['plan', 'My day'], ['new', 'New order'], ['today', 'Orders', 'today'], ['pays', 'Payments', 'cash'], ['vendors', 'My vendors']], release: [['release', 'Pending orders'], ['approved', 'Approved'], ['book', 'My book'], ['cash', 'Payments'], ['out', 'Out of stock']], route: [['route', 'Route'], ['done', 'Orders', 'today'], ['dpay', 'Payments', 'cash'], ['helpers', 'Helpers']] }; // v2.5.15: Orders and Payments are tabs of their own
+var TABS = { order: [['plan', 'Today', 'b6today'], ['today', 'Orders', 'b6orders'], ['new', 'New order', 'plus'], ['pays', 'Payments', 'b6pay'], ['vendors', 'Schools & vendors', 'b6sch']], release: [['release', 'Pending orders'], ['approved', 'Approved'], ['book', 'My book'], ['cash', 'Payments'], ['out', 'Out of stock']], route: [['route', 'Route'], ['done', 'Orders', 'today'], ['dpay', 'Payments', 'cash'], ['helpers', 'Helpers']] }; // v2.5.15: Orders and Payments are tabs of their own
 TABS.mgr = [['plan', 'Today'], ['appr', 'Approvals', 'approved'], ['helpi', 'Help items', 'gift'], ['money', 'Money', 'money'], ['vendors', 'Vendors']]; // v2.5.17: the manager's own work
 var SNAME = { order: 'Sales', release: 'Warehouse', route: 'Deliveries' };
 function firstTab() { return tabsOf()[0][0]; }
@@ -431,6 +464,10 @@ var ICO = {
   helpers: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5M19 8v6M16 11h6"/>',
   rtoday: '<path d="M9 6h11M9 12h11M9 18h11"/><path d="M3.5 6l1.2 1.2L7 5M3.5 12l1.2 1.2L7 11M3.5 18l1.2 1.2L7 17"/>',
   s_order: '<path d="M5 8h14l-1.2 11a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+  b6today: '<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.6" fill="currentColor"/>', // v2.6.0: the new bar
+  b6orders: '<path d="M3.5 7.5 12 3.5l8.5 4v9L12 20.5l-8.5-4z"/><path d="M3.5 7.5 12 11.5l8.5-4M12 11.5v9"/>',
+  b6pay: '<rect x="3" y="6" width="18" height="13.5" rx="3"/><path d="M3 10.5h18"/><circle cx="16.5" cy="15" r="1.3" fill="currentColor"/>',
+  b6sch: '<path d="M3 10 12 4l9 6"/><path d="M5 9.5V20h14V9.5M10 20v-5h4v5"/>',
   s_release: '<path d="M3 10l9-6 9 6v10H3z"/><path d="M8 20v-6h8v6"/>',
   s_route: '<path d="M2 6h11v10H2zM13 9h4l3 3v4h-7z"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/>',
   // v2.5.2: symbols used in the lists
@@ -469,7 +506,7 @@ function render() {
   pendView();
   if (TAB === 'today') SUB.today = 'orders'; else if (TAB === 'pays') SUB.today = 'pay'; if (TAB === 'done') SUB.done = 'orders'; else if (TAB === 'dpay') SUB.done = 'pay'; // v2.5.15
   if (mgrMe() && TAB === 'pays') TAB = 'money'; // v2.5.17
-  var body = actBar() + remBar() + mgrBack() + ({ appr: pgAppr, helpi: pgHelpI, money: pgMoney, plan: pgPlan, 'new': pgNew, vendors: pgVendors, today: pgToday, pays: pgToday, dpay: pgDone, release: pgRelease, approved: pgApproved, book: pgBook, cash: pgCash, out: pgOut, rtoday: pgRToday, route: pgRoute, done: pgDone, helpers: pgHelpers })[TAB]();
+  var body = actBar() + remBar() + mgrBack() + ({ appr: pgAppr, helpi: pgHelpI, money: pgMoney, plan: pgPlan, month: pgMonth, 'new': pgNew, vendors: pgVendors, today: pgToday, pays: pgToday, dpay: pgDone, release: pgRelease, approved: pgApproved, book: pgBook, cash: pgCash, out: pgOut, rtoday: pgRToday, route: pgRoute, done: pgDone, helpers: pgHelpers })[TAB]();
   $('main').innerHTML = m + body; topbar(); syncShow(); // v2.5.3: the counts follow what is on the screen
   drawSheet(); decorate(); setTimeout(decorate, 0); // v2.5.2: also the footer buttons drawn just after
 }
@@ -515,8 +552,9 @@ function topbar() {
   if (!D) return;
   var t = bar(), B = badges();
   if (D.screens.length > 1) { t += '<div class="scrs">'; D.screens.forEach(function (s) { var n = scrCount(B, s); t += '<button class="' + (s === SCREEN ? 'on' : '') + '" data-scr="' + s + '">' + (ICO['s_' + s] ? ico(ICO['s_' + s]) : '') + SNAME[s] + (n ? '<span class="cnt' + (s === 'order' || ACTF[s] ? '' : ' g') + '">' + n + '</span>' : '') + '</button>'; }); t += '</div>'; }
-  t += '<nav class="bnav">'; // v2.5.0: the screens of this role at the bottom, like a phone app; v2.5.3: with what waits on each
-  tabsOf().forEach(function (x) { if ((x[0] === 'helpers' || x[0] === 'dpay') && D.me.role === 'Helper') return; var n = (B[SCREEN] || {})[x[0]] || 0, ic = ICO[x[2] || x[0]], lb = x[0] === 'plan' && D.me.role !== 'Agent' ? 'Today' : x[0] === 'done' && D.me.role === 'Helper' ? 'My stops' : x[1]; t += '<button class="' + (x[0] === TAB ? 'on' : '') + '" data-tab="' + x[0] + '">' + (ic ? ico(ic) : '') + '<span>' + lb + '</span>' + (n ? '<span class="cnt' + (actView() ? ' g' : '') + (x[0] === 'new' ? ' dotc' : '') + '">' + (x[0] === 'new' ? '' : n > 99 ? '99+' : n) + '</span>' : '') + '</button>'; });
+  var b6 = tabsOf() === TABS.order; // v2.6.0: the agent's bar – Today · Orders · raised + · Payments · Schools & vendors
+  t += '<nav class="bnav' + (b6 ? ' b6' : '') + '">'; // v2.5.0: the screens of this role at the bottom, like a phone app; v2.5.3: with what waits on each
+  tabsOf().forEach(function (x) { if ((x[0] === 'helpers' || x[0] === 'dpay') && D.me.role === 'Helper') return; var n = (B[SCREEN] || {})[x[0]] || 0, ic = ICO[x[2] || x[0]], lb = x[0] === 'plan' && D.me.role !== 'Agent' ? 'Today' : x[0] === 'done' && D.me.role === 'Helper' ? 'My stops' : x[1]; if (b6) lb = lb.replace('Schools & vendors', 'Schools &<br>vendors'); t += '<button class="' + (x[0] === TAB || (TAB === 'month' && x[0] === 'plan') ? 'on' : '') + (b6 && x[0] === 'new' ? ' fabw' : '') + '" data-tab="' + x[0] + '">' + (b6 && x[0] === 'new' ? '<span class="fab">' + ico(ic) + '</span>' : ic ? ico(ic) : '') + '<span>' + lb + '</span>' + (n ? '<span class="cnt' + (actView() ? ' g' : '') + (x[0] === 'new' ? ' dotc' : '') + '">' + (x[0] === 'new' ? '' : n > 99 ? '99+' : n) + '</span>' : '') + '</button>'; });
   $('top').innerHTML = t + '</nav>'; try { var bn = document.querySelector('.bnav'); if (bn) document.documentElement.style.setProperty('--bnh', bn.offsetHeight + 'px'); } catch (e) { }
 }
 /** v2.5.3: what waits for this person on each screen and tab – the red counts. */
@@ -542,10 +580,10 @@ function scrCount(B, s) { var t = 0; Object.keys(B[s] || {}).forEach(function (k
 var POLLT = Date.now();
 function badgeFlat() { var B = badges(), o = {}; Object.keys(B).forEach(function (s) { Object.keys(B[s]).forEach(function (k) { if (k !== 'new') o[s + '.' + k] = B[s][k] || 0; }); }); return o; }
 function poll() {
-  var busy = function () { var a = document.activeElement; return !D || RK || document.visibilityState === 'hidden' || queue().length || FLUSHING || $('dlg').innerHTML || $('over').innerHTML || (a && /INPUT|SELECT|TEXTAREA/.test(a.tagName)); };
+  var busy = function () { var a = document.activeElement; return !D || RK || touching() || document.visibilityState === 'hidden' || queue().length || FLUSHING || $('dlg').innerHTML || $('over').innerHTML || (a && /INPUT|SELECT|TEXTAREA/.test(a.tagName)); };
   if (busy() || POLLING) return; POLLT = Date.now(); var t0 = Date.now(); POLLING = true; setTimeout(function () { POLLING = false; }, 60000);
-  rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: 'init', data: {}, poll: 1 }, function (r) {
-    POLLING = false; if (!r || r.error || r.auth || !r.screens || busy() || (D && D.__t0 > t0)) return; // an older answer never replaces a newer screen
+  rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: 'init', data: {}, poll: 1 }, function got(r) {
+    POLLING = false; if (r && !r.error && !r.auth && r.screens && touching()) { setTimeout(function () { if (LASTACT <= t0) got(r); }, 700); return; } if (!r || r.error || r.auth || !r.screens || busy() || (D && D.__t0 > t0)) return; // an older answer never replaces a newer screen
     var before = badgeFlat(); r.__t0 = t0; D = r; if (r.rev) REV = String(r.rev); else if (SEENREV) REV = SEENREV; OFFLINE = false; STALE = false; ls(CKEY, JSON.stringify(r)); ls(CKEY + '_at', new Date().toLocaleString('en-GB', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }));
     if (D.screens.indexOf(SCREEN) < 0) { SCREEN = D.screens[0]; TAB = firstTab(); }
     var y = window.scrollY; render(); window.scrollTo(0, y);
@@ -562,11 +600,11 @@ function ping() {
     if (r.ev && r.ev.length && D && !STALE) { var top = EVSEEN > REV ? EVSEEN : REV, nw = r.ev.filter(function (e) { return String(e.r) > top && e.by !== D.me.uid; }); if (r.ev.length) EVSEEN = String(r.ev[r.ev.length - 1].r); if (nw.length) evApply(nw); } // v2.5.9: the change shows at once
     if (SEENREV !== REV) poll(); }, function () { });
 }
-var EVSEEN = '';
+var EVSEEN = '', EVT = null;
 /** v2.5.9: status changes made on another phone (approved, on the way, delivered, confirmed…) – shown straight away, kept until the new screen. */
 function evApply(L) {
   L.forEach(function (e) { CONF.push({ op: e.op, ev: 1, at: Date.now(), data: { oids: e.oids, oid: e.oid, what: e.what, vid: e.vid, hid: e.hid, from: e.from, uid: e.uid, approve: e.ap, skus: e.skus, routes: e.routes, eid: e.eid, items: (e.oids || []).map(function (o) { return { oid: o }; }) } }); });
-  CONF = CONF.slice(-60); if ($('dlg').innerHTML || $('over').innerHTML || (document.activeElement && /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))) return; var y = window.scrollY; render(); window.scrollTo(0, y);
+  CONF = CONF.slice(-60); if (touching()) { clearTimeout(EVT); EVT = setTimeout(function () { evApply([]); }, 700); return; } if ($('dlg').innerHTML || $('over').innerHTML || (document.activeElement && /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))) return; var y = window.scrollY; render(); window.scrollTo(0, y);
 }
 setInterval(function () { if (Date.now() - POLLT > 300000) poll(); else if (Date.now() - PINGT > 8000) ping(); }, 4000); // v2.5.9: every 8 seconds while open
 var BACKT = null; function onBack() { if (document.visibilityState !== 'visible' || !D) return; clearTimeout(BACKT); BACKT = setTimeout(function () { if (Date.now() - POLLT > 30000) poll(); else ping(); }, 600); } // v2.5.7: opened again → the newest screen (once)
@@ -609,7 +647,7 @@ function pendView() {
     if (x.op === 'stop' && D.stops) { var so = d.oids || []; D.stops = D.stops.filter(function (s) { if (s.id !== d.vid) return true; if (d.what === 'NONE' || !so.length) return false; s.orders = s.orders.filter(function (o) { return so.indexOf(o.oid) < 0; }); return s.orders.length > 0; }); } // v2.5.7: a recorded stop leaves the list at once
     if (x.op === 'startday' && D.myDay) D.myDay.start = D.myDay.start || 'now';
     if (x.op === 'plan' && D.plan && d.items && D.plan.day === d.day) { D.plan.items = d.items; D.plan.status = d.live && D.plan.status === 'Approved' ? 'Approved' : 'Agreed'; D.plan.suggested = false; if (d.note !== undefined) D.plan.anote = d.note; if (d.goal !== undefined) D.plan.goal = d.goal; } // v2.5.8
-    if (x.op === 'visit' && D.plan && !(D.plan.visits || []).some(function (v) { return v.sid0 === x.sid; })) { D.plan.visits = (D.plan.visits || []).concat([{ sid0: x.sid, vid: d.vid || '', sid: d.sid || '', at: d.at ? new Date(d.at).toTimeString().slice(0, 5) : '', out: d.outcome || 'School visit', why: d.reason || '' }]); }
+    if (x.op === 'visit' && D.plan && !(D.plan.visits || []).some(function (v) { return v.sid0 === x.sid; })) { D.plan.visits = (D.plan.visits || []).concat([{ sid0: x.sid, vid: d.vid || '', sid: d.sid || '', at: d.at ? new Date(d.at).toTimeString().slice(0, 5) : '', out: d.outcome || 'School visit', why: d.reason || '', ohMiss: d.oh ? d.oh.miss || [] : [], ohSd: !!(d.oh && (d.oh.ticked || []).indexOf('Start day') >= 0) }]); }
     if (x.op === 'planok' && D.teamDay) D.teamDay.agents.forEach(function (a) { if (a.uid !== d.uid) return; if (d.approve && a.status === 'Agreed') a.status = 'Approved'; (d.add || []).forEach(function (z) { if (!a.items.some(function (y) { return y.k === z.k && y.id === z.id && !y.rm; })) { a.items.push(Object.assign({ by: 'Manager', done: '' }, z)); a.planned++; } });
       (d.remove || []).forEach(function (r) { a.items.forEach(function (y) { if (y.k === r.k && y.id === r.id) y.rm = 'Manager'; }); }); a.planned = a.items.filter(function (y) { return !y.skip && !y.rm; }).length; }); // v2.5.9: + taken out
     if (x.op === 'vprofile' && d.prof) { var vp = vend(d.vid); if (vp) { vp.prof = Object.assign({}, vp.prof || {}, { school: d.prof.newSchool ? '' : d.prof.school, at: D.today }); if (d.prof.newSchool) vp.school = d.prof.newSchool.name; } }
@@ -626,7 +664,7 @@ function decorate() {
 }
 document.addEventListener('click', function (e) {
   if (e.target.classList && e.target.classList.contains('overlay')) { if (e.target.parentNode && e.target.parentNode.id === 'dlg') ACT.dlgNo(); else { $('over').innerHTML = ''; SHEETK = ''; } return; } // v2.4.9: tap outside = close
-  var b = e.target.closest('[data-scr],[data-tab],[data-act]');
+  var b = e.target.closest('[data-scr],[data-tab],[data-act]'); if (b) LASTACT = Date.now(); // v2.5.21
   if (!b) { if (typeof PSTOP === 'string' && PSTOP && !e.target.closest('.stopc,.ndlist,.nstop,#over,#dlg,#toast,input,textarea,select,label,a,button')) stopFold(); return; } // v2.5.12
   if (b.dataset.scr) { SCREEN = b.dataset.scr; TAB = firstTab(); MSG = null; ACTF = {}; SHEETK = ''; render(); window.scrollTo(0, 0); return; } // v2.5.2: "Act for …" goes off when the manager leaves the screen
   if (b.dataset.tab) { TAB = b.dataset.tab; MSG = null; SHEETK = ''; OUTK = null; ENTK = {}; render(); window.scrollTo(0, 0); return; }
@@ -798,7 +836,7 @@ var FDEF = {
     ['prof', 'Profile', [['', 'Any'], ['noschool', 'School missing'], ['todo', 'Profile not filled'], ['done', 'Profile filled']]],
     ['sort', 'Sort by', [['', 'Name A–Z'], ['old', 'Oldest debt first'], ['big', 'Biggest debt first'], ['since', 'Longest since buying']]]],
   today: [['st', 'Status', [['', 'All'], ['wait', 'Pending approval'], ['appr', 'Approved (waiting for Prince)'], ['disp', 'Dispatched (on the way)'], ['nd', 'Not delivered'], ['del', 'Delivered'], ['dec', 'Declined'], ['canc', 'Cancelled'], ['ret', 'Returned'], ['vno', 'Vendor says not right']]],
-    ['pay', 'Payment', [['', 'Any'], ['Cash', 'Cash'], ['Credit', 'Credit']]], ['day', 'Date', 'date'], ['ent', 'Company app', [['', 'All orders'], ['yes', 'To enter in the company app']]]],
+    ['pay', 'Payment', [['', 'Any'], ['Cash', 'Cash'], ['Credit', 'Credit']]], ['day', 'Date', 'date'], ['ent', 'Omni Haven', [['', 'All orders'], ['yes', 'To enter in Omni Haven']]]],
   pcash: [['day', 'Collected on', 'date']],
   prcpt: [['day', 'Date', 'date'], ['st', 'Status', [['', 'All'], ['not', 'Not sent'], ['wait', 'Sent – no answer yet'], ['yes', 'Vendor confirmed'], ['no', 'Vendor says not right']]], ['kind', 'Kind', [['', 'All'], ['payment', 'Cash payments'], ['delivery', 'Deliveries']]]],
   phist: [['day', 'Date', 'date'], ['to', 'Given to', [['', 'Everyone'], ['frank', 'Frank (Omni Haven)'], ['other', 'HR logbook / Clement / Bernice'], ['mgr', 'The manager']]], ['st', 'Status', [['', 'All'], ['wait', 'Waiting for confirmation'], ['ok', 'Confirmed'], ['diff', 'Counted different']]]],
@@ -1075,7 +1113,7 @@ function outcomeHtml(o) {
 }
 function toEnterHtml() {
   if (!D.toEnter || !D.toEnter.length) return '';
-  return '<div class="card"><h3>Enter in the company app (' + D.toEnter.length + ')</h3><p class="sub">Delivered orders. Copy each one into the company app, tick it, then tap DONE.</p>' +
+  return '<div class="card"><h3>Enter in Omni Haven (' + D.toEnter.length + ')</h3><p class="sub">Delivered orders. Copy each one into Omni Haven, tick it, then tap DONE.</p>' +
     D.toEnter.map(function (x) { return '<label class="row" style="color:var(--ink);font-size:15px;margin:10px 0"><input type="checkbox" class="chk" name="ent" value="' + x.oid + '"> <span class="grow"><b>' + esc(x.vendor) + '</b>' + (D.me.role === 'Supervisor' ? ' · ' + esc(x.agent) : '') + '<br>' + x.lines.map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', ') + ' · <b>' + esc(x.pay) + '</b> · ' + ghs(x.value) + ' <span class="muted">(' + esc(x.date.slice(5)) + ')</span></span></label>'; }).join('') +
     '<button class="main big" data-act="entered">DONE – TICKED ONES ARE ENTERED</button></div>';
 }
@@ -1256,7 +1294,7 @@ function needsList(list) {
 ACT.resolve = function (b) { askIn('What was done? (short)', 'Checked', '', function (note) { bgSave('resolve', { eid: b.dataset.e, note: note }, 'rs-' + b.dataset.e, 'problem closed', b); }, 'DONE'); };
 ACT.entered = function (b) { var ids = Object.keys(ENTK).filter(function (k) { return (D.toEnter || []).some(function (x) { return x.oid === k; }); }); if (!ids.length) { say('Tick the orders you have entered.'); return; }
   var nm = (D.toEnter || []).filter(function (x) { return ids.indexOf(x.oid) >= 0; }).map(function (x) { return x.vendor; });
-  ask('You entered ' + ids.length + ' order' + (ids.length === 1 ? '' : 's') + ' in the company app?\n' + nm.join('\n'), function () { ENTK = {}; bgSave('entered', { oids: ids }, 'en-' + uid(), ids.length + ' order(s) entered in the company app', null); }, 'YES, ENTERED'); };
+  ask('You entered ' + ids.length + ' order' + (ids.length === 1 ? '' : 's') + ' in Omni Haven?\n' + nm.join('\n'), function () { ENTK = {}; bgSave('entered', { oids: ids }, 'en-' + uid(), ids.length + ' order(s) entered in Omni Haven', null); }, 'YES, ENTERED'); };
 var CTK = {}; // v2.4.9: the payments ticked as received, per hand-over
 function confirmHtml() {
   if (!D.toConfirm || !D.toConfirm.length) return '';
@@ -1349,7 +1387,7 @@ var OPENO = {}, OMENU = '';
 /** v2.5.0: a small drawing of the product – a noodle pack, bigger for the heavier packs; red = chicken, orange = onion. */
 function pk(id) {
   var s = String(id || ''), w = { RC: 0.72, SP: 0.82, HM: 0.91, BF: 1 }[s.slice(0, 2)] || 0.85, chick = s.slice(-1) === 'C';
-  var c1 = chick ? '#E31B23' : '#F08A00', c2 = chick ? '#B80F17' : '#C46A00', g = (skn(s).match(/\d+g/) || [''])[0];
+  var c1 = chick ? '#E31B23' : '#F08A00', c2 = chick ? '#B80F17' : '#C46A00', g = { RC: '70g', SP: '120g', HM: '180g', BF: '280g' }[s.slice(0, 2)] || '';
   var W = 30 * w, H = 22 * w, x = (32 - W) / 2, y = (32 - H) / 2;
   return '<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M' + x + ' ' + (y + 2) + 'q' + W / 2 + ' -3 ' + W + ' 0v' + (H - 4) + 'q-' + W / 2 + ' 3 -' + W + ' 0z" fill="' + c1 + '" stroke="' + c2 + '" stroke-width="1"/>' +
     '<rect x="' + x + '" y="' + (y + H * 0.36) + '" width="' + W + '" height="' + H * 0.3 + '" fill="#FFC400"/><path d="M' + (x + 3) + ' ' + (y + H * 0.52) + 'c1.5 -2 3 2 4.5 0s3 2 4.5 0" stroke="' + c2 + '" stroke-width="1.1" fill="none"/>' +
@@ -1408,7 +1446,7 @@ function pgToday() {
   if (SUB.today === 'pay') return h + paymentsHtml();
   var other = otherNeeds();
   h += todoBox([claimsRow(), ndHtml(), outCardHtml(), other.length ? todoRow('needs', 'alert', 'amber', 'Other problems', other.slice(0, 3).map(function (x) { return esc(x.type); }).join(' · '), other.length) : '',
-    D.me.role === 'Agent' && (D.toEnter || []).length && fl('today').ent !== 'yes' ? '<div class="li" data-act="entgo">' + leadI('done', 'blue') + '<div class="grow"><div class="t">Enter in the company app</div><div class="s">Delivered orders to copy</div></div><span class="cnt">' + D.toEnter.length + '</span><span class="go">' + ico(ICO.right) + '</span></div>' : '']);
+    D.me.role === 'Agent' && (D.toEnter || []).length && fl('today').ent !== 'yes' ? '<div class="li" data-act="entgo">' + leadI('done', 'blue') + '<div class="grow"><div class="t">Enter in Omni Haven</div><div class="s">Delivered orders to copy</div></div><span class="cnt">' + D.toEnter.length + '</span><span class="go">' + ico(ICO.right) + '</span></div>' : '']);
   var f0 = fl('today'); if (f0.ent === 'yes' && !(D.toEnter || []).length) { delete f0.ent; flSave(); }
   h += filterBar('today', 'Find a vendor or order number');
   return h + '<div id="flist">' + LISTR.today() + '</div>';
@@ -1421,8 +1459,8 @@ CHG.entk = function (el) { if (el.checked) ENTK[el.value] = 1; else delete ENTK[
 CHG.outk = function (el) { if (!OUTK) OUTK = ((D.out || {}).skus || []).slice(); OUTK = OUTK.filter(function (x) { return x !== el.value; }); if (el.checked) OUTK.push(el.value); };
 function toEnterList() {
   var L = (D.toEnter || []).filter(function (x) { return (!agOn() || x.agent === agName(agOn())) && hasQ('today', x.vendor + ' ' + x.oid); });
-  if (!L.length) return emptyHtml('Nothing left to enter in the company app.');
-  return '<div class="sumline"><b>' + L.length + '</b> delivered order' + (L.length === 1 ? '' : 's') + ' to copy into the company app – tick each one you have entered.</div><div class="card" style="padding:2px 14px">' + L.map(function (x, i) { return '<label class="tk"' + (i ? '' : ' style="border-top:0"') + '><input type="checkbox" class="chk" name="ent" value="' + x.oid + '" data-chg="entk"' + (ENTK[x.oid] ? ' checked' : '') + '><span class="grow"><b>' + esc(x.vendor) + '</b>' + (D.me.role === 'Supervisor' ? ' · ' + esc(x.agent) : '') + '<div class="small muted">' + x.lines.map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', ') + ' · ' + esc(x.pay) + ' · ' + esc(dayLbl(x.date)) + '</div></span><b>' + ghs(x.value) + '</b></label>'; }).join('') +
+  if (!L.length) return emptyHtml('Nothing left to enter in Omni Haven.');
+  return '<div class="sumline"><b>' + L.length + '</b> delivered order' + (L.length === 1 ? '' : 's') + ' to copy into Omni Haven – tick each one you have entered.</div><div class="card" style="padding:2px 14px">' + L.map(function (x, i) { return '<label class="tk"' + (i ? '' : ' style="border-top:0"') + '><input type="checkbox" class="chk" name="ent" value="' + x.oid + '" data-chg="entk"' + (ENTK[x.oid] ? ' checked' : '') + '><span class="grow"><b>' + esc(x.vendor) + '</b>' + (D.me.role === 'Supervisor' ? ' · ' + esc(x.agent) : '') + '<div class="small muted">' + x.lines.map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', ') + ' · ' + esc(x.pay) + ' · ' + esc(dayLbl(x.date)) + '</div></span><b>' + ghs(x.value) + '</b></label>'; }).join('') +
     '</div><button class="main big" data-act="entered">Done – ticked ones are entered</button>';
 }
 function decNeeds() { return (D.needs || []).filter(function (x) { return x.dec || x.cl || x.dup || x.over; }); }
@@ -1584,7 +1622,8 @@ function oRow(o) {
   if (c && c.delivered && c.delivered.length) sub = (c.owing > 0.004 ? '<span class="t-red">owes ' + ghs(c.owing) + '</span>' : '<span class="t-green">paid</span>') + ' · ' + sub;
   else if (o.parent) sub = 'Part · from ' + esc(o.rel ? o.rel.from : 'another place') + ' · ' + sub;
   else if (wait) sub = '<span class="t-red">waiting ' + wait + 'd</span> · ' + sub;
-  return liRow(' data-act="odet" data-o="' + esc(o.oid) + '"', leadI(s[2] || 'clock', tone), esc(o.vendor) + (fl2 ? '<span class="flags">' + fl2 + '</span>' : ''), sub, ghs(oValue(o)), esc(OSHORT[s[0]] || s[0]), tone);
+  var kid = (D.myOrders || []).filter(function (y) { return y.parent === o.oid && !/Cancel|Rejected|Declined/.test(y.status); }); // v2.5.21: a split order – the rest is its own order
+  if (kid.length) sub = sub.replace(' ctn · ', ' ctn (' + kid.map(function (y) { return '+' + oCtn(y) + ' from ' + esc(y.rel ? y.rel.from : 'another place'); }).join(', ') + ') · ');  return liRow(' data-act="odet" data-o="' + esc(o.oid) + '"', leadI(s[2] || 'clock', tone), esc(o.vendor) + (fl2 ? '<span class="flags">' + fl2 + '</span>' : ''), sub, ghs(oValue(o)), esc(OSHORT[s[0]] || s[0]), tone);
 }
 function oBody(o) {
   return '<div style="margin-top:8px"><div class="small">' + o.lines.map(function (l) { var r = /^(Submitted|Sending)$/.test(o.status) ? routeOf(l.sku) : ''; return '<span class="pill pk">' + pk(l.sku) + l.qty + ' ' + esc(skn(l.sku)) + '</span>' + (r ? '<span class="pill ' + (r === 'NONE' ? 'red' : 'amber') + '">' + (r === 'NONE' ? 'not available' : 'from ' + esc(srcNm(r))) + '</span>' : isOut(l.sku) && /^(Submitted|Sending)$/.test(o.status) ? '<span class="pill red">out at Omni</span>' : ''); }).join('') +
@@ -1955,7 +1994,7 @@ var DAYN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'S
 function pgPlan() {
   if (D.me.role === 'Supervisor') return pgTeamDay();
   if (ND) return pgPlanND(); // v2.5.19
-  var P = D.plan; var h = (P && P.practice ? '<div class="msg info" style="margin-bottom:8px"><b>Practice day.</b> ' + esc(dayLbl(P.day)) + ' works like a normal Monday on the test system, so you can try everything.</div>' : '') + todoBox([startRow(), monthRow()]);
+  var P = D.plan; var h = monthCard() + (P && P.practice ? '<div class="msg info" style="margin-bottom:8px"><b>Practice day.</b> ' + esc(dayLbl(P.day)) + ' works like a normal Monday on the test system, so you can try everything.</div>' : '') + todoBox([startRow(), monthNums() ? '' : monthRow()]); // v2.6.0: the month card is on top
   if (!P) return h + emptyHtml('Your plan is not ready – pull down to refresh.');
   if (P.leave || P.hol || (!P.work && !(P.items || []).length)) return h + emptyHtml(P.leave ? 'You are on leave today – no plan.' : P.hol ? 'Public holiday today: ' + String(P.hol).replace(/\s*\(.*\)$/, '') + ' – no plan.' : 'No plan on Saturday and Sunday – working days are Monday to Friday.') + (P.next && D.me.role === 'Agent' ? nextPlanHtml(P.next) : '') + otherVisits([]); // v2.5.19
   var L = planItems(), go = L.filter(function (x) { return !x.skip && !x.rm; }), done = go.filter(function (x) { return visitOf(x); }).length, edited = !!(PLANX && PLANX.day === P.day);
@@ -2001,11 +2040,11 @@ function pgPlan() {
 // ---------------------------------------------------------------- v2.5.19: the rebuilt My day (Section 1 of the fresh start)
 /** My day in one screen: what needs her, the next stop, how far she is, the other stops folded. */
 function pgPlanND() {
-  var P = D.plan, Y = D.myDay || {}, h = '';
-  if (!P) return ndNeeds([]) + emptyHtml('Your plan is not ready – pull down to refresh.') + ndSwitch();
+  var P = D.plan, Y = D.myDay || {}, h = NDPV ? '' : monthCard(); // v2.6.0
+  if (!P) return h + ndNeeds([]) + emptyHtml('Your plan is not ready – pull down to refresh.') + ndSwitch();
   if (!P.work && P.next && P.next.full && !NDPV && !(P.items || []).length) return ndPreview(P); // v2.5.19: a day off – the next working day, view only
   var dkey = (NDPV ? 'pv' : '') + P.day; if (NDLAST !== dkey) { PSTOP = ''; NDALL = false; NDLAST = dkey; } // review: what was open in the preview does not stay open on the day
-  if (P.leave || P.hol || (!P.work && !(P.items || []).length)) return ndNeeds([]) + emptyHtml(P.leave ? 'You are on leave today – no plan.' : P.hol ? 'Public holiday today: ' + String(P.hol).replace(/\s*\(.*\)$/, '') + ' – no plan.' : 'No plan on Saturday and Sunday – working days are Monday to Friday.') + otherVisits([]) + ndSwitch();
+  if (P.leave || P.hol || (!P.work && !(P.items || []).length)) return h + ndNeeds([]) + emptyHtml(P.leave ? 'You are on leave today – no plan.' : P.hol ? 'Public holiday today: ' + String(P.hol).replace(/\s*\(.*\)$/, '') + ' – no plan.' : 'No plan on Saturday and Sunday – working days are Monday to Friday.') + otherVisits([]) + ndSwitch();
   var L = planItems(), G = planGroups(L), kind = P.practice ? 'Practice day – works like a Monday' : P.school === false ? 'School holiday – calls and debts' : P.peak ? 'Peak day – re-orders and debts' : 'New schools and collection day';
   var gi = -1; G.some(function (g, i) { if (ndOpenIn(g).length) { gi = i; return true; } return false; });
   h += (P.practice ? '<div class="msg info" style="margin-bottom:8px"><b>Practice day.</b> ' + esc(dayLbl(P.day)) + ' works like a normal Monday on the test system, so you can try everything.</div>' : '') + '<div class="ndd">' + esc(dayLbl(P.day)) + ' · ' + esc(kind) + (P.status === 'Approved' ? ' · <span class="t-green">approved by the manager</span>' : '') + '</div>';
@@ -2144,7 +2183,7 @@ function planRow(x, i) {
   return '<div class="pv' + (v ? ' done' : '') + (x.skip ? ' skip' : '') + '">' + (vv ? avatar(vv.name) : leadI('school', 'blue')) + '<div class="grow" style="min-width:0"><div><b' + (vv ? ' data-act="vdet" data-v="' + vv.id + '" style="cursor:pointer"' : '') + '>' + esc(vv ? x.name : (x.tags || []).indexOf('follow') >= 0 ? 'Follow-up visit' : 'Prospect visit') + '</b>' + (x.by === 'Manager' ? ' <span class="tag">by the manager</span>' : '') + '</div>' +
     '<div>' + tagPills(shown) + '</div>' + (vv ? vFacts(vv) : '<div class="fx">' + esc(x.why || '') + '</div>') +
     (x.by === 'Manager' && x.why && x.why !== 'Added by the manager' ? '<div class="fx">Manager: ' + esc(x.why) + '</div>' : '') +
-    (x.skip ? '<div class="fx t-amber">Skipped: ' + esc(x.skip) + '</div>' : '') + (v ? '<div class="fx t-green">✓ ' + esc(v.at) + ' – ' + esc(v.out) + (v.why ? ' (' + esc(v.why) + ')' : '') + '</div>' : '') + (vv ? hReadyHtml(vv.id) : '') +
+    (x.skip ? '<div class="fx t-amber">Skipped: ' + esc(x.skip) + '</div>' : '') + (v ? '<div class="fx t-green">✓ ' + esc(v.at) + ' – ' + esc(v.out) + (v.why ? ' (' + esc(v.why) + ')' : '') + '</div>' + (v.ohMiss && v.ohMiss.length ? '<div class="fx t-amber"><span class="ohdot"></span>Omni Haven: not ticked – ' + esc(v.ohMiss.join(', ')) + '</div>' : '') : '') + (vv ? hReadyHtml(vv.id) : '') +
     '<div class="sb">' + (x.skip ? '<button class="ghost" data-act="plUnskip" data-i="' + i + '">Put back</button>' : '<button class="' + (v ? 'ghost' : 'main') + '" data-act="visOpen" data-k="' + x.k + '" data-i="' + esc(x.id) + '" data-kind="' + esc(x.kind || '') + '">' + (v ? 'Visit again' : 'Arrived – report') + '</button>' +
       (vv && vv.phone && !v ? '<a href="tel:' + esc(vv.phone) + '"><button class="ghost ic">' + ico(ICO.phone) + 'Call</button></a>' : '') + (x.k === 's' ? '<button class="ghost" data-act="hist" data-k="s" data-i="' + esc(x.id) + '">History</button>' : '') + (vv && !(vv.prof && vv.prof.school) ? '<button class="ghost" data-act="profOpen" data-v="' + vv.id + '">Set her school</button>' : '') +
       (v ? '' : mine ? '<button class="ghost" data-act="plDel" data-i="' + i + '">Remove</button>' : '<button class="ghost" data-act="plSkip" data-i="' + i + '">Skip</button>')) + '</div></div></div>';
@@ -2334,6 +2373,7 @@ ACT.visOpen = function (b) {
     levs: [], need: {}, needO: {}, gv: null,
     next: s ? { date: addDays(D.today, 7), how: 'Visit', bring: '' } : null,
     sc: s ? { pupils: s.pupils || '', b1: s.b1 || '', b2: s.b2 || '', contact: s.contact || '', cphone: s.cphone || '', fv: s.fv || '', brands: s.brands || '', stage: s.st && s.st !== 'Lead' ? s.st : 'Visited', stageNote: '' } : null };
+  if (D.me.role === 'Agent' && k === 'v') VIS.oh = { st: 'here', first: !ohSdDone(), t: {} }; // v2.6.0: I'm here opens the Omni Haven ticks first
   OVK = ''; visDraw(); ACT.visArr(); // v2.5.10: "Arrived – report" is the arrival
 };
 /** v2.5.14: the outcome as the sheet keeps it (one value, as before). */
@@ -2360,7 +2400,7 @@ function hChips0(kind, l, sel, oth) {
 var LEVW = { 'Visibility boost': 'Make Indomie easy to see', 'Vendor motivation': 'Encourage her', 'Doubt clearance': 'Answer her worry', 'Student motivation': 'Get students buying', Other: 'Another way' };
 function levW(x) { return String(x || '').split(', ').map(function (y) { return LEVW[y] || y; }).join(', '); }
 function visDraw() {
-  var X = VIS; if (!X) return; var v = X.k === 'v' ? vend(X.id) : null;
+  var X = VIS; if (!X) return; if (X.oh && X.oh.st) { ohDraw(X); return; } var v = X.k === 'v' ? vend(X.id) : null;
   var h = '<div class="overlay"><div class="sheet"><div class="shd">' + (v ? avatar(v.name) : leadI('school', 'blue')) + '<div class="grow"><h3>' + esc(X.name) + '</h3><div class="sub">' + (v ? esc(v.school || '') : 'School visit – fill its profile') + '</div></div><button class="ib gh sm x ic" data-act="closeO" aria-label="Close">' + ico(ICO.x) + '</button></div>';
   if (!X.at) { overDraw(h + '<p class="sub"><i class="spin dk"></i>Saving your arrival – finding where you are' + (v && !v.pin ? ' (her spot is pinned on the map)' : '') + '…</p></div></div>', 'vis'); return; }
   var oth = function (f, ph) { return '<input data-inp="vf" data-f="' + f + '" value="' + esc(X[f]) + '" placeholder="' + esc(ph) + '" style="margin:2px 0 6px">'; };
@@ -2377,7 +2417,7 @@ function visDraw() {
     var lv = visLever(); h += '<div class="psec">How I will help her sell</div><div class="small muted">Tap one or more, then what she needs</div>' + (lv ? '<p class="small muted" style="margin:0 0 4px">Suggested: <b>' + esc(levW(lv[0])) + '</b> – ' + esc(lv[1]) + '.</p>' : '') + vChips('levs', V_LEV.concat(['Other']), X.levs, 1, LEVW) +
       X.levs.map(function (l) { return l === 'Other' ? '<input data-inp="vho" data-h="need" data-l="Other" value="' + esc(X.needO.Other || '') + '" placeholder="Another way – write exactly how" style="margin:2px 0 6px">' : hChips('need', l, X.need[l] || [], X.needO[l]); }).join('');
   } else {
-    var S = X.sc; h += '<div class="psec">School</div><label>Stage</label>' + vChips('stage', V_STG, S.stage) + (S.stage === 'Not interested' ? '<label>Why not?</label><input data-inp="vsc" data-f="stageNote" value="' + esc(S.stageNote) + '">' : '') + (S.stage === 'Interested' || S.stage === 'Vendor registered' ? '<p class="small muted">Register her vendor with <b>New vendor</b> (My vendors) and choose this school.</p>' : '') +
+    var S = X.sc; h += '<div class="psec">School</div><label>Stage</label>' + vChips('stage', V_STG, S.stage) + (S.stage === 'Not interested' ? '<label>Why not?</label><input data-inp="vsc" data-f="stageNote" value="' + esc(S.stageNote) + '">' : '') + (S.stage === 'Interested' || S.stage === 'Vendor registered' ? '<p class="small muted">Register her vendor with <b>New vendor</b> (Schools &amp; vendors) and choose this school.</p>' : '') +
       '<label>Pupils (about)</label><input inputmode="numeric" data-inp="vsc" data-f="pupils" value="' + esc(S.pupils) + '">' + brkHtml('vsc', S.b1, S.b2) +
       '<div class="fgrid"><label><span>Contact (head / canteen)</span><input data-inp="vsc" data-f="contact" value="' + esc(S.contact) + '"></label><label><span>Contact phone</span><input inputmode="tel" data-inp="vsc" data-f="cphone" value="' + esc(S.cphone) + '"></label></div>' +
       '<div class="fgrid"><label><span>Food vendors there</span><input inputmode="numeric" data-inp="vsc" data-f="fv" value="' + esc(S.fv) + '"></label><label><span>Noodle brands sold</span><input data-inp="vsc" data-f="brands" value="' + esc(S.brands) + '" placeholder="e.g. Indomie, Tasty Tom"></label></div>';
@@ -2403,6 +2443,24 @@ function visDraw() {
   h += '<div class="btns" style="margin-top:16px"><button data-act="closeO">Cancel</button><button class="main" data-act="visSave">Save visit</button></div></div></div>';
   overDraw(h, 'vis');
 }
+/** v2.6.0: the Omni Haven ticks – a half sheet before the visit ("here") and before she goes ("fin"). */
+var OH_HERE = [['photos', 'Activity photos'], ['meet', 'Start the meeting']];
+function ohSdDone() { if (ls('cs_ohsd_' + D.today + '_' + (D.me.uid || '')) === '1') return true; return ((D.plan && D.plan.visits) || []).some(function (v) { return v.ohSd; }); }
+function ohItems(O) { return (O.first ? [['day', 'Start day']] : []).concat(OH_HERE); }
+function ohOut(O) { var L = O.away ? ohItems(O).filter(function (x) { return x[0] === 'day'; }) : ohItems(O).concat(O.asked ? [['end', 'End the meeting']] : []), t = [], m = []; L.forEach(function (x) { (O.t[x[0]] ? t : m).push(x[1]); }); if (O.t.day) ls('cs_ohsd_' + D.today + '_' + (D.me.uid || ''), '1'); return { ticked: t, miss: m }; }
+function ohBox(L, O) { return '<div class="ohck">' + L.map(function (x) { var on = !!O.t[x[0]]; return '<button class="' + (on ? 'on' : '') + '" data-act="ohTick" data-v="' + x[0] + '"><span class="bx">' + (on ? '✓' : '') + '</span>' + esc(x[1]) + '</button>'; }).join('') + '</div>'; }
+function ohDraw(X) {
+  var O = X.oh, fin = O.st === 'fin', L = fin ? [['end', 'End the meeting in Omni Haven']] : ohItems(O), miss = L.filter(function (x) { return !O.t[x[0]]; }).length;
+  var h = '<div class="overlay"><div class="sheet half"><div class="shd"><span class="ohb">OH</span><div class="grow"><h3>' + (fin ? 'Before you go' : 'Omni Haven') + '</h3><div class="sub">' + esc(X.name) + '</div></div><button class="ib gh sm x ic" data-act="closeO" aria-label="Close">' + ico(ICO.x) + '</button></div>';
+  h += ohBox(L, O) + '<button class="ghost wide" data-act="ohApp">Open Omni Haven ›</button>' + (miss ? '<div class="small muted" style="margin:8px 2px">The manager sees what is not ticked.</div>' : '');
+  h += '<div class="btns" style="margin-top:10px">' + (fin ? '<button data-act="ohBack">Back</button><button class="main" data-act="ohFin">Finish visit</button>' : '<button class="main" data-act="ohGo">' + (miss ? 'Start visit · ' + miss + ' not ticked' : 'Start visit') + '</button>') + '</div></div></div>';
+  overDraw(h, 'vis');
+}
+ACT.ohTick = function (b) { var O = VIS && VIS.oh; if (!O) return; O.t[b.dataset.v] = !O.t[b.dataset.v]; visDraw(); };
+ACT.ohGo = function () { if (!VIS || !VIS.oh) return; VIS.oh.st = ''; visDraw(); };
+ACT.ohBack = function () { if (!VIS || !VIS.oh) return; VIS.oh.st = ''; visDraw(); };
+ACT.ohFin = function () { if (!VIS || !VIS.oh) return; VIS.oh.st = ''; VIS.oh.fin = 1; ACT.visSave(); };
+ACT.ohApp = function () { toast('Open Omni Haven on your phone, then come back to CupSales.'); };
 ACT.visArr = function () { var my = VIS; if (!my || my.finding) return; my.finding = 1; gps(function (g, why) { my.finding = 0; if (VIS !== my || OVK !== 'vis' || !$('over').innerHTML) return; my.at = Date.now(); my.g = g; my.gwhy = why || ''; dayAuto(g, why); visDraw(); }); };
 /** v2.5.10: the first "Arrived" of the day starts her day (the same as Start my day). */
 /** v2.5.15: her plan changes not sent yet go before the start (the start agrees the plan). */
@@ -2410,7 +2468,7 @@ function planFlushX() { var P = D.plan; if (!P || !PLANX || PLANX.day !== P.day)
   P.items = L; bgSave('plan', { day: P.day, items: L, note: nt, goal: planGoal() }, 'pl-' + uid(), 'plan for today', null, true); PLANX = null; }
 function dayAuto(g, why) { var Y = D.myDay; if (D.me.role !== 'Agent' || !Y || !Y.workday || Y.start) return; planFlushX(); Y.start = 'now'; toast('Your day started – ' + new Date().toTimeString().slice(0, 5)); bgSave('startday', { lat: g ? g.lat : '', lng: g ? g.lng : '', acc: g ? g.acc : '', pt: Date.now(), why: why || '' }, 'sd-' + D.today + '-' + (D.me.uid || ''), 'day started at your first visit', null, true); }
 ACT.visAway = function () { var X = VIS; if (!X) return; // v2.5.14: asked first – one tap by mistake no longer saves
-  ask(X.name + ' is not there?\nThe visit is saved as "not there". Nothing else is asked.', function () { if (VIS !== X) return; Object.assign(X, { out: ['No order'], reason: 'Not there', saw: [], con: [], price: '', spag: '', skus: [], stock: {}, levs: [], need: {}, needO: {}, gv: null, amt: '' }); ACT.visSave(); }, 'YES, NOT THERE'); };
+  ask(X.name + ' is not there?\nThe visit is saved as "not there". Nothing else is asked.', function () { if (VIS !== X) return; if (X.oh) { X.oh.fin = 1; X.oh.away = 1; } Object.assign(X, { out: ['No order'], reason: 'Not there', saw: [], con: [], price: '', spag: '', skus: [], stock: {}, levs: [], need: {}, needO: {}, gv: null, amt: '' }); ACT.visSave(); }, 'YES, NOT THERE'); };
 ACT.vchip = function (b) {
   var X = VIS, g = b.dataset.g, val = b.dataset.v; if (!X) return;
   if (g === 'saw' || g === 'con' || g === 'levs') { var a = X[g], i = a.indexOf(val); if (i >= 0) a.splice(i, 1); else a.push(val); }
@@ -2447,10 +2505,11 @@ ACT.visSave = function () {
   if (!isV && X.sc.stage === 'Not interested' && tx(X.sc.stageNote).length < 3) { say('Write why the school is not interested.'); return; }
   if (!isV && X.sc.cphone && !/^0\d{9}$/.test(String(X.sc.cphone).replace(/\D/g, ''))) { say('The contact\'s phone has 10 numbers and starts with 0.'); return; }
   var nx = nextOk(X); if (nx === false) return;
+  if (X.oh && !X.oh.fin) { X.oh.st = 'fin'; X.oh.asked = 1; visDraw(); return; } // v2.6.0: before she goes – End the meeting in Omni Haven
   var v = isV ? vend(X.id) : null, debt = v ? Math.max(0, v.debt || 0) : 0, ordered = has('Ordered');
   var dpart = amt > 0 ? (ordered && (X.payFor === 'order' || debt < 0.005) ? 0 : ordered ? Math.min(amt, debt) : amt) : 0, opart = ordered ? Math.round((amt - dpart) * 100) / 100 : 0;
   var go = function () {
-    var d = { kind: X.kind, at: X.at, lat: X.g ? X.g.lat : '', lng: X.g ? X.g.lng : '', acc: X.g ? X.g.acc : '', note: X.note, next: nx };
+    var d = { kind: X.kind, at: X.at, lat: X.g ? X.g.lat : '', lng: X.g ? X.g.lng : '', acc: X.g ? X.g.acc : '', note: X.note, next: nx }; if (X.oh) d.oh = ohOut(X.oh);
     if (isV) { var stock = {}, units = {}; X.skus.forEach(function (id) { if (X.stock[id] != null) { stock[id] = X.stock[id]; units[id] = X.units[id] || 'sach'; } });
       Object.assign(d, { vid: X.id, outcome: out, outOther: out === 'Other' ? tx(X.outOther) : '', reason: X.reason, reasonOther: X.reason === 'Other' ? tx(X.reasonOther) : '', stock: stock, units: units, saw: X.saw.filter(function (x) { return x !== 'Other'; }), sawOther: X.saw.indexOf('Other') >= 0 ? tx(X.sawOther) : '', concerns: X.con.filter(function (x) { return x !== 'Other'; }), conOther: X.con.indexOf('Other') >= 0 ? tx(X.conOther) : '', price: X.price, spag: X.saw.indexOf('Spaghetti sold here') >= 0 ? X.spag : '',
         levers: X.levs, need: need.concat(X.levs.indexOf('Other') >= 0 ? [{ lever: 'Other', item: 'Other', detail: tx(X.needO.Other) }] : []), paid: amt > 0 ? amt : '' }); }
@@ -2752,11 +2811,11 @@ function pgTeamDay() {
       (a.last ? '<div class="small">Last: <b>' + esc(a.last.name) + '</b> ' + esc(a.last.at) + ' – ' + esc(a.last.out) + (a.last.lat ? ' · <a href="#" data-act="where" data-lat="' + a.last.lat + '" data-lng="' + a.last.lng + '" data-n="' + esc(a.name + ' – ' + (a.last.placeAt || a.last.at)) + '">where</a>' : '') + '</div>' : '') + (a.next ? '<div class="small">Next: ' + esc(a.next) + '</div>' : '') + '</div></div>' +
       '<div class="tiles" style="margin:10px 0 4px"><div class="tile"><b>' + a.done + '/' + a.planned + '</b><span>visits' + (a.visits > a.done ? ' (+' + (a.visits - a.done) + ')' : '') + '</span></div><div class="tile"><b>' + (a.pros || 0) + '/' + goal + '</b><span>new schools</span></div><div class="tile"><b>' + cv.done + '/' + cv.all + '</b><span>month visited · ' + (a.calls || 0) + ' calls</span></div></div>' +
       (a.status === 'Not opened' ? '<div class="small muted" style="margin:6px 0">Below is what the app will suggest to her. You can add or take out stops already.</div>' : '') +
-      (a.anote ? '<div class="msg info small" style="margin:6px 0"><b>Her note:</b> ' + esc(a.anote) + '</div>' : '') + (a.note ? '<div class="small muted">Your note: ' + esc(a.note) + '</div>' : '');
+      (a.ohMiss ? '<div class="small t-amber" style="margin:4px 0"><span class="ohdot"></span>Omni Haven: ' + a.ohMiss + ' visit' + (a.ohMiss === 1 ? '' : 's') + ' not fully ticked</div>' : '') + (a.anote ? '<div class="msg info small" style="margin:6px 0"><b>Her note:</b> ' + esc(a.anote) + '</div>' : '') + (a.note ? '<div class="small muted">Your note: ' + esc(a.note) + '</div>' : '');
     var tk = 'td-' + a.uid, tOpen = isOpen(tk, false), hb = h; h = ''; // v2.5.12: her stops on tap, folded at first
     G.forEach(function (g) {
       h += '<div style="margin-top:8px">' + (g.items.length === 1 && g.items[0].x.name === g.name ? '' : '<div class="small" style="font-weight:700">' + esc(g.name) + '</div>') + g.items.map(function (y) { var x = y.x;
-        return '<div class="row small" style="flex-wrap:nowrap;padding:4px 0;border-top:1px solid var(--line)"><div class="grow" style="min-width:0">' + (x.done ? '<span class="t-green">✓ ' + esc(x.done) + '</span> ' : x.skip ? '<span class="t-amber">skipped</span> ' : '') + '<b>' + esc(x.name) + '</b>' + (x.by === 'Manager' ? ' <span class="tag">you</span>' : '') + '<div>' + tagPills((x.tags || []).filter(function (t) { return t !== 'cover' && t !== 'way'; })).replace('Counts for your target', 'Counts for her target') + (x.skip ? ' <span class="muted">' + esc(x.skip) + '</span>' : '') + '</div>' + (function () { var vv = x.k === 'v' ? vend(x.id) : null; return vv ? '<div class="muted">' + (vv.debt > 0.004 ? 'Owes ' + ghs(vv.debt) + ' · ' + lateTxt(vv) + ' · ' : '') + (vv.last ? 'last order ' + esc(dayLbl(vv.last)) : 'no order yet') + (vv.open ? ' · ' + vv.open + ' ctn on the way' : '') + '</div>' : ''; })() + '</div>' +
+        return '<div class="row small" style="flex-wrap:nowrap;padding:4px 0;border-top:1px solid var(--line)"><div class="grow" style="min-width:0">' + (x.done ? '<span class="t-green">✓ ' + esc(x.done) + '</span> ' + (x.ohMiss && x.ohMiss.length ? '<span class="t-amber" title="Omni Haven not ticked"><span class="ohdot"></span>' + esc(x.ohMiss.join(', ')) + '</span> ' : '') : x.skip ? '<span class="t-amber">skipped</span> ' : '') + '<b>' + esc(x.name) + '</b>' + (x.by === 'Manager' ? ' <span class="tag">you</span>' : '') + '<div>' + tagPills((x.tags || []).filter(function (t) { return t !== 'cover' && t !== 'way'; })).replace('Counts for your target', 'Counts for her target') + (x.skip ? ' <span class="muted">' + esc(x.skip) + '</span>' : '') + '</div>' + (function () { var vv = x.k === 'v' ? vend(x.id) : null; return vv ? '<div class="muted">' + (vv.debt > 0.004 ? 'Owes ' + ghs(vv.debt) + ' · ' + lateTxt(vv) + ' · ' : '') + (vv.last ? 'last order ' + esc(dayLbl(vv.last)) : 'no order yet') + (vv.open ? ' · ' + vv.open + ' ctn on the way' : '') + '</div>' : ''; })() + '</div>' +
           (x.done ? '' : '<button class="ib gh sm" data-act="mgrRm" data-u="' + a.uid + '" data-k="' + x.k + '" data-i="' + esc(x.id) + '" data-n="' + esc(x.name) + '" aria-label="Take out" title="Take out">' + ico(ICO.x) + '</button>') + '</div>'; }).join('') + '</div>';
     });
     h = hb + '<div class="small tap" style="padding:8px 0;font-weight:700" data-act="tog" data-o="' + tk + '" data-s="' + (tOpen ? 1 : 0) + '">' + (tOpen ? 'Hide her stops ▴' : 'Her ' + items.length + ' visit' + (items.length === 1 ? '' : 's') + ' at ' + G.length + ' school' + (G.length === 1 ? '' : 's') + (function () { var ow = items.filter(function (x) { return x.k === 'v' && !x.done && !x.skip; }).reduce(function (t, x) { var v = vend(x.id); return t + (v && v.debt > 0.004 ? v.debt : 0); }, 0), sk = items.filter(function (x) { return x.skip; }).length; return (ow > 0.004 ? ' · collect ' + ghs(ow) : '') + (sk ? ' · ' + sk + ' skipped' : ''); })() + ' – tap to see or change ▾') + '</div>' + (tOpen ? h : '');
@@ -2816,6 +2875,50 @@ ACT.startday = function () {
     navigator.geolocation.getCurrentPosition(function (p) { if (done) return; done = true; clearTimeout(t); go(p); }, function (e) { if (done) return; done = true; clearTimeout(t); go(null, e && e.code === 1 ? 'location not allowed' : 'location not found'); }, { enableHighAccuracy: true, timeout: 11000, maximumAge: 60000 });
   }, 'START');
 };
+/** v2.6.0: "This month" – three numbers with a bar each and a black mark where she should be today (school days). */
+function monthNums() {
+  var M = D.myMonth, X = M && M.more; if (!M || !X) return null;
+  var pace = X.sd ? Math.min(1, (X.gone + (X.isSd ? 0.5 : 0)) / X.sd) : 0, at = Math.ceil((M.at || 0) / 100 * (M.vendors || 0) - 1e-9);
+  var L = [['Cartons', M.ctn, M.target], ['Active vendors', M.bought, at], ['New vendors', M.regsBought, M.vt]];
+  var p = L.reduce(function (t, x) { return t + (x[2] ? Math.min(1, x[1] / x[2]) : 1); }, 0) / L.length, r = pace > 0.05 ? p / pace : 1;
+  return { L: L, pace: pace, tone: r >= 0.95 ? 'ok' : r >= 0.8 ? 'amb' : 'red', word: r >= 0.95 ? 'On pace' : r >= 0.8 ? 'A little behind' : 'Far behind', X: X, at: at };
+}
+function pbar6(v, t, pace) { var w = t ? Math.max(0, Math.min(100, v / t * 100)) : 0; return '<div class="pbar6"><i style="width:' + w + '%"></i>' + (pace != null ? '<em style="left:' + Math.round(pace * 100) + '%"></em>' : '') + '</div>'; }
+function monthCard() {
+  var N = monthNums(); if (!N || D.me.role === 'Supervisor' && !D.viewOf) return '';
+  var mo = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][+D.today.slice(5, 7) - 1];
+  return '<button class="mcard ' + N.tone + '" data-act="goTab" data-t="month"><span class="mh">' + mo + ' so far<span>' + ico(ICO.right) + '</span></span><span class="m3">' +
+    N.L.map(function (x) { return '<span class="mn"><b>' + x[1] + ' <small>/ ' + x[2] + '</small></b><span>' + x[0] + '</span>' + pbar6(x[1], x[2], N.pace) + '</span>'; }).join('') + '</span>' +
+    '<span class="mfoot">' + N.word + ' · ' + N.X.left + ' school day' + (N.X.left === 1 ? '' : 's') + ' left</span></button>';
+}
+/** v2.6.0: My month – its own page (back to Today). */
+var MTAB = 'not', MPROD = false, MLAST = false, MMORE = false;
+function pgMonth() {
+  var M = D.myMonth, N = monthNums(); if (!M || !N) { TAB = 'plan'; return pgPlan(); }
+  var X = N.X, mo = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][+D.today.slice(5, 7) - 1];
+  var h = '<div class="pg6"><button class="back6" data-act="goTab" data-t="plan">' + ico('<path d="M15 5l-7 7 7 7"/>') + 'Today</button><b>' + mo + ' so far</b></div>';
+  h += '<div class="card6"><div class="row" style="flex-wrap:nowrap"><b class="grow">Bonus progress</b><span class="pill ' + (N.tone === 'ok' ? 'green' : N.tone === 'amb' ? 'amber' : 'red') + '">' + N.word + '</span></div>' +
+    [['Cartons', M.ctn, M.target, 35], ['Active vendors', M.bought, N.at, 30], ['New vendors', M.regsBought, M.vt, 35]].map(function (r) { return '<div class="brow"><div class="row" style="flex-wrap:nowrap"><span class="grow">' + r[0] + ' <span class="muted small">· part ' + r[3] + '</span></span><b>' + r[1] + ' of ' + r[2] + '</b></div>' + pbar6(r[1], r[2], N.pace) + '</div>'; }).join('') +
+    '<div class="small muted">Active: ' + (M.at || 0) + '% of your ' + (M.vendors || 0) + ' vendors. Black mark: where you should be today. ' + X.left + ' school day' + (X.left === 1 ? '' : 's') + ' left.</div></div>';
+  var mx = Math.max.apply(null, [1].concat(X.byDay.map(function (d) { return d[1]; })));
+  h += '<div class="card6"><div class="row" style="flex-wrap:nowrap"><b class="grow">Cartons by school day</b><b>' + M.ctn + '</b></div><div class="bars6">' + X.byDay.map(function (d) { return '<div class="' + (d[0] === D.today ? 't' : '') + '"><b>' + (d[1] || '') + '</b><i style="height:' + Math.round(d[1] / mx * 58) + 'px"></i><small>' + (+d[0].slice(8)) + '</small></div>'; }).join('') + '</div>' +
+    '<button class="link6" data-act="mTog" data-k="prod">By product ' + (MPROD ? '▴' : '▾') + '</button>' + (MPROD ? (X.bySku.length ? X.bySku.map(function (s) { return '<div class="sumrow6"><span>' + esc(s[0]) + '</span><b>' + s[1] + '</b></div>'; }).join('') : '<div class="small muted">No cartons delivered yet this month.</div>') : '') + '</div>';
+  var tabs = [['not', 'Not yet', X.not.length], ['buy', 'Bought', X.buy.length], ['new', 'New', X.nw.filter(function (v) { return v.st === 'new'; }).length]];
+  h += '<div class="seg6">' + tabs.map(function (t) { return '<button class="' + (MTAB === t[0] ? 'on' : '') + '" data-act="mTab" data-k="' + t[0] + '">' + t[1] + ' ' + t[2] + '</button>'; }).join('') + '</div>';
+  var L = MTAB === 'not' ? X.not : MTAB === 'buy' ? X.buy : X.nw, key = MTAB === 'not' ? [['slow', 'Slowing'], ['stop', 'Stopped'], ['', 'Not yet']] : MTAB === 'new' ? [['new', 'Bought (counts)'], ['', 'No order yet']] : [['buy', 'Bought'], ['new', 'New vendor']];
+  h += '<div class="ckey6">' + key.map(function (k) { return '<span><i class="k-' + (k[0] || 'none') + '"></i>' + k[1] + '</span>'; }).join('') + '</div>';
+  var show = MMORE ? L : L.slice(0, 8);
+  h += show.length ? '<div class="vrows6">' + show.map(function (v) { return '<div class="vrow6 k-' + (v.st || 'none') + '" data-act="mRow" data-v="' + esc(v.id) + '"><span class="grow"><b>' + esc(v.name) + '</b>' + (MOPEN === v.id && v.why ? '<span class="small muted" style="display:block">' + esc(v.why) + '</span>' : '') + '</span>' + (v.phone ? '<a class="ibl" href="tel:' + esc(v.phone) + '" aria-label="Call ' + esc(v.name) + '"><span class="ib sm">' + ico(ICO.phone) + '</span></a>' : '') + '</div>'; }).join('') + '</div>' : emptyHtml(MTAB === 'not' ? 'Every vendor has bought this month.' : MTAB === 'buy' ? 'Nobody has bought yet this month.' : 'No new vendors yet this month.');
+  if (L.length > 8) h += '<button class="fold6" data-act="mTog" data-k="more">' + (MMORE ? 'Show fewer ▴' : (L.length - 8) + ' more ▾') + '</button>';
+  if (M.proj) h += '<button class="lev6" data-act="sheet" data-k="mymonth"><span class="grow"><b>Your bonus</b><span class="small muted" style="display:block">If you keep this pace</span></span><b>' + ghs(M.proj.incentive) + '</b>' + ico(ICO.right) + '</button>';
+  h += '<button class="lev6" data-act="goTab" data-t="pays"><span class="grow"><b>Money collected</b><span class="small muted" style="display:block">This month, by you</span></span><b>' + ghs(X.got) + '</b>' + ico(ICO.right) + '</button>';
+  if (X.last) h += '<button class="fold6" data-act="mTog" data-k="last">' + esc(X.last.month) + ' ' + (MLAST ? '▴' : '▾') + '</button>' + (MLAST ? '<div class="card6"><div class="sumrow6"><span>Cartons</span><b>' + X.last.ctn + (X.last.target ? ' of ' + X.last.target : '') + '</b></div><div class="sumrow6"><span>Active vendors</span><b>' + X.last.bought + '</b></div><div class="sumrow6"><span>New vendors</span><b>' + X.last.regsBought + '</b></div></div>' : '');
+  return h;
+}
+var MOPEN = '';
+ACT.mTab = function (b) { MTAB = b.dataset.k; MMORE = false; MOPEN = ''; render(); };
+ACT.mTog = function (b) { var k = b.dataset.k; if (k === 'prod') MPROD = !MPROD; else if (k === 'last') MLAST = !MLAST; else MMORE = !MMORE; render(); };
+ACT.mRow = function (b) { MOPEN = MOPEN === b.dataset.v ? '' : b.dataset.v; render(); };
 function monthRow() {
   var M = D.myMonth; if (D.me.role !== 'Agent' || !M) return '';
   return todoRow('mymonth', 'today', 'blue', 'My month: ' + M.ctn + ' of ' + M.target + ' cartons · ' + M.regsBought + ' of ' + M.vt + ' new vendors', 'On track for about ' + ghs(M.proj.incentive) + ' incentive' + (D.myDay && D.myDay.start ? ' · day started ' + (D.myDay.start === 'now' ? 'just now' : D.myDay.start) : ''), 0);
