@@ -1,7 +1,7 @@
 // Keeps the app page on the phone so it opens without signal. Data always comes from the network.
 // v2.5.21: also when GitHub (where the page is kept) is down or slow: an error page, a page that is not the app,
 // or no answer within 8 seconds -> the saved copy opens instead.
-var P = 'cupsales-' + self.registration.scope + '-', C = P + '060f4ff8';
+var P = 'cupsales-' + self.registration.scope + '-', C = P + '129256d8';
 self.addEventListener('install', function (e) { self.skipWaiting(); e.waitUntil(caches.open(C).then(function (c) { return c.addAll(['./', 'index.html', 'manifest.webmanifest', 'icon-192.png']); })); });
 self.addEventListener('activate', function (e) { e.waitUntil(caches.keys().then(function (k) { return Promise.all(k.filter(function (x) { return x.indexOf(P) === 0 && x !== C; }).map(function (x) { return caches.delete(x); })); }).then(function () { return self.clients.claim(); })); });
 function saved(req, page) { return caches.match(req, { ignoreSearch: true }).then(function (r) { return r || (page ? caches.match('./') : r); }); } // only the page falls back to the saved page
