@@ -2373,7 +2373,7 @@ ACT.visOpen = function (b) {
     levs: [], need: {}, needO: {}, gv: null,
     next: s ? { date: addDays(D.today, 7), how: 'Visit', bring: '' } : null,
     sc: s ? { pupils: s.pupils || '', b1: s.b1 || '', b2: s.b2 || '', contact: s.contact || '', cphone: s.cphone || '', fv: s.fv || '', brands: s.brands || '', stage: s.st && s.st !== 'Lead' ? s.st : 'Visited', stageNote: '' } : null };
-  if (D.me.role === 'Agent' && k === 'v') VIS.oh = { st: 'here', first: !ohSdDone(), t: {} }; // v2.6.0: I'm here opens the Omni Haven ticks first
+  if (D.me.role === 'Agent') VIS.oh = { st: 'here', first: !ohSdDone(), t: {} }; // v2.6.0: I'm here opens the Omni Haven ticks first (vendor and school visits – Yayra 15 Oct)
   OVK = ''; visDraw(); ACT.visArr(); // v2.5.10: "Arrived – report" is the arrival
 };
 /** v2.5.14: the outcome as the sheet keeps it (one value, as before). */
