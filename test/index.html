@@ -736,6 +736,51 @@ body.r27ride .r27row{background:#1b1b1b;border-color:#333;color:#ddd}body.r27rid
 .n71cam{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:40px;height:40px;border-radius:12px;border:1.5px solid var(--blue);color:var(--blue);background:#fff;cursor:pointer;font-weight:700;padding:0 10px}.n71cam svg{width:20px;height:20px}
 .n71ph{display:flex;align-items:center;gap:10px;padding:6px 0}.n71ph img{width:64px;height:64px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
 .n71ask{border:1.5px solid var(--amber);background:#FFF8E6;border-radius:12px;padding:10px 12px;margin-top:10px}.n71ask .t2b2{margin-top:8px}
+/* v2.7.2 (a): Delivery schedule, payment method */
+.n72hd{display:flex;align-items:center;gap:12px;padding:0 0 10px;margin-bottom:6px;border-bottom:1px solid var(--line)}.n72hd b{font-size:17px}
+.n72hi{width:42px;height:42px;border-radius:12px;background:var(--blue2);color:var(--blue);display:grid;place-items:center;flex:0 0 42px}.n72hi svg{width:22px;height:22px}
+.n72x{width:36px;height:36px;border-radius:50%;border:0;background:#EEF1F5;font-size:22px;line-height:1;color:var(--mute);flex:0 0 36px}
+.n72l{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin:12px 2px 6px}
+.n72days{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.n72days button{border:1.5px solid var(--line);background:#F7F8FA;border-radius:12px;padding:8px 4px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0}
+.n72days span{font-size:10.5px;font-weight:800;color:var(--mute);letter-spacing:.04em}.n72days b{font-size:14px;white-space:nowrap}
+.n72days button.on{border-color:var(--blue);background:var(--blue2)}.n72days button.on span{color:var(--blue)}
+.n72cal{position:relative;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px;border:1.5px solid var(--line);border-radius:999px;padding:9px 12px;background:#F7F8FA;cursor:pointer}
+.n72cal svg{width:18px;height:18px;color:var(--mute);position:absolute;left:14px}.n72cal b{font-size:14.5px}
+.n72cal input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;padding:0;border:0;cursor:pointer}
+.n72seg{display:grid;grid-template-columns:repeat(4,1fr);background:#EEF1F5;border-radius:12px;padding:4px;gap:4px}
+.n72seg button{border:0;background:none;border-radius:9px;padding:9px 2px;font-weight:700;font-size:14px;color:var(--mute)}.n72seg button.on{background:#fff;color:var(--ink,#111);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.n72two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.n72tf{display:flex;flex-direction:column;gap:4px;min-width:0}.n72tf span{font-size:12px;font-weight:800;color:var(--mute);text-transform:uppercase;letter-spacing:.05em;margin-left:2px}
+.n72tf input{width:100%;box-sizing:border-box;border:1.5px solid var(--line);border-radius:999px;padding:9px 10px;font-size:16px;font-weight:700;text-align:center;background:#F7F8FA;margin:0}
+.n72q{display:flex;flex-wrap:wrap;gap:6px}.n72q button{border:1.5px solid var(--line);background:#F7F8FA;border-radius:999px;padding:7px 12px;font-size:13.5px;font-weight:600}.n72q button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.n72ft{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;margin-top:6px}.n72ft button{padding:13px 8px;font-size:16px;border-radius:14px}
+.n72pm{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 8px}.n72pm button{justify-content:center;padding:10px 6px;border-radius:12px;min-width:0;white-space:nowrap}
+/* v2.7.2 (f): Frank */
+.fk72t{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 10px}
+.fk72t button{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:8px 6px;display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-width:0;text-align:left}
+.fk72t button span{font-size:11.5px;font-weight:700;color:var(--mute);line-height:1.2}.fk72t button b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.fk72t button.on{border-color:var(--blue);background:var(--blue2)}.fk72t button.on span{color:var(--blue)}.fk72t button.red b{color:var(--red)}.fk72t .cnt{font-style:normal}
+.fk72d .fkln{font-size:13px;margin-top:4px}.fk72d.on{background:#FAFBFC}
+.fk72rc .fk72ok{display:flex;align-items:center;gap:10px}.fk72ok>svg{width:34px;height:34px;padding:6px;border-radius:50%;background:#E7F6EC;color:#15803d;flex:0 0 34px;box-sizing:border-box}
+.fk72txt{background:#F7F8FA;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px;margin-top:10px}
+.fk72two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.fk72two a{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px;border-radius:12px;font-weight:700;font-size:14px;text-decoration:none}.fk72two svg{width:18px;height:18px}
+.fk72hd{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px}.fk72hd b{font-size:15px}
+.fk72b{border:1.5px solid var(--blue);background:#fff;color:var(--blue);border-radius:999px;padding:7px 14px;font-weight:700;font-size:13.5px;white-space:nowrap}.fk72b.gr{background:#15803d;border-color:#15803d;color:#fff}
+.fk72n{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}.fk72n div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px}.fk72n b{display:block;font-size:15px;white-space:nowrap}.fk72n span{font-size:11.5px;color:var(--mute)}
+.fk72tr{margin:6px 0 10px}
+/* v2.7.2 (r): Prince */
+.r72lk{display:flex;justify-content:space-between;gap:8px;margin:2px 0 8px}.r72lk button{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:13.5px;font-weight:700;color:var(--blue)}.r72lk svg{width:16px;height:16px}
+.r72tb{margin-bottom:10px}.r72tb span{font-size:12px;color:var(--mute);font-weight:700}.r72tb button.on span{color:inherit}
+.r72s{background:#fff;border:1px solid var(--line);border-left:5px solid var(--blue);border-radius:14px;margin:8px 0;box-shadow:var(--sh)}.r72s.k-amber{border-left-color:var(--amber)}
+.r72s.drag{opacity:.85;box-shadow:0 8px 20px rgba(0,0,0,.18);position:relative;z-index:5}
+.r72h{display:flex;align-items:center;gap:10px;padding:12px;cursor:pointer}.r72h .grow{min-width:0;display:flex;flex-direction:column}.r72h .grow span{font-size:13px;color:var(--mute)}.r72h .rt{font-size:13px;color:var(--mute);white-space:nowrap}
+.r72h .qn{width:28px;height:28px;border-radius:50%;background:#EEF1F5;display:grid;place-items:center;font-weight:800;font-size:13px;flex:0 0 28px}
+.r72h .t2hd{touch-action:none;cursor:grab;color:var(--mute);font-size:18px;padding:0 2px}
+.r72s.on .r27ns{border:0;box-shadow:none;margin:0;padding-top:0}.r72s.on.nx .r72h .rt{display:none}.r72s.on .r27nm>.grow,.r72s.on .r27cd{display:none}.r72s.on .r27nm{position:absolute;right:12px;margin-top:-4px}.r72s.on .r27ns{position:relative}.r72s.on .r27sub{padding-right:48px}
+.r72ct button{border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:10px 8px;text-align:left;display:flex;flex-direction:column;gap:2px;min-width:0}.r72ct button.on{border-color:var(--blue);background:var(--blue2)}
+.r72ct button b{font-size:16px;white-space:nowrap}.r72ct button span{font-size:12.5px;color:var(--mute)}.r72ct .cnt{font-style:normal}
+.r72sub{font-weight:800;font-size:14px;margin:14px 2px 6px}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -7801,5 +7846,168 @@ ACT.vzspp = function (b) { var c = VZ.n.chk; c.spagP = Math.max(0.5, Math.min(50
 (function () { var f = SHEETS.tlast; SHEETS.tlast = function () { var h = f(); var v = vend(TLV), p = v && v.lv && v.lv.sph; if (!h || !p) return h;
   var row = '<tr><td class="k">Stock picture</td><td>' + (/^https:/.test(p) ? (D.me.role === 'Supervisor' ? '<a href="' + esc(p) + '" target="_blank">Open ›</a>' : 'Taken ✓') : esc(p)) + '</td></tr>';
   return h.replace('</table>', row + '</table>'); }; })();
+// ---------------------------------------------------------------- v2.7.2 (a): the Delivery schedule like Yayra's picture (22 Oct 19:05), Cash / MoMo side by side
+// Day: three day cards (Today / Tomorrow / the weekday) and a calendar field under them. Time: Exact / Before / After / Range with
+// real time fields (Range by default), quick picks, Cancel and Confirm side by side. Confirm no longer stays grey without a reason:
+// a closing time is filled in for her, and anything still missing is said in one red line.
+delete HALFK.n71dlv;
+var N72Q = [['close', 'Before she closes'], ['at12', '12 noon'], ['win', 'Before 7 am'], ['win', '7 to 9 am'], ['win', '9 am to 12']];
+function n72Allowed(x) { var L = dlvDays().slice(); if (x.urg) L.unshift('today'); return L; }
+function n72Top(d) { return d === 'today' ? 'TODAY' : d === addDays(D.today, 1) ? 'TOMORROW' : ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'][new Date((d === 'today' ? D.today : d) + 'T12:00:00Z').getUTCDay()]; }
+function n72Miss(S) { if (!S.day) return 'Pick a day'; if (S.mode === 'close') return S.close ? '' : 'When does she close?';
+  if (S.mode === 'win') return S.win ? '' : 'Pick a time'; if (!S.t1) return 'Pick a time'; if (S.mode === 'between' && !(S.t2 > S.t1)) return 'The end must be after the start'; return ''; }
+ACT.n71o = function () { var x = nDr(), v = vend(x.vid), p = n71Parse(x.time); if (!x.time) p = { mode: 'between', t1: '10:00', t2: '14:00' };
+  DLV = Object.assign(p, { day: x.day, close: nClose(v), bad: '' }); sheetOpen('n71dlv'); };
+SHEETS.n71dlv = function () { if (!DLV) return ''; var S = DLV, x = nDr(), v = vend(x.vid), A = n72Allowed(x), L = A.slice(0, 3), st = o27NextStar(v); if (st && L.indexOf(st) < 0) L[2] = st;
+  var h = '<div class="n72hd"><span class="n72hi">' + ico(ICO.b6today) + '</span><div class="grow"><b>Delivery schedule</b><div class="small muted">Pick the day and time</div></div><button class="n72x" data-act="n71x" aria-label="Close">×</button></div>';
+  h += '<div class="n72l">Day</div><div class="n72days">' + L.map(function (d) { return '<button class="' + (S.day === d ? 'on' : '') + '" data-act="n71d" data-v="' + d + '"><span>' + n72Top(d) + (o27Star(v, d) ? ' ★' : '') + '</span><b>' + esc(dayLbl(d === 'today' ? D.today : d)) + '</b></button>'; }).join('') + '</div>';
+  var dv = S.day === 'today' ? D.today : S.day || '';
+  h += '<label class="n72cal">' + ico(ICO.b6today) + '<input type="date" data-chg="n72date" value="' + esc(dv) + '" min="' + esc(A[0] === 'today' ? D.today : A[0]) + '" max="' + esc(A[A.length - 1]) + '" aria-label="Pick a day on the calendar"><b>' + esc(dv && L.indexOf(S.day) < 0 ? dayLbl(dv) : 'Other day') + '</b></label>' + (S.bad ? '<div class="small t-red" style="margin:4px 2px">' + esc(S.bad) + '</div>' : '');
+  h += '<div class="n72l">Time</div><div class="n72seg">' + [['at', 'Exact'], ['before', 'Before'], ['after', 'After'], ['between', 'Range']].map(function (m) { return '<button class="' + (S.mode === m[0] ? 'on' : '') + '" data-act="n71m" data-v="' + m[0] + '">' + m[1] + '</button>'; }).join('') + '</div>';
+  var tf = function (k, lb) { return '<label class="n72tf"><span>' + lb + '</span><input type="time" data-chg="n72t" data-k="' + k + '" value="' + esc(S[k] || '') + '"></label>'; };
+  if (S.mode === 'between') h += '<div class="n72two">' + tf('t1', 'From') + tf('t2', 'To') + '</div>';
+  else if (S.mode === 'at' || S.mode === 'before' || S.mode === 'after') h += '<div class="n72two">' + tf('t1', S.mode === 'at' ? 'At' : S.mode === 'before' ? 'Before' : 'After') + '</div>';
+  else if (S.mode === 'close') h += '<div class="n72l" style="margin-top:6px">She closes at</div><div class="t2tray">' + NCLOSE.map(function (c) { return '<button class="' + (S.close === c[0] ? 'on' : '') + '" data-act="n71cl" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>' + (S.close && S.close !== nClose(v) ? '<div class="small muted">Saved to her profile.</div>' : '');
+  h += '<div class="n72l">Quick picks</div><div class="n72q">' + N72Q.map(function (q) { var on = q[0] === 'close' ? S.mode === 'close' : q[0] === 'at12' ? S.mode === 'at' && S.t1 === '12:00' : S.mode === 'win' && S.win === q[1]; return '<button class="' + (on ? 'on' : '') + '" data-act="n72q" data-k="' + q[0] + '" data-v="' + esc(q[1]) + '">' + esc(q[1]) + '</button>'; }).join('') + '</div>';
+  var miss = n72Miss(S), t = n71Txt(S);
+  h += '<div class="n71sum">' + (miss ? '<span class="t-red">' + esc(miss) + '</span>' : esc(n71DayTxt(S.day)) + ' · ' + esc(S.mode === 'close' ? 'before she closes (' + nHm(S.close) + ')' : t)) + '</div>';
+  return h + '<div class="n72ft"><button class="ghost2" data-act="n71x">Cancel</button><button class="main red2" data-act="n71ok"' + (miss ? ' disabled' : '') + '>Confirm</button></div>'; };
+ACT.n71d = function (b) { DLV.day = b.dataset.v; DLV.bad = ''; drawSheet(); };
+ACT.n71m = function (b) { var m = b.dataset.v; DLV.mode = m; if (!DLV.t1) DLV.t1 = '10:00'; if (m === 'between' && !(DLV.t2 > DLV.t1)) DLV.t2 = DLV.t1 < '14:00' ? '14:00' : ''; drawSheet(); };
+ACT.n72q = function (b) { var k = b.dataset.k; if (k === 'close') DLV.mode = 'close'; else if (k === 'at12') { DLV.mode = 'at'; DLV.t1 = '12:00'; } else { DLV.mode = 'win'; DLV.win = b.dataset.v; } drawSheet(); };
+CHG.n72t = function (el) { if (/^\d{2}:\d{2}$/.test(el.value)) DLV[el.dataset.k] = el.value; setTimeout(drawSheet, 0); };
+CHG.n72date = function (el) { var d = el.value, x = nDr(), A = n72Allowed(x); if (!d) return;
+  if (d === D.today && x.urg) { DLV.day = 'today'; DLV.bad = ''; }
+  else if (A.indexOf(d) >= 0) { DLV.day = d; DLV.bad = ''; NDAYO = true; }
+  else DLV.bad = d <= D.today ? 'Pick a day after today (or mark it Urgent).' : new Date(d + 'T12:00:00Z').getUTCDay() % 6 === 0 ? 'No deliveries on Saturday or Sunday.' : 'Pick a day in the next 3 weeks.';
+  setTimeout(drawSheet, 0); };
+// Payment: "How did she pay?" on its own line, Cash with me and MoMo to Frank side by side
+n71Pay = (function (f) { return function (x, v, o) { return f(x, v, o).replace('<div class="n71pm"><span class="small muted">Payment method:</span>', '<div class="small muted" style="margin:8px 2px 0">How did she pay?</div><div class="n71pm n72pm">'); }; })(n71Pay);
+// ---------------------------------------------------------------- v2.7.2 (f): Frank (Yayra 22 Oct 17:58)
+// Cash: four tabs at the top (With people · Counted today · Receipts · Other distributors). Other distributors: money collected
+// per day for Clement, Bernice, the open market (or Omni only), a date range, tap a day for the split, and what went to the HR office.
+// The receipt sheet is small and nothing is picked for him. My day: small Open / Close buttons and clear tabs (Cartons out ·
+// Delivered · Help items · Owed to Omni · Reports). The Help items filter picks an item from a tray.
+FK.ct = 'now'; FK.dsub = 'ctn'; FK.dr = { k: 'week', from: '', to: '', f: 'others', open: '' };
+function fkDist() { return fkF().dist || { days: {}, paid: [], names: {} }; }
+function fkDName(s) { var N = fkDist().names || {}; return s === 'SRC-OMINI' ? 'Omni Haven' : s === 'SRC-MARKET' ? 'Open market' : N[s] || s; }
+function fkDRange() { var t = D.today, wd = new Date(t + 'T12:00:00Z').getUTCDay(), R = FK.dr;
+  var r = R.k === 'today' ? [t, t] : R.k === 'week' ? [addDays(t, -((wd + 6) % 7)), t] : R.k === 'month' ? [t.slice(0, 8) + '01', t] : [R.from || addDays(t, -30), R.to || t]; return r[0] > r[1] ? [r[1], r[0]] : r; }
+function fkDSrcs() { var S = {}, X = fkDist(); Object.keys(X.days || {}).forEach(function (d) { Object.keys(X.days[d]).forEach(function (s) { S[s] = 1; }); }); (X.paid || []).forEach(function (p) { S[p.s] = 1; }); return Object.keys(S).sort(function (a, b) { return a === 'SRC-OMINI' ? -1 : b === 'SRC-OMINI' ? 1 : a < b ? -1 : 1; }); }
+function fkDPick(s) { var f = FK.dr.f; return f === 'all' ? true : f === 'others' ? s !== 'SRC-OMINI' : f === 'omni' ? s === 'SRC-OMINI' : s === f; }
+function fkDToday() { var m = (fkDist().days || {})[D.today] || {}; return Object.keys(m).filter(function (s) { return s !== 'SRC-OMINI'; }).reduce(function (t, s) { return t + m[s]; }, 0); }
+function pgFCash() {
+  var B = D.book || { received: [], withPeople: [] }, T = D.toConfirm || [], W = B.withPeople || [], F = fkF(), late = new Date().getHours() >= 17;
+  var tc = T.reduce(function (t, x) { return t + x.amount; }, 0), wp = W.reduce(function (t, p) { return t + p.total; }, 0), cf = (B.received || []).reduce(function (t, x) { return t + x.amount; }, 0);
+  var tabs = [['now', 'With people', ghs(tc + wp), T.length, late && wp > 0.004], ['cnt', 'Counted today', ghs(cf), 0], ['rc', 'Receipts', 'and history', 0], ['dist', 'Other distributors', ghs(fkDToday()), 0]];
+  var h = '<div class="fk72t">' + tabs.map(function (t) { return '<button class="' + (FK.ct === t[0] ? 'on' : '') + (t[4] ? ' red' : '') + '" data-act="fk72t" data-v="' + t[0] + '"><span>' + t[1] + (t[3] ? ' <i class="cnt">' + t[3] + '</i>' : '') + '</span><b>' + t[2] + '</b></button>'; }).join('') + '</div>';
+  if (FK.ct === 'cnt') return h + ((F.cnt || []).length ? F.cnt.map(function (c) { return '<div class="fkr" style="border-left-color:#15803d"><div class="grow"><b>' + esc(c.from) + '</b><div class="fks">' + esc(c.t) + (c.kind === 'MoMo' ? ' · MoMo' : ' · Cash') + (Math.abs(c.amt - c.exp) > 0.004 ? ' · <span class="t-red">expected ' + ghs(c.exp) + '</span>' : '') + '</div></div><b class="fkam">' + ghs(c.amt) + '</b><a class="fkwa" href="https://wa.me/?text=' + encodeURIComponent(c.rc) + '" target="_blank" rel="noopener" aria-label="Receipt on WhatsApp">' + ico(ICO.wa) + '</a></div>'; }).join('') : emptyHtml('Nothing counted yet today.'));
+  if (FK.ct === 'rc') { var cur = PSEC.fcash || 'rcpt'; return h + chips('fcash', [['rcpt', 'Receipts'], ['hist', 'History']], cur) + (cur === 'rcpt' ? filterBar('prcpt', 'Find a vendor') + '<div id="flist">' + LISTR.prcpt() + '</div>' : filterBar('phist', 'Find a person or amount') + '<div id="flist">' + LISTR.phist() + '</div>'); }
+  if (FK.ct === 'dist') return h + fkDistHtml();
+  h += T.length ? T.map(function (x) { return '<div class="fkr" style="border-left-color:#2563eb" data-act="fkcnt" data-h="' + esc(x.hid) + '"><div class="grow"><b>' + esc(x.from) + '</b><div class="fks">' + (x.momo ? 'MoMo · check your phone' : 'Cash to count') + (x.time ? ' · ' + esc(x.time) : '') + '</div></div><b class="fkam">' + ghs(x.amount) + '</b></div>'; }).join('') : '';
+  h += W.map(function (p) { var red = late; return '<div class="fkr" style="border-left-color:' + (red ? '#d0021b' : '#9a9aa3') + '" data-act="fkcnt" data-u="' + esc(p.uid) + '"><div class="grow"><b>' + esc(p.name) + '</b><div class="fks ell">' + esc((F.since || {})[p.uid] || '') + (red ? ' · <span class="t-red">the manager sees it</span>' : ' · red after 5 pm') + '</div></div><b class="fkam' + (red ? ' t-red' : '') + '">' + ghs(p.total) + '</b></div>'; }).join('');
+  if (!T.length && !W.length) h += '<div class="fkok sm">All counted ✓</div>';
+  (F.hr || []).forEach(function (s) { h += '<div class="fkwarn amb"><span>' + esc(s.name) + '\'s part · ' + (s.frank > 0.004 ? 'give to the HR office' : 'with ' + esc(s.who.join(', ')) + ' · goes to the HR office') + (s.page ? ' · logbook page ' + esc(s.page) : '') + '</span><b>' + ghs(s.frank > 0.004 ? s.frank : s.field) + '</b></div>'; });
+  return h;
+}
+ACT.fk72t = function (b) { FK.ct = b.dataset.v; render(); };
+function fkDistHtml() {
+  var X = fkDist(), R = FK.dr, r = fkDRange(), S = fkDSrcs(), days = Object.keys(X.days || {}).filter(function (d) { return d >= r[0] && d <= r[1]; }).sort().reverse();
+  var h = '<div class="seg wrap" style="margin:0 0 8px">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['dates', 'Dates']].map(function (x) { return '<button class="' + (R.k === x[0] ? 'on' : '') + '" data-act="fkdr" data-k="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
+  if (R.k === 'dates') h += '<div class="fgrid"><label><span>From</span><input type="date" data-chg="fkdrd" data-f="from" value="' + esc(r[0]) + '" min="' + esc(addDays(D.today, -90)) + '" max="' + esc(D.today) + '"></label><label><span>To</span><input type="date" data-chg="fkdrd" data-f="to" value="' + esc(r[1]) + '" max="' + esc(D.today) + '"></label></div>';
+  var F = [['others', 'All other distributors']].concat(S.filter(function (s) { return s !== 'SRC-OMINI'; }).map(function (s) { return [s, fkDName(s)]; }), [['omni', 'Omni only'], ['all', 'Everyone']]);
+  h += '<div class="t2tray">' + F.map(function (f) { return '<button class="' + (R.f === f[0] ? 'on' : '') + '" data-act="fkdf" data-v="' + esc(f[0]) + '">' + esc(f[1]) + '</button>'; }).join('') + '</div>';
+  var tot = 0, rows = days.map(function (d) { var m = X.days[d], t = Object.keys(m).filter(fkDPick).reduce(function (a, s) { return a + m[s]; }, 0); tot += t; return { d: d, t: t, m: m }; }).filter(function (x) { return Math.abs(x.t) > 0.004; });
+  var paid = (X.paid || []).filter(function (p) { return p.d >= r[0] && p.d <= r[1] && fkDPick(p.s); }), pt = paid.reduce(function (a, p) { return a + p.amt; }, 0);
+  h += '<div class="fkpan"><div class="fkln"><span>Collected · ' + esc(r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) + '</span><b>' + ghs(tot) + '</b></div>' + (R.f !== 'omni' ? '<div class="fkln"><span>Given to the HR office</span><b>' + ghs(pt) + '</b></div>' : '') + '</div>';
+  h += rows.length ? rows.map(function (x) { var on = R.open === x.d; return '<div class="fkr fk72d' + (on ? ' on' : '') + '" style="border-left-color:#2563eb" data-act="fkdo" data-v="' + x.d + '"><div class="grow"><b>' + esc(dayLbl(x.d)) + '</b>' + (on ? Object.keys(x.m).filter(fkDPick).sort(function (a, b) { return a === 'SRC-OMINI' ? -1 : b === 'SRC-OMINI' ? 1 : 0; }).map(function (s) { return '<div class="fkln"><span>' + esc(fkDName(s)) + '</span><b>' + ghs(x.m[s]) + '</b></div>'; }).join('') : '') + '</div><b class="fkam">' + ghs(x.t) + ' <small class="muted">' + (on ? '▴' : '▾') + '</small></b></div>'; }).join('') : emptyHtml('No money for this choice.');
+  if (paid.length) h += fold('fkdpaid', '<b>Given to the HR office: ' + paid.length + '</b>', function () { return paid.map(function (p) { return '<div class="fkln"><span>' + esc(dayLbl(p.d)) + ' · ' + esc(fkDName(p.s)) + (p.by ? ' · ' + esc(p.by) : '') + (p.pg ? ' · page ' + esc(p.pg) : '') + '</span><b>' + ghs(p.amt) + '</b></div>'; }).join(''); });
+  return h;
+}
+ACT.fkdr = function (b) { FK.dr.k = b.dataset.k; render(); }; CHG.fkdrd = function (el) { FK.dr[el.dataset.f] = el.value; render(); };
+ACT.fkdf = function (b) { FK.dr.f = b.dataset.v; render(); }; ACT.fkdo = function (b) { FK.dr.open = FK.dr.open === b.dataset.v ? '' : b.dataset.v; render(); };
+// the receipt: small, nothing picked for him – he sends it again on WhatsApp or by text only if he wants to
+SHEETS.frc = function () { var R = FK.done; if (!R) return ''; return '<div class="fksh fk72rc"><div class="fk72ok">' + ico(ICO.check) + '<div class="grow"><b>Receipt sent</b><div class="small muted">' + esc(R.name) + ' gets it in the app</div></div><button class="n72x" data-act="closeO" aria-label="Close">×</button></div><div class="fk72txt">' + esc(R.rc) + '</div><div class="small muted" style="margin:8px 2px 4px">Send it again? (optional)</div><div class="fk72two"><a class="o2btn ghost2" href="https://wa.me/?text=' + encodeURIComponent(R.rc) + '" target="_blank" rel="noopener">' + ico(ICO.wa) + ' WhatsApp</a><a class="o2btn ghost2" href="sms:?body=' + encodeURIComponent(R.rc) + '">' + ico(ICO.phone) + ' Text</a></div></div>'; };
+// ---------------------------------------------------------------- My day
+function pgFDay() {
+  var F = fkF(), Y = F.day || {}, B = D.book || { rows: [], received: [] }, om = (B.rows || []).filter(function (r) { return r.omini; });
+  var ctn = om.reduce(function (t, r) { return t + r.lines.reduce(function (s, l) { return s + l.qty; }, 0); }, 0), cf = (B.received || []).reduce(function (t, x) { return t + x.amount; }, 0), nw = (F.wait || []).length;
+  var h = '<div class="fk72hd"><div class="grow"><b>' + esc(dayLbl(D.today)) + '</b><div class="small muted">' + (Y.opened ? 'Opened ' + esc(Y.opened) + ' · ' + ghs(Y.open || 0) : 'Not opened yet') + (Y.closed ? ' · closed ' + esc(Y.closed) : '') + '</div></div>' +
+    (!Y.opened ? '<button class="fk72b gr" data-act="fkopen">Open my day</button>' : Y.closed ? '<button class="fk72b" data-act="fkrep">Report ✓ ›</button>' : '<button class="fk72b" data-act="fkclose">Close the day</button>') + '</div>';
+  h += '<div class="fk72n"><div><b>' + om.length + '</b><span>orders approved</span></div><div><b>' + ctn + '</b><span>cartons out</span></div><div><b>' + ghs(cf) + '</b><span>cash confirmed</span></div></div>' + (nw ? '<div class="fkln" data-act="sheet" data-k="fwait"><span>Waiting for the manager</span><b>' + nw + ' ›</b></div>' : '');
+  var sub = FK.dsub;
+  h += '<div class="t2tray fk72tr">' + [['ctn', 'Cartons out'], ['hist', 'Delivered'], ['help', 'Help items'], ['owed', 'Owed to Omni'], ['rep', 'Reports']].map(function (x) { return '<button class="' + (sub === x[0] ? 'on' : '') + '" data-act="fkds" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
+  if (sub === 'ctn') h += delRangeHtml(B).replace('<div class="sech">Delivered <span>Omni Haven goods</span></div>', '');
+  else if (sub === 'help') h += helpBookHtml().replace(/^<div class="sech">[\s\S]*?<\/div>/, '');
+  else if (sub === 'owed') h += owedByDayHtml(B);
+  else if (sub === 'rep') { h += '<div class="wrep">' + (B.reportS ? '<a href="https://wa.me/?text=' + encodeURIComponent(B.reportS) + '" target="_blank"><button class="main">' + ico(ICO.wa) + 'Summary</button></a>' : '') + (B.report ? '<a href="https://wa.me/?text=' + encodeURIComponent(B.report) + '" target="_blank"><button>' + ico(ICO.wa) + 'Full report</button></a>' : '') + '</div>';
+    h += (F.reps || []).length ? F.reps.map(function (r, i) { return '<div class="fkln" data-act="fkrep" data-i="' + i + '"><span>' + esc(dayLbl(r.day)) + ' · ' + esc(r.at) + '</span><b>' + r.n + ' orders · ' + ghs(r.count == null ? r.exp : r.count) + ' ›</b></div>'; }).join('') : emptyHtml('No day reports yet.'); }
+  else h += filterBar('hist', 'Find a customer or school') + '<div id="flist">' + LISTR.hist() + '</div>';
+  return h;
+}
+// Help items: the item is picked from a tray (all the items we give, those given in these days first)
+hFilters = (function (f) { return function (gOnly) { var h = f(gOnly); if (!gOnly) return h;
+  var cat = [], HC = D.help || HELPD; Object.keys(HC).forEach(function (k) { (HC[k] || []).forEach(function (i) { if (cat.indexOf(i) < 0) cat.push(i); }); }); hOpts('i', true).forEach(function (i) { if (cat.indexOf(i) < 0) cat.push(i); });
+  var cnt = {}; var keep = HF.it; HF.it = ''; hRows(true).forEach(function (x) { cnt[x.i] = (cnt[x.i] || 0) + (x.q || 1); }); HF.it = keep;
+  cat.sort(function (a, b) { return (cnt[b] || 0) - (cnt[a] || 0); });
+  var tray = '<div class="small" style="font-weight:700;margin:2px 2px 4px">Item</div><div class="t2tray"><button class="' + (!HF.it ? 'on' : '') + '" data-act="hfit" data-v="">All items</button>' + cat.map(function (i) { return '<button class="' + (HF.it === i ? 'on' : '') + '" data-act="hfit" data-v="' + esc(i) + '">' + esc(i) + (cnt[i] ? ' <span class="muted">' + cnt[i] + '</span>' : '') + '</button>'; }).join('') + '</div>';
+  h = h.replace(/<label><span>Item<\/span><select[\s\S]*?<\/select><\/label>/, ''); var at = h.lastIndexOf('<div class="fgrid">'); return at < 0 ? h + tray : h.slice(0, at) + tray + h.slice(at); }; })(hFilters);
+ACT.hfit = function (b) { HF.it = b.dataset.v; render(); };
+// ---------------------------------------------------------------- v2.7.2 (r): Prince (Yayra 22 Oct 19:05)
+// Route: three tabs (To deliver / Delivered / Later) with the helper and past-deliveries links at the top, so they never sink
+// under a long line. Each stop is a folded row like the agent's Today: the next stop is open, a tap opens another, ⠿ slides a
+// stop up or down (a warning first: the line is sorted by urgent and time). Delivered stops leave the To deliver list.
+// Collect: the three tiles at the top are the tabs (With you / To collect / Handed to Frank). Save messages: just "Saved".
+var R72 = { t: 'go', open: '', c: 'with' };
+function r72Ord() { try { var o = JSON.parse(ls('r72ord') || 'null'); return o && o.day === D.today ? o.ids : null; } catch (e) { return null; } }
+function r72Sorted(R) { var O = r72Ord(); if (!O) return R; return R.slice().sort(function (a, b) { var i = O.indexOf(a.id), j = O.indexOf(b.id); var ia = i < 0 ? (a.urg ? -1 : 999) : i, jb = j < 0 ? (b.urg ? -1 : 999) : j; return ia - jb || R.indexOf(a) - R.indexOf(b); }); }
+tReorder = (function (f) { return function (kind, order) { if (kind !== 'r') return f(kind, order);
+  var save = function () { ls('r72ord', JSON.stringify({ day: D.today, ids: order })); render(); };
+  if (r72Ord()) save(); else ask('Your line is sorted by urgent and the time she needs it. Change the order?', save, 'YES, CHANGE'); }; })(tReorder);
+ACT.r72back = function () { ls('r72ord', ''); render(); };
+ACT.r72t = function (b) { R72.t = b.dataset.v; render(); };
+ACT.r72o = function (b) { if (Date.now() - (TDRAGGED || 0) < 500) return; R72.open = R72.open === b.dataset.v ? '_' : b.dataset.v; render(); };
+function r72Links() { return D.me.role === 'Helper' ? '' : '<div class="r72lk"><button data-act="goTab" data-t="helpers">' + ico(ICO.user) + 'Give to a helper</button><button data-act="goTab" data-t="done">' + ico(ICO.clock) + 'Past deliveries</button></div>'; }
+function r72Tabs(T, on, act) { return '<div class="o2seg r72tb">' + T.map(function (t) { return '<button class="' + (on === t[0] ? 'on' : '') + '" data-act="' + act + '" data-v="' + t[0] + '">' + t[1] + (t[2] != null ? ' <span>' + t[2] + '</span>' : '') + '</button>'; }).join('') + '</div>'; }
+function pgR27Route() {
+  r27Ride(); var R = r72Sorted(routeStops()), P = pickStops(), dn = r27Done(), helper = D.me.role === 'Helper', L = helper ? [] : (D.later || []);
+  if (!R.length && !P.length && !dn.length && !(D.hstops || []).length && !L.length) return r72Links() + emptyHtml('Nothing to deliver right now.');
+  var started = helper || r27Started() || dn.length || !(R.length || P.length), h = helper ? '<div class="msg info">Helper link for ' + esc(D.me.first) + ' – works today only.</div>' : '';
+  if (started) h += '<div class="r27hd"><span>' + dn.length + ' of ' + (dn.length + R.length + P.length) + ' done</span><button class="r27rm' + (R27.ride ? ' on' : '') + '" data-act="r27ride">☀ Riding mode' + (R27.ride ? ' on' : '') + '</button></div>';
+  if (R27.ride && R[0]) return h + r27Card(R[0], true);
+  h += r72Links() + r72Tabs([['go', 'To deliver', R.length + P.length], ['done', 'Delivered', dn.length]].concat(helper ? [] : [['later', 'Later', L.length]]), R72.t, 'r72t');
+  if (R72.t === 'done') return h + (dn.length ? dn.map(function (x, i) { return r27DoneRow(x, i + 1); }).join('') : emptyHtml('Nothing delivered yet today.'));
+  if (R72.t === 'later') return h + (L.length ? L.map(function (x) { return r27Row('', x.released ? 'blue' : 'grey', esc(x.vendor), esc(dayLbl(x.dlv)) + ' · ' + x.lines.map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', '), x.released ? '' : 'Not approved'); }).join('') : emptyHtml('No later deliveries.'));
+  if (!started) h += r27Start(R, P);
+  if (!R.length && !P.length) h += '<div class="r27ok">All stops done ✓ <button class="r27link" data-act="r72go">Go to Collect ›</button></div>';
+  var op = R72.open === '_' ? '' : R72.open && R.some(function (s) { return s.id === R72.open; }) ? R72.open : started && R[0] ? R[0].id : '';
+  h += '<div class="r72list">' + R.map(function (s, i) { var on = s.id === op, chg = s.orders.some(function (o) { return o.chgw; });
+    return '<div class="r72s k-' + (chg ? 'amber' : 'blue') + (on ? ' on' : '') + (i ? '' : ' nx') + '" data-drag="r" data-k="' + esc(s.id) + '"><div class="r72h" data-act="r72o" data-v="' + esc(s.id) + '"><span class="t2hd" data-dh="1">⠿</span><span class="qn">' + (i + 1) + '</span><div class="grow"><b class="ell">' + (s.urg ? '🚩 ' : '') + esc(s.name) + '</b><span class="ell">' + r27Codes(r27Lines(s)) + (chg ? ' · change waiting' : '') + '</span></div><span class="rt">' + esc(s.carry ? 'First today' : r27Need(s.time)) + '</span></div>' + (on ? r27Card(s, i === 0) : '') + '</div>'; }).join('') + '</div>';
+  if (r72Ord()) h += '<div class="r27why">You changed the order. <a class="r27link" style="display:inline" data-act="r72back">Back to sorted ›</a></div>';
+  else if (R.length > 1) h += '<div class="r27why">Sorted: urgent 🚩 first, then the time she needs it. Hold ⠿ to move a stop.</div>';
+  P.forEach(function (s, i) { h += r27StopRow(s, R.length + i + 1, true); });
+  return h + hStopsHtml();
+}
+ACT.r72go = function () { ACT.goTab({ dataset: { t: 'collect' } }); };
+// ---- Collect: the tiles are the tabs
+function pgR27Collect() {
+  var C = D.cash || [], free = 0, fr = 0, hr = 0, keep = 0; C.forEach(function (c) { if (!(c.free > 0.004)) return; free += c.free; if (c.src === 'Unallocated') keep += c.free; else if (/Frank/.test(c.route || '')) fr += c.free; else hr += c.free; });
+  var S = routeStops().concat(pickStops()).filter(function (s) { return s.ask > 0.004; }), still = S.reduce(function (t, s) { return t + s.ask; }, 0), H = (D.handovers || []).filter(function (x) { return x.out && x.day === D.today; });
+  var HF = H.filter(function (x) { return x.toKind === 'frank'; }), cf = HF.some(function (x) { return /^Confirm/.test(x.status); }), wt = HF.some(function (x) { return x.status === 'Sent'; }), n = rcptToSend();
+  var T = [['with', ghs(free), 'With you'], ['still', ghs(still), 'To collect'], ['hand', wt ? 'Waiting' : cf ? '✓ Done' : HF.length ? ghs(HF.reduce(function (t, x) { return t + x.amount; }, 0)) : '—', 'Handed to Frank' + (n ? ' <i class="cnt">' + n + '</i>' : '')]];
+  var h = '<div class="r72lk"><span></span><button data-act="goTab" data-t="done">' + ico(ICO.clock) + 'Past deliveries</button></div><div class="r27n3 c r72ct">' + T.map(function (t) { return '<button class="' + (R72.c === t[0] ? 'on' : '') + '" data-act="r72c" data-v="' + t[0] + '"><b>' + t[1] + '</b><span>' + t[2] + '</span></button>'; }).join('') + '</div>';
+  if (R72.c === 'still') return h + (S.length ? S.map(function (s, i) { return r27Row(i + 1, 'amber', esc(s.name), r27Codes(r27Lines(s)), '<b>' + ghs(s.ask) + '</b>'); }).join('') : emptyHtml('Nothing left to collect.'));
+  if (R72.c === 'hand') return h + (H.length ? H.map(function (x) { return r27Row('', /^Confirm/.test(x.status) ? 'green' : x.status === 'Sent' ? 'amber' : 'grey', esc(x.to) + ' · ' + ghs(x.amount), esc(x.at) + ' · ' + (/^Confirm/.test(x.status) ? 'counted ✓' : x.status === 'Sent' ? 'waiting for him to count' : esc(x.status)), ''); }).join('') : '') + '<div class="r72sub">Payments and receipts</div>' + paymentsHtml();
+  var got = r27Done().filter(function (x) { return x.cash > 0.004; });
+  h += '<div class="r27pan"><div class="r27sr"><span>For Frank (Omni)</span><b>' + ghs(fr) + '</b></div><div class="r27sr"><span>For the HR office (Clement)</span><b>' + ghs(hr) + '</b></div>' + (keep > 0.004 ? '<div class="r27sr"><span>Extra – keep apart</span><b>' + ghs(keep) + '</b></div>' : '') +
+    (wt ? '<div class="r27ok">Waiting for Frank to count it.</div>' : cf && free - keep < 0.005 ? '<div class="r27ok">Frank counted it ✓</div>' : '') + (free - keep > 0.004 && D.me.role !== 'Supervisor' ? '<button class="r27big g" data-act="sheet" data-k="hand">Hand to Frank</button>' : '') + '</div>';
+  return h + (got.length ? '<div class="r72sub">Collected today (' + got.length + ')</div>' + got.map(function (x) { return '<div class="r27row k-green"><div class="grow"><b class="ell">' + esc(x.vendor) + '</b><span>' + esc(x.agent || '') + '</span></div><span class="rt"><b>' + ghs(x.cash) + '</b></span></div>'; }).join('') : '');
+}
+ACT.r72c = function (b) { R72.c = b.dataset.v; render(); };
+// ---- save messages: "Saved" (or a few words), never a sentence (Yayra 22 Oct, for everyone)
+function r72Short(t) { t = String(t == null ? '' : t); var m = t.match(/^\s*✓?\s*(Saved|Recorded|Decided|Sent)\b/i); if (m) return '✓ ' + (m[1].toLowerCase() === 'sent' ? 'Sent' : 'Saved');
+  if (/ (is|are) (told|asked)\b|\bsees:|\bis told:/i.test(t)) { var c0 = t.split(/[:.](?:\s|$)/)[0].trim(); return c0.length <= 30 && !/ (is|are) (told|asked)\b|\bsees\b/i.test(c0) ? '✓ ' + c0.replace(/^✓\s*/, '') : '✓ Saved'; }
+  if (t.length > 40) { var c = t.split(/[:.](?:\s|$)/)[0].trim(); if (c.length >= 4 && c.length <= 40) return c; } return t; }
+toast = (function (f) { return function (t, kind) { return f(kind === 'err' ? t : r72Short(t), kind); }; })(toast);
 if (RK) rcpBoot(); else if (!n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
