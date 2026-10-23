@@ -954,6 +954,7 @@ body.r27ride .bnav{background:#111113 !important;border-top-color:#2C2C2E !impor
 body.r27ride .bnav button{color:#AEAEB2}body.r27ride .bnav button.on{color:#FFD60A}
 body.r27ride .bnav button.on svg{background:rgba(255,214,10,.18) !important;color:#FFD60A}
 body.r27ride .bnav.b6 button.on::before{background:#FFD60A}body.r27ride .bnav .cnt{box-shadow:0 0 0 2px #111113}
+.fk84d{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:#DBEAFE;color:#1D4ED8;font-size:12px;font-weight:700;vertical-align:1px}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -8239,10 +8240,13 @@ fkRows = (function (f) { return function (L) {
   var q = FK.flt === 'ok' ? '' : norm(FK.q), R = L.filter(function (x) { return (!FK.flt || x.st === FK.flt) && (q.length < 2 || norm(x.vendor + ' ' + x.agent).indexOf(q) >= 0); });
   if (!R.length) return f(L);
   if (FK.flt === 'ok') { var n = R.filter(function (x) { return FK.load[x.oid] !== false; }).length;
-    return '<div class="fk73ld">' + R.map(function (x) { var on = FK.load[x.oid] !== false; return '<button class="fkck' + (on ? ' on' : '') + '" data-act="fklt" data-o="' + esc(x.oid) + '"><span class="fkbx">' + (on ? '✓' : '') + '</span><span class="grow ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + fk73Chip(fk73Vid(x)) + '</span><b>' + esc(fkL(x.lines)) + '</b></button>'; }).join('') +
+    return '<div class="fk73ld">' + R.map(function (x) { var on = FK.load[x.oid] !== false; return '<button class="fkck' + (on ? ' on' : '') + '" data-act="fklt" data-o="' + esc(x.oid) + '"><span class="fkbx">' + (on ? '✓' : '') + '</span><span class="grow ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + fk84Day(x) + fk73Chip(fk73Vid(x)) + '</span><b>' + esc(fkL(x.lines)) + '</b></button>'; }).join('') +
       '<button class="main gr fkbig" data-act="fkhand"' + (n ? '' : ' disabled') + '>Hand to Prince · ' + n + '</button><p class="small muted" style="margin:4px 2px 0">Not ticked = next trip. Prince confirms on his phone.</p></div>'; }
   return R.map(function (x) { var c = FKST[x.st];
-    return '<div class="fkr" style="border-left-color:' + c[1] + '" data-act="fko" data-k="' + esc(x.k) + '"><div class="grow"><b class="ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + '</b><div class="fks ell">' + esc(x.agent) + ' · ' + esc(fkL(x.lines)) + (x.st !== 'dl' ? fk73Chip(fk73Vid(x)) : '') + '</div></div>' + (x.st === 'appr' || x.st === 'chg' || x.st === 'bad' ? '<span class="fkt fk-' + x.st + '">' + (x.st === 'chg' ? 'Change' : c[0]) + '</span>' : '<span class="go">' + ico(ICO.right) + '</span>') + '</div>'; }).join(''); }; })(fkRows);
+    return '<div class="fkr" style="border-left-color:' + c[1] + '" data-act="fko" data-k="' + esc(x.k) + '"><div class="grow"><b class="ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + '</b><div class="fks ell">' + esc(x.agent) + ' · ' + esc(fkL(x.lines)) + (x.st !== 'dl' ? fk84Day(x) : '') + (x.st !== 'dl' ? fk73Chip(fk73Vid(x)) : '') + '</div></div>' + (x.st === 'appr' || x.st === 'chg' || x.st === 'bad' ? '<span class="fkt fk-' + x.st + '">' + (x.st === 'chg' ? 'Change' : c[0]) + '</span>' : '<span class="go">' + ico(ICO.right) + '</span>') + '</div>'; }).join(''); }; })(fkRows);
+function fk84Dlv(x) { return ((x && (x.o || x.x)) || {}).dlv || ''; }
+function fk84Day(x) { var d = fk84Dlv(x); return d && d > D.today ? ' <span class="fk84d">' + esc(dayLbl(d)) + '</span>' : ''; }
+fkRows = (function (f) { return function (L) { (L || []).forEach(function (x) { if (x.st === 'ok' && fk84Dlv(x) > D.today && FK.load[x.oid] === undefined) FK.load[x.oid] = false; }); return f(L); }; })(fkRows); // a later day: not ticked unless Frank ticks it
 pgFOrders = (function (f) { return function () { return f().replace(/<button class="main fkbig" data-act="fkload">[\s\S]*?<\/button>/, ''); }; })(pgFOrders); PG27.forders = pgFOrders;
 ACT.fkflt = (function (f) { return function (b) { if (b.dataset.v === 'ok') FK.load = {}; f(b); }; })(ACT.fkflt); // a fresh load list: everything ticked
 ACT.fklt = function (b) { FK.load[b.dataset.o] = FK.load[b.dataset.o] === false; if (SHEETK === 'fload') drawSheet(); else { var el = $('fkol'); if (el) el.innerHTML = fkRows(fkList()); else render(); } };
