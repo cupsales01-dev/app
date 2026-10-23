@@ -809,6 +809,83 @@ body.r27ride .r27n3 button,body.r27ride .r27n3>div{background:#141414;color:#fff
 body.r27ride .r72lk button{background:#1c1c1e;color:#fff;border-color:#333}body.r27ride .r72lk button svg{color:#fff}html:has(body.r27ride),body.r27ride #main,body.r27ride .wrap{background:#000}
 @media (max-width:360px){.r72tb button{font-size:12.5px;padding:8px 2px;line-height:1.2}}
 body.r27ride .r27ns{background:#fff;color:#000}body.r27ride .r27ns .r27sub{color:#333}
+/* v2.8.0 (job 1): the manager's Dashboard */
+.mdw{margin-top:0}
+.mdl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:6px 0 4px}
+.mdlt{display:flex;flex-direction:column;align-items:flex-start;gap:2px;background:var(--card);border:1.5px solid var(--line);border-left-width:5px;border-radius:12px;padding:8px 9px;min-height:0;box-shadow:var(--sh);text-align:left;color:var(--ink);font:inherit;min-width:0}
+.mdlt i{display:none}.mdlt span{font-size:11.5px;font-weight:800;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+.mdlt b{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.mdlt.g{border-left-color:var(--green)}.mdlt.a{border-left-color:#F59E0B}.mdlt.r{border-left-color:var(--red)}.mdlt.on{border-color:var(--ink)}
+.mdlt.g b{color:var(--green)}.mdlt.a b{color:var(--amber)}.mdlt.r b{color:var(--red)}
+.mdwhy{font-size:13px;border-radius:10px;padding:8px 10px;margin:4px 0 8px;background:var(--grey2)}.mdwhy.g{background:var(--green2)}.mdwhy.a{background:var(--amber2)}.mdwhy.r{background:var(--red2)}
+.mdks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:8px 0 4px}
+@media (min-width:600px){.mdks{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.mdk{background:var(--card);border-radius:14px;box-shadow:var(--sh);padding:10px 8px;display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
+.mdk b{font-size:13px;margin-top:2px}.mdk span{font-size:12.5px;font-weight:700}.mdk small{font-size:11.5px;color:var(--mute)}
+.mdrg{width:68px;height:68px}.mdrb{fill:none;stroke:var(--grey2);stroke-width:7}.mdrf{fill:none;stroke-width:7;stroke-linecap:round;stroke:var(--green)}
+.mdrf.a{stroke:#F59E0B}.mdrf.r{stroke:var(--red)}.mdrg text{font-size:14px;font-weight:800;fill:var(--ink)}
+.mdar{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:12px;box-shadow:var(--sh);border-left:5px solid var(--green);padding:8px 10px;margin:6px 0;cursor:pointer}
+.mdar.a{border-left-color:#F59E0B}.mdar.r{border-left-color:var(--red)}.mdar .avatar,.mdar .av{flex:0 0 auto}
+.mdan{font-weight:800;white-space:nowrap}.mdan small{font-weight:600;color:var(--mute)}
+.mdad{background:var(--card);border-radius:0 0 12px 12px;margin:-8px 0 6px;padding:10px 12px 10px 15px;font-size:13px;display:flex;flex-direction:column;gap:4px}.mdad button{align-self:flex-start;margin-top:4px}
+.mdbar{display:grid;grid-template-columns:40px 1fr 40px 44px;align-items:center;gap:8px;margin:5px 0;font-size:13px}
+.mdbar span{font-weight:800}.mdbar i{height:9px;border-radius:9px;background:var(--grey2);overflow:hidden}.mdbar em{display:block;height:100%;background:var(--k1);border-radius:9px}.mdbar b{text-align:right}.mdbar small{color:var(--mute);text-align:right}
+.mdstk{display:flex;height:12px;border-radius:12px;overflow:hidden;background:var(--grey2);margin:6px 0}
+.mdstk em{display:block;height:100%}.mdstk .g{background:var(--green)}.mdstk .b{background:#2563EB}.mdstk .r{background:var(--red)}
+.mdstk .s0,.mddot.s0{background:#E2001A}.mdstk .s1,.mddot.s1{background:#2563EB}.mdstk .s2,.mddot.s2{background:#0D9488}.mdstk .s3,.mddot.s3{background:#F59E0B}.mdstk .s4,.mddot.s4{background:#7C3AED}
+.mdkey{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px;font-weight:700}.mdkey i{display:inline-block;width:9px;height:9px;border-radius:9px;margin-right:4px}.mdkey .g{background:var(--green)}.mdkey .b{background:#2563EB}.mdkey .r{background:var(--red)}
+.mdln{font-size:13.5px;margin-top:6px}
+.mddot{display:inline-block;width:10px;height:10px;border-radius:10px;flex:0 0 auto}
+.mdsr{padding:7px 0;border-top:1px solid var(--line)}.mdsr:first-of-type{border-top:0}
+.mdst{display:flex;align-items:center;gap:10px;padding:7px 10px;border-left:4px solid var(--green);background:#FAFBFC;border-radius:8px;margin:5px 0;font-size:13.5px}.mdst.a{border-left-color:#F59E0B}.mdst.r{border-left-color:var(--red)}.mdst b{width:40px}
+.mdlk{display:flex;align-items:center;gap:8px;padding:8px 10px;border-left:4px solid var(--red);background:#FAFBFC;border-radius:8px;margin:5px 0;cursor:pointer}.mdlk.a{border-left-color:#F59E0B}.mdlk.p{border-left-color:var(--pur)}
+.mdev{display:flex;gap:10px;padding:6px 0;border-top:1px solid var(--line);font-size:13px}.mdev:first-child{border-top:0}.mdev span{color:var(--mute);white-space:nowrap;min-width:44px}.mdev b{font-weight:600}
+.mdsk{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.mdsk i{display:block;height:118px;border-radius:14px;background:linear-gradient(90deg,#EEF0F3,#F7F8FA,#EEF0F3);background-size:200% 100%;animation:mdsh 1.4s linear infinite}
+@keyframes mdsh{to{background-position:-200% 0}}
+.mdar>svg,.mdlk>svg{width:18px;height:18px;flex:0 0 auto;color:var(--mute)}
+.mdar b.grow{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:379px){.hdr-r .who.psw:not(.vw)>span:first-child{font-size:0}.hdr-r .who.psw:not(.vw)>span:first-child::after{content:'▾';font-size:13px}}
+/* v2.8.0 (job 2): Team */
+.mtsum{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 8px}.mtsum>div{background:var(--card);border-radius:12px;box-shadow:var(--sh);padding:10px 12px;display:flex;flex-direction:column}
+.mtsum b{font-size:20px}.mtsum span{font-size:13px;font-weight:700}.mtsum small{font-size:12px;color:var(--mute)}
+.mtar{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:12px;box-shadow:var(--sh);border-left:5px solid var(--green);padding:10px;margin:6px 0;cursor:pointer}
+.mtar.a{border-left-color:#F59E0B}.mtar.r{border-left-color:var(--red)}.mtar>svg{width:18px;height:18px;flex:0 0 auto;color:var(--mute)}.mtar .grow{min-width:0}.mtar .pbar{margin-top:6px}
+.mthd{display:flex;align-items:center;gap:10px;margin:0 0 8px}.mthd b{font-size:18px}.mthd .ghost{padding:6px 10px;min-height:0}
+.mtts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 6px}@media (min-width:600px){.mtts{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.mtt{background:var(--card);border-radius:12px;box-shadow:var(--sh);padding:10px 12px;display:flex;flex-direction:column;border-top:4px solid transparent;min-width:0}
+.mtt.g{border-top-color:var(--green)}.mtt.a{border-top-color:#F59E0B}.mtt.r{border-top-color:var(--red)}
+.mtt b{font-size:20px}.mtt b small{font-size:13px;color:var(--mute);font-weight:700}.mtt span{font-size:13px;font-weight:700}.mtt>small{font-size:11.5px;color:var(--mute)}
+.dt td.r{text-align:right}
+.mtwk{display:flex;align-items:flex-end;gap:6px;height:110px;margin:6px 0}.mtwk>div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-width:0}
+.mtwk i{display:block;width:70%;background:var(--k1);border-radius:6px 6px 2px 2px}.mtwk b{font-size:12px;margin-top:3px}.mtwk span{font-size:11px;color:var(--mute);white-space:nowrap}
+/* v2.8.0 (job 3): the manager's Orders */
+.t2tabs.mo4{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.t2tabs.mo4 .t2tab{padding:8px 8px 7px}.t2tabs.mo4 .t2tab b{font-size:12.5px;line-height:1.15}.t2tabs.mo4 .t2tab span{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:360px){.t2tabs.mo4 .t2tab b{font-size:12px}.t2tabs.mo4{gap:4px}.t2tabs.mo4 .t2tab{padding:7px 6px}}
+.o2top .mo2new{margin-left:auto;padding:7px 12px;min-height:0;font-size:13px}
+.mdst.ns{opacity:.55}.mopd{min-width:48px;text-align:right}
+/* v2.8.0 (job 4): the manager's Money */
+.mdst.o{border-left-color:#EA580C}.mdstk .ag0{background:var(--green)}.mdstk .ag1{background:#F59E0B}.mdstk .ag2{background:#EA580C}.mdstk .ag3{background:var(--red)}
+.mdst b.grow{min-width:0}
+.mdst>span{white-space:nowrap}
+/* v2.8.0 (job 5a): the manager's Vendors */
+.mvh{display:flex;align-items:center;gap:8px}.mvh .mvreq{margin-left:auto;background:none;border:0;padding:4px 0;min-height:0;color:var(--brand,#2563eb);font-size:12.5px;font-weight:600;white-space:nowrap}
+.mvg{flex:0 0 46px;width:46px;height:8px;border-radius:5px;background:#e5e7eb;overflow:hidden;align-self:center;margin:0 4px 0 6px;display:inline-block}.mvg>i{display:block;height:100%;border-radius:5px}.mvg.none{background:none}
+.mvdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#a855f7;vertical-align:middle;margin-left:2px}
+.mvsum{font-size:12.5px;color:var(--muted,#6b7280);margin:2px 2px 6px}.mvkey{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted,#6b7280);margin:6px 2px}.mvkey .mvg{margin:0}
+.mvgw{padding:2px 0 4px;display:flex;justify-content:flex-end}.mvgw .mvg{flex-basis:120px;width:120px;height:10px}
+.sv7tr .mvhf::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:#a855f7;margin-right:5px}
+/* v2.8.0 (job 5b): Me › Settings and Reports */
+.msbox{background:var(--card,#fff);border-radius:14px;padding:4px 12px;margin:0 0 6px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.msl{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--line,#eef0f3);font-size:14px}.msl span{color:var(--muted,#6b7280)}
+.msbox .ghost.wide{margin:8px 0}
+.msr{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;border-bottom:1px solid var(--line,#eef0f3);padding:11px 0;min-height:0;text-align:left;font:inherit;color:inherit;border-radius:0}.msr:last-child{border-bottom:0}
+.msr .grow{display:flex;flex-direction:column;min-width:0}.msr b{font-size:14px}.msr small{font-size:12px;color:var(--muted,#6b7280)}.msr em{font-style:normal;font-weight:700;white-space:nowrap;font-size:14px}.msr .go svg{width:16px;height:16px}
+.mrhd{font-weight:700;font-size:15px;margin:4px 2px 8px}.mrsub{margin:-4px 0 6px 14px}
+.mrb{display:grid;grid-template-columns:1.25fr .8fr 1fr .9fr 1.15fr;gap:4px;align-items:start;padding:8px 0;border-bottom:1px solid var(--line,#eef0f3);font-size:13px}.mrb>span{text-align:right;display:flex;flex-direction:column;align-items:flex-end}.mrb small{font-size:11px;color:var(--muted,#6b7280);white-space:nowrap}
+.mrbh{font-size:11.5px;color:var(--muted,#6b7280);padding-top:0}.mrbh>span:first-child{text-align:left;align-items:flex-start}
+.mrwa{display:block;text-align:center;margin:14px 0 6px;text-decoration:none}
+.mrb small.t-red{color:#dc2626}.mrb small.t-amber{color:#d97706}.mrb small.t-green{color:#16a34a}
+.msme{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}.msme button{display:flex;align-items:center;gap:8px;justify-content:center;padding:12px 8px;border-radius:12px;background:var(--card,#fff);border:1px solid var(--line,#e5e7eb);font:inherit;color:inherit;min-height:0}.msme svg{width:20px;height:20px}.msme b{font-size:14px}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -1132,7 +1209,7 @@ function topbar() {
   if (D.screens.length > 1) { t += '<div class="scrs">'; D.screens.forEach(function (s) { var n = scrCount(B, s); t += '<button class="' + (s === SCREEN ? 'on' : '') + '" data-scr="' + s + '">' + (ICO['s_' + s] ? ico(ICO['s_' + s]) : '') + SNAME[s] + (n ? '<span class="cnt' + (s === 'order' || ACTF[s] ? '' : ' g') + '">' + n + '</span>' : '') + '</button>'; }); t += '</div>'; }
   var b6 = tabsOf() === TABS.order; // v2.6.0: the agent's bar – Today · Orders · raised + · Payments · Schools & vendors
   t += '<nav class="bnav' + (b6 ? ' b6' : '') + '">'; // v2.5.0: the screens of this role at the bottom, like a phone app; v2.5.3: with what waits on each
-  tabsOf().forEach(function (x) { if ((x[0] === 'helpers' || x[0] === 'dpay') && D.me.role === 'Helper') return; var n = (B[SCREEN] || {})[x[0]] || 0, ic = ICO[x[2] || x[0]], lb = x[0] === 'plan' && D.me.role !== 'Agent' ? 'Today' : x[0] === 'done' && D.me.role === 'Helper' ? 'My stops' : x[1]; if (b6) lb = lb.replace('Schools & vendors', 'Schools &<br>vendors'); t += '<button class="' + (x[0] === TAB || (TAB === 'month' && x[0] === 'plan') ? 'on' : '') + (b6 && x[0] === 'new' ? ' fabw' : '') + '" data-tab="' + x[0] + '">' + (b6 && x[0] === 'new' ? '<span class="fab">' + ico(ic) + '</span>' : ic ? ico(ic) : '') + '<span>' + lb + '</span>' + (n ? '<span class="cnt' + (actView() ? ' g' : '') + (x[0] === 'new' ? ' dotc' : '') + '">' + (x[0] === 'new' ? '' : n > 99 ? '99+' : n) + '</span>' : '') + '</button>'; });
+  tabsOf().forEach(function (x) { if ((x[0] === 'helpers' || x[0] === 'dpay') && D.me.role === 'Helper') return; var n = (B[SCREEN] || {})[x[0]] || 0, ic = ICO[x[2] || x[0]], lb = x[0] === 'plan' && D.me.role !== 'Agent' && !mgrMe() ? 'Today' : x[0] === 'done' && D.me.role === 'Helper' ? 'My stops' : x[1]; if (b6) lb = lb.replace('Schools & vendors', 'Schools &<br>vendors'); t += '<button class="' + (x[0] === TAB || (TAB === 'month' && x[0] === 'plan') ? 'on' : '') + (b6 && x[0] === 'new' ? ' fabw' : '') + '" data-tab="' + x[0] + '">' + (b6 && x[0] === 'new' ? '<span class="fab">' + ico(ic) + '</span>' : ic ? ico(ic) : '') + '<span>' + lb + '</span>' + (n ? '<span class="cnt' + (actView() ? ' g' : '') + (x[0] === 'new' ? ' dotc' : '') + '">' + (x[0] === 'new' ? '' : n > 99 ? '99+' : n) + '</span>' : '') + '</button>'; });
   $('top').innerHTML = t + '</nav>'; try { var bn = document.querySelector('.bnav'); if (bn) document.documentElement.style.setProperty('--bnh', bn.offsetHeight + 'px'); } catch (e) { }
 }
 /** v2.5.3: what waits for this person on each screen and tab – the red counts. */
@@ -6551,9 +6628,9 @@ function mgrBack() { return mgrMe() && (TAB === 'new' || TAB === 'today') ? '<di
 function whoHtml() {
   if (!D.views) return '<button class="who n27me" data-act="sheet" data-k="n27me" aria-label="Me">' + avatar(D.me.first) + '<span class="n27nm">' + esc(D.me.first) + ' ▾</span></button>'; // v2.7.0: the Me pop-up
   var cur = D.views.filter(function (x) { return (x.v || '') === VIEW; })[0] || D.views[0], nm = cur ? cur.name : D.me.first;
-  return '<span class="who psw" data-act="sheet" data-k="psw" title="Look at someone\'s screen"><span>' + (VIEW ? esc(nm) + '\'s screen' : esc(nm) + ' · Me') + ' ▾</span>' + avatar(nm) + '</span>';
+  return '<span class="who psw' + (VIEW ? ' vw' : '') + '" data-act="sheet" data-k="psw" title="Look at someone\'s screen"><span>' + (VIEW ? esc(nm) + '\'s screen' : esc(nm) + ' · Me') + ' ▾</span>' + avatar(nm) + '</span>';
 }
-var VWORD = { Manager: 'Today, Approvals, Help items, Money, Vendors', Agent: 'Her own screen: My day, orders, payments, vendors', Warehouse: 'His screen: orders to approve, his book, payments', Deliveries: 'His screen: route, orders, payments, helpers' };
+var VWORD = { Manager: 'Dashboard, Team, Orders, Money, Vendors', Agent: 'Her own screen: My day, orders, payments, vendors', Warehouse: 'His screen: orders to approve, his book, payments', Deliveries: 'His screen: route, orders, payments, helpers' };
 SHEETS.psw = function () {
   var V = D && D.views || []; if (!V.length) return '';
   return shHead('user', 'blue', 'Whose screen?', 'Each person\'s own screen, as they see it – view only until you tap Act for. Your own work is on Me.') + '<div class="list">' + V.map(function (x) { var on = (x.v || '') === VIEW;
@@ -8242,5 +8319,474 @@ rcptSend = (function (f) { return function (r, via) { if (via === 'SMS' || !D ||
     setTimeout(function () { document.removeEventListener('visibilitychange', hid); if (left || document.visibilityState !== 'visible') return; // the phone did not open WhatsApp: one tap opens it
       dlgChoose('Send ' + r.vendor + ' the receipt on WhatsApp', [['OPEN WHATSAPP', function () { location.href = 'https://wa.me/' + (wa || '') + '?text=' + encodeURIComponent(txt); }, 'main'], ['Not now', null, 'ghost']]); }, 2500); };
   if (!queue().length) return go(); flush(); var t0 = Date.now(), w = setInterval(function () { if (!queue().length || Date.now() - t0 > 6000) { clearInterval(w); go(); } }, 300); }; })(rcptSend);
+// ---------------------------------------------------------------- v2.8.0 (job 1): the manager's Dashboard – the workbook on the phone
+/* Bar: Dashboard · Team · Orders · Money · Vendors. Approvals leave the bar: the softly blinking "N tasks need you" sign opens them.
+   Targets are cartons only (no GHS targets – Yayra 23 Oct); the real ones and the ones the agents see sit side by side. */
+ICO.mdash = '<rect x="3.5" y="3.5" width="7.5" height="9" rx="2"/><rect x="13" y="3.5" width="7.5" height="5" rx="2"/><rect x="3.5" y="14.5" width="7.5" height="6" rx="2"/><rect x="13" y="10.5" width="7.5" height="10" rx="2"/>';
+ICO.mteam = '<circle cx="9" cy="8" r="3.3"/><path d="M2.8 19.5c.7-3.4 3.2-5.2 6.2-5.2s5.5 1.8 6.2 5.2"/><circle cx="17" cy="9" r="2.6"/><path d="M16.2 14.4c2.6.1 4.4 1.7 5 4.6"/>';
+TABS.mgr = [['mdash', 'Dashboard', 'mdash'], ['plan', 'Team', 'mteam'], ['today', 'Orders', 'b6orders'], ['money', 'Money', 'b6pay'], ['vendors', 'Vendors', 'b6sch']];
+var MD = { w: 'month', from: '', to: '', light: '', ag: '', C: {}, T: {} };
+function md28Win() { var t = D.today, w = MD.w;
+  if (w === 'today') return [t, t];
+  if (w === 'week') { var d = new Date(t + 'T12:00:00Z').getUTCDay(), mo = addDays(t, -((d + 6) % 7)); return [mo, addDays(mo, 6)]; }
+  if (w === 'dates') { var f = MD.from || t, e = MD.to || f; return f <= e ? [f, e] : [e, f]; }
+  var y = +t.slice(0, 4), m = +t.slice(5, 7); return [t.slice(0, 8) + '01', new Date(Date.UTC(y, m, 0, 12)).toISOString().slice(0, 10)]; }
+function md28Get() { var r = md28Win(), k = r[0] + '|' + r[1], c = MD.C[k], now = Date.now();
+  if ((!c || now - c.at > 120000) && MD.T[k] !== 1) { MD.T[k] = 1;
+    readOp('mdash', { from: r[0], to: r[1] }, function (x) { MD.T[k] = 0; if (x && x.ok) { MD.C[k] = { at: Date.now(), d: x }; if (TAB === 'mdash') render(); } }, function () { MD.T[k] = 0; }); }
+  return c ? c.d : null; }
+function md28Pct(a, b) { return b > 0 ? Math.round(a / b * 100) : 0; }
+function md28N(n) { return (Math.round((Number(n) || 0) * 10) / 10).toLocaleString('en-GB'); }
+function md28Ring(p, tone, mid) { var c = 2 * Math.PI * 26, f = Math.max(0, Math.min(100, p)) / 100 * c;
+  return '<svg class="mdrg" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="26" class="mdrb"/><circle cx="32" cy="32" r="26" class="mdrf ' + tone + '" stroke-dasharray="' + f.toFixed(1) + ' ' + c.toFixed(1) + '" transform="rotate(-90 32 32)"/><text x="32" y="36.5" text-anchor="middle">' + mid + '</text></svg>'; }
+function md28Tone(p) { return p >= 95 ? 'g' : p >= 80 ? 'a' : 'r'; }
+function md28Lights(X) {
+  var S = (X && X.stock) || [], out = [], low = [], set = S.some(function (s) { return s.set; });
+  S.forEach(function (s) { if (s.out || (s.set && s.left <= 0)) out.push(skn(s.sku)); else if (s.set && ((s.cover !== null && s.cover < 3) || s.left <= s.lvl)) low.push(skn(s.sku) + (s.cover !== null ? ' (' + md28N(s.cover) + ' days)' : '')); });
+  var st = !X ? ['', '…', ''] : out.length ? ['r', out.length + ' out', 'Out: ' + out.join(', ') + (low.length ? '. Low: ' + low.join(', ') : '')] : low.length ? ['a', low.length + ' low', 'Low: ' + low.join(', ')] : set ? ['g', 'Fine', 'Every code has more than 3 days of cover.'] : ['a', 'Not set', 'Frank has not set the stock reserved for CupSales yet.'];
+  var H = D.held27 || { cut: 17, people: [] }, P = H.people || [], hr = new Date().getHours(), aft = hr >= H.cut, late = 0, td = 0, wl = [], wd = [], cu = H.cut > 12 ? H.cut - 12 + ' pm' : H.cut + ' am';
+  P.forEach(function (p) { var l = p.old + (aft ? p.today : 0), t = aft ? 0 : p.today; late += l; td += t; if (l > 0.004) wl.push(p.name + ' ' + ghs(l)); if (t > 0.004) wd.push(p.name + ' ' + ghs(t)); });
+  var k = function (n) { return n >= 10000 ? Math.round(n / 1000) + 'k' : Math.round(n).toLocaleString('en-GB'); };
+  var ca = late > 0.004 ? ['r', k(late), 'Not with Frank by ' + cu + ': ' + wl.join(', ') + (wd.length ? '. Due today: ' + wd.join(', ') : '')] : td > 0.004 ? ['a', k(td), 'With people, due with Frank by ' + cu + ': ' + wd.join(', ')] : ['g', 'All in', 'All cash is with Frank.'];
+  var M = D.team, ct = 0, ex = 0; if (M) M.agents.forEach(function (a) { ct += a.ctn; ex += a.t.real * (M.days ? M.gone / M.days : 0); });
+  var r = ex > 0 ? ct / ex : 1, pa = !M ? ['', '…', ''] : r >= 1.05 ? ['g', 'Ahead', ct + ' cartons, ' + Math.round(ex) + ' expected by today'] : r >= 0.95 ? ['g', 'On pace', ct + ' cartons, ' + Math.round(ex) + ' expected by today'] : [r >= 0.8 ? 'a' : 'r', 'Behind', ct + ' cartons, ' + Math.round(ex) + ' expected by today (real targets)'];
+  return [['stock', 'Stock', st], ['cash', 'Cash', ca], ['pace', 'Pace', pa]]; }
+function pgMDash() {
+  var X = md28Get(), W = md28Win(), L = md28Lights(X);
+  var h = '<div class="t2tray mdw">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['dates', '📅']].map(function (c) { return '<button class="' + (MD.w === c[0] ? 'on' : '') + '" data-act="mdw" data-k="' + c[0] + '"' + (c[0] === 'dates' ? ' aria-label="Pick dates"' : '') + '>' + (c[0] === 'dates' && MD.w === 'dates' ? '📅 ' + esc(W[0] === W[1] ? dayLbl(W[0]) : dayLbl(W[0]) + ' – ' + dayLbl(W[1])) : c[1]) + '</button>'; }).join('') + '</div>';
+  if (MD.w === 'dates') h += '<div class="n72two"><label class="n72tf"><span>From (or the day)</span><input type="date" data-chg="mdd" data-f="from" value="' + esc(MD.from) + '" max="' + esc(D.today) + '"></label><label class="n72tf"><span>To (optional)</span><input type="date" data-chg="mdd" data-f="to" value="' + esc(MD.to) + '" max="' + esc(D.today) + '"></label></div>';
+  h += '<div class="mdl">' + L.map(function (l) { return '<button class="mdlt ' + l[2][0] + (MD.light === l[0] ? ' on' : '') + '" data-act="mdlt" data-k="' + l[0] + '"><i></i><span>' + l[1] + '</span><b>' + esc(l[2][1]) + '</b></button>'; }).join('') + '</div>';
+  var lo = L.filter(function (l) { return l[0] === MD.light; })[0]; if (lo && lo[2][2]) h += '<div class="mdwhy ' + lo[2][0] + '">' + esc(lo[2][2]) + '</div>';
+  if (!X) return h + '<div class="mdsk"><i></i><i></i><i></i><i></i></div>';
+  var A = X.agents, s = function (f) { return A.reduce(function (t, a) { return t + (Number(a[f]) || 0); }, 0); };
+  var ct = s('ctn'), rl = s('real'), sh = s('shown'), nw = s('nw'), vt = s('vend'), vs = s('vshown'), ac = s('act'), vn = s('vendors'), ap = A.length ? A[0].apct : 90;
+  var tot = X.sku.reduce(function (t, k) { return t + k.c; }, 0), bf = tot > 0 ? Math.round(X.bfc.now / tot * 100) : 0, lm = X.bfc.lm === null ? null : Math.round(X.bfc.lm);
+  var ring = function (p, tone, mid, lbl, sub, sub2) { return '<div class="mdk">' + md28Ring(p, tone, mid) + '<b>' + lbl + '</b><span>' + sub + '</span>' + (sub2 ? '<small>' + sub2 + '</small>' : '') + '</div>'; };
+  var pc = md28Pct(ct, rl), pn = md28Pct(nw, vt), pv = md28Pct(ac, vn), pb = lm ? Math.round(bf / lm * 100) : 0;
+  h += '<div class="mdks">' + ring(pc, md28Tone(md28Pct(ct, s('exp')) || (ct ? 100 : 0)), pc + '%', 'Cartons', md28N(ct) + ' of ' + rl, 'agents see ' + sh.toLocaleString('en-GB')) +
+    (vt > 0 ? ring(pn, md28Tone(pn), pn + '%', 'New vendors', nw + ' of ' + vt, 'agents see ' + vs) : ring(nw ? 100 : 0, 'g', String(nw), 'New vendors', 'in these days', '')) +
+    (MD.w === 'month' ? ring(md28Pct(pv, ap), md28Tone(md28Pct(pv, ap)), pv + '%', 'Active vendors', ac + ' of ' + vn, 'target ' + ap + '%') : ring(pv, 'g', pv + '%', 'Bought', ac + ' of ' + vn, 'in these days')) +
+    ring(lm ? Math.min(100, pb) : 0, lm ? md28Tone(pb) : 'a', bf + '%', 'BFC share', lm !== null ? X.bfc.lmName + ' ' + lm + '%' : 'no ' + X.bfc.lmName + ' sales', '') + '</div>';
+  h += '<div class="sech">Agents <span>real target</span></div>' + A.map(function (a) { var p = a.exp > 0 ? md28Pct(a.ctn, a.exp) : (a.ctn ? 100 : 0), k = 'mdag-' + a.uid, o = isOpen(k);
+    return '<div class="mdar ' + md28Tone(p) + '" data-act="tog" data-o="' + k + '" data-s="' + (o ? 1 : 0) + '">' + avatar(a.name) + '<b class="grow">' + esc(a.name) + '</b><span class="mdan">' + md28N(a.ctn) + ' <small>of ' + a.real + '</small></span>' + chev(o) + '</div>' +
+      (o ? '<div class="mdad"><div>Agents see <b>' + a.shown + '</b> cartons · ' + (a.exp > 0 ? p + '% of the pace' : 'no working day yet') + '</div><div>Active <b>' + a.act + ' of ' + a.vendors + '</b> · New vendors <b>' + a.nw + ' of ' + a.vend + '</b> <span class="muted">(she sees ' + a.vshown + ')</span></div><button class="ghost" data-act="mtgo" data-u="' + esc(a.uid) + '">Her month ›</button></div>' : ''); }).join('');
+  var pay = X.pay, pt = pay.cash + pay.credit + pay.slow, pp = function (n) { return pt > 0 ? Math.round(n / pt * 100) : 0; };
+  var top = X.sku.slice(0, 3).map(function (k) { return skn(k.sku) + ' ' + md28Pct(k.c, tot) + '%'; }).join(' · ');
+  var mc = X.sku.filter(function (k) { return k.c >= 1; }).slice().sort(function (a, b) { return b.cash / b.c - a.cash / a.c; }), mcr = mc.slice().reverse();
+  h += fold('mdmix', '<b>Sales mix</b> <span class="small muted">' + md28N(tot) + ' cartons</span><div class="small ell">' + (top || 'No cartons delivered') + '</div>', function () {
+    if (!tot) return emptyHtml('No cartons delivered in these days.');
+    return X.sku.map(function (k) { var p = md28Pct(k.c, tot); return '<div class="mdbar"><span>' + esc(skn(k.sku)) + '</span><i><em style="width:' + p + '%"></em></i><b>' + p + '%</b><small>' + md28N(k.c) + '</small></div>'; }).join('') +
+      '<div class="psec">Cash · credit · slow payers</div><div class="mdstk"><em class="g" style="width:' + pp(pay.cash) + '%"></em><em class="b" style="width:' + pp(pay.credit) + '%"></em><em class="r" style="width:' + pp(pay.slow) + '%"></em></div>' +
+      '<div class="mdkey"><span><i class="g"></i>Cash ' + pp(pay.cash) + '%</span><span><i class="b"></i>Credit ' + pp(pay.credit) + '%</span><span><i class="r"></i>Slow payers ' + pp(pay.slow) + '%</span></div>' +
+      (mc.length > 1 ? '<div class="mdln">Most on cash: <b>' + mc.slice(0, 2).map(function (k) { return esc(skn(k.sku)) + ' ' + md28Pct(k.cash, k.c) + '%'; }).join(', ') + '</b></div><div class="mdln">Most on credit: <b>' + mcr.slice(0, 2).map(function (k) { return esc(skn(k.sku)) + ' ' + md28Pct(k.cr, k.c) + '%'; }).join(', ') + '</b></div>' : ''); });
+  var S0 = X.src[0];
+  h += fold('mdsrc', '<b>Sources</b><div class="small ell">' + (S0 ? esc(S0.name) + ' ' + md28Pct(S0.c, tot) + '% of cartons' + (X.src.length > 1 ? ' · ' + X.src.slice(1).map(function (x) { return esc(x.name) + ' ' + md28Pct(x.c, tot) + '%'; }).join(' · ') : '') : 'No cartons delivered') + '</div>', function () {
+    if (!X.src.length) return emptyHtml('No cartons delivered in these days.');
+    return '<div class="mdstk">' + X.src.map(function (x, i) { return '<em class="s' + i + '" style="width:' + md28Pct(x.c, tot) + '%"></em>'; }).join('') + '</div>' + X.src.map(function (x, i) {
+      return '<div class="mdsr"><div class="row" style="flex-wrap:nowrap"><i class="mddot s' + i + '"></i><b class="grow">' + esc(x.name) + '</b><span>' + md28N(x.c) + ' cartons</span></div><div class="small muted">Sold ' + ghs(x.v) + ' · paid ' + ghs(x.paid) + ' · <b class="' + (x.open > 0.004 ? 't-red' : 't-green') + '">' + ghs(x.open) + ' left</b> (' + md28Pct(x.open, x.v) + '%)</div></div>'; }).join(''); });
+  var SK = X.stock.filter(function (x) { return x.set; }), sL = L[0][2];
+  h += fold('mdstock', '<b>Stock at Omni</b><div class="small ell">' + (SK.length ? esc(sL[2] || '') : 'Frank has not set the stock yet') + '</div>', function () {
+    if (!SK.length) return emptyHtml('Frank has not set the stock reserved for CupSales yet.');
+    return SK.map(function (x) { var t = x.out || x.left <= 0 ? 'r' : (x.cover !== null && x.cover < 3) || x.left <= x.lvl ? 'a' : 'g';
+      return '<div class="mdst ' + t + '"><b>' + esc(skn(x.sku)) + '</b><span class="grow">' + (x.out ? 'Out at Omni' : x.left + ' left') + '</span><span>' + (x.cover === null ? '<small class="muted">no sales</small>' : md28N(x.cover) + ' days') + '</span></div>'; }).join('') + '<p class="small muted" style="margin:6px 0 0">Days of cover from the last ' + X.sd + ' school days.</p>'; });
+  var Lk = X.look, ho = typeof needOpen === 'function' ? needOpen() : 0, ny = needsYou(), nl = Lk.lateN + (Lk.slow + Lk.stop ? 1 : 0) + (Lk.broken ? 1 : 0) + (ho ? 1 : 0);
+  var lrow = function (tab, tone, t, sub) { return '<div class="mdlk ' + tone + '" data-tab="' + tab + '"><div class="grow"><b>' + t + '</b>' + (sub ? '<div class="small muted ell">' + sub + '</div>' : '') + '</div>' + chev(false) + '</div>'; };
+  h += fold('mdlook', '<b>Needs a look</b>' + (nl ? ' <span class="cnt">' + nl + '</span>' : '') + '<div class="small ell">' + ([Lk.lateN ? Lk.lateN + ' late' : '', Lk.slow + Lk.stop ? (Lk.slow + Lk.stop) + ' vendors gone quiet' : '', Lk.broken ? Lk.broken + ' promises broken' : '', ho ? ho + ' help items asked' : ''].filter(String).join(' · ') || 'Nothing') + '</div>', function () {
+    var r = [Lk.lateN ? lrow('today', 'r', Lk.lateN + ' late deliver' + (Lk.lateN === 1 ? 'y' : 'ies'), Lk.late.slice(0, 4).map(function (o) { return esc(o.vendor); }).join(', ')) : '',
+      Lk.slow + Lk.stop ? lrow('vendors', 'a', (Lk.slow + Lk.stop) + ' vendors gone quiet', Lk.slow + ' slowing · ' + Lk.stop + ' stopped') : '', Lk.broken ? lrow('vendors', 'a', Lk.broken + ' promise' + (Lk.broken === 1 ? '' : 's') + ' broken', 'Past the day promised') : '', ho ? lrow('helpi', 'p', ho + ' help item' + (ho === 1 ? '' : 's') + ' asked', 'Release them, Prince brings them') : ''].join('');
+    return (r || ny ? r + ny : emptyHtml('Nothing needs a look.')); });
+  var R = X.recent || [];
+  h += fold('mdrec', '<b>Recent activity</b><div class="small ell">' + (R[0] ? esc(R[0].x) : 'Nothing yet') + '</div>', function () {
+    return R.length ? R.map(function (e) { return '<div class="mdev"><span>' + esc(e.at.slice(0, 10) === D.today ? e.at.slice(11) : dayLbl(e.at.slice(0, 10)).replace(/^\w+ /, '') + ' ' + e.at.slice(11)) + '</span><b>' + esc(e.x) + '</b></div>'; }).join('') : emptyHtml('Nothing yet.'); });
+  var need = lm && lm < 100 && tot > 0 && bf < lm ? Math.ceil((lm / 100 * tot - X.bfc.now) / (1 - lm / 100)) : 0;
+  h += fold('mdbfc', '<b>BFC servings</b> <span class="small muted">' + X.servings.toLocaleString('en-GB') + '</span><div class="small ell">' + (lm === null ? 'BFC is ' + bf + '% of cartons' : need > 0 ? 'Push BFC: ' + need + ' more cartons to reach ' + X.bfc.lmName + '\'s ' + lm + '%' : 'BFC ' + bf + '% – at or above ' + X.bfc.lmName + '\'s ' + lm + '%') + '</div>', function () {
+    return '<div class="mdln">Servings in BFC equivalents: <b>' + X.servings.toLocaleString('en-GB') + '</b></div><div class="small muted">Every sachet counted as BFC (280 g) by its weight, × 4 servings.</div><div class="mdln">BFC share: <b>' + bf + '%</b>' + (lm !== null ? ' · ' + X.bfc.lmName + ' ' + lm + '%' : '') + '</div>'; });
+  var St = D.stats; if (St) { var w = St.week, p = St.prev; h += fold('mdwk', '<b>This week against last week</b><div class="small">Cartons ' + cmpTxt(w.ctn, p.ctn) + '</div>', function () {
+    return '<table class="cmpt" style="width:100%">' + [['Cartons delivered', cmpTxt(w.ctn, p.ctn)], ['Cash collected', cmpTxt(w.cash, p.cash, 1)], ['Orders taken', cmpTxt(w.orders, p.orders)], ['Calls', cmpTxt(w.calls, p.calls)]].map(function (r) { return '<tr><td>' + r[0] + '</td><td class="r">' + r[1] + '</td></tr>'; }).join('') + '</table>'; }); }
+  return h; }
+PG27.mdash = pgMDash;
+ACT.mdw = function (b) { MD.w = b.dataset.k; MD.light = ''; if (MD.w === 'dates' && !MD.from) MD.from = D.today; render(); };
+ACT.mdlt = function (b) { MD.light = MD.light === b.dataset.k ? '' : b.dataset.k; render(); };
+CHG.mdd = function (e) { MD[e.dataset.f] = e.value || ''; setTimeout(render, 0); };
+function mgrBack() { return mgrMe() && TAB === 'new' ? '<div class="backrow"><button class="ghost" data-tab="today">‹ Orders</button></div>' : ''; }
+/* "N tasks need you": approvals and help items to release, for the manager (not while acting for someone) */
+(function () { var b0 = bellHtml; bellHtml = function () { if (!mgrMe() || D.viewOf) return b0();
+  var n = apprCount() + (typeof needOpen === 'function' ? needOpen() : 0) + (typeof n27Tasks === 'function' ? n27Tasks().length : 0); if (!n) return '';
+  return '<button class="tbell" data-act="mdtasks" aria-label="' + n + (n === 1 ? ' task needs you' : ' tasks need you') + '">' + ico(N27I.task) + '<b>' + n + '</b></button>'; }; })();
+ACT.mdtasks = function () { TAB = 'appr'; APK = ''; MSG = null; SHEETK = ''; render(); window.scrollTo(0, 0); };
+(function () { var p0 = pgAppr; pgAppr = function () { if (!mgrMe()) return p0(); var no = typeof needOpen === 'function' ? needOpen() : 0, t = typeof n27TaskRows === 'function' ? n27TaskRows() : '';
+  return todoBox([no ? tabRow('helpi', 'gift', 'purple', 'Help items: ' + no + ' to release', 'Prince brings them', 0) : '']) + (t ? '<div class="card">' + t + '</div>' : '') + p0(); }; })();
+// ---------------------------------------------------------------- v2.8.0 (job 2): Team – Today · This month · Prince · Frank, and each agent's page
+var MT = { s: 'today', a: '', C: {}, T: {} };
+function mt28Read(op, data, key) { var c = MT.C[key], now = Date.now();
+  if ((!c || now - c.at > 120000) && MT.T[key] !== 1) { MT.T[key] = 1;
+    readOp(op, data, function (x) { MT.T[key] = 0; if (x && x.ok) { MT.C[key] = { at: Date.now(), d: x }; if (TAB === 'plan') render(); } }, function () { MT.T[key] = 0; }); }
+  return c ? c.d : null; }
+function mt28Sk() { return '<div class="mdsk"><i></i><i></i></div>'; }
+function mt28Tone(a, M) { var ex = a.t.real * (M.days ? M.gone / M.days : 0), p = ex > 0 ? a.ctn / ex * 100 : (a.ctn ? 100 : 0); return md28Tone(p); }
+(function () { var pp0 = pgPlan; pgPlan = function () { return mgrMe() ? pgMTeam() : pp0(); }; })();
+function pgMTeam() {
+  if (MT.a) return mt28AgentPg();
+  var wt = (D.teamDay ? D.teamDay.agents.filter(function (a) { return a.status === 'Agreed' || (a.tmr && a.tmr.status === 'Agreed'); }).length : 0);
+  var h = '<div class="t2tray">' + [['today', 'Today', wt], ['month', 'This month', 0], ['prince', 'Prince', 0], ['frank', 'Frank', 0]].map(function (c) { return '<button class="' + (MT.s === c[0] ? 'on' : '') + '" data-act="mts" data-k="' + c[0] + '">' + c[1] + (c[2] ? ' <span class="cnt">' + c[2] + '</span>' : '') + '</button>'; }).join('') + '</div>';
+  if (MT.s === 'month') return h + mt28Month();
+  if (MT.s === 'prince') return h + mt28Prince();
+  if (MT.s === 'frank') return h + mt28Frank();
+  return h + pgTeamDay(); }
+ACT.mts = function (b) { MT.s = b.dataset.k; MT.a = ''; render(); window.scrollTo(0, 0); };
+ACT.mta = function (b) { MT.a = b.dataset.u; render(); window.scrollTo(0, 0); };
+ACT.mtx = function () { MT.a = ''; render(); window.scrollTo(0, 0); };
+function mgrTop() { return ''; } /* New order is on Orders now */
+ACT.mtgo = function (b) { TAB = 'plan'; MT.a = b.dataset.u; MSG = null; render(); window.scrollTo(0, 0); };
+function mt28Month() {
+  var M = D.team; if (!M) return emptyHtml('The month is not ready – pull down to refresh.');
+  var ct = 0, tg = 0, sh = 0; M.agents.forEach(function (a) { ct += a.ctn; tg += a.t.real; sh += a.t.shown; });
+  var h = '<div class="mtsum"><div><b>' + md28N(ct) + '</b> <span>of ' + tg + ' cartons</span><small>agents see ' + sh.toLocaleString('en-GB') + '</small></div><div><b>' + M.gone + '</b> <span>of ' + M.days + ' days gone</span><small>' + esc(M.month.slice(8)) + ' ' + esc(M.month.slice(0, 4)) + '</small></div></div>';
+  h += M.agents.map(function (a) { var pc = a.t.real ? Math.min(100, a.ctn / a.t.real * 100) : 0, tone = mt28Tone(a, M);
+    return '<div class="mtar ' + tone + '" data-act="mta" data-u="' + esc(a.uid) + '">' + avatar(a.name) + '<div class="grow"><div class="row" style="flex-wrap:nowrap"><b class="grow">' + esc(a.name) + (a.leave ? ' <span class="pill">on leave</span>' : '') + '</b><span class="mdan">' + md28N(a.ctn) + ' <small>of ' + a.t.real + '</small></span></div><div class="pbar"><i style="width:' + pc + '%"></i><em style="left:80%"></em></div></div>' + chev(false) + '</div>'; }).join('');
+  h += '<div class="mdkey" style="margin:4px 2px 10px"><span><i class="g"></i>On pace</span><span><i style="background:#F59E0B"></i>A little behind</span><span><i class="r"></i>Behind</span></div>';
+  return h + '<div class="btns" style="flex-wrap:wrap"><button data-act="sheet" data-k="team">Leave and pay</button><button data-act="tgtOpen">Set targets</button></div>'; }
+function mt28AgentPg() {
+  var M = D.team, a = M ? M.agents.filter(function (x) { return x.uid === MT.a; })[0] : null; if (!a) { MT.a = ''; return pgMTeam(); }
+  var X = mt28Read('mteama', { uid: a.uid }, 'a' + a.uid), t = a.t, c = a.conv, st = a.today;
+  var h = '<div class="mthd"><button class="ghost" data-act="mtx">‹ Team</button>' + avatar(a.name) + '<b class="grow">' + esc(a.name) + '</b><span class="small muted">' + esc(M.month.slice(8)) + '</span></div>';
+  var tile = function (v, l, s, tone) { return '<div class="mtt ' + (tone || '') + '"><b>' + v + '</b><span>' + l + '</span>' + (s ? '<small>' + s + '</small>' : '') + '</div>'; };
+  var ex = t.real * (M.days ? M.gone / M.days : 0), pp = ex > 0 ? Math.round(a.ctn / ex * 100) : 0;
+  h += '<div class="mtts">' + tile(md28N(a.ctn) + '<small> / ' + t.real + '</small>', 'Cartons', 'she sees ' + t.shown, mt28Tone(a, M)) + tile(a.regsBought + '<small> / ' + t.vendors + '</small>', 'New vendors', 'she sees ' + t.vshown) +
+    tile(a.activePct + '%', 'Active', a.bought + ' of ' + a.vendors + ' · target ' + t.active + '%') + tile(pp + '%', 'Pace', 'month end ' + a.proj.projCtn + ' ctn') + '</div>';
+  h += '<div class="small muted" style="margin:2px 2px 10px">Today: ' + (!st && a.leave ? 'on leave' : !st && a.hol ? 'public holiday' : st ? 'started ' + esc(st.hm) : 'not started') + '</div>';
+  h += fold('mtpay', '<b>Targets and pay</b><div class="small ell">Incentive ' + ghs(a.real.now) + ' so far · conveyance ' + ghs(c.due) + (c.penalty ? ' (lateness −' + ghs(c.penalty) + ')' : '') + '</div>', function () {
+    var r = function (k, real, shown) { return '<tr><td class="k">' + k + '</td><td class="r"><b>' + real + '</b></td><td class="r muted">' + shown + '</td></tr>'; };
+    return '<table class="dt" style="width:100%"><tr><td></td><td class="r"><b>Real</b></td><td class="r muted">She sees</td></tr>' + r('Cartons', t.real, t.shown) + r('New vendors', t.vendors, t.vshown) + r('Active', t.active + '%', t.active + '%') +
+      r('Incentive', ghs(a.real.now) + '<div class="small muted">' + ghs(a.real.pace) + ' at this pace</div>', ghs(a.proj.incentive)) + '</table>' +
+      '<div class="mdln">Conveyance <b>' + ghs(c.due) + '</b> of ' + ghs(c.amount) + (c.penalty ? ' · lateness <b class="t-red">−' + ghs(c.penalty) + '</b>' : '') + (c.missing ? ' · ' + c.missing + ' day' + (c.missing === 1 ? '' : 's') + ' without a start' : '') + '</div>' +
+      (c.late.length ? '<div class="small muted" style="margin-top:4px">' + c.late.slice(-6).map(function (l) { return esc(dayLbl(l.day)) + (l.none ? ' no start' : ' late ' + esc(l.at)); }).join(' · ') + '</div>' : '') + '<div class="small muted" style="margin-top:6px">Only you see the real targets, the 50/50 incentive and the lateness.</div>'; });
+  if (!X) return h + mt28Sk();
+  var S = X.st, nm = function (L) { return L.map(function (x) { return esc(x.n); }).join(', '); };
+  h += fold('mtven', '<b>Her vendors</b> <span class="small muted">' + X.vendors + '</span><div class="small ell">' + S.buy + ' buying · ' + S.slowN + ' slowing · ' + S.stopN + ' stopped · ' + S.nw + ' new</div>', function () {
+    return '<div class="mdstk"><em class="g" style="width:' + md28Pct(S.buy, X.vendors) + '%"></em><em style="background:#F59E0B;width:' + md28Pct(S.slowN, X.vendors) + '%"></em><em class="r" style="width:' + md28Pct(S.stopN, X.vendors) + '%"></em><em class="b" style="width:' + md28Pct(S.nw, X.vendors) + '%"></em></div>' +
+      (S.slow.length ? '<div class="mdln"><b>Slowing:</b> ' + nm(S.slow) + (S.slowN > S.slow.length ? ' …' : '') + '</div>' : '') + (S.stop.length ? '<div class="mdln"><b>Stopped:</b> ' + nm(S.stop) + (S.stopN > S.stop.length ? ' …' : '') + '</div>' : '') +
+      (X.notBoughtN ? '<div class="mdln"><b>Not bought this month (' + X.notBoughtN + '):</b> <span class="small">' + X.notBought.map(esc).join(', ') + (X.notBoughtN > X.notBought.length ? ' …' : '') + '</span></div>' : ''); });
+  var V = X.visits;
+  h += fold('mtvis', '<b>Visits</b> <span class="small muted">this month</span><div class="small ell">' + V.n + ' visits · ' + V.calls + ' calls · ' + (V.n ? md28Pct(V.ord, V.n) : 0) + '% ended in an order</div>', function () {
+    return '<div class="mdln">' + V.n + ' visits on ' + V.days + ' days, at ' + V.schools + ' school' + (V.schools === 1 ? '' : 's') + '</div><div class="mdln">' + V.ord + ' ended in an order · ' + V.calls + ' calls</div>'; });
+  var Mo = X.money;
+  h += fold('mtmon', '<b>Money</b><div class="small ell">' + (Mo.cash > 0.004 ? ghs(Mo.cash) + ' with her · ' : '') + 'her vendors owe ' + ghs(Mo.owed) + (Mo.slow > 0.004 ? ' · ' + ghs(Mo.slow) + ' slow' : '') + '</div>', function () {
+    return '<div class="mdln">Cash with her: <b>' + ghs(Mo.cash) + '</b></div><div class="mdln">Owed by ' + Mo.n + ' vendor' + (Mo.n === 1 ? '' : 's') + ': <b>' + ghs(Mo.owed) + '</b>' + (Mo.slow > 0.004 ? ' · <b class="t-red">' + ghs(Mo.slow) + '</b> past the credit days' : '') + '</div>' +
+      Mo.top.map(function (x) { return '<div class="mdev"><b class="grow">' + esc(x.n) + '</b><span>' + ghs(x.a) + '</span></div>'; }).join(''); });
+  var W = X.weeks, mx = Math.max.apply(null, W.map(function (w) { return w.c; }).concat([1]));
+  h += fold('mtwk', '<b>Cartons a week</b><div class="small ell">This week ' + md28N(W[W.length - 1].c) + ' · last week ' + md28N(W[W.length - 2].c) + '</div>', function () {
+    return '<div class="mtwk">' + W.map(function (w) { return '<div><i style="height:' + Math.max(2, Math.round(w.c / mx * 70)) + 'px"></i><b>' + md28N(w.c) + '</b><span>' + esc(dayLbl(w.from).replace(/^\w+ /, '')) + '</span></div>'; }).join('') + '</div><div class="small muted">Weeks from Monday.</div>'; });
+  return h; }
+function mt28Prince() { var R = D.r27m, c = typeof r27MgrCard === 'function' ? r27MgrCard() : ''; if (!R || !c) return emptyHtml('Prince\'s month is not ready – pull down to refresh.');
+  var S = R.score, B = R.bonus, tile = function (v, l, s, tone) { return '<div class="mtt ' + (tone || '') + '"><b>' + v + '</b><span>' + l + '</span>' + (s ? '<small>' + s + '</small>' : '') + '</div>'; };
+  return '<div class="mtts">' + tile(md28N(S.ctn) + '<small> / ' + S.target.toLocaleString('en-GB') + '</small>', 'Cartons', 'qualifies at ' + S.qual, S.onPace ? 'g' : 'a') + tile(S.score + '<small> / 100</small>', 'His score', 'on time ' + S.time.pct + '%') +
+    tile(ghs(B.ghs), 'Bonus', B.qualifies ? 'qualifies ✓' : md28N(B.need) + ' cartons to go', B.qualifies ? 'g' : '') + tile(S.resp.up + ' 👍 ' + S.resp.down + ' 👎', 'Respect', 'help items ' + S.help.x + '/' + S.help.y) + '</div>' +
+    fold('mtpr', '<b>Details</b><div class="small ell">Bonus, score and calls per agent</div>', function () { return c; }); }
+function mt28Frank() {
+  var X = mt28Read('mfrank', {}, 'frank'); if (!X) return mt28Sk();
+  var N = X.now || {}, d = X.day, h = '';
+  var tile = function (v, l, s, tone) { return '<div class="mtt ' + (tone || '') + '"><b>' + v + '</b><span>' + l + '</span>' + (s ? '<small>' + s + '</small>' : '') + '</div>'; };
+  h += '<div class="mtts">' + tile(X.wait, 'To approve', X.urg ? X.urg + ' urgent' : '', X.wait ? 'a' : 'g') + tile(X.load, 'To load', '', X.load ? 'a' : 'g') + tile(X.med.today === null ? '–' : X.med.today + ' min', 'Approval time', 'middle time today' + (X.med.week !== null ? ' · week ' + X.med.week + ' min' : ''), X.med.today !== null && X.med.today > 30 ? 'a' : '') + tile(N.n || 0, 'Approved today', md28N(N.ctn || 0) + ' cartons') + '</div>';
+  h += '<div class="small muted" style="margin:2px 2px 10px">' + (d.opened ? 'Opened ' + esc(d.opened) : 'Not opened yet') + (d.closed ? ' · closed ' + esc(d.closed) : '') + '</div>';
+  h += fold('mtfcash', '<b>Cash box</b><div class="small ell">Expected ' + ghs(N.exp || 0) + (d.count !== null ? ' · counted ' + ghs(d.count) : '') + '</div>', function () {
+    var df = d.count !== null ? Math.round((d.count - (N.exp || 0)) * 100) / 100 : null;
+    return '<div class="mdln">Opening ' + ghs(N.open || 0) + ' + paid in today ' + ghs(N.rec || 0) + ' = expected <b>' + ghs(N.exp || 0) + '</b></div>' + (df !== null ? '<div class="mdln">Counted <b>' + ghs(d.count) + '</b> · ' + (Math.abs(df) < 0.01 ? '<b class="t-green">right</b>' : '<b class="t-red">' + (df > 0 ? '+' : '') + ghs(df) + '</b>') + '</div>' : '') +
+      ((N.wp || []).length ? '<div class="mdln">Still with people: ' + N.wp.map(function (p) { return esc(p.name) + ' ' + ghs(p.amt); }).join(', ') + '</div>' : '') + (N.notYet ? '<div class="mdln">' + N.notYet + ' payment' + (N.notYet === 1 ? '' : 's') + ' not confirmed yet</div>' : ''); });
+  if (N.low || (N.back || []).length) h += fold('mtfstk', '<b>Stock</b><div class="small ell">' + esc(N.low || 'Back on the shelf today: ' + N.back.length) + '</div>', function () { return (N.low ? '<div class="mdln">' + esc(N.low) + '</div>' : '') + ((N.back || []).length ? '<div class="mdln">Back on the shelf today: ' + N.back.map(esc).join(', ') + '</div>' : ''); });
+  h += fold('mtfrep', '<b>His day reports</b><div class="small ell">' + (X.reps.length ? 'Last: ' + esc(dayLbl(X.reps[0].day)) : 'None yet') + '</div>', function () {
+    return X.reps.length ? X.reps.map(function (r) { var df = r.count === null || r.count === undefined ? null : Math.round((r.count - r.exp) * 100) / 100;
+      return '<div class="mdev"><span>' + esc(dayLbl(r.day).replace(/^\w+ /, '')) + '</span><b class="grow">' + r.n + ' orders · ' + md28N(r.ctn) + ' ctn</b><span class="' + (df === null ? 'muted' : Math.abs(df) < 0.01 ? 't-green' : 't-red') + '">' + (df === null ? 'not counted' : Math.abs(df) < 0.01 ? 'cash right' : (df > 0 ? '+' : '') + ghs(df)) + '</span></div>'; }).join('') : emptyHtml('No day reports yet.'); });
+  return h; }
+// ---------------------------------------------------------------- v2.8.0 (job 3): the manager's Orders – Needs you · On the way · Done · Stock
+/* One list of every agent's orders, coloured by stage, with one filter tray: agent (one), source (several), urgent; Done has the day chips. */
+var MO = { t: '', ag: '', src: [], urg: 0, q: '', w: 'week', from: '', to: '', ST: null, stT: 0 };
+(function () { var t0 = pgToday; pgToday = function () { return mgrMe() && SUB.today !== 'pay' ? pgMOrd() : t0(); }; })();
+function moSrc(o) { var f = String(o.from || ''); return /^Omni/.test(f) ? 'Omni' : /^Open/i.test(f) ? 'Open market' : f ? f.split(' ')[0] : 'Omni'; }
+function moOk(o) { var q = norm(MO.q);
+  return (!MO.ag || o.agent === MO.ag) && (!MO.src.length || MO.src.indexOf(moSrc(o)) >= 0) && (!MO.urg || !!o.urg) && (!q || norm(o.vendor + ' ' + (o.school || '') + ' ' + o.oid).indexOf(q) >= 0); }
+function moDue(o) { return o.dlv || o.date; }
+function moNeeds() { if (!D || !D.myOrders) return [];
+  return oAll().filter(function (o) { if (!oOpen(o)) return false; var k = oStage(o).k; return k === 'prob' || moDue(o) < D.today || oWaitDays(o) >= 1; }).map(function (o) { var k = oStage(o).k;
+    return { o: o, why: k === 'prob' ? oStage(o).w : moDue(o) < D.today ? 'Late · was for ' + dayLbl(moDue(o)) : 'Waiting for Frank ' + oWaitDays(o) + ' day' + (oWaitDays(o) === 1 ? '' : 's') }; }); }
+BADGE27.push(function (B, r, sup) { if (sup && B.order && mgrMe()) B.order.today = moNeeds().length; });
+function moRow(o, why) { var st = oStage(o);
+  return '<div class="o2r k-' + st.k + '" data-act="' + (o.old ? 'o27oldo' : 'oopen') + '" data-o="' + esc(oKey(o)) + '"><div class="o2a"><b class="ell">' + esc(o.vendor) + (o.urg ? ' 🚩' : '') + '</b><span>' + oCtnAll(o) + ' ctn</span></div><div class="o2s ell">' + esc(why || st.w) + ' · ' + esc(o.agent || '') + (o.from && moSrc(o) !== 'Omni' ? ' · ' + esc(moSrc(o)) : '') + '</div></div>'; }
+function moTab(k, nm, sub, cls) { return '<button class="t2tab' + (MO.t === k ? ' on' : '') + '" data-act="motab" data-k="' + k + '"><b>' + nm + '</b><span class="' + (cls || '') + '">' + esc(sub) + '</span></button>'; }
+function moTray() {
+  var A = (D.team ? D.team.agents.map(function (a) { return a.name; }) : []), S = ['Omni'];
+  (D.suppliers || []).forEach(function (x) { var s = moSrc({ from: x.name }); if (S.indexOf(s) < 0) S.push(s); }); oAll().forEach(function (o) { var s = moSrc(o); if (S.indexOf(s) < 0) S.push(s); });
+  var n = (MO.ag ? 1 : 0) + MO.src.length + (MO.urg ? 1 : 0);
+  return '<input class="o2q" data-inp="moq" placeholder="Find a vendor or order number" value="' + esc(MO.q) + '" autocomplete="off">' +
+    '<div class="t2tray"><button class="' + (!MO.ag ? 'on' : '') + '" data-act="moag" data-k="">All agents</button>' + A.map(function (a) { return '<button class="' + (MO.ag === a ? 'on' : '') + '" data-act="moag" data-k="' + esc(a) + '">' + esc(a) + '</button>'; }).join('') + '</div>' +
+    '<div class="t2tray">' + S.map(function (s) { return '<button class="' + (MO.src.indexOf(s) >= 0 ? 'on' : '') + '" data-act="mosrc" data-k="' + esc(s) + '">' + esc(s) + '</button>'; }).join('') + '<button class="' + (MO.urg ? 'on' : '') + '" data-act="mourg">🚩 Urgent</button>' + (n ? '<button data-act="moclr">Clear</button>' : '') + '</div>'; }
+function moWin() { var t = D.today;
+  if (MO.w === 'today') return [t, t];
+  if (MO.w === 'month') return [t.slice(0, 8) + '01', t];
+  if (MO.w === 'dates') { var f = MO.from || t, e = MO.to || f; return f <= e ? [f, e] : [e, f]; }
+  return [oWeekStart(), t]; }
+function moDone() { var R = moWin(), k = 'm|' + R[0] + '|' + R[1], L = [], seen = {}, ph = addDays(D.today, -13);
+  oAll().forEach(function (o) { if (!oOpen(o) && o.date >= R[0] && o.date <= R[1]) { seen[o.oid] = 1; L.push(o); } });
+  if (R[0] < ph) { if (!OHIST[k] && OHTRY[k] !== 1 && OHTRY[k] !== 2) { OHTRY[k] = 1; readOp('ordhist', { from: R[0], to: R[1], uid: '*' }, function (r) { if (r && r.orders) { OHIST[k] = r.orders; OHTRY[k] = 0; render(); } else { OHTRY[k] = 2; render(); } }, function () { OHTRY[k] = 2; render(); }); }
+    (OHIST[k] || []).forEach(function (o) { if (!seen[o.oid]) { seen[o.oid] = 1; L.push(o); } }); }
+  return { L: L, wait: R[0] < ph && !OHIST[k] && OHTRY[k] !== 2 }; }
+function pgMOrd() {
+  var A = oAll().filter(moOk), N = moNeeds().filter(function (x) { return moOk(x.o); }), W = A.filter(oOpen), CA = (D.chgAsks || []).length;
+  if (!MO.t) MO.t = N.length || CA ? 'n' : 'w';
+  var h = '<div class="o2top"><b>Orders</b><button class="ic mo2new" data-tab="new">' + ico(ICO['new']) + 'New order</button></div>';
+  h += '<div class="t2tabs mo4">' + moTab('n', 'Needs you', N.length + CA ? (N.length + CA) + ' to do' : 'Nothing ✓', N.length + CA ? 'a' : 'g') + moTab('w', 'On the way', String(W.length)) + moTab('d', 'Done', MO.w === 'dates' ? 'picked' : MO.w === 'today' ? 'today' : MO.w === 'month' ? 'this month' : 'this week') + moTab('s', 'Stock', 'at Omni') + '</div>';
+  if (MO.t === 's') return h + moStock();
+  h += moTray();
+  if (MO.t === 'n') {
+    h += CA ? '<div class="mdlk a" data-act="moapk" data-k="chg"><div class="grow"><b>' + CA + ' order change' + (CA === 1 ? '' : 's') + ' to OK</b><div class="small muted">The agent spoke to Frank</div></div>' + chev(false) + '</div>' : '';
+    h += N.length ? N.map(function (x) { return moRow(x.o, x.why); }).join('') : (CA ? '' : emptyHtml('Nothing needs you.'));
+  } else if (MO.t === 'w') {
+    var rank = ['prob', 'frank', 'appr', 'prince'], G = {};
+    W.forEach(function (o) { var k = oStage(o).k; (G[k] = G[k] || []).push(o); });
+    h += '<div class="mdkey" style="margin:2px 2px 6px">' + rank.map(function (k) { return '<span><i style="background:' + OCOL[k][1] + '"></i>' + OCOL[k][0] + '</span>'; }).join('') + '</div>';
+    h += W.length ? rank.filter(function (k) { return G[k]; }).map(function (k) { var g = G[k].sort(function (a, b) { return (b.urg ? 1 : 0) - (a.urg ? 1 : 0) || (a.fpos || 0) - (b.fpos || 0) || (a.ppos || 0) - (b.ppos || 0); });
+      return '<div class="o2dh"><span>' + OCOL[k][0] + '</span><span>' + g.length + ' · ' + g.reduce(function (t, o) { return t + oCtnAll(o); }, 0) + ' ctn</span></div>' + g.map(function (o) { return moRow(o); }).join(''); }).join('') : emptyHtml('No order on the way.');
+  } else {
+    var R = moWin(), X = moDone();
+    h += '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['dates', '📅']].map(function (c) { return '<button class="' + (MO.w === c[0] ? 'on' : '') + '" data-act="mow" data-k="' + c[0] + '">' + (c[0] === 'dates' && MO.w === 'dates' ? '📅 ' + esc(R[0] === R[1] ? dayLbl(R[0]) : dayLbl(R[0]) + ' – ' + dayLbl(R[1])) : c[1]) + '</button>'; }).join('') + '</div>';
+    if (MO.w === 'dates') h += '<div class="n72two"><label class="n72tf"><span>From (or the day)</span><input type="date" data-chg="mod" data-f="from" value="' + esc(MO.from) + '" max="' + esc(D.today) + '"></label><label class="n72tf"><span>To (optional)</span><input type="date" data-chg="mod" data-f="to" value="' + esc(MO.to) + '" max="' + esc(D.today) + '"></label></div>';
+    var L = X.L.filter(moOk).sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; }), ok = L.filter(function (o) { return !/Cancel|Rejected/.test(o.status); });
+    h += '<div class="o2wk">' + ok.length + ' order' + (ok.length === 1 ? '' : 's') + ' · ' + ok.reduce(function (t, o) { return t + oCtnAll(o); }, 0) + ' cartons · ' + ghs(ok.reduce(function (t, o) { return t + oValAll(o); }, 0)) + '</div>';
+    if (X.wait) h += '<div class="mdsk"><i></i><i></i></div>';
+    var cur = null; L.forEach(function (o) { if (o.date !== cur) { cur = o.date; var g = L.filter(function (y) { return y.date === cur && !/Cancel|Rejected/.test(y.status); }); h += '<div class="o2dh"><span>' + esc(dayLbl(cur)) + '</span><span>' + g.reduce(function (t, y) { return t + oCtnAll(y); }, 0) + ' ctn · ' + ghs(g.reduce(function (t, y) { return t + oValAll(y); }, 0)) + '</span></div>'; } h += moRow(o); });
+    if (!L.length && !X.wait) h += emptyHtml('No order matches.');
+  }
+  return h; }
+function moStock() {
+  var now = Date.now(); if ((!MO.ST || now - MO.ST.at > 120000) && MO.stT !== 1) { MO.stT = 1; readOp('mstock', {}, function (x) { MO.stT = 0; if (x && x.ok) { MO.ST = { at: Date.now(), d: x }; if (TAB === 'today') render(); } }, function () { MO.stT = 0; }); }
+  var X = MO.ST && MO.ST.d; if (!X) return '<div class="mdsk"><i></i><i></i></div>';
+  var S = X.stock, set = S.filter(function (x) { return x.set; });
+  if (!set.length) return emptyHtml('Frank has not set the stock reserved for CupSales yet.');
+  return '<div class="mdkey" style="margin:2px 2px 6px"><span><i class="g"></i>3+ days</span><span><i style="background:#F59E0B"></i>Low</span><span><i class="r"></i>Out</span></div>' + S.map(function (x) {
+    var t = !x.set ? '' : x.out || x.left <= 0 ? 'r' : (x.cover !== null && x.cover < 3) || x.left <= x.lvl ? 'a' : 'g';
+    return '<div class="mdst ' + t + (x.set ? '' : ' ns') + '"><b>' + esc(skn(x.sku)) + '</b><span class="grow">' + (!x.set ? '<small class="muted">not set</small>' : x.out ? 'Out at Omni' : x.left + ' left') + '</span><span>' + (x.cover === null ? '<small class="muted">' + (x.set ? 'no sales' : '') + '</small>' : md28N(x.cover) + ' days') + '</span><small class="muted mopd">' + (x.per ? md28N(x.per) + '/day' : '') + '</small></div>'; }).join('') +
+    '<p class="small muted" style="margin:6px 0 0">Days of cover from the last ' + X.sd + ' school days.</p>'; }
+ACT.motab = function (b) { MO.t = b.dataset.k; render(); };
+ACT.moag = function (b) { MO.ag = b.dataset.k; render(); };
+ACT.mosrc = function (b) { var k = b.dataset.k, i = MO.src.indexOf(k); if (i >= 0) MO.src.splice(i, 1); else MO.src.push(k); render(); };
+ACT.mourg = function () { MO.urg = MO.urg ? 0 : 1; render(); };
+ACT.moclr = function () { MO.ag = ''; MO.src = []; MO.urg = 0; MO.q = ''; render(); };
+ACT.mow = function (b) { MO.w = b.dataset.k; if (MO.w === 'dates' && !MO.from) MO.from = D.today; render(); };
+ACT.moapk = function (b) { TAB = 'appr'; APK = b.dataset.k; MSG = null; render(); window.scrollTo(0, 0); };
+CHG.mod = function (e) { MO[e.dataset.f] = e.value || ''; setTimeout(render, 0); };
+INP.moq = function (el) { MO.q = el.value; clearTimeout(MO.qt); MO.qt = setTimeout(function () { var p = el.selectionStart; render(); var n = document.querySelector('[data-inp=moq]'); if (n) { n.focus(); try { n.setSelectionRange(p, p); } catch (e) { } } }, 250); };
+// ---------------------------------------------------------------- v2.8.0 (job 4): the manager's Money – Collected · Credit · With people · Distributors
+var MM = { s: 'col', w: 'week', from: '', to: '', C: {}, T: {} };
+function mm28Win() { var t = D.today; if (MM.w === 'today') return [t, t]; if (MM.w === 'month') return [t.slice(0, 8) + '01', t];
+  if (MM.w === 'dates') { var f = MM.from || t, e = MM.to || f; return f <= e ? [f, e] : [e, f]; } return [oWeekStart(), t]; }
+function mm28Get() { var r = mm28Win(), k = r[0] + '|' + r[1], c = MM.C[k];
+  if ((!c || Date.now() - c.at > 120000) && MM.T[k] !== 1) { MM.T[k] = 1; readOp('mmoney', { from: r[0], to: r[1] }, function (x) { MM.T[k] = 0; if (x && x.ok) { MM.C[k] = { at: Date.now(), d: x }; if (TAB === 'money') render(); } }, function () { MM.T[k] = 0; }); }
+  return c ? c.d : (function () { var L = null; Object.keys(MM.C).forEach(function (q) { if (!L || MM.C[q].at > L.at) L = MM.C[q]; }); return L && MM.s !== 'col' ? L.d : null; })(); }
+(function () { var m0 = pgMoney; pgMoney = function () { return mgrMe() ? pgMMoney(m0) : m0(); }; })();
+function pgMMoney(m0) {
+  var X = mm28Get(), held = X ? X.held : [], hn = held.length;
+  var h = '<div class="t2tray">' + [['col', 'Collected'], ['cr', 'Credit'], ['wp', 'With people', hn], ['dist', 'Distributors']].map(function (c) { return '<button class="' + (MM.s === c[0] ? 'on' : '') + '" data-act="mms" data-k="' + c[0] + '">' + c[1] + (c[2] ? ' <span class="cnt">' + c[2] + '</span>' : '') + '</button>'; }).join('') + '</div>';
+  if (MM.s === 'dist') { var ph = p7HeldHtml, mh; p7HeldHtml = function () { return ''; }; try { mh = m0(); } finally { p7HeldHtml = ph; } return h + mm28Dist(X) + mh; } /* cash with people has its own tab */
+  if (!X) return h + '<div class="mdsk"><i></i><i></i><i></i><i></i></div>';
+  if (MM.s === 'cr') return h + mm28Cr(X);
+  if (MM.s === 'wp') return h + mm28Wp(X);
+  return h + mm28Col(X); }
+ACT.mms = function (b) { MM.s = b.dataset.k; render(); window.scrollTo(0, 0); };
+ACT.mmw = function (b) { MM.w = b.dataset.k; if (MM.w === 'dates' && !MM.from) MM.from = D.today; render(); };
+CHG.mmd = function (e) { MM[e.dataset.f] = e.value || ''; setTimeout(render, 0); };
+function mm28T(v, l, s, tone) { return '<div class="mtt ' + (tone || '') + '"><b>' + v + '</b><span>' + l + '</span>' + (s ? '<small>' + s + '</small>' : '') + '</div>'; }
+function mm28G(n) { return ghs(n).replace('GHS ', 'GHS '); }
+function mm28Col(X) { var R = mm28Win(), C = X.col;
+  var h = '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['dates', '📅']].map(function (c) { return '<button class="' + (MM.w === c[0] ? 'on' : '') + '" data-act="mmw" data-k="' + c[0] + '">' + (c[0] === 'dates' && MM.w === 'dates' ? '📅 ' + esc(R[0] === R[1] ? dayLbl(R[0]) : dayLbl(R[0]) + ' – ' + dayLbl(R[1])) : c[1]) + '</button>'; }).join('') + '</div>';
+  if (MM.w === 'dates') h += '<div class="n72two"><label class="n72tf"><span>From (or the day)</span><input type="date" data-chg="mmd" data-f="from" value="' + esc(MM.from) + '" max="' + esc(D.today) + '"></label><label class="n72tf"><span>To (optional)</span><input type="date" data-chg="mmd" data-f="to" value="' + esc(MM.to) + '" max="' + esc(D.today) + '"></label></div>';
+  if (X.from !== R[0] || X.to !== R[1]) return h + '<div class="mdsk"><i></i><i></i></div>';
+  var cash = 0, momo = 0; C.way.forEach(function (w) { if (w.k === 'MoMo') momo = w.a; else cash += w.a; });
+  h += '<div class="mtts">' + mm28T(mm28G(C.tot), 'Collected', C.n + ' payment' + (C.n === 1 ? '' : 's'), 'g') + mm28T(md28Pct(cash, C.tot) + '% <small>cash</small>', 'Cash · MoMo', mm28G(cash) + ' · ' + mm28G(momo)) + '</div>';
+  if (!C.n) return h + emptyHtml('No money collected in these days.');
+  h += '<div class="mdstk"><em class="g" style="width:' + md28Pct(cash, C.tot) + '%"></em><em style="background:#F59E0B;width:' + md28Pct(momo, C.tot) + '%"></em></div><div class="mdkey"><span><i class="g"></i>Cash</span><span><i style="background:#F59E0B"></i>MoMo</span></div>';
+  h += '<div class="sech">Who collected</div>' + C.by.map(function (p) { return '<div class="mdst g"><b class="grow" style="width:auto">' + esc(p.k) + '</b><span>' + ghs(p.a) + '</span><small class="muted mopd">' + md28Pct(p.a, C.tot) + '%</small></div>'; }).join('');
+  if (C.days.length > 1) h += fold('mmdays', '<b>Each day</b><div class="small ell">Best: ' + (function () { var b = C.days.slice().sort(function (a, b) { return b.a - a.a; })[0]; return esc(dayLbl(b.d)) + ' ' + ghs(b.a); })() + '</div>', function () { return C.days.map(function (d) { return '<div class="mdev"><span>' + esc(dayLbl(d.d)) + '</span><b class="grow" style="text-align:right">' + ghs(d.a) + '</b></div>'; }).join(''); });
+  return h; }
+function mm28Cr(X) { var C = X.cr, tone = ['g', 'a', 'o', 'r'];
+  var h = '<div class="mtts">' + mm28T(mm28G(C.open), 'Owed now', C.age[0].a > 0 ? md28Pct(C.age[0].a, C.open) + '% within 7 days' : '', '') + mm28T(mm28G(C.slow), 'Slow payers', C.slowN + ' vendor' + (C.slowN === 1 ? '' : 's') + ' past their credit days', C.slow > 0.004 ? 'r' : 'g') +
+    mm28T(C.coll === null ? '–' : C.coll + '%', 'Collectibility', 'credit of the last 60 days, paid', C.coll === null ? '' : md28Tone(C.coll)) + mm28T(md28Pct(C.slow, C.open) + '%', 'Of the debt is slow', '', md28Pct(C.slow, C.open) > 30 ? 'r' : '') + '</div>';
+  h += '<div class="sech">How old</div><div class="mdstk">' + C.age.map(function (b, i) { return '<em class="ag' + i + '" style="width:' + md28Pct(b.a, C.open) + '%"></em>'; }).join('') + '</div>' +
+    C.age.map(function (b, i) { return '<div class="mdst ' + tone[i] + '"><b class="grow" style="width:auto">' + b.k + '</b><span>' + ghs(b.a) + '</span><small class="muted mopd">' + md28Pct(b.a, C.open) + '%</small></div>'; }).join('');
+  h += '<div class="sech">Per agent</div>' + C.ag.map(function (a) { return '<div class="mdst ' + (a.slow > 0.004 ? 'r' : 'g') + '"><b class="grow" style="width:auto">' + esc(a.k) + '</b><span>' + ghs(a.open) + '</span><small class="muted mopd">' + (a.slow > 0.004 ? ghs(a.slow) + ' slow' : '') + '</small></div>'; }).join('');
+  h += fold('mmslow', '<b>Slow payers</b> <span class="small muted">' + C.slowN + '</span><div class="small ell">' + (C.slowV[0] ? esc(C.slowV[0].n) + ' ' + ghs(C.slowV[0].a) + ', ' + C.slowV[0].days + ' days' : 'Nobody') + '</div>', function () {
+    return C.slowV.length ? C.slowV.map(function (v) { return '<div class="mdst r"><b class="grow ell" style="width:auto">' + esc(v.n) + '<div class="small muted" style="font-weight:600">' + esc(v.ag) + ' · ' + v.days + ' days</div></b><span>' + ghs(v.a) + '</span></div>'; }).join('') + (C.slowN > C.slowV.length ? '<p class="small muted">The ' + C.slowV.length + ' biggest of ' + C.slowN + '.</p>' : '') : emptyHtml('Nobody is past the credit days.'); });
+  return h; }
+function mm28Wp(X) { var H = X.held, cut = (D.held27 || {}).cut || 17, aft = new Date().getHours() >= cut, tot = 0; H.forEach(function (p) { tot += p.today + p.old; });
+  if (!H.length) return '<div class="mtts">' + mm28T('GHS 0', 'With people', 'All cash is with Frank', 'g') + '</div>';
+  var h = '<div class="mtts">' + mm28T(mm28G(tot), 'With people', 'not with Frank yet', H.some(function (p) { return p.old > 0.004; }) ? 'r' : 'a') + mm28T(H.length, H.length === 1 ? 'Person' : 'People', 'due by ' + (cut > 12 ? cut - 12 + ' pm' : cut + ' am') + ' each day') + '</div>';
+  return h + H.map(function (p) { var late = p.old > 0.004 || (aft && p.today > 0.004);
+    return '<div class="mdst ' + (late ? 'r' : 'a') + '"><b class="grow" style="width:auto">' + esc(p.name) + '<div class="small muted" style="font-weight:600">' + (p.today > 0.004 ? 'today ' + ghs(p.today) : '') + (p.today > 0.004 && p.old > 0.004 ? ' · ' : '') + (p.old > 0.004 ? 'older ' + ghs(p.old) + (p.days ? ', oldest ' + p.days + ' day' + (p.days === 1 ? '' : 's') : '') : '') + '</div></b><span>' + ghs(p.today + p.old) + '</span></div>'; }).join(''); }
+function mm28Dist(X) { if (!X) return '';
+  var S = X.src, tot = S.reduce(function (t, s) { return t + s.open; }, 0);
+  if (!S.length) return '';
+  return '<div class="sech">Vendors owe <span>' + ghs(tot) + '</span></div><div class="mdstk">' + S.map(function (s, i) { return '<em class="s' + i + '" style="width:' + md28Pct(s.open, tot) + '%"></em>'; }).join('') + '</div>' +
+    S.map(function (s, i) { return '<div class="mdsr"><div class="row" style="flex-wrap:nowrap"><i class="mddot s' + i + '"></i><b class="grow">' + esc(s.name) + '</b><span><b>' + ghs(s.open) + '</b></span></div><div class="small muted">' + s.vendors + ' vendor' + (s.vendors === 1 ? '' : 's') + (s.slow > 0.004 ? ' · <b class="t-red">' + ghs(s.slow) + ' slow</b>' : '') + '</div></div>'; }).join('') + '<div class="sech" style="margin-top:14px">Your money</div>'; }
+// ---------------------------------------------------------------- v2.8.0 (job 5a): the manager's Vendors – one search, one filter tray, a stock gauge
+/* Vendors · Schools. One search; filters: All · Dormant · Slowing · Follow up · New this month · Help items · Slow payers · Owes · Birthday; one agent.
+   Each row: name + school, coloured border (status), a small gauge of the noodles she likely has left (her usual gap between orders minus the
+   school days since the last one). Tap: short details; More ›: her page (account, orders, visits, help items). */
+var MV = { t: 'v', f: 'all', ag: '', q: '', x: '', d: null, busy: false, got: 0 };
+(function () { var p0 = pgSV; pgSV = function () { if (!mgrMe()) return p0(); SVHALF.forEach(function (k) { HALFK[k] = 1; }); if (SV.pg) { svLoad(); return svPage(); } return pgMVen(); }; if (PG27.vendors === p0) PG27.vendors = pgSV; })();
+function mvLoad() { if (MV.busy || (MV.d && Date.now() - MV.got < 5 * 60000)) return; MV.busy = true;
+  readOp('mvend', {}, function (r) { MV.busy = false; if (r && r.ok) { MV.d = r; MV.got = Date.now(); if (TAB === 'vendors') render(); } }, function () { MV.busy = false; }); }
+function mvR(id) { return MV.d && MV.d.v[id] || null; }
+function mvHelp(id) { return MV.d && MV.d.help[id] || []; }
+function mvM1() { return D.today.slice(0, 8) + '01'; }
+function mvNew(v) { var r = mvR(v.id), m1 = mvM1(); return !!(r && ((r[3] && r[3] >= m1) || (r[4] && r[4] >= m1))); }
+function mvBd(v) { var x = vend(v.id), b = x ? bdayIn(x.bday) : -1; return b >= 0 && b <= 7; }
+/** Days of noodles she likely has left: null = no rhythm yet. */
+function mvLeft(v) { var r = mvR(v.id); if (!r || !r[0] || r[2] < 2 || v.st === 'stop' || v.st === 'closed') return null; return r[0] - r[1]; }
+var MVF = [['all', 'All'], ['stop', 'Dormant'], ['slow', 'Slowing'], ['fu', 'Follow up'], ['new', 'New this month'], ['help', 'Help items'], ['slowpay', 'Slow payers'], ['owes', 'Owes'], ['bday', 'Birthday']];
+function mvOk(v, f) { return f === 'all' || (f === 'stop' && v.st === 'stop') || (f === 'slow' && v.st === 'slow') || (f === 'fu' && !!(v.pr || v.nx)) || (f === 'new' && mvNew(v)) ||
+  (f === 'help' && mvHelp(v.id).length > 0) || (f === 'slowpay' && !!v.slowpay) || (f === 'owes' && v.ow > 0) || (f === 'bday' && mvBd(v)); }
+function mvSort(f) { return function (a, b) {
+  if (f === 'stop' || f === 'slow') { var na = (mvR(a.id) || [0, 0])[1], nb = (mvR(b.id) || [0, 0])[1]; if (na !== nb) return nb - na; }
+  if (f === 'owes' || f === 'slowpay') { if ((b.ow || 0) !== (a.ow || 0)) return (b.ow || 0) - (a.ow || 0); }
+  if (f === 'fu') { var da = a.pr ? a.pr.dk : 50, db = b.pr ? b.pr.dk : 50; if (da !== db) return da - db; }
+  if (f === 'help') { var ha = mvHelp(a.id)[0], hb = mvHelp(b.id)[0]; if (ha.d !== hb.d) return hb.d - ha.d; }
+  if (f === 'all') { var ra = svVr(a), rb = svVr(b); if (ra !== rb) return ra - rb; var la = mvLeft(a), lb = mvLeft(b); la = la == null ? 99 : la; lb = lb == null ? 99 : lb; if (la !== lb) return la - lb; }
+  return svByN(a, b); }; }
+function mvGauge(v) { var l = mvLeft(v), r = mvR(v.id); if (l == null) return '<span class="mvg none" aria-hidden="true"></span>';
+  var p = Math.max(0, Math.min(1, l / r[0])), c = l <= 0 ? '#dc2626' : p <= 0.34 ? '#f59e0b' : '#16a34a';
+  return '<span class="mvg" role="img" aria-label="' + mvLeftTxt(v) + '"><i style="width:' + Math.max(8, Math.round(p * 100)) + '%;background:' + c + '"></i></span>'; }
+function mvLeftTxt(v) { var l = mvLeft(v); if (l == null) return v.st === 'stop' ? 'Not buying' : 'No buying rhythm yet'; return l <= 0 ? 'Likely out' : '≈ ' + l + ' school day' + (l === 1 ? '' : 's') + ' of noodles left'; }
+function mvRow(v) {
+  var k = 'v:' + v.id, op = MV.x === k, H = mvHelp(v.id), l = mvLeft(v);
+  var h = '<div class="sv7r' + (op ? ' open' : '') + '" style="--k:' + SVC[v.st] + '"><div class="sv7rh"><button class="sv7n" data-act="mvx" data-x="' + k + '"><b>' + esc(v.n) + (H.length ? ' <i class="mvdot" aria-label="help items waiting"></i>' : '') + '</b><span>' + esc(v.sn || 'School not recorded') + (MV.ag ? '' : ' · ' + esc(v.ag || 'no agent')) + '</span></button>' + mvGauge(v) + '</div>';
+  if (!op) return h + '</div>';
+  h += '<div class="sv7rb">' + svMl(SVL[v.st], esc(v.t), v.st === 'stop' ? 't-red' : v.st === 'slow' ? 't-amber' : '') + (v.st === 'stop' ? svMl('Why', v.why ? esc(v.why) : v.said ? 'said' : '<span class="t-amber">agent has not said</span>') : '') + svMl('Stock', esc(mvLeftTxt(v)), l != null && l <= 0 ? 't-red' : '') + svMl('Last visit', svLv(v.lv));
+  if (v.ow > 0) h += svMl('Owes', ghs(v.ow) + (v.late > 0 ? ' · ' + v.late + ' day' + (v.late === 1 ? '' : 's') + ' late' : ''), v.late > 0 ? 't-red' : '');
+  if (H.length) h += svMl('Help items', esc(H.map(function (a) { return a.i + (a.q > 1 ? ' × ' + a.q : ''); }).join(', ')), H[0].d > 7 ? 't-amber' : '');
+  if (v.pr) h += svMl('Promise', svPrTxt(v.pr), v.pr.dk < 0 ? 't-red' : v.pr.dk === 0 ? 't-amber' : ''); else if (v.nx) h += svMl('Next', esc(v.nx));
+  return h + '<div class="sv7rx">' + (v.ph ? '<a class="sv7b" href="tel:' + esc(v.ph) + '">📞 Call</a>' : '') + '<button class="sv7b g" data-act="svopen" data-k="v" data-i="' + v.id + '">More ›</button></div></div></div>';
+}
+function mvAgents(L) { var A = []; L.forEach(function (x) { String(x.ag || '').split(', ').forEach(function (a) { if (a && A.indexOf(a) < 0) A.push(a); }); }); return A.sort(); }
+function mvAgTray(L) { var A = mvAgents(L); if (A.length < 2) return '';
+  return '<div class="sv7tr"><button class="' + (!MV.ag ? 'on' : '') + '" data-act="mvag" data-k="">All agents</button>' + A.map(function (a) { return '<button class="' + (MV.ag === a ? 'on' : '') + '" data-act="mvag" data-k="' + esc(a) + '">' + esc(a) + '</button>'; }).join('') + '</div>'; }
+function mvAgOk(x) { return !MV.ag || String(x.ag || '').split(', ').indexOf(MV.ag) >= 0; }
+function pgMVen() {
+  svLoad(); mvLoad();
+  var h = '<div class="sv7"><div class="sv7h mvh"><b>Vendors</b><button class="mvreq" data-act="svmgr">Changes and requests ›</button></div>';
+  if (!SV.d) return h + svSkel() + '</div>';
+  var V = SV.d.v.filter(function (v) { return v.st !== 'closed'; }), S = SV.d.s;
+  h += '<div class="sv7tabs t2" role="tablist">' + [['v', 'Vendors', V.length], ['s', 'Schools', S.filter(function (s) { return s.ty !== 'moe'; }).length]].map(function (t) { var on = MV.t === t[0]; return '<button role="tab" aria-selected="' + on + '" class="sv7tab' + (on ? ' on' : '') + '" data-act="mvt" data-t="' + t[0] + '"><b>' + t[1] + '</b><em>' + t[2] + '</em></button>'; }).join('') + '</div>';
+  h += '<div class="sv7qw">' + ico(SVSRCH) + '<input class="sv7q" data-inp="mvq" value="' + esc(MV.q) + '" placeholder="' + (MV.t === 'v' ? 'Search a vendor, school or phone' : 'Search a school or area') + '" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search">' + (MV.q ? '<button class="sv7qx" data-act="mvqx" aria-label="Clear">✕</button>' : '') + '</div>';
+  return h + '<div id="mvb">' + (MV.t === 'v' ? mvVen(V) : mvSch(S)) + '</div></div>';
+}
+function mvVen(V) {
+  var q = MV.q.trim(), dq = q.replace(/\D/g, ''), A = V.filter(mvAgOk);
+  if (q.length >= 2) A = A.filter(function (v) { return svHit(v.n + ' ' + (v.sn || '') + ' ' + (v.ag || ''), q) || (dq.length >= 4 && v.ph && v.ph.indexOf(dq) >= 0); });
+  var h = '<div class="sv7tr">' + MVF.map(function (f) { var n = A.filter(function (v) { return mvOk(v, f[0]); }).length; if (!n && f[0] !== 'all' && MV.f !== f[0]) return '';
+    return '<button class="' + (MV.f === f[0] ? 'on' : '') + (f[0] === 'help' ? ' mvhf' : '') + '" data-act="mvf" data-f="' + f[0] + '">' + (SVC[f[0]] ? '<i style="background:' + SVC[f[0]] + '"></i>' : '') + f[1] + ' ' + n + '</button>'; }).join('') + '</div>' + mvAgTray(V);
+  var F = A.filter(function (v) { return mvOk(v, MV.f); }).sort(mvSort(MV.f)), ow = F.reduce(function (t, v) { return t + (v.ow || 0); }, 0);
+  h += '<div class="mvsum"><b>' + F.length + '</b> vendor' + (F.length === 1 ? '' : 's') + (ow > 0 ? ' · owe <b>' + ghs(ow) + '</b>' : '') + (MV.d ? '' : ' · <span class="muted">stock gauges coming</span>') + '</div>';
+  h += F.slice(0, 60).map(mvRow).join('') + (F.length ? svMore(F.length - 60) : '<p class="sv7fine">None.</p>');
+  if (F.length) h += '<div class="mvkey"><span class="mvg"><i style="width:80%;background:#16a34a"></i></span> noodles she likely has left, from how often she buys</div>';
+  return h + '<button class="sv7add" data-act="regOpen">+ Tap to register a vendor</button>';
+}
+var MVSF = [['all', 'All'], ['pros', 'Prospect'], ['ready', 'Ready'], ['our', 'Ours'], ['promdue', 'Promise due'], ['noint', 'Not interested'], ['moe', 'Not visited']];
+function mvSch(S) {
+  var q = MV.q.trim(), A = S.filter(mvAgOk); if (q.length >= 2) A = A.filter(function (s) { return svHit(s.n + ' ' + s.a + ' ' + (s.em || '') + ' ' + (s.ag || ''), q); });
+  var ok = function (s, f) { return f === 'all' ? s.ty !== 'moe' || q.length >= 2 : svSok(s, f); };
+  var h = '<div class="sv7tr">' + MVSF.map(function (f) { var n = A.filter(function (s) { return ok(s, f[0]); }).length; if (!n && f[0] !== 'all' && MV.f !== f[0]) return '';
+    return '<button class="' + (MV.f === f[0] ? 'on' : '') + '" data-act="mvf" data-f="' + f[0] + '">' + (SSC[f[0]] ? '<i style="background:' + SSC[f[0]] + '"></i>' : '') + f[1] + ' ' + n + '</button>'; }).join('') + '</div>' + mvAgTray(S);
+  var F = A.filter(function (s) { return ok(s, MV.f); }).sort(function (a, b) { return svSr(a) - svSr(b) || svByN(a, b); });
+  return h + F.slice(0, 60).map(svSRow).join('') + (F.length ? svMore(F.length - 60) : '<p class="sv7fine">None.</p>');
+}
+INP.mvq = function (el) { MV.q = el.value; MV.x = ''; SV.x = ''; var b = $('mvb'); if (b) b.innerHTML = MV.t === 'v' ? mvVen(SV.d.v.filter(function (v) { return v.st !== 'closed'; })) : mvSch(SV.d.s);
+  var w = el.parentNode, x = w && w.querySelector('.sv7qx'); if (!!x !== !!MV.q) { if (MV.q && w) w.insertAdjacentHTML('beforeend', '<button class="sv7qx" data-act="mvqx" aria-label="Clear">✕</button>'); else if (x) x.remove(); } decorate(); };
+ACT.mvqx = function () { MV.q = ''; render(); };
+ACT.mvt = function (b) { if (MV.t === b.dataset.t) return; MV.t = b.dataset.t; MV.f = 'all'; MV.x = ''; SV.x = ''; render(); window.scrollTo(0, 0); };
+ACT.mvf = function (b) { MV.f = MV.f === b.dataset.f ? 'all' : b.dataset.f; MV.x = ''; SV.x = ''; render(); };
+ACT.mvag = function (b) { MV.ag = b.dataset.k; MV.x = ''; SV.x = ''; render(); };
+ACT.mvx = function (b) { MV.x = MV.x === b.dataset.x ? '' : b.dataset.x; render(); };
+// ---- her page for the manager: no plan / report buttons (agents' own), and a top with the gauge, help items waiting and her orders
+(function () { var pb = svPlanBtn; svPlanBtn = function (k, o) { return mgrMe() ? '' : pb(k, o); };
+  var vt = svVTop; svVTop = function (v, mine) { var h = vt(v, mine); return mgrMe() ? h.replace(/<button[^>]*data-act="svplan"[^>]*>[^<]*<\/button>/g, '').replace(/<button class="sv7stopb"[^>]*>[^<]*<\/button>/g, '') : h; };
+  var st = svSTop; svSTop = function (s, mine, P) { var h = st(s, mine, P); return mgrMe() ? h.replace(/<button[^>]*data-act="(svplan|svrepo)"[^>]*>[^<]*<\/button>/g, '') : h; };
+  var vs = svVSum; svVSum = function (v, P, mine) { return mgrMe() ? mvPgTop(v) + vs(v, P, mine) + mvPgOrd(v) : vs(v, P, mine); }; })();
+function mvPgTop(v) { mvLoad(); var l = mvLeft(v), H = mvHelp(v.id), h = '<div class="sv7box">' + svMl('Agent', esc(v.ag || 'none')) + '<div class="sv7ml"><span>Stock</span><b class="' + (l != null && l <= 0 ? 't-red' : '') + '">' + esc(mvLeftTxt(v)) + '</b></div>' + (l != null ? '<div class="mvgw">' + mvGauge(v) + '</div>' : '') + '</div>';
+  if (H.length) h += '<div class="sv7lbl">Help items waiting</div>' + H.map(function (a) { return '<div class="sv7r" style="--k:' + (a.d > 7 ? '#dc2626' : '#f59e0b') + '"><div class="sv7rh"><span class="sv7n"><b>' + esc(a.i) + (a.q > 1 ? ' × ' + a.q : '') + '</b><span>asked on ' + a.n + ' visit' + (a.n === 1 ? '' : 's') + ' · ' + a.d + ' day' + (a.d === 1 ? '' : 's') + ' ago</span></span></div></div>'; }).join('');
+  return h; }
+function mvPgOrd(v) { var L = oAll().filter(function (o) { return o.vid === v.id; }).sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; }); if (!L.length) return '';
+  var h = svFold('mvo', 'Orders', L.length, SV.mvo).replace(' ()', ''); if (SV.mvo) h += L.slice(0, 15).map(function (o) { return moRow(o, dayLbl(o.date) + ' · ' + oStage(o).w); }).join(''); return h; }
+// ---------------------------------------------------------------- v2.8.0 (job 5b): Me › Settings and Me › Reports (manager)
+/* Settings: targets (the targets pop-up), carton prices (a new price from a day – the old one stays in the history), phone numbers
+   (Frank's MoMo, Frank, Prince) and three rules. Reports: the Dashboard's numbers for any days, the month target build and a WhatsApp text. */
+var MS = { d: null, busy: false, e: null };
+var MR = { w: 'month', from: '', to: '', C: {}, T: {} };
+(function () { var p0 = SHEETS.psw; SHEETS.psw = function () { var h = p0(); if (!h || VIEW || !D || D.me.role !== 'Supervisor') return h;
+  return '<div class="msme">' + [['n27rep', ICO.mdash || ICO.info, 'Reports'], ['n27set', N27I.user, 'Settings']].map(function (r) { return '<button data-act="n27meGo" data-k="' + r[0] + '">' + ico(r[1]) + '<b>' + r[2] + '</b></button>'; }).join('') + '</div>' + h; }; })();
+// ---- Settings
+function msLoad(force) { if (MS.busy || (MS.d && !force)) return; MS.busy = true; readOp('mset', {}, function (r) { MS.busy = false; if (r && r.ok) { MS.d = r; if (TAB === 'n27set') render(); } }, function () { MS.busy = false; }); }
+var MSSET = [['Frank_MoMo_Number', 'Frank\'s MoMo number', 'ph'], ['Frank_Phone', 'Frank\'s phone', 'ph'], ['Prince_Phone', 'Prince\'s phone', 'ph']];
+var MSRULE = [['Credit_Term_Days_Default', 'Credit days', ' days', 'When a vendor has no own credit days'], ['Cash_Cutoff_Hour', 'Cash to Frank by', '', 'Cash collected today must reach Frank by this hour'], ['Agent_Cash_Days', 'Cash still held, remind after', ' days', 'Agents and Prince are reminded and you are told']];
+function msHour(h) { h = +h; return !h ? '' : (h % 12 || 12) + (h < 12 ? ' am' : h === 12 ? ' noon' : ' pm'); }
+function msPh(p) { p = String(p || ''); return p.length === 10 ? p.slice(0, 3) + ' ' + p.slice(3, 6) + ' ' + p.slice(6) : p; }
+function msRow(act, k, l, v, sub) { return '<button class="msr" data-act="' + act + '" data-k="' + esc(k) + '"><span class="grow"><b>' + l + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</span><em>' + v + '</em><span class="go">' + ico(ICO.right) + '</span></button>'; }
+PG27.n27set = function () { msLoad(); var h = '';
+  var T = D.team; h += '<div class="sech">Targets <span class="muted small">' + esc(T && T.month ? T.month.slice(8) + ' ' + T.month.slice(0, 4) : '') + '</span></div>';
+  if (T && T.agents) h += '<div class="msbox">' + T.agents.map(function (a) { return '<div class="msl"><b>' + esc(a.name) + '</b><span>' + a.t.real + ' cartons · sees ' + a.t.shown + '</span></div>'; }).join('') + '<button class="ghost wide" data-act="tgtOpen">Change targets ›</button></div>';
+  else h += '<p class="small muted">Open Team once, then come back.</p>';
+  if (!MS.d) return n27Page('Settings', h + '<div class="mdsk"><i></i><i></i><i></i></div>');
+  h += '<div class="sech">Carton prices</div><div class="msbox">' + MS.d.prices.map(function (p) { return msRow('msep', p.sku, esc(skn(p.sku)), ghs(p.price), p.next ? ghs(p.next.price) + ' from ' + esc(dayLbl(p.next.from)) : ''); }).join('') + '</div>';
+  h += '<div class="sech">Phone numbers</div><div class="msbox">' + MSSET.map(function (s) { var v = MS.d.set[s[0]]; return msRow('mses', s[0], s[1], v ? esc(msPh(v)) : '<span class="t-amber">missing</span>', ''); }).join('') + '</div>';
+  h += '<div class="sech">Rules</div><div class="msbox">' + MSRULE.map(function (s) { var v = MS.d.set[s[0]]; return msRow('mses', s[0], s[1], v === '' ? '–' : s[0] === 'Cash_Cutoff_Hour' ? msHour(v) : v + s[2], s[3]); }).join('') + '</div>';
+  return n27Page('Settings', h + '<p class="small muted" style="margin:10px 2px">The same values as the Settings and Price_History tabs.</p>'); };
+ACT.msep = function (b) { var p = MS.d.prices.filter(function (x) { return x.sku === b.dataset.k; })[0]; if (!p) return; MS.e = { kind: 'price', key: p.sku, label: skn(p.sku) + ' carton price', value: '', now: p.price, from: D.today }; sheetOpen('mset1'); };
+ACT.mses = function (b) { var k = b.dataset.k, s = MSSET.concat(MSRULE).filter(function (x) { return x[0] === k; })[0]; if (!s) return; MS.e = { kind: 'set', key: k, label: s[1], value: String(MS.d.set[k] === '' || MS.d.set[k] == null ? '' : MS.d.set[k]), ph: s[2] === 'ph' }; sheetOpen('mset1'); };
+SHEETS.mset1 = function () { var e = MS.e; if (!e) return '';
+  var h = '<div class="n27h"></div><div class="t2sh"><b>' + esc(e.label) + '</b><a data-act="closeO">Close</a></div>';
+  if (e.kind === 'price') h += '<div class="small muted" style="margin:0 2px 8px">Now ' + ghs(e.now) + '. Orders keep the price of their day.</div><div class="n72two"><label class="n72tf"><span>New price (GHS)</span><input inputmode="decimal" data-inp="msv" data-f="value" value="' + esc(e.value) + '" placeholder="' + esc(String(e.now)) + '"></label><label class="n72tf"><span>From</span><input type="date" data-chg="msd" value="' + esc(e.from) + '" min="' + esc(D.today) + '"></label></div>';
+  else h += '<label class="n72tf"><span>' + (e.ph ? 'Phone number' : 'Number') + '</span><input inputmode="' + (e.ph ? 'tel' : 'numeric') + '" data-inp="msv" data-f="value" value="' + esc(e.ph ? msPh(e.value) : e.value) + '"' + (e.ph ? ' placeholder="024 123 4567"' : '') + '></label>' + (e.key === 'Cash_Cutoff_Hour' ? '<div class="small muted" style="margin:4px 2px">17 = 5 pm</div>' : '');
+  return h + '<button class="main gr wide" style="margin-top:12px" data-act="msave">Save</button>'; };
+INP.msv = function (el) { if (MS.e) MS.e.value = el.value; };
+CHG.msd = function (el) { if (MS.e) MS.e.from = el.value || D.today; };
+ACT.msave = function () { var e = MS.e; if (!e) return; var v = String(e.value || '').replace(/[,\s]/g, '');
+  if (e.kind === 'price') { var n = Number(v); if (!(n > 0 && n <= 5000)) { say('Type the carton price (GHS 1 – 5,000).'); return; } if (!e.from || e.from < D.today) { say('The new price starts today or later.'); return; }
+    ask(skn(e.key) + ': ' + ghs(n) + ' a carton from ' + dayLbl(e.from) + '?', function () { var p = MS.d.prices.filter(function (x) { return x.sku === e.key; })[0]; if (p) { if (e.from <= D.today) { p.price = n; p.from = e.from; p.next = null; } else p.next = { price: n, from: e.from }; }
+      bgSave('msetprice', { sku: e.key, price: n, from: e.from }, 'msp-' + uid(), 'price ' + skn(e.key), null, true); MS.e = null; SHEETK = ''; $('over').innerHTML = ''; render(); }, 'SAVE'); return; }
+  if (e.ph) { v = v.replace(/\D/g, ''); if (v.length === 9) v = '0' + v; if (v.length === 12 && v.indexOf('233') === 0) v = '0' + v.slice(3); if (v && !/^0\d{9}$/.test(v)) { say('Type a phone number like 024 123 4567.'); return; } }
+  else if (!/^\d+$/.test(v)) { say('Type a whole number.'); return; }
+  MS.d.set[e.key] = e.ph ? v : +v; bgSave('msetset', { key: e.key, value: v }, 'mss-' + uid(), e.label, null, true); MS.e = null; SHEETK = ''; $('over').innerHTML = ''; render(); };
+// ---- Reports
+function mrWin() { var t = D.today, y = +t.slice(0, 4), m = +t.slice(5, 7);
+  if (MR.w === 'today') return [t, t]; if (MR.w === 'week') return [oWeekStart(), t]; if (MR.w === 'month') return [t.slice(0, 8) + '01', t];
+  if (MR.w === 'last') { var a = new Date(Date.UTC(y, m - 2, 1, 12)).toISOString().slice(0, 10), e = new Date(Date.UTC(y, m - 1, 0, 12)).toISOString().slice(0, 10); return [a, e]; }
+  var f = MR.from || t, e2 = MR.to || f; return f <= e2 ? [f, e2] : [e2, f]; }
+function mrGet() { var r = mrWin(), k = r[0] + '|' + r[1], c = MR.C[k];
+  if ((!c || Date.now() - c.at > 120000) && MR.T[k] !== 1) { MR.T[k] = 1; readOp('mreport', { from: r[0], to: r[1] }, function (x) { MR.T[k] = 0; if (x && x.ok) { MR.C[k] = { at: Date.now(), d: x }; if (TAB === 'n27rep') render(); } else if (x && x.error) toast(x.error, 'err'); }, function () { MR.T[k] = 0; }); }
+  return c ? c.d : null; }
+ACT.mrw = function (b) { MR.w = b.dataset.k; if (MR.w === 'dates' && !MR.from) MR.from = D.today; render(); };
+CHG.mrd = function (e) { MR[e.dataset.f] = e.value || ''; setTimeout(render, 0); };
+function mrSt(s) { return s === 'Reached' || s === 'On track' ? 'g' : s === 'A little behind' ? 'a' : s ? 'r' : ''; }
+PG27.n27rep = function () { var R = mrWin(), X = mrGet();
+  var h = '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['last', 'Last month'], ['dates', '📅']].map(function (c) { return '<button class="' + (MR.w === c[0] ? 'on' : '') + '" data-act="mrw" data-k="' + c[0] + '">' + (c[0] === 'dates' && MR.w === 'dates' ? '📅 ' + esc(R[0] === R[1] ? dayLbl(R[0]) : dayLbl(R[0]) + ' – ' + dayLbl(R[1])) : c[1]) + '</button>'; }).join('') + '</div>';
+  if (MR.w === 'dates') h += '<div class="n72two"><label class="n72tf"><span>From (or the day)</span><input type="date" data-chg="mrd" data-f="from" value="' + esc(MR.from) + '" max="' + esc(D.today) + '"></label><label class="n72tf"><span>To (optional)</span><input type="date" data-chg="mrd" data-f="to" value="' + esc(MR.to) + '" max="' + esc(D.today) + '"></label></div>';
+  if (!X) return n27Page('Reports', h + '<div class="mdsk"><i></i><i></i><i></i></div>');
+  h += '<div class="mrhd">' + esc(R[0] === R[1] ? dayLbl(R[0]) : dayLbl(R[0]) + ' – ' + dayLbl(R[1])) + '</div>';
+  var P = X.pay, pt = (P.cash || 0) + (P.credit || 0) + (P.slow || 0), cash = 0, momo = 0; X.col.way.forEach(function (w) { if (w.k === 'MoMo') momo = w.a; else cash += w.a; });
+  h += '<div class="mtts">' + mm28T(String(X.ctn), 'Cartons', ghs(X.val)) + mm28T(mm28G(X.col.tot), 'Collected', 'Cash ' + mm28G(cash) + ' · MoMo ' + mm28G(momo), 'g') + '</div>';
+  if (pt > 0) h += '<div class="sech">Cash · credit · slow payers</div><div class="mdstk"><em class="g" style="width:' + md28Pct(P.cash, pt) + '%"></em><em style="background:#F59E0B;width:' + md28Pct(P.credit, pt) + '%"></em><em style="background:#DC2626;width:' + md28Pct(P.slow, pt) + '%"></em></div>' +
+    '<div class="mdkey"><span><i class="g"></i>Cash ' + md28Pct(P.cash, pt) + '%</span><span><i style="background:#F59E0B"></i>Credit ' + md28Pct(P.credit, pt) + '%</span><span><i style="background:#DC2626"></i>Slow ' + md28Pct(P.slow, pt) + '%</span></div>';
+  h += '<div class="sech">Agents</div>' + X.agents.map(function (a) { var p = a.exp > 0 ? Math.round(a.ctn / a.exp * 100) : null; return '<div class="mdst ' + (p == null ? '' : p >= 95 ? 'g' : p >= 80 ? 'a' : 'r') + '"><b class="grow" style="width:auto">' + esc(a.name) + '</b><span>' + a.ctn + ' / ' + Math.round(a.exp) + '</span><small class="muted mopd">' + (p == null ? '' : p + '%') + '</small></div>'; }).join('') + '<div class="small muted" style="margin:2px">Cartons / real target for these days</div>';
+  if (X.sku.length) h += fold('mrsku', '<b>Products</b><div class="small ell">' + esc(X.sku.slice(0, 3).map(function (s) { return skn(s.sku) + ' ' + md28Pct(s.c, X.ctn) + '%'; }).join(' · ')) + '</div>', function () { return X.sku.map(function (s) { return '<div class="mdst"><b class="grow" style="width:auto">' + esc(skn(s.sku)) + '</b><span>' + s.c + ' ctn</span><small class="muted mopd">' + md28Pct(s.c, X.ctn) + '%</small></div><div class="small muted mrsub">cash ' + md28Pct(s.cash, s.c) + '% · credit ' + md28Pct(s.cr, s.c) + '%</div>'; }).join(''); });
+  if (X.src.length > 1) h += fold('mrsrc', '<b>Sources</b><div class="small ell">' + esc(X.src.map(function (s) { return s.name.split(' ')[0] + ' ' + s.c; }).join(' · ')) + '</div>', function () { return X.src.map(function (s) { return '<div class="mdst"><b class="grow" style="width:auto">' + esc(s.name) + '</b><span>' + s.c + ' ctn</span><small class="muted mopd">' + ghs(s.open) + ' open</small></div>'; }).join(''); });
+  var nw = X.agents.reduce(function (t, a) { return t + (a.nw || 0); }, 0), act = X.agents.reduce(function (t, a) { return t + (a.act || 0); }, 0), vn = X.agents.reduce(function (t, a) { return t + (a.vendors || 0); }, 0);
+  h += '<div class="mtts">' + mm28T(String(nw), 'New vendors', '') + mm28T(act + ' / ' + vn, 'Bought', md28Pct(act, vn) + '% of vendors') + '</div>';
+  h += '<div class="mdst"><b class="grow" style="width:auto">BFC servings</b><span>' + X.servings.toLocaleString('en-GB') + '</span></div>';
+  var B = X.build; if (B && B.rows.length) h += fold('mrbld', '<b>Month target build</b><div class="small ell">' + esc(B.month.slice(8)) + ' · ' + B.gone + ' of ' + B.days + ' working days</div>', function () {
+    return '<div class="mrb mrbh"><span>Agent</span><span>' + esc(B.lm) + '</span><span>Target</span><span>Growth</span><span>So far</span></div>' + B.rows.map(function (r) { return '<div class="mrb"><b>' + esc(r.name) + '</b><span>' + r.base + '</span><span>' + r.real + '<small>sees ' + r.shown + '</small></span><span>' + (r.growth == null ? '–' : (r.growth > 0 ? '+' : '') + r.growth + '%') + '</span><span>' + r.mtd + '<small class="t-' + ({ g: 'green', a: 'amber', r: 'red' }[mrSt(r.st)] || 'grey') + '">' + esc(r.st) + '</small></span></div>'; }).join(''); });
+  h += '<a class="ghost wide mrwa" href="https://wa.me/?text=' + encodeURIComponent(mrText(X, R)) + '" target="_blank" rel="noopener">Share on WhatsApp</a>';
+  return n27Page('Reports', h); };
+function mrText(X, R) { var P = X.pay, pt = (P.cash || 0) + (P.credit || 0) + (P.slow || 0);
+  return 'CupSales ' + (R[0] === R[1] ? dayLbl(R[0]) : dayLbl(R[0]) + ' – ' + dayLbl(R[1])) + '\nCartons: ' + X.ctn + ' (' + ghs(X.val) + ')\nCollected: ' + ghs(X.col.tot) +
+    (pt > 0 ? '\nCash ' + md28Pct(P.cash, pt) + '% · credit ' + md28Pct(P.credit, pt) + '% · slow ' + md28Pct(P.slow, pt) + '%' : '') + '\n' + X.agents.map(function (a) { return a.name + ': ' + a.ctn + ' cartons'; }).join('\n') +
+    (X.sku.length ? '\n' + X.sku.slice(0, 4).map(function (s) { return skn(s.sku) + ' ' + md28Pct(s.c, X.ctn) + '%'; }).join(' · ') : '') + '\nBFC servings: ' + X.servings.toLocaleString('en-GB'); }
 if (RK) rcpBoot(); else if (!n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
