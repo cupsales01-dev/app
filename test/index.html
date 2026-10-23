@@ -886,6 +886,29 @@ body.r27ride .r27ns{background:#fff;color:#000}body.r27ride .r27ns .r27sub{color
 .mrwa{display:block;text-align:center;margin:14px 0 6px;text-decoration:none}
 .mrb small.t-red{color:#dc2626}.mrb small.t-amber{color:#d97706}.mrb small.t-green{color:#16a34a}
 .msme{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}.msme button{display:flex;align-items:center;gap:8px;justify-content:center;padding:12px 8px;border-radius:12px;background:var(--card,#fff);border:1px solid var(--line,#e5e7eb);font:inherit;color:inherit;min-height:0}.msme svg{width:20px;height:20px}.msme b{font-size:14px}
+/* v2.7.4 */
+.fk74ok{margin:0 2px 8px;font-size:13px;font-weight:600;color:var(--green)}
+.cal74{padding:2px 0 6px}.cal74h{display:flex;align-items:center;justify-content:space-between;margin:0 0 8px}.cal74h b{font-size:16px}
+.cal74h button{width:44px;height:40px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-size:22px;line-height:1;padding:0}.cal74h button:disabled{opacity:.35}
+.cal74g{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal74g i{font-style:normal;text-align:center;font-size:12px;color:var(--mute);font-weight:700;padding:2px 0}
+.cal74g button{height:42px;border:0;border-radius:12px;background:#F2F4F7;font-size:15px;font-weight:700;padding:0;min-width:0;color:var(--ink,#111)}
+.cal74g button.td{box-shadow:inset 0 0 0 2px var(--blue)}.cal74g button.on{background:var(--blue);color:#fff}.cal74g button.in{background:#dbeafe}.cal74g button:disabled{opacity:.3}
+.cal74t{text-align:center;font-size:13px;color:var(--mute);margin-top:10px}
+.cal74ch{display:flex;align-items:center;gap:8px;width:100%;border:1.5px solid var(--line);border-radius:999px;background:#F7F8FA;padding:10px 14px;margin:8px 0;font-size:15px;font-weight:700;text-align:left}
+.cal74ch svg{width:18px;height:18px;flex:0 0 18px}.cal74ch span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cal74ch b{color:var(--blue);font-size:13px}
+#over button svg,#over a svg{max-width:22px;max-height:22px}
+.r72s.on .r27ns .lbl{justify-content:flex-start;padding-right:56px} /* Prince: 'Any time' was hidden under the call button */
+/* riding mode: every text light on black, buttons dark with light text, the main actions white */
+body.r27ride #main,body.r27ride #main *{color:#F5F5F7 !important}
+body.r27ride #main div,body.r27ride #main section,body.r27ride #main p,body.r27ride #main span,body.r27ride #main label,body.r27ride #main li,body.r27ride #main table,body.r27ride #main td{background-color:transparent !important}
+body.r27ride #main .r72s,body.r27ride #main .r27row,body.r27ride #main .r73cf,body.r27ride #main .r27pan,body.r27ride #main .r27st,body.r27ride #main .card,body.r27ride #main .r27n3>div,body.r27ride #main .r72tb,body.r27ride #main .o2seg{background-color:#161618 !important;border-color:#3A3A3C}
+body.r27ride #main button,body.r27ride #main a{background-color:#2C2C2E !important;border-color:#48484A !important}
+body.r27ride #main button.on,body.r27ride #main button.main,body.r27ride #main .r27big{background-color:#FFFFFF !important;color:#000 !important}
+body.r27ride #main button.on *,body.r27ride #main button.main *,body.r27ride #main .r27big *{color:#000 !important}
+body.r27ride #main .r72h .qn{background-color:#FFFFFF !important;color:#000 !important}
+body.r27ride #main .t-red,body.r27ride #main .red{color:#FF8A80 !important}body.r27ride #main .t-green,body.r27ride #main .green{color:#7EE2A8 !important}
+body.r27ride #main input,body.r27ride #main select,body.r27ride #main textarea{background-color:#2C2C2E !important;border-color:#48484A !important}
+body.r27ride #main .r73dot{background-color:#C084FC !important}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -2244,7 +2267,7 @@ LISTR.phist = function () {
     if (x.day !== cur) { cur = x.day; h += dayHead(cur); }
     var k = 'h:' + x.hid, o = isOpen(k), s = stc(x), P = x.parts || [];
     h += '<div class="srow" style="flex-wrap:wrap"><div class="grow tap"' + rowTap(k) + '><b>' + ghs(x.amount) + '</b> ' + (x.out ? 'to ' + esc(x.to) : 'from ' + esc(x.from)) + '<div class="small muted">' + esc(String(x.at).slice(-5)) + ' · ' + esc(x.money) + (P.length ? ' · ' + P.length + ' payment' + (P.length === 1 ? '' : 's') : '') + '</div></div><span class="pill ' + s[0] + '" style="white-space:nowrap">' + esc(s[1]) + '</span>' +
-      (o ? '<div class="dets" style="flex:1 1 100%">' + (P.length ? P.map(function (p) { return esc(p.text) + ' – <b>' + ghs(p.amt) + '</b>'; }).join('<br>') : 'No payment list for this one.') + (x.note && !/payment\(s\) ticked|^Recorded by Frank/.test(x.note) ? '<br><span class="muted">' + esc(x.note) + '</span>' : '') + '</div>' : '') + '</div>';
+      (o ? '<div class="dets" style="flex:1 1 100%">' + (P.length ? P.map(function (p) { return '<div>' + esc(p.text) + ' – <b>' + ghs(p.amt) + '</b>' + (p.lines && p.lines.length ? '<div class="small muted">' + esc(p.lines.map(function (l) { return l.qty + ' ' + skn(l.sku); }).join(', ')) + (p.days && p.days.length ? ' · order of ' + esc(p.days.map(dayLbl).join(', ')) : '') + '</div>' : '') + '</div>'; }).join('') : 'No payment list for this one.') + (x.note && !/payment\(s\) ticked|^Recorded by Frank/.test(x.note) ? '<br><span class="muted">' + esc(x.note) + '</span>' : '') + '</div>' : '') + '</div>';
   });
   return h + '</div>';
 };
@@ -4406,7 +4429,7 @@ function fkLeft(s) { var r = (fkF().res || {})[s]; return r && r.set ? r.left : 
 function fkShort(lines) { return (lines || []).filter(function (l) { var n = fkLeft(l.sku); return n !== null && n < (l.main !== undefined ? l.main : l.qty); }).map(function (l) { return skn(l.sku); }); }
 // ---------------------------------------------------------------- Orders
 function pgFOrders() {
-  var L = fkList(), n = fkTasks(), h = n ? '' : '<div class="fkok">Nothing waiting for you ✓</div>'; /* his tasks: the sign on top (Yayra 17 Oct) */
+  var L = fkList(), n = fkTasks(), h = n ? '' : '<p class="fk74ok">Nothing waiting ✓</p>'; /* his tasks: the sign on top (Yayra 17 Oct) */
   h += hRelRows();
   var cnt = {}; L.forEach(function (x) { cnt[x.st] = (cnt[x.st] || 0) + 1; });
   h += '<input class="o2q fkq" data-inp="fkq" inputmode="search" placeholder="Search: type 2 letters of a name" value="' + esc(FK.q) + '" autocomplete="off">';
@@ -8788,5 +8811,50 @@ function mrText(X, R) { var P = X.pay, pt = (P.cash || 0) + (P.credit || 0) + (P
   return 'CupSales ' + (R[0] === R[1] ? dayLbl(R[0]) : dayLbl(R[0]) + ' – ' + dayLbl(R[1])) + '\nCartons: ' + X.ctn + ' (' + ghs(X.val) + ')\nCollected: ' + ghs(X.col.tot) +
     (pt > 0 ? '\nCash ' + md28Pct(P.cash, pt) + '% · credit ' + md28Pct(P.credit, pt) + '% · slow ' + md28Pct(P.slow, pt) + '%' : '') + '\n' + X.agents.map(function (a) { return a.name + ': ' + a.ctn + ' cartons'; }).join('\n') +
     (X.sku.length ? '\n' + X.sku.slice(0, 4).map(function (s) { return skn(s.sku) + ' ' + md28Pct(s.c, X.ctn) + '%'; }).join(' · ') : '') + '\nBFC servings: ' + X.servings.toLocaleString('en-GB'); }
+// ---------------------------------------------------------------- v2.7.4 (Yayra 23 Oct 12:06)
+// "Sending" ends: saves the system already has leave the phone's list at the next screen; a send that hangs is tried again.
+// The agent's order stays "Approved" until Prince says "I have it". Frank: one calendar for dates (tap a day twice = that day,
+// two days = a range), Distributor always lists all four, cartons in History. Prince: riding mode light text everywhere.
+// ---- 1/9: saves the system already has are not "sending" any more
+function seen74() { if (!D || !D.seen || !D.seen.length) return; var q = queue(), q2 = q.filter(function (x) { return D.seen.indexOf(x.sid) < 0; }); if (q2.length !== q.length) setQ(q2); }
+pendView = (function (f) { return function () { try { seen74(); } catch (e) { } return f.apply(this, arguments); }; })(pendView);
+var N74T = 0;
+flush = (function (f) { return function (after) { N74T = Date.now(); if (FLUSHING && N73FT && Date.now() - N73FT > 60000) FLUSHING = false; return f(after); }; })(flush); // a send with no answer for a minute is sent again
+var N74A = 0; authScreen = (function (f) { return function (r) { N74A = Date.now(); return f(r); }; })(authScreen); // the PIN screen is up: no resends under her fingers
+setInterval(function () { if (!D || RK || !queue().length || Date.now() - N74A < 600000) return; if ((!FLUSHING && Date.now() - N74T > 45000) || (FLUSHING && Date.now() - N73FT > 60000)) flush(); }, 5000);
+// ---- 6: Frank handed it to Prince, but Prince has not confirmed yet → the agent still sees "Approved"
+oStage = (function (f) { return function (o) { if (o && o.disp && !o.pok && (o.status === 'Released' || o.status === 'Partly released') && !o.hold) return f(Object.assign({}, o, { disp: '' })); return f(o); }; })(oStage);
+// ---- 4: one calendar: tap a day twice for that day, or tap two days for a range
+var CAL74 = { y: 0, m: 0, a: '', cb: null, max: '' };
+function cal74Open(from, to, cb) { var d = from || D.today; CAL74 = { y: +d.slice(0, 4), m: +d.slice(5, 7) - 1, a: '', cb: cb, max: D.today, from: from || '', to: to || from || '' }; sheetOpen('cal74'); }
+function cal74Ymd(y, m, d) { return y + '-' + ('0' + (m + 1)).slice(-2) + '-' + ('0' + d).slice(-2); }
+SHEETS.cal74 = function () {
+  var C = CAL74, first = new Date(Date.UTC(C.y, C.m, 1)), days = new Date(Date.UTC(C.y, C.m + 1, 0)).getUTCDate(), lead = (first.getUTCDay() + 6) % 7;
+  var mn = first.toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }), h = '<div class="cal74">';
+  h += '<div class="cal74h"><button data-act="cal74m" data-v="-1" aria-label="Month before">‹</button><b>' + esc(mn) + '</b><button data-act="cal74m" data-v="1" aria-label="Next month"' + (cal74Ymd(C.y, C.m, days) >= C.max ? ' disabled' : '') + '>›</button></div>';
+  h += '<div class="cal74g">' + ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(function (x) { return '<i>' + x + '</i>'; }).join('');
+  for (var i = 0; i < lead; i++) h += '<span></span>';
+  for (var d = 1; d <= days; d++) { var k = cal74Ymd(C.y, C.m, d), on = k === C.a, inr = !C.a && C.from && k >= C.from && k <= C.to;
+    h += '<button data-act="cal74d" data-v="' + k + '" class="' + (on ? 'on' : inr ? 'in' : '') + (k === D.today ? ' td' : '') + '"' + (k > C.max ? ' disabled' : '') + '>' + d + '</button>'; }
+  h += '</div><div class="cal74t">' + (C.a ? esc(dayLbl(C.a)) + ' – tap it again, or tap the last day' : 'Tap a day twice for that day, or tap two days for a range') + '</div></div>';
+  return h; };
+HALFK.cal74 = 1;
+ACT.cal74m = function (b) { var m = CAL74.m + Number(b.dataset.v); CAL74.y += Math.floor(m / 12); CAL74.m = ((m % 12) + 12) % 12; drawSheet(); };
+ACT.cal74d = function (b) { var k = b.dataset.v, C = CAL74; if (!C.a) { C.a = k; drawSheet(); return; }
+  var a = C.a < k ? C.a : k, z = C.a < k ? k : C.a, cb = C.cb; C.a = ''; SHEETK = ''; $('over').innerHTML = ''; if (cb) cb(a, z); };
+function cal74Chip(act, from, to) { return '<button class="cal74ch" data-act="' + act + '">' + ico(ICO.b6today) + '<span>' + (from ? esc(from === (to || from) ? dayLbl(from) : dayLbl(from) + ' – ' + dayLbl(to)) : 'Pick the day') + '</span><b>Change</b></button>'; }
+// ---- 4 + 5: Frank › My day › Owed: the calendar; Distributor always Omni, Clement, Bernice, Open market, then All
+var SRC74 = [['SRC-OMINI', 'Omni Haven'], ['SRC-CLEMENT', 'Clement'], ['SRC-BERNICE', 'Bernice'], ['SRC-MARKET', 'Open market'], ['all', 'All']];
+fk73OwedHtml = (function (f) { return function () {
+  var h = f().replace(/<div class="n72two">[\s\S]*?<\/label><\/div>/, function () { return cal74Chip('cal74ow', OW.from, OW.to); });
+  h = h.replace(/<option value="dates"([^>]*)>[^<]*<\/option>/, '<option value="dates"$1>Pick dates</option>');
+  return h.replace(/<select data-chg="ow73" data-f="src">[\s\S]*?<\/select>/, function () { return '<select data-chg="ow73" data-f="src">' + SRC74.map(function (o) { return '<option value="' + o[0] + '"' + (OW.src === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>'; }); }; })(fk73OwedHtml);
+ACT.cal74ow = function () { cal74Open(OW.from, OW.to, function (a, z) { OW.from = a; OW.to = z; OW.age = 'dates'; render(); }); };
+CHG.ow73 = (function (f) { return function (el) { f(el); if (el.dataset.f === 'age' && el.value === 'dates' && !OW.from) ACT.cal74ow(); }; })(CHG.ow73);
+// ---- 4: Help items › 📅 opens the same calendar
+fk73HelpHtml = (function (f) { return function () { return f().replace(/<div class="n72two">[\s\S]*?<\/label><\/div>/, function () { return cal74Chip('cal74hf', HF.from, HF.to); }); }; })(fk73HelpHtml);
+ACT.cal74hf = function () { cal74Open(HF.from, HF.to, function (a, z) { HF.r = 'dates'; HF.from = a; HF.to = z; render(); }); };
+ACT.hfr = (function (f) { return function (b) { f(b); if (b.dataset.r === 'dates' && D && D.me && D.me.role === 'Warehouse' && FK.dsub === 'help') ACT.cal74hf(); }; })(ACT.hfr);
+hRange = (function (f) { return function () { if (HF.r === 'dates' && HF.from) return [HF.from, HF.to || HF.from]; return f(); }; })(hRange);
 if (RK) rcpBoot(); else if (!n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
