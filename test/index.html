@@ -909,6 +909,51 @@ body.r27ride #main .r72h .qn{background-color:#FFFFFF !important;color:#000 !imp
 body.r27ride #main .t-red,body.r27ride #main .red{color:#FF8A80 !important}body.r27ride #main .t-green,body.r27ride #main .green{color:#7EE2A8 !important}
 body.r27ride #main input,body.r27ride #main select,body.r27ride #main textarea{background-color:#2C2C2E !important;border-color:#48484A !important}
 body.r27ride #main .r73dot{background-color:#C084FC !important}
+/* v2.8.2 */
+.r27slide .fill{position:absolute;left:0;top:0;bottom:0;width:0;background:#16A34A;border-radius:inherit;pointer-events:none}
+.r27slide:not(.drag) .fill{transition:width .2s}.r27slide .kn,.r27slide .tx{z-index:1}
+.r27slide.ready .fill{background:#22C55E;box-shadow:0 0 18px rgba(34,197,94,.7)}.r27slide.ready .tx{padding-left:0}
+.r82e{display:flex;flex-direction:column;gap:6px;font-size:15px}.r82e .r27big{margin:4px 0 0}
+.r82pg{display:flex;flex-direction:column;gap:4px;min-width:120px}.r82pg b{font-size:14px;color:var(--ink,#111)}
+.r82pg i{display:block;height:8px;border-radius:4px;background:#E5E7EB;overflow:hidden}.r82pg em{display:block;height:100%;background:var(--green);border-radius:4px}
+.r27slide:active,.r27big:active,.r72lk button:active,.r27link:active{filter:brightness(.88)}
+/* riding mode: a green slide with a big white knob that fills as he slides; coloured edges; a dark bottom bar */
+body.r27ride #main .r27slide{background-color:#14532D !important;border:2px solid #22C55E;height:64px;border-radius:32px}
+body.r27ride #main .r27slide .fill{background-color:#16A34A !important}
+body.r27ride #main .r27slide.ready .fill{background-color:#22C55E !important}
+body.r27ride #main .r27slide .kn{background-color:#FFFFFF !important;color:#15803D !important;width:52px;height:52px;left:4px;top:4px;font-size:28px;font-weight:900;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+body.r27ride #main .r27slide .tx{font-size:18px;color:#FFFFFF !important}
+body.r27ride #main .r27slide.ready{border-color:#86EFAC}body.r27ride #main .r27slide.ready .tx{color:#052E16 !important;font-size:20px}
+body.r27ride #main .r72s,body.r27ride #main .r27row{border-left-width:7px !important;border-left-style:solid !important}
+body.r27ride #main .r72s.k-blue,body.r27ride #main .r27row.k-blue{border-left-color:#60A5FA !important}
+body.r27ride #main .r72s.k-amber,body.r27ride #main .r27row.k-amber{border-left-color:#FBBF24 !important}
+body.r27ride #main .r72s.k-red,body.r27ride #main .r27row.k-red{border-left-color:#F87171 !important}
+body.r27ride #main .r27row.k-green{border-left-color:#4ADE80 !important}body.r27ride #main .r27row.k-grey{border-left-color:#8E8E93 !important}
+body.r27ride #main .r72h b{font-size:19px}body.r27ride #main .r72h .grow span{font-size:15px;color:#D1D1D6 !important}body.r27ride #main .r72h .rt{font-size:15px}
+body.r27ride #main .r82pg b{font-size:16px}body.r27ride #main .r82pg i{background-color:#3A3A3C !important}body.r27ride #main .r82pg em{background-color:#4ADE80 !important}
+body.r27ride #main .r27link,body.r27ride #main .r72lk button,body.r27ride #main a[data-k="rems"]{display:inline-flex;align-items:center;gap:6px;padding:10px 14px !important;border:1.5px solid #636366 !important;border-radius:999px;background-color:#2C2C2E !important;font-size:15px;font-weight:700;text-decoration:none}
+body.r27ride #main .r72lk button:active,body.r27ride #main .r27link:active,body.r27ride #main a[data-k="rems"]:active,body.r27ride #main button:active{background-color:#48484A !important}
+body.r27ride #main button.main:active,body.r27ride #main .r27big:active,body.r27ride #main button.on:active{background-color:#D1D1D6 !important}
+body.r27ride #main .r82e{background-color:#161618 !important;border:1.5px solid #3A3A3C;border-radius:14px;padding:16px 14px}
+body.r27ride #main .r82e b{font-size:18px;color:#FFFFFF !important}
+body.r27ride #main .r27pl.g{background-color:#14532D !important;color:#86EFAC !important}body.r27ride #main .r27pl.a{background-color:#78350F !important;color:#FCD34D !important}
+body.r27ride #main .r27pl{font-size:13px;padding:3px 10px}
+body.r27ride .toast{background:#15803D;color:#fff;font-size:16px;font-weight:700}body.r27ride .toast.err{background:#B91C1C}
+body.r27ride #main .ring span{background-color:#161618 !important;color:#FFFFFF !important}
+@media (max-width:360px){body.r27ride #main .r72lk button,body.r27ride #main .r27link,body.r27ride #main a[data-k="rems"]{font-size:13.5px;padding:8px 10px !important;white-space:nowrap}}
+/* riding mode: the pop-up sheets dark too */
+body.r27ride #over .sheet{background:#1C1C1E;color:#F5F5F7}body.r27ride #over .sheet *{color:#F5F5F7}
+body.r27ride #over .sheet .t-red,body.r27ride #over .sheet .red{color:#FF8A80 !important}body.r27ride #over .sheet .t-amber{color:#FCD34D !important}body.r27ride #over .sheet .t-green,body.r27ride #over .sheet .green{color:#7EE2A8 !important}
+body.r27ride #over .sheet .muted,body.r27ride #over .sheet .small{color:#C7C7CC}
+body.r27ride #over .sheet button,body.r27ride #over .sheet a,body.r27ride #over .sheet input,body.r27ride #over .sheet textarea,body.r27ride #over .sheet select{background-color:#2C2C2E !important;border-color:#48484A !important}
+body.r27ride #over .sheet button:active,body.r27ride #over .sheet a:active{background-color:#48484A !important}
+body.r27ride #over .sheet button.main,body.r27ride #over .sheet .r27big,body.r27ride #over .sheet button.on{background-color:#FFFFFF !important}
+body.r27ride #over .sheet button.main *,body.r27ride #over .sheet .r27big *,body.r27ride #over .sheet button.on *,body.r27ride #over .sheet button.main,body.r27ride #over .sheet .r27big,body.r27ride #over .sheet button.on{color:#000 !important}
+body.r27ride #over .sheet .n27h,body.r27ride #over .sheet .grab{background-color:#636366 !important}
+body.r27ride .bnav{background:#111113 !important;border-top-color:#2C2C2E !important;box-shadow:none}
+body.r27ride .bnav button{color:#AEAEB2}body.r27ride .bnav button.on{color:#FFD60A}
+body.r27ride .bnav button.on svg{background:rgba(255,214,10,.18) !important;color:#FFD60A}
+body.r27ride .bnav.b6 button.on::before{background:#FFD60A}body.r27ride .bnav .cnt{box-shadow:0 0 0 2px #111113}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -8307,10 +8352,10 @@ function pgR27Route() {
   if (R72.t === 'done') return h + (dn.length ? dn.map(function (x, i) { return r27DoneRow(x, i + 1); }).join('') : emptyHtml('Nothing delivered yet today.'));
   if (R72.t === 'later') return h + (L.length ? L.map(function (x) { return r27Row('', x.released ? 'blue' : 'grey', esc(x.vendor), esc(dayLbl(x.dlv)) + ' · ' + x.lines.map(function (l) { return l.qty + ' ' + esc(skn(l.sku)); }).join(', '), x.released ? '' : 'Not approved'); }).join('') : emptyHtml('No later deliveries.'));
   if (!started) h += '<div class="r27st"><b>Today\'s route · ' + esc(dayLbl(D.today)) + '</b><div class="r27n3"><div><b>' + R.length + '</b><span>stops</span></div><div><b>' + R.reduce(function (t, s) { return t + r27Ctn(r27Lines(s)); }, 0) + '</b><span>cartons</span></div><div><b>' + r27Fmt(R.reduce(function (t, s) { return t + (s.ask || 0); }, 0)) + '</b><span>GHS to collect</span></div></div><button class="r27big" data-act="r27go">Start route</button></div>';
-  if (!R.length) h += C.length ? '<div class="r27ok">Confirm the load first <button class="r27link" data-act="r72t" data-v="conf">To confirm ›</button></div>' : '<div class="r27ok">All stops done ✓ <button class="r27link" data-act="r72go">Go to Collect ›</button></div>';
+  if (!R.length) h += C.length ? '<div class="r27ok r82e"><b>Check what Frank gave you.</b><button class="r27big" data-act="r72t" data-v="conf">Confirm the load</button></div>' : '<div class="r27ok r82e"><b>All stops done ✓</b><button class="r27big" data-act="r72go">Go to Collect</button></div>';
   var op = R72.open === '_' ? '' : R72.open && R.some(function (s) { return s.id === R72.open; }) ? R72.open : started && R[0] ? R[0].id : '';
   h += '<div class="r72list">' + R.map(function (s, i) { var on = s.id === op, chg = s.orders.some(function (o) { return o.chgw; });
-    return '<div class="r72s k-' + (chg ? 'amber' : 'blue') + (on ? ' on' : '') + (i ? '' : ' nx') + '" data-drag="r" data-k="' + esc(s.id) + '"><div class="r72h" data-act="r72o" data-v="' + esc(s.id) + '"><span class="t2hd" data-dh="1">⠿</span><span class="qn">' + (i + 1) + '</span><div class="grow"><b class="ell">' + r73Dot(s.id) + (s.urg ? '🚩 ' : '') + esc(s.name) + '</b><span class="ell">' + r27Codes(r27Lines(s)) + (chg ? ' · change waiting' : '') + '</span></div><span class="rt">' + esc(s.carry ? 'First today' : r27Need(s.time)) + '</span></div>' + (on ? r27Card(s, i === 0) : '') + '</div>'; }).join('') + '</div>';
+    return '<div class="r72s k-' + (chg ? 'amber' : s.urg ? 'red' : 'blue') + (on ? ' on' : '') + (i ? '' : ' nx') + '" data-drag="r" data-k="' + esc(s.id) + '"><div class="r72h" data-act="r72o" data-v="' + esc(s.id) + '"><span class="t2hd" data-dh="1">⠿</span><span class="qn">' + (i + 1) + '</span><div class="grow"><b class="ell">' + r73Dot(s.id) + (s.urg ? '🚩 ' : '') + esc(s.name) + '</b><span class="ell">' + r27Codes(r27Lines(s)) + (chg ? ' · change waiting' : '') + '</span></div><span class="rt">' + esc(s.carry ? 'First today' : r27Need(s.time)) + '</span></div>' + (on ? r27Card(s, i === 0) : '') + '</div>'; }).join('') + '</div>';
   if (R.some(function (s) { return (D.hstops || []).some(function (r) { return r.vid === s.id; }); })) h += '<div class="r73key"><i class="r73dot"></i>= help items go with it</div>';
   if (R27.ride) return h;
   if (r72Ord()) h += '<div class="r27why">You changed the order. <a class="r27link" style="display:inline" data-act="r72back">Back to sorted ›</a></div>';
@@ -8856,5 +8901,46 @@ fk73HelpHtml = (function (f) { return function () { return f().replace(/<div cla
 ACT.cal74hf = function () { cal74Open(HF.from, HF.to, function (a, z) { HF.r = 'dates'; HF.from = a; HF.to = z; render(); }); };
 ACT.hfr = (function (f) { return function (b) { f(b); if (b.dataset.r === 'dates' && D && D.me && D.me.role === 'Warehouse' && FK.dsub === 'help') ACT.cal74hf(); }; })(ACT.hfr);
 hRange = (function (f) { return function () { if (HF.r === 'dates' && HF.from) return [HF.from, HF.to || HF.from]; return f(); }; })(hRange);
-if (RK) rcpBoot(); else if (!n27Gate()) load(goHash); // v2.7.0: the PIN once a day
+// ---------------------------------------------------------------- v2.8.2 (Yayra 23 Oct 14:45)
+// Riding mode: the slide shows his thumb's progress (green fill, "Let go ✓", a short buzz); the route has a progress bar.
+// A forgotten PIN: "Forgot?" sends a one-time email link; the manager can reset a PIN or make a new link (Me › Settings › Staff PINs).
+// ---- the slide: a green fill follows the knob; near the end it turns bright and says "Let go ✓"
+r27Slide = (function (f) { return function (vid) { return f(vid).replace('<span class="kn">', '<span class="fill"></span><span class="kn">'); }; })(r27Slide);
+(function () { var T0 = 'Slide to record ›››';
+  document.addEventListener('pointermove', function () { var t = document.querySelector('.r27slide.drag'); if (!t) return; var k = t.querySelector('.kn'), fl = t.querySelector('.fill'), tx = t.querySelector('.tx'); if (!k || !fl) return;
+    var m = /translateX\(([\d.]+)px\)/.exec(k.style.transform || ''), dx = m ? +m[1] : 0, max = Math.max(40, t.clientWidth - 56), ready = dx >= max * 0.8;
+    fl.style.width = (k.offsetLeft + k.offsetWidth + dx + 2) + 'px'; t.classList.toggle('ready', ready); if (tx) { tx.textContent = ready ? 'Let go ✓' : T0; tx.style.opacity = ready ? '' : String(Math.max(0.15, 1 - 1.6 * dx / max)); } });
+  var reset = function () { setTimeout(function () { [].forEach.call(document.querySelectorAll('.r27slide'), function (t) { if (t.classList.contains('drag')) return; var fl = t.querySelector('.fill'), tx = t.querySelector('.tx'); if (fl) fl.style.width = ''; t.classList.remove('ready'); if (tx) { tx.textContent = T0; tx.style.opacity = ''; } }); }, 0); };
+  document.addEventListener('pointerup', reset); document.addEventListener('pointercancel', reset);
+})();
+r27Open = (function (f) { return function () { try { if (navigator.vibrate) navigator.vibrate(35); } catch (e) { } return f.apply(this, arguments); }; })(r27Open);
+// ---- the route: "2 of 5 done" with a progress bar
+function r82Pg(h) { return String(h).replace(/<div class="r27hd"><span>(\d+) of (\d+) done<\/span>/, function (m, a, b) { var p = +b ? Math.round(100 * a / b) : 0; return '<div class="r27hd"><span class="r82pg"><b>' + a + ' of ' + b + ' done</b><i><em style="width:' + p + '%"></em></i></span>'; }); }
+pgR27Route = (function (f) { return function () { return r82Pg(f.apply(this, arguments)); }; })(pgR27Route); PG27.route = pgR27Route;
+// ---- a forgotten PIN: an email with a one-time link
+ACT.n27forgot = function () { var e = $('n27er'); if (e) e.textContent = 'Sending…';
+  rpc({ t: TOKEN, op: 'pinforgot' }, function (x) { var e2 = $('n27er'); if (e2) e2.textContent = (x && x.msg) || 'Try again.'; }, function () { var e2 = $('n27er'); if (e2) e2.textContent = 'No signal – try again.'; }); };
+n27Auth = (function (f) { return function (r) { f(r); if (r && r.locked && !RK) { var d = document.querySelector('.n27pin'); if (d) d.innerHTML = LOGO + '<h2>' + (r.name ? 'Hello ' + esc(r.name) : 'CupSales') + '</h2><div class="n27lock">The PIN was wrong 5 times.</div>' +
+  '<button class="main big wide" data-act="n27forgot">Email me a reset link</button><div class="n27er" id="n27er"></div><p class="small muted">Or ask the manager to reset your PIN.</p>'; } }; })(n27Auth);
+function pr82Boot() { var m = String(location.search).match(/[?&]pr=([A-Za-z0-9]{20,60})/); if (!m || RK || !TOKEN) return false; var code = m[1];
+  try { history.replaceState(null, '', location.pathname + location.search.replace(/[?&]pr=[A-Za-z0-9]+/, '').replace(/^&/, '?')); } catch (e) { }
+  rpc({ t: TOKEN, op: 'pinreset', pr: code }, function (x) { SESSION = ''; try { ls(SKEY, null); } catch (e) { } n27Auth(x || { auth: 'pin', msg: 'Try again.' }); }, function () { n27Auth({ auth: 'pin', msg: 'No signal – open the email link again.' }); }); return true; }
+// ---- the manager: Me › Settings › Staff PINs
+PG27.n27set = (function (f) { return function () { var h = f.apply(this, arguments); if (!MS.d || !MS.d.pins || !MS.d.pins.length) return h;
+  var rows = '<div class="sech">Staff PINs</div><div class="msbox">' + MS.d.pins.map(function (p) { return msRow('mpin', p.uid, esc(p.name), p.locked ? '<span class="t-red">Locked</span>' : p.pin ? 'PIN set' : '<span class="t-amber">No PIN yet</span>', p.email ? '' : 'No email – reset here'); }).join('') + '</div>';
+  return h.replace('<div class="sech">Rules</div>', rows + '<div class="sech">Rules</div>'); }; })(PG27.n27set);
+var MP82 = null;
+ACT.mpin = function (b) { var p = (MS.d.pins || []).filter(function (x) { return x.uid === b.dataset.k; })[0]; if (!p) return; MP82 = { p: p, link: null }; sheetOpen('mpin82'); };
+SHEETS.mpin82 = function () { var x = MP82; if (!x) return ''; var p = x.p;
+  var h = '<div class="n27h"></div><div class="t2sh"><b>' + esc(p.name) + '</b><a data-act="closeO">Close</a></div>';
+  if (x.link) return h + '<p class="small muted" style="margin:0 2px 10px">New link made. The old one no longer works.</p>' + (x.link.wa ? '<a class="main gr wide big" style="display:flex;justify-content:center;text-decoration:none" href="' + esc(x.link.wa) + '" target="_blank" rel="noopener">Send it on WhatsApp</a>' : '<p class="small">No phone number for ' + esc(p.name) + '. Copy the link and send it:</p><input readonly id="mp82u" value="' + esc(x.link.url) + '" style="width:100%"><button class="main gr wide big" style="margin-top:10px" data-act="mpinc">Copy link</button>');
+  return h + '<p class="small muted" style="margin:0 2px 10px">' + (p.locked ? 'Locked after 5 wrong PINs.' : p.pin ? 'Has a PIN.' : 'Has not chosen a PIN yet.') + '</p>' +
+    '<button class="main wide big" data-act="mpinr">Reset PIN</button><p class="small muted" style="margin:6px 2px 14px">Same link. Next time ' + esc(p.name) + ' opens the app, a new PIN is chosen.</p>' +
+    '<button class="ghost wide" data-act="mpinl">Lost phone: new link</button><p class="small muted" style="margin:6px 2px 0">The old link stops. You send the new one by WhatsApp.</p>'; };
+HALFK.mpin82 = 1;
+ACT.mpinc = function () { var e = $('mp82u'); if (!e) return; var done = function () { toast('Copied'); }; try { navigator.clipboard.writeText(e.value).then(done, function () { e.select(); document.execCommand('copy'); done(); }); } catch (x) { e.select(); try { document.execCommand('copy'); done(); } catch (y) { } } };
+ACT.mpinr = function () { var x = MP82; if (!x) return; ask('Reset ' + x.p.name + '\'s PIN?', function () { readOp('mpinreset', { uid: x.p.uid }, function (r) { if (r && r.ok) { x.p.pin = false; x.p.locked = false; toast('Saved'); SHEETK = ''; $('over').innerHTML = ''; render(); } else say((r && r.error) || 'Try again.'); }, function (m) { say(m || 'No signal – try again.'); }); }, 'RESET'); };
+ACT.mpinl = function () { var x = MP82; if (!x) return; ask('Make a new link for ' + x.p.name + '? The old one stops working.', function () { readOp('mnewlink', { uid: x.p.uid }, function (r) { if (!(r && r.ok)) { say((r && r.error) || 'Try again.'); return; }
+  var ph = String(r.phone || '').replace(/\D/g, ''); x.link = { url: r.url, wa: ph ? 'https://wa.me/233' + ph.replace(/^0/, '') + '?text=' + encodeURIComponent('Your new CupSales link: ' + r.url + ' – open it and choose a new PIN.') : '' }; x.p.pin = false; x.p.locked = false; sheetOpen('mpin82'); }, function (m) { say(m || 'No signal – try again.'); }); }, 'NEW LINK'); };
+if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
