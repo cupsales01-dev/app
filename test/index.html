@@ -954,7 +954,6 @@ body.r27ride .bnav{background:#111113 !important;border-top-color:#2C2C2E !impor
 body.r27ride .bnav button{color:#AEAEB2}body.r27ride .bnav button.on{color:#FFD60A}
 body.r27ride .bnav button.on svg{background:rgba(255,214,10,.18) !important;color:#FFD60A}
 body.r27ride .bnav.b6 button.on::before{background:#FFD60A}body.r27ride .bnav .cnt{box-shadow:0 0 0 2px #111113}
-.fk84d{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:#DBEAFE;color:#1D4ED8;font-size:12px;font-weight:700;vertical-align:1px}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -1320,11 +1319,11 @@ function poll() {
 /** v2.5.4: every half minute the phone asks "has anything changed?" (nothing is read for that); only then is the newest screen fetched. */
 var REV = null, SEENREV = '', LASTREV = '', PINGT = 0;
 function ping() {
-  if (!D || RK || document.visibilityState === 'hidden') return; PINGT = Date.now();
+  if (!D || RK || document.visibilityState === 'hidden') return; PINGT = Date.now(); PING86 = 25000 + Math.floor(Math.random() * 10000);
   var lv = D.me.role === 'Agent' && !D.viewOf && Date.now() - LIVET > 55000; if (lv) LIVET = Date.now(); // v2.5.17: "she is using the app"
   rpc({ op: 'ping', t: TOKEN, since: REV || '', live: lv ? 1 : 0 }, function (r) { if (!r || r.rev == null) return; SEENREV = String(r.rev); if (!D) return; if (REV === null) { if (STALE || !D.rev) return; REV = String(D.rev); }
     if (r.ev && r.ev.length && D && !STALE) { var top = EVSEEN > REV ? EVSEEN : REV, nw = r.ev.filter(function (e) { return String(e.r) > top && e.by !== D.me.uid; }); if (r.ev.length) EVSEEN = String(r.ev[r.ev.length - 1].r); if (nw.length) evApply(nw); } // v2.5.9: the change shows at once
-    if (SEENREV !== REV) poll(); }, function () { });
+    if (SEENREV !== REV) setTimeout(poll, Math.floor(Math.random() * 6000)); }, function () { });
 }
 var EVSEEN = '', EVT = null;
 /** v2.5.9: status changes made on another phone (approved, on the way, delivered, confirmed…) – shown straight away, kept until the new screen. */
@@ -1332,7 +1331,7 @@ function evApply(L) {
   L.forEach(function (e) { CONF.push({ op: e.op, ev: 1, at: Date.now(), data: { oids: e.oids, oid: e.oid, what: e.what, vid: e.vid, hid: e.hid, from: e.from, uid: e.uid, approve: e.ap, skus: e.skus, routes: e.routes, eid: e.eid, items: (e.oids || []).map(function (o) { return { oid: o }; }) } }); });
   CONF = CONF.slice(-60); if (touching()) { clearTimeout(EVT); EVT = setTimeout(function () { evApply([]); }, 700); return; } if ($('dlg').innerHTML || $('over').innerHTML || (document.activeElement && /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName))) return; var y = window.scrollY; render(); window.scrollTo(0, y);
 }
-setInterval(function () { if (Date.now() - POLLT > 300000) poll(); else if (Date.now() - PINGT > 8000) ping(); }, 4000); // v2.5.9: every 8 seconds while open
+setInterval(function () { if (Date.now() - POLLT > 300000 + PING86) poll(); else if (Date.now() - PINGT > PING86) ping(); }, 4000); // v2.8.6: every 25-35 seconds while open
 var BACKT = null; function onBack() { if (document.visibilityState !== 'visible' || !D) return; clearTimeout(BACKT); BACKT = setTimeout(function () { if (Date.now() - POLLT > 30000) poll(); else ping(); }, 600); } // v2.5.7: opened again → the newest screen (once)
 document.addEventListener('visibilitychange', onBack); window.addEventListener('pageshow', function (e) { if (e.persisted) onBack(); }); window.addEventListener('focus', onBack);
 /** v2.4.7: what is saved on the phone but not yet in the system is shown as done already. */
@@ -4945,8 +4944,8 @@ function n27Auth(r) {
     var p = $('pin').value.trim(); if (!/^\d{4}$/.test(p)) { n27Err('The PIN is 4 numbers.'); return; }
     if (set && p !== ($('pin2').value || '').trim()) { n27Err('The two PINs are not the same. Type it again.'); $('pin2').value = ''; N27.pf = 'pin2'; return; }
     var btn = this; btn.disabled = true;
-    rpc({ t: TOKEN, op: 'login', pin: p }, function (x) { if (x && x.session) { SESSION = x.session; ls(SKEY, x.session); n27k('pd', n27Today()); $('main').innerHTML = ''; if (set) toast('PIN saved ✓'); load(goHash); if (set) n27Onb(); } else { var q = x || { auth: 'pin', msg: 'Try again.' }; q.name = q.name || r.name; n27Auth(q); } },
-      function () { btn.disabled = false; n27Err('No signal – try again.'); });
+    rpc({ t: TOKEN, op: 'login', pin: p }, function (x) { if (x && x.session) { SESSION = x.session; ls(SKEY, x.session); n86Keep(p); n27k('pd', n27Today()); $('main').innerHTML = ''; if (set) toast('PIN saved ✓'); load(goHash); if (set) n27Onb(); } else { var q = x || { auth: 'pin', msg: 'Try again.' }; q.name = q.name || r.name; n27Auth(q); } },
+      function () { btn.disabled = false; if (n86Open(p)) return; n27Err(navigator.onLine === false ? 'No signal – try again.' : 'The system is busy. Try again in a minute.'); });
   };
 }
 function n27Err(m) { var e = $('n27er'); if (e) e.textContent = m; var d = document.querySelector('.n27pin'); if (d) { d.classList.remove('shake'); void d.offsetWidth; d.classList.add('shake'); } }
@@ -8240,13 +8239,10 @@ fkRows = (function (f) { return function (L) {
   var q = FK.flt === 'ok' ? '' : norm(FK.q), R = L.filter(function (x) { return (!FK.flt || x.st === FK.flt) && (q.length < 2 || norm(x.vendor + ' ' + x.agent).indexOf(q) >= 0); });
   if (!R.length) return f(L);
   if (FK.flt === 'ok') { var n = R.filter(function (x) { return FK.load[x.oid] !== false; }).length;
-    return '<div class="fk73ld">' + R.map(function (x) { var on = FK.load[x.oid] !== false; return '<button class="fkck' + (on ? ' on' : '') + '" data-act="fklt" data-o="' + esc(x.oid) + '"><span class="fkbx">' + (on ? '✓' : '') + '</span><span class="grow ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + fk84Day(x) + fk73Chip(fk73Vid(x)) + '</span><b>' + esc(fkL(x.lines)) + '</b></button>'; }).join('') +
+    return '<div class="fk73ld">' + R.map(function (x) { var on = FK.load[x.oid] !== false; return '<button class="fkck' + (on ? ' on' : '') + '" data-act="fklt" data-o="' + esc(x.oid) + '"><span class="fkbx">' + (on ? '✓' : '') + '</span><span class="grow ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + fk73Chip(fk73Vid(x)) + '</span><b>' + esc(fkL(x.lines)) + '</b></button>'; }).join('') +
       '<button class="main gr fkbig" data-act="fkhand"' + (n ? '' : ' disabled') + '>Hand to Prince · ' + n + '</button><p class="small muted" style="margin:4px 2px 0">Not ticked = next trip. Prince confirms on his phone.</p></div>'; }
   return R.map(function (x) { var c = FKST[x.st];
-    return '<div class="fkr" style="border-left-color:' + c[1] + '" data-act="fko" data-k="' + esc(x.k) + '"><div class="grow"><b class="ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + '</b><div class="fks ell">' + esc(x.agent) + ' · ' + esc(fkL(x.lines)) + (x.st !== 'dl' ? fk84Day(x) : '') + (x.st !== 'dl' ? fk73Chip(fk73Vid(x)) : '') + '</div></div>' + (x.st === 'appr' || x.st === 'chg' || x.st === 'bad' ? '<span class="fkt fk-' + x.st + '">' + (x.st === 'chg' ? 'Change' : c[0]) + '</span>' : '<span class="go">' + ico(ICO.right) + '</span>') + '</div>'; }).join(''); }; })(fkRows);
-function fk84Dlv(x) { return ((x && (x.o || x.x)) || {}).dlv || ''; }
-function fk84Day(x) { var d = fk84Dlv(x); return d && d > D.today ? ' <span class="fk84d">' + esc(dayLbl(d)) + '</span>' : ''; }
-fkRows = (function (f) { return function (L) { (L || []).forEach(function (x) { if (x.st === 'ok' && fk84Dlv(x) > D.today && FK.load[x.oid] === undefined) FK.load[x.oid] = false; }); return f(L); }; })(fkRows); // a later day: not ticked unless Frank ticks it
+    return '<div class="fkr" style="border-left-color:' + c[1] + '" data-act="fko" data-k="' + esc(x.k) + '"><div class="grow"><b class="ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + '</b><div class="fks ell">' + esc(x.agent) + ' · ' + esc(fkL(x.lines)) + (x.st !== 'dl' ? fk73Chip(fk73Vid(x)) : '') + '</div></div>' + (x.st === 'appr' || x.st === 'chg' || x.st === 'bad' ? '<span class="fkt fk-' + x.st + '">' + (x.st === 'chg' ? 'Change' : c[0]) + '</span>' : '<span class="go">' + ico(ICO.right) + '</span>') + '</div>'; }).join(''); }; })(fkRows);
 pgFOrders = (function (f) { return function () { return f().replace(/<button class="main fkbig" data-act="fkload">[\s\S]*?<\/button>/, ''); }; })(pgFOrders); PG27.forders = pgFOrders;
 ACT.fkflt = (function (f) { return function (b) { if (b.dataset.v === 'ok') FK.load = {}; f(b); }; })(ACT.fkflt); // a fresh load list: everything ticked
 ACT.fklt = function (b) { FK.load[b.dataset.o] = FK.load[b.dataset.o] === false; if (SHEETK === 'fload') drawSheet(); else { var el = $('fkol'); if (el) el.innerHTML = fkRows(fkList()); else render(); } };
@@ -8946,5 +8942,22 @@ ACT.mpinc = function () { var e = $('mp82u'); if (!e) return; var done = functio
 ACT.mpinr = function () { var x = MP82; if (!x) return; ask('Reset ' + x.p.name + '\'s PIN?', function () { readOp('mpinreset', { uid: x.p.uid }, function (r) { if (r && r.ok) { x.p.pin = false; x.p.locked = false; toast('Saved'); SHEETK = ''; $('over').innerHTML = ''; render(); } else say((r && r.error) || 'Try again.'); }, function (m) { say(m || 'No signal – try again.'); }); }, 'RESET'); };
 ACT.mpinl = function () { var x = MP82; if (!x) return; ask('Make a new link for ' + x.p.name + '? The old one stops working.', function () { readOp('mnewlink', { uid: x.p.uid }, function (r) { if (!(r && r.ok)) { say((r && r.error) || 'Try again.'); return; }
   var ph = String(r.phone || '').replace(/\D/g, ''); x.link = { url: r.url, wa: ph ? 'https://wa.me/233' + ph.replace(/^0/, '') + '?text=' + encodeURIComponent('Your new CupSales link: ' + r.url + ' – open it and choose a new PIN.') : '' }; x.p.pin = false; x.p.locked = false; sheetOpen('mpin82'); }, function (m) { say(m || 'No signal – try again.'); }); }, 'NEW LINK'); };
+// ---------------------------------------------------------------- v2.8.6: when Google is busy
+var PING86 = 25000 + Math.floor(Math.random() * 10000);
+function fl86() { try { return JSON.parse(ls('cs_fl86') || '[]'); } catch (e) { return []; } }
+function fl86Add(op, e) { var L = fl86(); L.push({ at: Date.now(), op: op, m: String((e && (e.message || e)) || 'no answer').slice(0, 120) }); ls('cs_fl86', JSON.stringify(L.slice(-30))); }
+/** Sign-in and the first screen try again by themselves (3, 6, 12 seconds); every failed request is noted and sent later. */
+rpc = (function (f) { return function (req, ok, fail) {
+  var n = 0, again = req && (req.op === 'login' || (req.op === 'init' && !req.poll)), sent = null;
+  if (req && req.op === 'init') { var L = fl86(); if (L.length) { sent = L.length; req.fl = L.slice(-10); } }
+  function go() { var t0 = Date.now(); f(req, function (x) { if (sent && x && !x.error && !x.auth) { var L = fl86(); ls('cs_fl86', JSON.stringify(L.slice(sent))); sent = null; } ok(x); },
+    function (e) { if (req && req.op !== 'ping' && navigator.onLine !== false) fl86Add(req.op, e); if (again && n < 3 && navigator.onLine !== false && Date.now() - t0 < 20000) { /* a quick refusal only: a login that waited may have arrived */ n++; setTimeout(go, 3000 * Math.pow(2, n - 1) + Math.floor(Math.random() * 1500)); return; } fail(e); }); }
+  go(); }; })(rpc);
+/** The PIN is also kept on this phone (scrambled with the link), so the person can open her last screen when Google is busy. */
+function n86H(p) { var s = 'cs86|' + TOKEN + '|' + p, h = 2166136261; for (var r = 0; r < 300; r++) for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i) + r; h = (h * 16777619) >>> 0; } return h.toString(16); }
+function n86Keep(p) { ls('cs_ph86_' + TOKEN, n86H(p)); ls('cs_pw86_' + TOKEN, null); }
+function n86Open(p) { var h = ls('cs_ph86_' + TOKEN), c = ls(CKEY), w = Number(ls('cs_pw86_' + TOKEN) || 0); if (!h || !c || !(SESSION || ls(SKEY)) || w >= 5) return false;
+  if (h !== n86H(p)) { ls('cs_pw86_' + TOKEN, String(w + 1)); return false; } /* 5 wrong here: only the system can open it again */
+  n27k('pd', n27Today()); $('main').innerHTML = ''; D = null; load(goHash); setTimeout(function () { toast('Opened. Saves send later.'); }, 400); return true; }
 if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
