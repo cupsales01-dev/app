@@ -1055,7 +1055,7 @@ function flush(after) {
         whenFree(function () { dlgOpen('NOT SAVED – back on your New order screen:\n' + r.problems.map(function (p) { return p.msg; }).join('\n'), null, 'OK', null, null); });
       }
       if (x.op === 'orders' && O2 && D && D.me && D.me.role === 'Agent' && r.problems && r.problems.length) whenFree(function () { dlgOpen('NOT SAVED – back on your New order screen:\n' + r.problems.map(function (p) { return p.msg; }).join('\n'), null, 'OK', null, null); });
-      if (m) toast('✓ ' + m);
+      if (m) toast(['release', 'decline', 'ochgfr', 'dispatch'].indexOf(x.op) >= 0 ? 'Saved' : '✓ ' + m); // v2.8.9
       if (r.held && r.held.length) whenFree(function () { dlgOpen('NOT APPROVED:\n\n' + r.held.join('\n'), null, 'OK', null, null); }); // v2.5.10
     }
     if (r.init && !r.error && !r.ask) { NEXTD = r.init; NEXTD.__at = Date.now(); }
@@ -4479,7 +4479,7 @@ function pgFOrders() {
   var L = fkList(), n = fkTasks(), h = n ? '' : '<p class="fk74ok">Nothing waiting ✓</p>'; /* his tasks: the sign on top (Yayra 17 Oct) */
   h += hRelRows();
   var cnt = {}; L.forEach(function (x) { cnt[x.st] = (cnt[x.st] || 0) + 1; });
-  h += '<input class="o2q fkq" data-inp="fkq" inputmode="search" placeholder="Search: type 2 letters of a name" value="' + esc(FK.q) + '" autocomplete="off">';
+  h += '<input class="o2q fkq" data-inp="fkq" inputmode="search" placeholder="Find vendor or agent" value="' + esc(FK.q) + '" autocomplete="off">';
   h += '<div class="t2tray fkpills">' + [['', 'All', '#14171c']].concat(FKORD.filter(function (k) { return cnt[k] || FK.flt === k; }).map(function (k) { return [k, FKST[k][0], FKST[k][1]]; })).map(function (c) { return '<button class="' + (FK.flt === c[0] ? 'on' : '') + '" data-act="fkflt" data-v="' + c[0] + '"><i class="o2dot" style="background:' + c[2] + '"></i>' + c[1] + ' ' + (c[0] ? cnt[c[0]] || 0 : L.length) + '</button>'; }).join('') + '</div>';
   h += '<div id="fkol">' + fkRows(L) + '</div>';
   var ready = L.filter(function (x) { return x.st === 'ok'; }).length;
@@ -4487,7 +4487,7 @@ function pgFOrders() {
   return h;
 }
 function fkRows(L) {
-  var q = norm(FK.q), R = L.filter(function (x) { return (!FK.flt || x.st === FK.flt) && (q.length < 2 || norm(x.vendor + ' ' + x.agent).indexOf(q) >= 0); });
+  var q = norm(FK.q), R = L.filter(function (x) { return (!FK.flt || x.st === FK.flt) && (q.length < 1 || norm(x.vendor + ' ' + x.agent).indexOf(q) >= 0); });
   if (!R.length) return '<p class="small muted" style="text-align:center;margin:18px 0">' + (L.length ? 'No order matches.' : 'No orders today yet.') + '</p>';
   return R.map(function (x) { var c = FKST[x.st];
     return '<div class="fkr" style="border-left-color:' + c[1] + '" data-act="fko" data-k="' + esc(x.k) + '"><div class="grow"><b class="ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + '</b><div class="fks ell">' + esc(x.agent) + ' · ' + esc(fkL(x.lines)) + '</div></div>' + (x.st === 'appr' || x.st === 'chg' || x.st === 'bad' ? '<span class="fkt fk-' + x.st + '">' + (x.st === 'chg' ? 'Change' : c[0]) + '</span>' : '<span class="go">' + ico(ICO.right) + '</span>') + '</div>'; }).join('');
@@ -4503,10 +4503,12 @@ SHEETS.fko = function () {
   h += fkLn('Products', esc(fkL(x.lines)) + was);
   if (o) { h += fkLn('Money', ghs(fkVal(o.lines)) + ' · ' + esc(o.pay === 'Credit' ? 'Credit' : 'On delivery'));
     h += fkLn('Needed', esc(o.time || '') + (o.dlv ? (o.time ? ' · ' : '') + 'Deliver ' + esc(dayLbl(o.dlv)) : '')); h += o.urg ? '<div class="fkln"><span>Urgent</span><b class="t-red">' + esc(o.urg) + '</b></div>' : '';
-    h += o.od ? fkLn('Old debt', ghs(o.od.amt) + ' · Prince asks for it') : ''; }
+    h += fkLn('Old debt', o.od ? ghs(o.od.amt) + ' · Prince asks for it' : 'none'); }
   else if (X) h += fkLn('Money', ghs(X.status === 'Delivered' ? dVal(X) : X.value) + ' · ' + esc(X.pay === 'Credit' ? 'Credit' : X.pay || '')) + (X.status === 'Delivered' ? fkLn('Paid', X.owing > 0.004 ? '<span class="t-red">owes ' + ghs(X.owing) + '</span>' : '<span class="t-green">paid ✓</span>') : '');
   if (x.st === 'appr') {
     var s = relState(o), sh = fkShort(o.lines.map(function (l) { return { sku: l.sku, qty: l.qty, main: (s.lines[l.sku] || {}).main }; }).filter(function () { return s.src === 'SRC-OMINI'; }));
+    if (s.src === 'SRC-OMINI') h += '<div class="fk89st">' + o.lines.map(function (l) { var need = (s.lines[l.sku] || {}).main, have = fkLeft(l.sku); need = need === undefined ? l.qty : need; var short = have !== null && have < need;
+      return '<div class="fkln' + (short ? ' t-red' : '') + '"><span>' + esc(skn(l.sku)) + '</span><b>Need ' + need + ' · Have ' + (have === null ? '–' : have) + (short ? ' · Short ' + (need - have) : '') + '</b></div>'; }).join('') + '</div>'; // v2.8.9
     if (sh.length) h += '<div class="fkwarn"><span>Not enough reserved</span><b>' + esc(sh.join(', ')) + '</b></div>';
     if (s.auto) h += '<div class="small t-amber" style="margin:6px 0">Set by the manager: ' + esc(s.auto) + '</div>';
     if (FK.split) h += fkSplitHtml(o, s);
@@ -4537,21 +4539,21 @@ ACT.fkappr = function () {
   var lines = o.lines.map(function (l) { var ln = s.lines[l.sku]; return { sku: l.sku, q: l.qty, main: ln.main, otherSrc: ln.main < l.qty ? ln.other : '' }; });
   var sh = s.src === 'SRC-OMINI' ? fkShort(lines.map(function (l) { return { sku: l.sku, main: l.main }; })) : [];
   var go = function () { delete REL[o.oid]; D.waiting = (D.waiting || []).filter(function (y) { return y.oid !== o.oid; }); SHEETK = ''; $('over').innerHTML = '';
-    bgSave('release', { items: [{ oid: o.oid, src: s.src, lines: lines }] }, 'fa-' + o.oid, 'approved ' + o.vendor, null, true); toast('Approved. ' + o.agent + ' is told. Reserved stock counted down.'); };
+    bgSave('release', { items: [{ oid: o.oid, src: s.src, lines: lines }] }, 'fa-' + o.oid, 'approved ' + o.vendor, null, true); toast('Saved'); };
   if (sh.length) ask('Not enough reserved: ' + sh.join(', ') + '.\nApprove anyway? Then raise the reservation on Stock.', go, 'APPROVE'); else go();
 };
 ACT.fkdgo = function () {
   var x = fkCur(); if (!x || !x.o || !FK.why) return; var note = String(($('fkdnote') || {}).value || '').trim(); if (FK.why === 'OTHER' && note.length < 3) { say('Write why (a few words).'); return; }
   D.waiting = (D.waiting || []).filter(function (y) { return y.oid !== x.oid; }); SHEETK = ''; $('over').innerHTML = '';
-  bgSave('decline', { oid: x.oid, why: FK.why, note: note }, 'dl-' + x.oid, 'declined ' + x.vendor, null, true); toast('Declined. ' + x.agent + ' is told.');
+  bgSave('decline', { oid: x.oid, why: FK.why, note: note }, 'dl-' + x.oid, 'declined ' + x.vendor, null, true); toast('Saved');
 };
 ACT.fkchg = function () {
   var x = fkCur(); if (!x || !x.c) return; var c = x.c; D.fk.chg = (D.fk.chg || []).filter(function (y) { return y.oid !== c.oid; }); SHEETK = ''; $('over').innerHTML = '';
-  bgSave('ochgfr', { oid: c.oid, ok: 1 }, 'fc-' + c.oid, 'change confirmed: ' + c.vendor, null, true); toast(c.lines.length ? 'Change confirmed. Prince sees ' + fkL(c.lines) + ' on his stop.' : 'Change confirmed: cancelled. The cartons come back to you.');
+  bgSave('ochgfr', { oid: c.oid, ok: 1 }, 'fc-' + c.oid, 'change confirmed: ' + c.vendor, null, true); toast('Saved');
 };
 ACT.fkchg0 = function () { /* Frank does not have the stock: the change is not made, the agent and the manager are told */
   var x = fkCur(); if (!x || !x.c) return; var c = x.c; D.fk.chg = (D.fk.chg || []).filter(function (y) { return y.oid !== c.oid; }); SHEETK = ''; $('over').innerHTML = '';
-  bgSave('ochgfr', { oid: c.oid, ok: 0 }, 'fc0-' + c.oid, 'change not made: ' + c.vendor, null, true); toast('Not changed. ' + c.agent + ' and the manager are told.'); render(); };
+  bgSave('ochgfr', { oid: c.oid, ok: 0 }, 'fc0-' + c.oid, 'change not made: ' + c.vendor, null, true); toast('Saved'); render(); };
 // the load for Prince (C50)
 ACT.fkload = function () { FK.load = {}; sheetOpen('fload'); };
 SHEETS.fload = function () {
@@ -4564,7 +4566,7 @@ ACT.fklt = function (b) { FK.load[b.dataset.o] = FK.load[b.dataset.o] === false;
 ACT.fkhand = function () {
   var R = fkList().filter(function (x) { return x.st === 'ok' && FK.load[x.oid] !== false; }); if (!R.length) return; var ids = R.map(function (x) { return x.oid; });
   (D.dispatched || []).forEach(function (x) { if (ids.indexOf(x.oid) >= 0) x.status = 'Dispatched'; }); SHEETK = ''; $('over').innerHTML = '';
-  bgSave('dispatch', { oids: ids }, 'dp-' + uid(), 'on the bike: ' + ids.length, null, true); toast(ids.length + (ids.length === 1 ? ' order' : ' orders') + ' on the bike. Prince confirms on his phone.');
+  bgSave('dispatch', { oids: ids }, 'dp-' + uid(), 'on the bike: ' + ids.length, null, true); toast('Saved');
 };
 // ---------------------------------------------------------------- Cash
 function pgFCash() {
@@ -6561,6 +6563,7 @@ function hPend(x, d) {
   if (x.op === 'hrel' && D.hrel) { var R0 = D.hrel, ks = (d.items || []).map(hKeyC), vo = (R0.open || []).filter(function (v) { return v.vid === d.vid; })[0]; R0.ready = R0.ready || [];
     if (!R0.ready.some(function (r) { return r.sid0 === x.sid; })) R0.ready.push({ sid0: x.sid, rid: '', vid: d.vid, name: vo ? vo.name : '', school: vo ? vo.school : '', agent: vo ? vo.agent : '', items: d.items || [], txt: hTxtC(d.items), day: D.today, by: D.me.first, cname: d.carrier === 'agent' ? (vo ? vo.agent : 'the agent') : R0.rider, crole: d.carrier === 'agent' ? 'Agent' : 'Rider' });
     R0.open = (R0.open || []).map(function (v) { return v.vid !== d.vid ? v : Object.assign({}, v, { items: v.items.filter(function (i) { return ks.indexOf(hKeyC(i)) < 0; }) }); }).filter(function (v) { return v.items.length; }); }
+  if (x.op === 'hgive' && d.rid && D.r27 && D.me.role === 'Rider') { var g89 = (D.hstops || []).filter(function (r) { return r.rid === d.rid; })[0]; if (g89 && !(D.r27.help || []).some(function (y) { return y.rid === d.rid; })) (D.r27.help = D.r27.help || []).unshift({ rid: g89.rid, vid: g89.vid, name: g89.name, agent: g89.agent, txt: g89.txt, day: D.today, conf: '' }); } // v2.8.9
   if ((x.op === 'hgive' || x.op === 'hback') && d.rid) { if (D.hrel) D.hrel.ready = (D.hrel.ready || []).filter(function (r) { return r.rid !== d.rid; }); if (D.hready) D.hready = D.hready.filter(function (r) { return r.rid !== d.rid; }); if (D.hstops) D.hstops = D.hstops.filter(function (r) { return r.rid !== d.rid; }); }
   if (x.op === 'hcarry' && d.rid) { hLists().forEach(function (L) { L.forEach(function (r) { if (r.rid !== d.rid) return; r.crole = d.to === 'agent' ? 'Agent' : 'Rider'; r.cname = d.to === 'agent' ? r.agent : hRider(); }); }); if (D.hstops && d.to === 'agent') D.hstops = D.hstops.filter(function (r) { return r.rid !== d.rid; }); }
 }
@@ -6620,7 +6623,7 @@ ACT.hrgo = function (b) {
 SHEETS.hready = function () {
   var R = D.hrel, rd = R ? R.ready || [] : []; if (!rd.length) return '';
   return shHead('truck', 'purple', 'On the way', 'Released, not given yet. Tap who brings it to change it.') + '<div class="list">' + rd.map(function (r) { var pr = r.crole === 'Rider';
-    return '<div class="li" style="flex-wrap:wrap">' + leadI('gift', 'purple') + '<div class="grow"><div class="t">' + esc(r.name) + '</div><div class="s">' + esc(r.txt) + '</div><div class="s">' + esc((pr ? r.cname + ' brings it' : r.agent + ' gives it') + ' · released ' + dayLbl(r.day) + (r.by ? ' by ' + r.by : '')) + '</div>' +
+    return '<div class="li" style="flex-wrap:wrap">' + leadI('gift', 'purple') + '<div class="grow"><div class="t">' + esc(r.name) + '</div><div class="s">' + esc(r.txt) + '</div><div class="s">' + esc((pr ? r.cname + (r.picked ? ' has it · on the way' : ' brings it') : r.agent + ' gives it') + ' · released ' + dayLbl(r.day) + (r.by ? ' by ' + r.by : '')) + '</div>' +
       (r.rid ? '<div class="sb" style="margin-top:6px"><button class="ghost" data-act="hcar" data-r="' + esc(r.rid) + '" data-t="' + (pr ? 'agent' : 'rider') + '">' + esc(pr ? (r.agent || 'The agent') + ' gives it' : hRider() + ' brings it') + '</button><button class="ghost" style="color:var(--red)" data-act="hbk" data-r="' + esc(r.rid) + '">Take back</button></div>' : '<div class="s t-amber">sending…</div>') + '</div></div>'; }).join('') + '</div>';
 };
 SHEETS.hgiven = function () {
@@ -6648,8 +6651,8 @@ ACT.hcar = function (b) { var r = hFind(b.dataset.r); if (!r) return; var to = b
 function hReadyOf(vid) { return (D.hready || []).filter(function (r) { return r.vid === vid; }); }
 function hReadyHtml(vid) {
   return hReadyOf(vid).map(function (r) { var mine = r.crole === 'Agent';
-    return '<div class="hready"><div>' + sico(ICO.gift) + '<b>Ready for ' + esc(r.name) + ':</b> ' + esc(r.txt) + ' – ' + (mine ? 'you give it (collect it from Frank)' : esc(r.cname || hRider()) + ' brings it') + '</div><div class="sb">' +
-      (mine ? '<button class="main" data-act="hgOpen" data-r="' + esc(r.rid) + '">GIVEN</button><button class="ghost" data-act="hcar" data-r="' + esc(r.rid) + '" data-t="rider">' + esc(hRider()) + ' brings it</button>' : '<button class="ghost" data-act="hcar" data-r="' + esc(r.rid) + '" data-t="agent">I\'ll give it myself</button>') + '</div></div>'; }).join('');
+    return '<div class="hready"><div>' + sico(ICO.gift) + '<b>Ready for ' + esc(r.name) + ':</b> ' + esc(r.txt) + ' – ' + (mine ? 'you give it (collect it from Frank)' : esc(r.cname || hRider()) + (r.picked ? ' has it · on the way' : ' brings it')) + '</div><div class="sb">' +
+      (mine ? '<button class="main" data-act="hgOpen" data-r="' + esc(r.rid) + '">GIVEN</button><button class="ghost" data-act="hcar" data-r="' + esc(r.rid) + '" data-t="rider">' + esc(hRider()) + ' brings it</button>' : r.picked ? '' : '<button class="ghost" data-act="hcar" data-r="' + esc(r.rid) + '" data-t="agent">I\'ll give it myself</button>') + '</div></div>'; }).join('');
 }
 /** Her vendors with items ready who are not on today's plan. */
 function hReadyRest(L) {
@@ -6658,7 +6661,7 @@ function hReadyRest(L) {
   return fold('hrest', '<b>Help items ready for ' + vs.length + ' more vendor' + (vs.length === 1 ? '' : 's') + '</b> <span class="small muted">not on today\'s plan</span>', function () { return vs.map(function (vid) { var r = hReadyOf(vid)[0]; return '<div style="margin:4px 0 10px"><b>' + esc(r.name) + '</b> <span class="small muted">' + esc(r.school || '') + '</span>' + hReadyHtml(vid) + '</div>'; }).join(''); });
 }
 /** Prince: the strip on a carton stop, and the stops with help items only (purple). */
-function hStrip(vid) { return (D.hstops || []).filter(function (r) { return r.vid === vid; }).map(function (r) { return '<div class="hstrip">' + sico(ICO.gift) + '<span class="grow"><b>+ ' + esc(r.txt) + '</b> (help items)</span><button class="main" data-act="hgOpen" data-r="' + esc(r.rid) + '">GIVEN</button></div>'; }).join(''); }
+function hStrip(vid) { return (D.hstops || []).filter(function (r) { return r.vid === vid && (!r.dlv || r.dlv <= D.today); }).map(function (r) { return '<div class="hstrip">' + sico(ICO.gift) + '<span class="grow"><b>+ ' + esc(r.txt) + '</b> (help items)</span><button class="main" data-act="hgOpen" data-r="' + esc(r.rid) + '">GIVEN</button></div>'; }).join(''); }
 function hOnlyN() { var on = {}, n = {}; routeStops().forEach(function (s) { on[s.id] = 1; }); (D.hstops || []).forEach(function (r) { if (!on[r.vid]) n[r.vid] = 1; }); return Object.keys(n).length; } // v2.5.18: help-only stops
 function hStopsHtml() {
   var H = D.hstops || []; if (!H.length) return ''; var onR = {}; routeStops().forEach(function (s) { onR[s.id] = 1; });
@@ -8066,18 +8069,19 @@ function fk87Box() { var F = fkF(); if (F.box === null || F.box === undefined) r
 // per day for Clement, Bernice, the open market (or Omni only), a date range, tap a day for the split, and what went to the HR office.
 // The receipt sheet is small and nothing is picked for him. My day: small Open / Close buttons and clear tabs (Cartons out ·
 // Delivered · Help items · Owed to Omni · Reports). The Help items filter picks an item from a tray.
-FK.ct = 'now'; FK.dsub = 'ctn'; FK.dr = { k: 'week', from: '', to: '', f: 'others', open: '' };
+FK.ct = 'now'; FK.dsub = 'ctn'; FK.dr = { k: 'today', from: '', to: '', f: 'all', open: '' };
 function fkDist() { return fkF().dist || { days: {}, paid: [], names: {} }; }
 function fkDName(s) { var N = fkDist().names || {}; return s === 'SRC-OMINI' ? 'Omni Haven' : s === 'SRC-MARKET' ? 'Open market' : N[s] || s; }
 function fkDRange() { var t = D.today, wd = new Date(t + 'T12:00:00Z').getUTCDay(), R = FK.dr;
   var r = R.k === 'today' ? [t, t] : R.k === 'week' ? [addDays(t, -((wd + 6) % 7)), t] : R.k === 'month' ? [t.slice(0, 8) + '01', t] : [R.from || addDays(t, -30), R.to || t]; return r[0] > r[1] ? [r[1], r[0]] : r; }
-function fkDSrcs() { var S = {}, X = fkDist(); Object.keys(X.days || {}).forEach(function (d) { Object.keys(X.days[d]).forEach(function (s) { S[s] = 1; }); }); (X.paid || []).forEach(function (p) { S[p.s] = 1; }); return Object.keys(S).sort(function (a, b) { return a === 'SRC-OMINI' ? -1 : b === 'SRC-OMINI' ? 1 : a < b ? -1 : 1; }); }
+function fkDSrcs() { var X = fkDist(), L = (X.list || []).slice(); ['SRC-OMINI', 'SRC-CLEMENT', 'SRC-BERNICE', 'SRC-MARKET'].forEach(function (s) { if (L.indexOf(s) < 0) L.push(s); }); return L.sort(function (a, b) { var o = ['SRC-OMINI', 'SRC-CLEMENT', 'SRC-BERNICE', 'SRC-MARKET'], i = o.indexOf(a), j = o.indexOf(b); return (i < 0 ? 9 : i) - (j < 0 ? 9 : j) || (a < b ? -1 : 1); }); }
+function fkDSrcs0() { var S = {}, X = fkDist(); Object.keys(X.days || {}).forEach(function (d) { Object.keys(X.days[d]).forEach(function (s) { S[s] = 1; }); }); (X.paid || []).forEach(function (p) { S[p.s] = 1; }); return Object.keys(S).sort(function (a, b) { return a === 'SRC-OMINI' ? -1 : b === 'SRC-OMINI' ? 1 : a < b ? -1 : 1; }); }
 function fkDPick(s) { var f = FK.dr.f; return f === 'all' ? true : f === 'others' ? s !== 'SRC-OMINI' : f === 'omni' ? s === 'SRC-OMINI' : s === f; }
-function fkDToday() { var m = (fkDist().days || {})[D.today] || {}; return Object.keys(m).filter(function (s) { return s !== 'SRC-OMINI'; }).reduce(function (t, s) { return t + m[s]; }, 0); }
+function fkDToday() { var m = (fkDist().days || {})[D.today] || {}; return Object.keys(m).reduce(function (t, s) { return t + m[s]; }, 0); }
 function pgFCash() {
   var B = D.book || { received: [], withPeople: [] }, T = D.toConfirm || [], W = B.withPeople || [], F = fkF(), late = new Date().getHours() >= 17;
   var tc = T.reduce(function (t, x) { return t + x.amount; }, 0), wp = W.reduce(function (t, p) { return t + p.total; }, 0), cf = (B.received || []).reduce(function (t, x) { return t + x.amount; }, 0);
-  var tabs = [['now', 'With people', ghs(tc + wp), T.length, late && wp > 0.004], ['cnt', 'Counted today', ghs(cf), 0], ['rc', 'Receipts', 'and history', 0], ['dist', 'Other distributors', ghs(fkDToday()), 0]];
+  var tabs = [['now', 'With people', ghs(tc + wp), T.length, late && wp > 0.004], ['cnt', 'Counted today', ghs(cf), 0], ['rc', 'Receipts', 'and history', 0], ['dist', 'Cash Breakdown', ghs(fkDToday()), 0]];
   var h = '<div class="fk72t">' + tabs.map(function (t) { return '<button class="' + (FK.ct === t[0] ? 'on' : '') + (t[4] ? ' red' : '') + '" data-act="fk72t" data-v="' + t[0] + '"><span>' + t[1] + (t[3] ? ' <i class="cnt">' + t[3] + '</i>' : '') + '</span><b>' + t[2] + '</b></button>'; }).join('') + '</div>';
   if (FK.ct === 'cnt') return h + fk87Box() + ((F.cnt || []).length ? F.cnt.map(function (c) { return '<div class="fkr" style="border-left-color:#15803d"><div class="grow"><b>' + esc(c.from) + '</b><div class="fks">' + esc(c.t) + (c.kind === 'MoMo' ? ' · MoMo' : ' · Cash') + (Math.abs(c.amt - c.exp) > 0.004 ? ' · <span class="t-red">expected ' + ghs(c.exp) + '</span>' : '') + '</div></div><b class="fkam">' + ghs(c.amt) + '</b><a class="fkwa" href="https://wa.me/?text=' + encodeURIComponent(c.rc) + '" target="_blank" rel="noopener" aria-label="Receipt on WhatsApp">' + ico(ICO.wa) + '</a></div>'; }).join('') : emptyHtml('Nothing counted yet today.'));
   if (FK.ct === 'rc') { var cur = PSEC.fcash || 'rcpt'; return h + chips('fcash', [['rcpt', 'Receipts'], ['hist', 'History']], cur) + (cur === 'rcpt' ? filterBar('prcpt', 'Find a vendor') + '<div id="flist">' + LISTR.prcpt() + '</div>' : filterBar('phist', 'Find a person or amount') + '<div id="flist">' + LISTR.phist() + '</div>'); }
@@ -8093,11 +8097,11 @@ function fkDistHtml() {
   var X = fkDist(), R = FK.dr, r = fkDRange(), S = fkDSrcs(), days = Object.keys(X.days || {}).filter(function (d) { return d >= r[0] && d <= r[1]; }).sort().reverse();
   var h = '<div class="seg wrap" style="margin:0 0 8px">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['dates', 'Dates']].map(function (x) { return '<button class="' + (R.k === x[0] ? 'on' : '') + '" data-act="fkdr" data-k="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
   if (R.k === 'dates') h += '<div class="fgrid"><label><span>From</span><input type="date" data-chg="fkdrd" data-f="from" value="' + esc(r[0]) + '" min="' + esc(addDays(D.today, -90)) + '" max="' + esc(D.today) + '"></label><label><span>To</span><input type="date" data-chg="fkdrd" data-f="to" value="' + esc(r[1]) + '" max="' + esc(D.today) + '"></label></div>';
-  var F = [['others', 'All other distributors']].concat(S.filter(function (s) { return s !== 'SRC-OMINI'; }).map(function (s) { return [s, fkDName(s)]; }), [['omni', 'Omni only'], ['all', 'Everyone']]);
+  var F = [['all', 'All']].concat(S.map(function (s) { return [s === 'SRC-OMINI' ? 'omni' : s, fkDName(s)]; }));
   h += '<div class="t2tray">' + F.map(function (f) { return '<button class="' + (R.f === f[0] ? 'on' : '') + '" data-act="fkdf" data-v="' + esc(f[0]) + '">' + esc(f[1]) + '</button>'; }).join('') + '</div>';
   var tot = 0, rows = days.map(function (d) { var m = X.days[d], t = Object.keys(m).filter(fkDPick).reduce(function (a, s) { return a + m[s]; }, 0); tot += t; return { d: d, t: t, m: m }; }).filter(function (x) { return Math.abs(x.t) > 0.004; });
   var paid = (X.paid || []).filter(function (p) { return p.d >= r[0] && p.d <= r[1] && fkDPick(p.s); }), pt = paid.reduce(function (a, p) { return a + p.amt; }, 0);
-  h += '<div class="fkpan"><div class="fkln"><span>Collected · ' + esc(r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) + '</span><b>' + ghs(tot) + '</b></div>' + (R.f !== 'omni' ? '<div class="fkln"><span>Given to the HR office</span><b>' + ghs(pt) + '</b></div>' : '') + '</div>';
+  h += '<div class="fkpan"><div class="fkln"><span>Received · ' + esc(r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) + '</span><b>' + ghs(tot) + '</b></div>' + (R.f !== 'omni' ? '<div class="fkln"><span>Given to the HR office</span><b>' + ghs(pt) + '</b></div>' : '') + '</div>';
   h += rows.length ? rows.map(function (x) { var on = R.open === x.d; return '<div class="fkr fk72d' + (on ? ' on' : '') + '" style="border-left-color:#2563eb" data-act="fkdo" data-v="' + x.d + '"><div class="grow"><b>' + esc(dayLbl(x.d)) + '</b>' + (on ? Object.keys(x.m).filter(fkDPick).sort(function (a, b) { return a === 'SRC-OMINI' ? -1 : b === 'SRC-OMINI' ? 1 : 0; }).map(function (s) { return '<div class="fkln"><span>' + esc(fkDName(s)) + '</span><b>' + ghs(x.m[s]) + '</b></div>'; }).join('') : '') + '</div><b class="fkam">' + ghs(x.t) + ' <small class="muted">' + (on ? '▴' : '▾') + '</small></b></div>'; }).join('') : emptyHtml('No money for this choice.');
   if (paid.length) h += fold('fkdpaid', '<b>Given to the HR office: ' + paid.length + '</b>', function () { return paid.map(function (p) { return '<div class="fkln"><span>' + esc(dayLbl(p.d)) + ' · ' + esc(fkDName(p.s)) + (p.by ? ' · ' + esc(p.by) : '') + (p.pg ? ' · page ' + esc(p.pg) : '') + '</span><b>' + ghs(p.amt) + '</b></div>'; }).join(''); });
   return h;
@@ -8241,10 +8245,10 @@ function fk73Help(vid) { var R = D.hrel; if (!R || !vid) return null; var a = hr
   if (rd.length) return { ask: 0, txt: rd.map(function (r) { return r.txt; }).join(', ') }; return null; }
 function fk73Chip(vid) { var h = fk73Help(vid); return h ? '<span class="fk73hp">' + ico(ICO.gift) + esc(h.txt) + '</span>' : ''; }
 fkRows = (function (f) { return function (L) {
-  var q = FK.flt === 'ok' ? '' : norm(FK.q), R = L.filter(function (x) { return (!FK.flt || x.st === FK.flt) && (q.length < 2 || norm(x.vendor + ' ' + x.agent).indexOf(q) >= 0); });
+  var q = norm(FK.q), R = L.filter(function (x) { return (!FK.flt || x.st === FK.flt) && (q.length < 1 || norm(x.vendor + ' ' + x.agent).indexOf(q) >= 0); });
   if (!R.length) return f(L);
-  if (FK.flt === 'ok') { var n = R.filter(function (x) { return FK.load[x.oid] !== false; }).length;
-    return '<div class="fk73ld">' + R.map(function (x) { var on = FK.load[x.oid] !== false; return '<button class="fkck' + (on ? ' on' : '') + '" data-act="fklt" data-o="' + esc(x.oid) + '"><span class="fkbx">' + (on ? '✓' : '') + '</span><span class="grow ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + fk84Day(x) + fk73Chip(fk73Vid(x)) + '</span><b>' + esc(fkL(x.lines)) + '</b></button>'; }).join('') +
+  if (FK.flt === 'ok') { var T = L.filter(function (x) { return x.st === 'ok' && FK.load[x.oid] !== false; }), n = T.length, tc = T.reduce(function (t, x) { return t + (x.lines || []).reduce(function (s, l) { return s + (Number(l.qty) || 0); }, 0); }, 0);
+    return '<div class="fk73ld"><div class="fk89trip">This trip: <b>' + n + (n === 1 ? ' order' : ' orders') + ' · ' + tc + (tc === 1 ? ' carton' : ' cartons') + '</b></div>' + R.map(function (x) { var on = FK.load[x.oid] !== false; return '<button class="fkck' + (on ? ' on' : '') + '" data-act="fklt" data-o="' + esc(x.oid) + '"><span class="fkbx">' + (on ? '✓' : '') + '</span><span class="grow ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + fk84Day(x) + fk73Chip(fk73Vid(x)) + '</span><b>' + esc(fkL(x.lines)) + '</b></button>'; }).join('') +
       '<button class="main gr fkbig" data-act="fkhand"' + (n ? '' : ' disabled') + '>Hand to Prince · ' + n + '</button><p class="small muted" style="margin:4px 2px 0">Not ticked = next trip. Prince confirms on his phone.</p></div>'; }
   return R.map(function (x) { var c = FKST[x.st];
     return '<div class="fkr" style="border-left-color:' + c[1] + '" data-act="fko" data-k="' + esc(x.k) + '"><div class="grow"><b class="ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + '</b><div class="fks ell">' + esc(x.agent) + ' · ' + esc(fkL(x.lines)) + (x.st !== 'dl' ? fk84Day(x) : '') + (x.st !== 'dl' ? fk73Chip(fk73Vid(x)) : '') + '</div></div>' + (x.st === 'appr' || x.st === 'chg' || x.st === 'bad' ? '<span class="fkt fk-' + x.st + '">' + (x.st === 'chg' ? 'Change' : c[0]) + '</span>' : '<span class="go">' + ico(ICO.right) + '</span>') + '</div>'; }).join(''); }; })(fkRows);
@@ -8343,7 +8347,7 @@ LISTR.prcpt = (function (f) { return function () { var h = f(); (D.receipts || [
 // until he taps "I have it" (or says what is different); only then it is in To deliver. A mauve dot before a name = help items
 // go with that stop. Riding mode: the same tabs and folding stops, black and bright on every tab. WhatsApp receipt: the
 // delivery is saved first, then WhatsApp opens (no empty browser tab left behind).
-var R73 = { ok: {}, auto: '' };
+var R73 = { ok: {}, auto: '', h: {} };
 function r73Dot(vid) { return (D.hstops || []).some(function (r) { return r.vid === vid; }) ? '<i class="r73dot" aria-label="Help items too"></i>' : ''; }
 function r73Conf() { if (D.me.role !== 'Rider') return []; var ok = ((D.r27 && D.r27.load) || {}).oids || [], L = [];
   (D.stops || []).forEach(function (s) { var os = (s.orders || []).filter(function (o) { return ok.indexOf(o.oid) < 0 && !R73.ok[o.oid]; }); if (os.length) L.push(Object.assign({}, s, { orders: os })); }); return L; }
@@ -8351,40 +8355,42 @@ function r73Mine(s) { var c = {}; r73Conf().forEach(function (x) { x.orders.forE
 r27Ride = function () { try { document.body.classList.toggle('r27ride', !!R27.ride && SCREEN === 'route'); } catch (e) { } };
 function pgR27Route() {
   r27Ride(); var C = r73Conf(), R = r72Sorted(routeStops().map(r73Mine).filter(Boolean)), dn = r27Done(), helper = D.me.role === 'Helper', L = helper ? [] : (D.later || []);
-  if (!R.length && !C.length && !dn.length && !(D.hstops || []).length && !L.length) return r72Links() + emptyHtml('Nothing to deliver right now.');
-  if (C.length && !R73.auto && (!R72.t || R72.t === 'go')) R72.t = 'conf'; R73.auto = C.length ? 1 : '';
-  if (!C.length && R72.t === 'conf') R72.t = 'go';
+  var HC = r89Conf(), HO = r89Only(R), HD = r89Gave(), HL = helper ? [] : r89Later(L), nC = C.length + r89NotIn(HC, C).length, nO = r89Vids(HO).length, nH = r89Go().filter(function (r) { return HO.indexOf(r) < 0; }).length; // v2.8.9: help items are deliveries
+  if (!R.length && !C.length && !dn.length && !(D.hstops || []).length && !L.length && !HD.length) return r72Links() + emptyHtml('Nothing to deliver right now.');
+  if (nC && !R73.auto && (!R72.t || R72.t === 'go')) R72.t = 'conf'; R73.auto = nC ? 1 : '';
+  if (!nC && R72.t === 'conf') R72.t = 'go';
   var started = helper || r27Started() || dn.length || !R.length, h = helper ? '<div class="msg info">Helper link for ' + esc(D.me.first) + ' – works today only.</div>' : '';
-  h += '<div class="r27hd"><span>' + dn.length + ' of ' + (dn.length + R.length + C.length) + ' done</span><button class="r27rm' + (R27.ride ? ' on' : '') + '" data-act="r27ride">☀ Riding mode' + (R27.ride ? ' on' : '') + '</button></div>';
-  h += r72Links() + r72Tabs((C.length || R72.t === 'conf' ? [['conf', 'To confirm', C.length]] : []).concat([['go', 'To deliver', R.length], ['done', 'Delivered', dn.length]], helper ? [] : [['later', 'Later', L.length]]), R72.t, 'r72t');
-  if (R72.t === 'conf') return h + r73ConfHtml(C);
-  if (R72.t === 'done') return h + (dn.length ? dn.map(function (x, i) { return r27DoneRow(x, i + 1); }).join('') : emptyHtml('Nothing delivered yet today.'));
-  if (R72.t === 'later') return h + r87Later(L);
+  h += '<div class="r27hd"><span>' + (dn.length + HD.length) + ' of ' + (dn.length + HD.length + R.length + nO + nH + nC) + ' done</span><button class="r27rm' + (R27.ride ? ' on' : '') + '" data-act="r27ride">☀ Riding mode' + (R27.ride ? ' on' : '') + '</button></div>';
+  h += r72Links() + r72Tabs((nC || R72.t === 'conf' ? [['conf', 'To confirm', nC]] : []).concat([['go', 'To deliver', R.length + nO], ['done', 'Delivered', dn.length + HD.length]], helper ? [] : [['later', 'Later', L.length + HL.length]]), R72.t, 'r72t');
+  if (R72.t === 'conf') return h + r73ConfHtml(C, HC);
+  if (R72.t === 'done') return h + (dn.length || HD.length ? dn.map(function (x, i) { return r27DoneRow(x, i + 1); }).join('') + r89DoneRows(HD, dn.length) : emptyHtml('Nothing delivered yet today.'));
+  if (R72.t === 'later') return h + (L.length || !HL.length ? r87Later(L) : '') + r89LaterHtml(HL);
   if (!started) h += '<div class="r27st"><b>Today\'s route · ' + esc(dayLbl(D.today)) + '</b><div class="r27n3"><div><b>' + R.length + '</b><span>stops</span></div><div><b>' + R.reduce(function (t, s) { return t + r27Ctn(r27Lines(s)); }, 0) + '</b><span>cartons</span></div><div><b>' + r27Fmt(R.reduce(function (t, s) { return t + (s.ask || 0); }, 0)) + '</b><span>GHS to collect</span></div></div><button class="r27big" data-act="r27go">Start route</button></div>';
-  if (!R.length) h += C.length ? '<div class="r27ok r82e"><b>Check what Frank gave you.</b><button class="r27big" data-act="r72t" data-v="conf">Confirm the load</button></div>' : '<div class="r27ok r82e"><b>All stops done ✓</b><button class="r27big" data-act="r72go">Go to Collect</button></div>';
+  if (!R.length && !nO) h += nC ? '<div class="r27ok r82e"><b>Check what Frank gave you.</b><button class="r27big" data-act="r72t" data-v="conf">Confirm the load</button></div>' : '<div class="r27ok r82e"><b>All stops done ✓</b><button class="r27big" data-act="r72go">Go to Collect</button></div>';
   var op = R72.open === '_' ? '' : R72.open && R.some(function (s) { return s.id === R72.open; }) ? R72.open : started && R[0] ? R[0].id : '';
   h += '<div class="r72list">' + R.map(function (s, i) { var on = s.id === op, chg = s.orders.some(function (o) { return o.chgw; });
-    return '<div class="r72s k-' + (chg ? 'amber' : s.urg ? 'red' : 'blue') + (on ? ' on' : '') + (i ? '' : ' nx') + '" data-drag="r" data-k="' + esc(s.id) + '"><div class="r72h" data-act="r72o" data-v="' + esc(s.id) + '"><span class="t2hd" data-dh="1">⠿</span><span class="qn">' + (i + 1) + '</span><div class="grow"><b class="ell">' + r73Dot(s.id) + (s.urg ? '🚩 ' : '') + esc(s.name) + '</b><span class="ell">' + r27Codes(r27Lines(s)) + (chg ? ' · change waiting' : '') + '</span></div><span class="rt">' + esc(s.carry ? 'First today' : r27Need(s.time)) + '</span></div>' + (on ? r27Card(s, i === 0) : '') + '</div>'; }).join('') + '</div>';
+    return '<div class="r72s k-' + (chg ? 'amber' : s.urg ? 'red' : 'blue') + (on ? ' on' : '') + (i ? '' : ' nx') + '" data-drag="r" data-k="' + esc(s.id) + '"><div class="r72h" data-act="r72o" data-v="' + esc(s.id) + '"><span class="t2hd" data-dh="1">⠿</span><span class="qn">' + (i + 1) + '</span><div class="grow"><b class="ell">' + r73Dot(s.id) + (s.urg ? '🚩 ' : '') + esc(s.name) + '</b><span class="ell">' + r27Codes(r27Lines(s)) + (chg ? ' · change waiting' : '') + '</span></div><span class="rt">' + esc(s.carry ? 'First today' : r27Need(s.time)) + '</span></div>' + (on ? r27Card(s, i === 0) : '') + '</div>'; }).join('') + '</div>' + r89Rows(HO, R.length);
   if (R.some(function (s) { return (D.hstops || []).some(function (r) { return r.vid === s.id; }); })) h += '<div class="r73key"><i class="r73dot"></i>= help items go with it</div>';
   if (R27.ride) return h;
   if (r72Ord()) h += '<div class="r27why">You changed the order. <a class="r27link" style="display:inline" data-act="r72back">Back to sorted ›</a></div>';
   else if (R.length > 1) h += '<div class="r27why">Sorted: urgent 🚩 first, then the time she needs it. Hold ⠿ to move a stop.</div>';
-  return h + hStopsHtml();
+  return h;
 }
 PG27.route = pgR27Route;
-function r73ConfHtml(C) {
-  if (!C.length) return emptyHtml('Nothing to confirm ✓');
+function r73ConfHtml(C, HC) {
+  HC = HC || []; if (!C.length && !HC.length) return emptyHtml('Nothing to confirm ✓');
   var ld = {}; C.forEach(function (s) { var m = r27Lines(s); Object.keys(m).forEach(function (k) { ld[k] = (ld[k] || 0) + m[k]; }); }), dif = (((D.r27 && D.r27.load) || {}).diff || []);
-  var h = '<div class="r73cf"><div class="r27ld">Frank gave you: ' + r27Codes(ld) + '</div>' + C.map(function (s, i) { var at = s.orders.every(function (o) { return o.disp === false; });
-    return r27Row(i + 1, at ? 'grey' : 'blue', r73Dot(s.id) + (s.urg ? '🚩 ' : '') + esc(s.name), r27Codes(r27Lines(s)) + ((D.hstops || []).some(function (r) { return r.vid === s.id; }) ? ' · + ' + esc((D.hstops || []).filter(function (r) { return r.vid === s.id; }).map(function (r) { return r.txt; }).join(', ')) : ''), at ? 'At Frank' : ''); }).join('') +
+  var h = '<div class="r73cf">' + (C.length ? '<div class="r27ld">Frank gave you: ' + r27Codes(ld) + '</div>' : '') + C.map(function (s, i) { var at = s.orders.every(function (o) { return o.disp === false; });
+    return r27Row(i + 1, at ? 'grey' : 'blue', r73Dot(s.id) + (s.urg ? '🚩 ' : '') + esc(s.name), r27Codes(r27Lines(s)) + ((D.hstops || []).some(function (r) { return r.vid === s.id; }) ? ' · + ' + esc((D.hstops || []).filter(function (r) { return r.vid === s.id && (!r.dlv || r.dlv <= D.today); }).map(function (r) { return r.txt; }).join(', ')) : ''), at ? 'At Frank' : ''); }).join('') + r89ConfRows(r89NotIn(HC, C), C.length) +
     (dif.length ? '<div class="r27dbt">You told Frank: ' + dif.map(esc).join(' · ') + '</div>' : '') +
     '<button class="r27big g" data-act="r73ok">I have it ✓</button><button class="r27link" data-act="r27ldiff">Something is different</button></div>';
   return h;
 }
 ACT.r73ok = function () { var C = r73Conf(), P = [], X = [], ld = {};
   C.forEach(function (s) { s.orders.forEach(function (o) { (o.disp === false ? P : X).push(o.oid); R73.ok[o.oid] = 1; o.lines.forEach(function (l) { ld[skn(l.sku)] = (ld[skn(l.sku)] || 0) + l.qty; }); }); });
-  if (!P.length && !X.length) return;
-  bgSave('rload', { act: 'ok', oids: P, conf: X, lines: Object.keys(ld).map(function (k) { return k + ' ' + ld[k]; }).join(', ') }, 'rl-' + D.today + '-' + uid(), 'I have the load', null, true);
+  var HR = r89Conf().map(function (r) { R73.h[r.rid] = 1; r.picked = 1; return r.rid; }); // v2.8.9: and the help items
+  if (!P.length && !X.length && !HR.length) return;
+  bgSave('rload', { act: 'ok', oids: P, conf: X, hrids: HR, lines: Object.keys(ld).map(function (k) { return k + ' ' + ld[k]; }).join(', ') }, 'rl-' + D.today + '-' + uid(), 'I have the load', null, true);
   (D.stops || []).forEach(function (s) { s.orders.forEach(function (o) { if (P.indexOf(o.oid) >= 0) o.disp = true; }); });
   if (D.r27) D.r27.load = Object.assign({}, D.r27.load, { ok: 1, oids: (((D.r27.load || {}).oids) || []).concat(P, X) }); R72.t = 'go'; render(); };
 // ---- the WhatsApp receipt: save the delivery first, then open WhatsApp itself (no empty browser tab)
@@ -8396,6 +8402,36 @@ rcptSend = (function (f) { return function (r, via) { if (via === 'SMS' || !D ||
     setTimeout(function () { document.removeEventListener('visibilitychange', hid); if (left || document.visibilityState !== 'visible') return; // the phone did not open WhatsApp: one tap opens it
       dlgChoose('Send ' + r.vendor + ' the receipt on WhatsApp', [['OPEN WHATSAPP', function () { location.href = 'https://wa.me/' + (wa || '') + '?text=' + encodeURIComponent(txt); }, 'main'], ['Not now', null, 'ghost']]); }, 2500); };
   if (!queue().length) return go(); flush(); var t0 = Date.now(), w = setInterval(function () { if (!queue().length || Date.now() - t0 > 6000) { clearInterval(w); go(); } }, 300); }; })(rcptSend);
+try { document.head.insertAdjacentHTML('beforeend', '<style>.fk89trip{font-size:14px;margin:2px 2px 8px;color:var(--ink)}.fk73ld .fkbig{position:sticky;bottom:calc(70px + env(safe-area-inset-bottom));z-index:4;box-shadow:0 6px 16px rgba(16,24,40,.18)}.fk89st{margin:6px 0 2px}.fk89st .fkln.t-red b{color:var(--red)}</style>'); } catch (e) { } // v2.8.9: Frank
+// ---------------------------------------------------------------- v2.8.9: help items are deliveries on Prince's Route
+// Today's help items (no day, or today) are on the Route: first in To confirm (with the cartons, "I have it"), then in
+// To deliver (a vendor with an order: on her stop; help items only: their own purple row, no cash), then in Delivered.
+// A later day: in Later, where he picks Deliver today / Another day. An order that moves takes her help items along.
+function r89Day(r) { return r.dlv && r.dlv > D.today ? r.dlv : D.today; }
+function r89Now() { return (D.hstops || []).filter(function (r) { return r89Day(r) === D.today; }); }
+function r89Conf() { return D.me.role === 'Rider' ? r89Now().filter(function (r) { return !r.picked && !R73.h[r.rid]; }) : []; }
+function r89Go() { var c = r89Conf(); return r89Now().filter(function (r) { return c.indexOf(r) < 0; }); }
+function r89Only(R) { var on = {}; R.forEach(function (s) { on[s.id] = 1; }); return r89Go().filter(function (r) { return !on[r.vid]; }); }
+function r89NotIn(H, S) { var on = {}; (S || []).forEach(function (s) { on[s.id] = 1; }); return H.filter(function (r) { return !on[r.vid]; }); } // with her cartons: on her row already ("+ Apron")
+function r89Vids(L) { var V = []; L.forEach(function (r) { if (V.indexOf(r.vid) < 0) V.push(r.vid); }); return V; }
+function r89Gave() { return ((D.r27 && D.r27.help) || []).filter(function (g) { return g.day === D.today; }); }
+function r89Later(L) { var lv = {}; (L || []).forEach(function (x) { lv[x.vid] = 1; }); return (D.hstops || []).filter(function (r) { return r89Day(r) > D.today && !lv[r.vid]; }).sort(function (a, b) { return a.dlv < b.dlv ? -1 : 1; }); } // with a later order: on its row (the dot)
+function r89Rows(HO, n) { var V = r89Vids(HO); if (!V.length) return '';
+  return '<div class="r72list">' + V.map(function (vid, i) { var L = HO.filter(function (r) { return r.vid === vid; }), r = L[0], on = R72.open === 'h:' + vid;
+    return '<div class="r72s k-pur' + (on ? ' on' : '') + '"><div class="r72h" data-act="r72o" data-v="h:' + esc(vid) + '"><span class="qn">' + (n + i + 1) + '</span><div class="grow"><b class="ell">' + sico(ICO.gift) + esc(r.name) + '</b><span class="ell">Help items · ' + esc(L.map(function (x) { return x.txt; }).join(', ')) + '</span></div><span class="rt">No cash</span></div>' +
+      (on ? '<div class="r87c">' + (r.school || r.agent ? '<div class="small muted">' + esc([r.school, r.agent].filter(Boolean).join(' · ')) + '</div>' : '') + (r.phone ? '<div style="margin-top:6px">' + callBtn(r.phone) + '</div>' : '') + L.map(function (x) { return '<button class="r27big g" style="margin-top:8px" data-act="hgOpen" data-r="' + esc(x.rid) + '">Given' + (L.length > 1 ? ': ' + esc(x.txt) : '') + '</button>'; }).join('') + '</div>' : '') + '</div>'; }).join('') + '</div>'; }
+function r89ConfRows(HC, n) { return HC.map(function (r, i) { return r27Row(n + i + 1, 'pur', sico(ICO.gift) + esc(r.name), 'Help items · ' + esc(r.txt), 'No cash'); }).join(''); }
+function r89DoneRows(HD, n) { return HD.map(function (g, i) { return r27Row(n + i + 1, 'pur', sico(ICO.gift) + esc(g.name), 'Help items · ' + esc(g.txt), '✓'); }).join(''); }
+function r89LaterHtml(HL) { if (!HL.length) return ''; var cur = '', h = '';
+  HL.forEach(function (r) { if (r.dlv !== cur) { cur = r.dlv; h += '<div class="r87d">' + esc(dayLbl(cur)) + '</div>'; } var on = R87.open === 'h:' + r.rid;
+    h += '<div class="r72s k-pur' + (on ? ' on' : '') + '"><div class="r72h" data-act="r87o" data-v="h:' + esc(r.rid) + '"><div class="grow"><b class="ell">' + sico(ICO.gift) + esc(r.name) + '</b><span class="ell">Help items · ' + esc(r.txt) + '</span></div><span class="rt">' + esc(dayLbl(r.dlv)) + '</span></div>' +
+      (on ? '<div class="r87c"><div class="t2b2" style="margin-top:8px"><button class="r27big" data-act="r89now" data-v="' + esc(r.rid) + '">Deliver today</button><button class="ghost2" data-act="r89day" data-v="' + esc(r.rid) + '">Another day</button></div></div>' : '') + '</div>'; });
+  return '<div class="r72list">' + h + '</div>'; }
+function r89Of(rid) { return (D.hstops || []).filter(function (r) { return r.rid === rid; })[0]; }
+ACT.r89now = function (b) { var r = r89Of(b.dataset.v); if (!r) return; r.dlv = ''; R87.open = ''; bgSave('dlvday', { rid: r.rid, day: 'asap' }, 'hd-' + uid(), 'deliver today: ' + r.name, null, true); render(); };
+ACT.r89day = function (b) { var r = r89Of(b.dataset.v); if (!r) return;
+  dlvAsk(r.name, r.dlv, function (d) { if (d === 'asap') { ACT.r89now(b); return; } if (d === r.dlv) return; r.dlv = d; bgSave('dlvday', { rid: r.rid, day: d }, 'hd-' + uid(), 'help items day: ' + r.name, null, true); render(); }); };
+try { document.head.insertAdjacentHTML('beforeend', '<style>.r72s.k-pur,.r27row.k-pur{border-left-color:var(--pur)}body.r27ride #main .r72s.k-pur,body.r27ride #main .r27row.k-pur{border-left-color:#C4B5FD !important}.r72s.k-pur .ell svg{width:15px;height:15px;vertical-align:-2px;margin-right:4px}</style>'); } catch (e) { }
 // ---------------------------------------------------------------- v2.8.0 (job 1): the manager's Dashboard – the workbook on the phone
 /* Bar: Dashboard · Team · Orders · Money · Vendors. Approvals leave the bar: the softly blinking "N tasks need you" sign opens them.
    Targets are cartons only (no GHS targets – Yayra 23 Oct); the real ones and the ones the agents see sit side by side. */
