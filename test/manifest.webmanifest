@@ -1,6 +1,6 @@
 {
- "name": "TEST \u2013 CupSales",
- "short_name": "TEST \u2013 CupSales",
+ "name": "CupSales",
+ "short_name": "CupSales",
  "display": "standalone",
  "background_color": "#F3F4F6",
  "theme_color": "#E2001A",
