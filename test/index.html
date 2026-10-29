@@ -4754,7 +4754,7 @@ SHEETS.frep = function () { var r = FK.rep; if (!r) return ''; var d = r.count =
     fkLn('Still with people', r.wp.length ? '<span class="t-red">' + esc(r.wp.map(function (p) { return p.name + ' ' + ghs(p.amt); }).join(', ')) + '</span>' : 'nobody') + fkLn('Returns', esc(r.back.length ? r.back.join(', ') : 'none')) + fkLn('Reservation changes', String(r.rch.length)) + fkLn('Low stock', esc(r.low || 'none')) + (r.note ? fkLn('Note', esc(r.note)) : '') + '</div>'; };
 // ---------------------------------------------------------------- C37: the agent's New order shows "OC out" / "only 5 left" from Frank's reservations
 function fkNpk(html) { var M = D && D.resv; if (!M || !html) return html;
-  Object.keys(M).forEach(function (s) { var x = M[s], re = new RegExp('(<div class="n2pk)(")( data-act="npadd" data-s="' + s + '")(><div class="grow"><b>[^<]*</b>)');
+  Object.keys(M).forEach(function (s) { var rt = routeOf(s); if (rt && rt !== 'NONE') return; /* v2.8.16: it comes from Clement or Bernice */ var x = M[s], re = new RegExp('(<div class="n2pk)(")( data-act="npadd" data-s="' + s + '")(><div class="grow"><b>[^<]*</b>)');
     if (x.left <= 0) html = html.replace(re, '$1 off$2$4<div class="small t-red">' + esc(skn(s)) + ' out · Frank can add more later</div>');
     else if (x.low) html = html.replace(re, '$1$2$3$4<div class="small t-amber">Only ' + x.left + ' left</div>'); });
   return html; }
