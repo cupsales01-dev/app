@@ -1716,7 +1716,7 @@ var PROF = null;
 function schoolOf(id) { return (D.schools || []).filter(function (s) { return s.id === id; })[0] || null; }
 ACT.profOpen = function (b) {
   var v = vend(b.dataset.v); if (!v) return; var p = v.prof || {}; SHEETK = '';
-  PROF = { vid: v.id, school: p.school || '', pick: !p.school, q: '', newS: null, spot: p.spot || '', share: p.share || '', ptype: p.ptype || '', momo: p.momo || '', waK: /^0\d{9}$/.test(p.wa || '') ? 'Other' : p.wa === 'Same number' || p.wa === 'No WhatsApp' ? p.wa : '', waN: /^0\d{9}$/.test(p.wa || '') ? p.wa : '', byear: p.byear || '', close: p.close || '', facts: {} };
+  PROF = { vid: v.id, school: p.school || '', pick: !p.school, q: '', newS: null, spot: p.spot || '', share: p.share || '', ptype: p.ptype || '', momo: p.momo || '', waK: /^0\d{9}$/.test(p.wa || '') ? 'Other' : p.wa === 'Same number' || p.wa === 'No WhatsApp' ? p.wa : '', waN: /^0\d{9}$/.test(p.wa || '') ? p.wa : '', byear: p.byear || '', close: p.close || '', town: v.town || '', lm: v.lm || '', facts: {} }; // v2.8.14: town, landmark
   profDraw();
 };
 function profDraw() {
@@ -1730,6 +1730,7 @@ function profDraw() {
       '<label>Pupils (about)</label><input inputmode="numeric" data-inp="pfact" data-f="pupils" value="' + esc(fp) + '">' + brkHtml('pfact', f1, f2);
   } else h += '<input data-inp="psq" value="' + esc(P.q) + '" placeholder="Type 2–3 letters of the school" autocomplete="off" autocapitalize="off" spellcheck="false"><div id="psr">' + profHits() + '</div><button class="ghost" data-act="pnew">+ New school (not in the list)</button>';
   h += '<div class="psec">' + ico(ICO.idcard) + ' About her</div>' +
+    '<label>Town</label><input data-inp="pf" data-f="town" value="' + esc(P.town) + '" placeholder="e.g. Bantama"><label>Landmark</label><input data-inp="pf" data-f="lm" value="' + esc(P.lm) + '" placeholder="e.g. opposite the Total station">' + // v2.8.14
     '<label>Where she sells</label><input data-inp="pf" data-f="spot" value="' + esc(P.spot) + '" placeholder="e.g. by the gate near the JHS block">' +
     '<label>She closes at</label><input type="time" data-inp="pf" data-f="close" value="' + esc(P.close || '') + '">' +
     '<label>What she gives the school (if anything)</label><input data-inp="pf" data-f="share" value="' + esc(P.share) + '" placeholder="e.g. GHS 50 a term · 10% · nothing">' +
@@ -1769,13 +1770,14 @@ ACT.psave = function () {
   var num0 = function (x) { return String(x == null ? '' : x).replace(/[,\s]/g, ''); };
   if (P.newS && num0(P.newS.pupils) && !/^\d{1,5}$/.test(num0(P.newS.pupils))) { say('Pupils: a number, e.g. 650.'); return; }
   if (P.facts.pupils !== undefined && num0(P.facts.pupils) && !/^\d{1,5}$/.test(num0(P.facts.pupils))) { say('Pupils: a number, e.g. 650.'); return; }
-  var prof = { school: P.newS ? '' : P.school, spot: P.spot, share: P.share, ptype: P.ptype, momo: momo, wa: wa, byear: y, close: P.close || '' };
+  var tw = String(P.town || '').replace(/\s+/g, ' ').trim(), lm = String(P.lm || '').replace(/\s+/g, ' ').trim(); if (tw.length === 1) { say('Type her town, e.g. Bantama.'); return; } // v2.8.14
+  var prof = { school: P.newS ? '' : P.school, spot: P.spot, share: P.share, ptype: P.ptype, momo: momo, wa: wa, byear: y, close: P.close || '', town: tw, lm: lm };
   if (P.newS) prof.newSchool = { name: String(P.newS.name).trim(), area: P.newS.area, pupils: num0(P.newS.pupils), b1: P.newS.b1 || '', b2: P.newS.b2 || '' };
   else if (P.school && Object.keys(P.facts).length) prof.schoolFacts = { pupils: P.facts.pupils !== undefined ? num0(P.facts.pupils) : undefined, b1: P.facts.b1, b2: P.facts.b2 };
   $('over').innerHTML = ''; var s = schoolOf(P.school);
   v.prof = { school: P.newS ? '' : P.school, spot: P.spot, share: P.share, ptype: P.ptype, momo: momo, wa: wa, byear: y, close: P.close || '', at: D.today };
   if (s && !P.newS) { if (P.facts.b1 !== undefined) s.b1 = P.facts.b1; if (P.facts.b2 !== undefined) s.b2 = P.facts.b2; if (P.facts.pupils !== undefined) s.pupils = num0(P.facts.pupils); } if (P.newS) v.school = String(P.newS.name).trim(); else if (s) v.school = s.name; // shown at once
-  bgSave('vprofile', { vid: v.id, prof: prof }, 'pf-' + v.id + '-' + uid(), v.name + ' – profile', null, true); PROF = null; render();
+  v.town = tw; v.lm = lm; bgSave('vprofile', { vid: v.id, prof: prof }, 'pf-' + v.id + '-' + uid(), v.name + ' – profile', null, true); PROF = null; render();
 };
 // ---------------------------------------------------------------- v2.4.8: birthdays
 function bdayCard(todayOnly) {
@@ -3269,6 +3271,7 @@ SHEETS.ord = function () { var o = oById(OSEL); if (!o) return ''; var st = oSta
     if (phone && B.length < 2) B.push('<a class="ghost2 o2btn" href="tel:' + esc(phone) + '">Call her</a>');
     if (B.length) h += '<div class="t2b2" style="margin-top:10px">' + B.join('') + '</div>';
     if (mgrMe() && o.status !== 'Submitted' && o.status !== 'Manager check' && /released/i.test(o.status)) h += '<button class="ghost2 o2red" style="width:100%;margin-top:8px" data-act="ocan" data-o="' + esc(o.oid) + '">Cancel order</button>'; // v2.8.12
+    if (mgrMe() && (o.status === 'Delivered' || o.status === 'Failed' && /manager fix/.test(c.status || '')) && c.did) h += '<button class="ghost2" style="width:100%;margin-top:8px" data-act="mfix" data-o="' + esc(o.oid) + '">✎ Fix this order</button>'; // v2.8.14
     return h + '<a class="o2more" data-act="omore">More details ›</a>';
   }
   // More details: every step with its time, the products asked / approved / delivered, the money
@@ -3438,13 +3441,14 @@ ACT.nhelp = function () { sheetOpen('nhelp'); };
 SHEETS.nhelp = function () { var x = nDr(); if (!x.vid) return ''; var L = x.help || [], h = '<div class="t2sh"><b>Help items</b><span class="small muted">The manager approves first</span></div><div class="vzck">';
   NHLEV.forEach(function (l) { h += '<div class="vzl">' + esc(VZLEV[l] || l) + '</div>'; helpOf(l).forEach(function (it) { if (NHSKIP.indexOf(it) >= 0) return; var c = L.filter(function (z) { return z.lever === l && z.item === it; })[0];
     var row = '<button class="ck' + (c ? ' on' : '') + '" data-act="nhi" data-l="' + esc(l) + '" data-v="' + esc(it) + '"><span class="bx">' + (c ? '✓' : '') + '</span><span class="grow">' + esc(it) + '</span></button>';
-    if (c && VZQTY.indexOf(it) >= 0) row = '<div class="ckq">' + row + '<div class="step"><button data-act="nhq" data-l="' + esc(l) + '" data-v="' + esc(it) + '" data-d="-1" aria-label="One less"' + (c.qty <= 1 ? ' disabled' : '') + '>−</button><b style="min-width:30px;text-align:center;align-self:center">' + c.qty + '</b><button data-act="nhq" data-l="' + esc(l) + '" data-v="' + esc(it) + '" data-d="1" aria-label="One more">+</button></div></div>';
+    if (c && VZQTY.indexOf(it) >= 0) row = '<div class="ckq">' + row + '<div class="step"><button data-act="nhq" data-l="' + esc(l) + '" data-v="' + esc(it) + '" data-d="-1" aria-label="One less"' + (c.qty <= 1 ? ' disabled' : '') + '>−</button><input inputmode="numeric" pattern="[0-9]*" class="o2n" style="width:56px;text-align:center" data-inp="nhqi" data-chg="nhqc" data-l="' + esc(l) + '" data-v="' + esc(it) + '" value="' + c.qty + '" aria-label="How many ' + esc(it) + '"><button data-act="nhq" data-l="' + esc(l) + '" data-v="' + esc(it) + '" data-d="1" aria-label="One more">+</button></div></div>';
     if (c && it === 'Other') row += '<input data-inp="nho" data-l="' + esc(l) + '" value="' + esc(c.detail || '') + '" placeholder="Write exactly what" style="margin:2px 0 6px">';
     h += row; }); });
   return h + '</div><button class="main gr wide" data-act="nhx">Done</button>'; };
 function nHelpFind(x, l, it) { var i = -1; (x.help || []).forEach(function (z, j) { if (z.lever === l && z.item === it) i = j; }); return i; }
 ACT.nhi = function (b) { var l = b.dataset.l, it = b.dataset.v; nEdit(function (x) { x.help = x.help || []; var i = nHelpFind(x, l, it); if (i >= 0) x.help.splice(i, 1); else x.help.push({ lever: l, item: it, qty: 1, detail: '' }); }); sheetOpen('nhelp'); };
 ACT.nhq = function (b) { nEdit(function (x) { var i = nHelpFind(x, b.dataset.l, b.dataset.v); if (i >= 0) x.help[i].qty = Math.max(1, Math.min(500, (Number(x.help[i].qty) || 1) + Number(b.dataset.d))); }); sheetOpen('nhelp'); };
+INP.nhqi = function (el) { var x = nDr(), i = nHelpFind(x, el.dataset.l, el.dataset.v), n = Math.round(Number(String(el.value).replace(/\D/g, ''))); if (i >= 0 && n >= 1) { x.help[i].qty = Math.min(500, n); nSave(x); } }; CHG.nhqc = function () { setTimeout(function () { render(); sheetOpen('nhelp'); }, 0); }; // v2.8.14
 INP.nho = function (el) { var x = nDr(), i = nHelpFind(x, el.dataset.l, 'Other'); if (i >= 0) { x.help[i].detail = el.value; nSave(x); } };
 ACT.nhx = function () { SHEETK = ''; $('over').innerHTML = ''; render(); };
 function nEdit(fn, keepScroll) { var x = nDr(); fn(x); nSave(x); render(); }
@@ -8189,6 +8193,17 @@ ACT.hfit = function (b) { HF.it = b.dataset.v; render(); };
 // under a long line. Each stop is a folded row like the agent's Today: the next stop is open, a tap opens another, ⠿ slides a
 // stop up or down (a warning first: the line is sorted by urgent and time). Delivered stops leave the To deliver list.
 // Collect: the three tiles at the top are the tabs (With you / To collect / Handed to Frank). Save messages: just "Saved".
+var MFX = null; // v2.8.14: the manager fixes a delivered order
+ACT.mfix = function (b) { var o = oById(b.dataset.o), c = o && o.outcome; if (!c) return; var q = {}, mx = {}; (c.delivered || []).forEach(function (l) { q[l.sku] = (q[l.sku] || 0) + l.qty; mx[l.sku] = (mx[l.sku] || 0) + l.qty; }); (c.returned || []).forEach(function (l) { mx[l.sku] = (mx[l.sku] || 0) + l.qty; if (!(l.sku in q)) q[l.sku] = 0; }); MFX = { oid: o.oid, q: q, mx: mx, why: '' }; sheetOpen('mfix'); };
+SHEETS.mfix = function () { var o = MFX && oById(MFX.oid); if (!o) return ''; var h = '<div class="t2sh"><b>Fix: ' + esc(o.vendor) + '</b><a data-act="closeO">Close</a></div><div class="small muted" style="margin-bottom:6px">What did she really get?</div>';
+  Object.keys(MFX.mx).forEach(function (k) { h += '<div class="o2cl"><div class="grow"><b>' + esc(skn(k)) + '</b><div class="small muted">of ' + MFX.mx[k] + '</div></div><button class="o2pm" data-act="mfq" data-k="' + esc(k) + '" data-d="-1">−</button><b class="o2n">' + MFX.q[k] + '</b><button class="o2pm" data-act="mfq" data-k="' + esc(k) + '" data-d="1">+</button></div>'; });
+  h += '<button class="ghost2" style="width:100%;margin:6px 0" data-act="mfnone">Nothing was delivered</button><input data-inp="mfwhy" value="' + esc(MFX.why) + '" placeholder="Why? e.g. Prince did not reach her">';
+  return h + '<button class="main gr wide" style="margin-top:8px" data-act="mfsave">Save fix</button><div class="small muted" style="margin-top:6px">The agent, Frank and Prince are told. Her debt follows.</div>'; };
+ACT.mfq = function (b) { var k = b.dataset.k; MFX.q[k] = Math.max(0, Math.min(MFX.mx[k], MFX.q[k] + Number(b.dataset.d))); drawSheet(); };
+ACT.mfnone = function () { Object.keys(MFX.q).forEach(function (k) { MFX.q[k] = 0; }); drawSheet(); };
+INP.mfwhy = function (el) { MFX.why = el.value; };
+ACT.mfsave = function () { if (!MFX || viewBlock('mfixdel')) return; if (String(MFX.why).trim().length < 3) { toast('Write why', 'err'); return; } var m = MFX, o = oById(m.oid); MFX = null; SHEETK = ''; $('over').innerHTML = ''; if (o && o.outcome) o.outcome.delivered = Object.keys(m.q).filter(function (k) { return m.q[k] > 0; }).map(function (k) { return { sku: k, qty: m.q[k] }; });
+  bgSave('mfixdel', { oid: m.oid, lines: Object.keys(m.q).map(function (k) { return { sku: k, qty: m.q[k] }; }), why: String(m.why).trim() }, 'mf-' + m.oid + '-' + uid(), 'order fixed', null, true); render(); };
 var R72 = { t: 'go', open: '', c: 'with', f: '' };
 function r95Key(s) { return { t: s.town || '', a: ((s.orders || [])[0] || {}).agent || '' }; } // v2.8.13: Town / Agent filter
 function r95Fil(R) { var f = R72.f; if (!f) return R; var k = f.slice(0, 1), v = f.slice(2), L = R.filter(function (s) { return r95Key(s)[k] === v; }); if (!L.length) { R72.f = ''; return R; } return L; }
