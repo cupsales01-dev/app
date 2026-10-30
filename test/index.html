@@ -957,6 +957,7 @@ body.r27ride .bnav.b6 button.on::before{background:#FFD60A}body.r27ride .bnav .c
 .fk84d{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:#DBEAFE;color:#1D4ED8;font-size:12px;font-weight:700;vertical-align:1px}
 .r87d{font-size:12.5px;font-weight:800;color:var(--muted);margin:12px 2px 4px}.r87c{padding:4px 12px 12px}.r87c .t2b2 button{flex:1}
 /* v2.8.17 */.va3{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.va3>*{flex:1 1 auto}.vatop{display:flex;flex-direction:column;gap:2px;margin:2px 0 8px}.vatop b{font-size:18px}.vatop span{font-size:13px;color:var(--muted,#6b7280)}.vatry{margin:0 0 6px}.vasp{font-size:13px;margin:4px 2px 0;line-height:1.4}.vach{display:flex;gap:6px;overflow-x:auto;margin:8px 0;padding-bottom:2px}.vach>button{flex:0 0 auto;border:1.5px solid #D5D9E0;background:#fff;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;color:var(--ink)}.vach>button.on{background:#14171c;border-color:#14171c;color:#fff}.varow{border:1px solid #E5E7EB;border-left:5px solid #9a9aa3;border-radius:10px;padding:8px 10px;margin:0 0 6px;background:#fff}.varow.kr{border-left-color:#d0021b}.varow.ka{border-left-color:#d97706}.varow.kg{border-left-color:#15803d}.varow.kb{border-left-color:#2563eb}.varow.cx{opacity:.55}.varow.cx .r1 b{text-decoration:line-through}.varow .r1,.varow .r2,.vad>div{display:flex;justify-content:space-between;gap:8px;align-items:center}.varow .r1{font-size:14px;font-weight:600}.varow .r2{font-size:13px;color:var(--muted,#6b7280);margin-top:2px}.vaold{font-style:normal;font-size:11px;background:#F3E8FF;color:#7e22ce;border-radius:6px;padding:0 5px;margin-left:4px}.vad{margin-top:6px;border-top:1px dashed #E5E7EB;padding-top:6px;font-size:13px}.vad>div{margin:2px 0}.vad p{margin:4px 0;color:var(--muted,#6b7280)}.vasm{border:1.5px solid #D5D9E0;background:#fff;border-radius:8px;padding:3px 9px;font-size:12px;font-weight:700}.vasm.red{color:#d0021b;border-color:#fecaca;margin-top:6px}.vad .wide{width:100%;margin-top:6px}
+/* v2.8.18 */.vatot{font-weight:700}.vapf{margin-top:8px;border-top:1px dashed #E5E7EB;padding-top:6px}.vapf .o2q{margin:4px 0}.mcb{border:1.5px solid #D5D9E0;background:#fff;border-radius:8px;padding:2px 7px;font-size:16px;line-height:1.4;margin-left:6px;vertical-align:middle}#mc89 .mcbg{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:900}#mc89 .mcbox{position:fixed;left:0;right:0;bottom:0;z-index:901;background:#fff;border-radius:16px 16px 0 0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));max-height:86vh;overflow:auto}#mc89 .mch{display:flex;justify-content:space-between;align-items:center}#mc89 .mct{font-size:26px;font-weight:800;text-align:center;margin:6px 0 8px;color:#15803d}#mc89 .mcg{display:grid;grid-template-columns:1fr 1fr;gap:6px}#mc89 .mcr{display:flex;align-items:center;gap:6px;border:1px solid #E5E7EB;border-radius:10px;padding:5px 7px}#mc89 .mcr.on{border-color:#15803d;background:#F0FDF4}#mc89 .mcl{font-weight:800;min-width:34px}#mc89 .mcr button{width:30px;height:30px;border-radius:8px;border:1.5px solid #D5D9E0;background:#fff;font-size:18px;font-weight:700}#mc89 .mcr b{min-width:18px;text-align:center}#mc89 .mcs{margin-left:auto;font-size:12px;color:#6b7280}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -1588,7 +1589,7 @@ function agFilterOk() { return !!(D && D.agents && D.agents.length > 1 && D.me.r
 function selHtml(k, f, label, opts, val) { return '<label><span>' + esc(label) + '</span><select data-chg="fset" data-k="' + k + '" data-f="' + f + '">' + opts.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (o[0] === val ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select></label>'; }
 function filterBar(k, ph) {
   CURL = k; var f = fl(k), defs = FDEF[k] || [], ag = agFilterOk();
-  var act = defs.filter(function (d) { return f[d[0]]; }).map(function (d) { if (d[2] === 'date') return [d[0], d[1] + ': ' + dayLbl(f[d[0]])]; var o = d[2].filter(function (x) { return x[0] === f[d[0]]; })[0]; return [d[0], (d[0] === 'sort' ? '' : d[1] + ': ') + (o ? o[1] : f[d[0]])]; });
+  var act = defs.filter(function (d) { return f[d[0]]; }).map(function (d) { if (d[2] === 'date') return [d[0], d[1] + ': ' + dayLbl(f[d[0]]) + (d[0] === 'day' && f.to ? ' – ' + dayLbl(f.to) : '')]; var o = d[2].filter(function (x) { return x[0] === f[d[0]]; })[0]; return [d[0], (d[0] === 'sort' ? '' : d[1] + ': ') + (o ? o[1] : f[d[0]])]; });
   if (ag && agOn()) act.unshift(['ag', 'Agent: ' + agName(agOn())]);
   var n = act.filter(function (a) { return a[0] !== 'sort'; }).length;
   var h = '<div class="fbar"><div class="row" style="flex-wrap:nowrap"><input data-inp="flq" data-k="' + k + '" value="' + esc(f.q || '') + '" placeholder="' + esc(ph) + '" autocomplete="off" autocapitalize="off" spellcheck="false" style="flex:1 1 auto;min-width:0">' +
@@ -1599,9 +1600,9 @@ function filterBar(k, ph) {
   return h + '</div>';
 }
 ACT.fopen = function (b) { FOPEN[b.dataset.k] = !FOPEN[b.dataset.k]; render(); };
-ACT.fx = function (b) { if (b.dataset.f === 'ag') setAg(''); else { delete fl(b.dataset.k)[b.dataset.f]; flSave(); } render(); };
+ACT.fx = function (b) { if (b.dataset.f === 'ag') setAg(''); else { delete fl(b.dataset.k)[b.dataset.f]; if (b.dataset.f === 'day') delete fl(b.dataset.k).to; flSave(); } render(); };
 ACT.fclear = function (b) { var q = fl(b.dataset.k).q; FL[b.dataset.k] = q ? { q: q } : {}; flSave(); if (agFilterOk()) setAg(''); render(); };
-CHG.fset = function (el) { if (el.dataset.f === 'ag') setAg(el.value); else { if (el.value) fl(el.dataset.k)[el.dataset.f] = el.value; else delete fl(el.dataset.k)[el.dataset.f]; flSave(); } render(); };
+CHG.fset = function (el) { if (el.dataset.f === 'ag') setAg(el.value); else { if (el.dataset.f === 'day') delete fl(el.dataset.k).to; if (el.value) fl(el.dataset.k)[el.dataset.f] = el.value; else delete fl(el.dataset.k)[el.dataset.f]; flSave(); } render(); };
 INP.flq = function (el) { fl(el.dataset.k).q = el.value; flSave(); var box = $('flist'); if (box && LISTR[el.dataset.k]) box.innerHTML = LISTR[el.dataset.k](); }; // the box itself is not redrawn (no lost letters)
 function setAg(a) { AGF = a; try { localStorage.setItem('cs_agf_' + TOKEN, AGF); } catch (x) { } }
 function hasQ(k, text) { var n = norm(fl(k).q); return !n || norm(text).indexOf(n) >= 0; }
@@ -3837,7 +3838,7 @@ function vzMoney(v) {
     return '<div class="vzconf"><div class="big2">You took<b>GHS ' + n0(a) + '</b>' + (m.how === 'Cash' ? 'in cash' : 'by MoMo to Frank') + ' from ' + esc(VZ.name) + '.</div><div class="small muted">' + (ex > 0.004 ? 'That is GHS ' + n0(ex) + ' more than she owes – the extra is kept apart for the manager.' : 'She will still owe GHS ' + n0(left - a) + '.') + '</div>' + (m.how === 'MoMo' ? '<div class="small">Frank\'s MoMo: <b>' + esc(D.momo || '') + '</b> – Frank confirms when it arrives.</div>' : '') +
       '<div class="vz2"><button class="ghost2" data-act="vzm" data-s="enter">Change</button><button class="main gr" data-act="vzpsave">Save GHS ' + n0(a) + '</button></div></div>'; }
   var fx = m.fix >= 0 ? m.pays[m.fix] : null;
-  h += '<div class="vzq">' + (fx ? 'Fixing GHS ' + n0(fx.amt) + '. How much did she really give you?' : m.add ? 'How much more did she give you?' : 'How much did she give you?') + '</div><div class="vzamt"><small>GHS</small>' + (m.amt ? n0(a) : '0') + '</div>';
+  h += '<div class="vzq">' + (fx ? 'Fixing GHS ' + n0(fx.amt) + '. How much did she really give you?' : m.add ? 'How much more did she give you?' : 'How much did she give you?') + '</div><div class="vzamt"><small>GHS</small>' + (m.amt ? n0(a) : '0') + mcBtn('mcvz') + '</div>';
   var qk = [left > 0.004 && !fx && !m.add ? [left, 'All ' + n0(left)] : null, [1000, '1,000'], [500, '500']].filter(Boolean);
   h += '<div class="vzqk">' + qk.map(function (q) { return '<button class="' + (num(m.amt) === q[0] ? 'on' : '') + '" data-act="vzq" data-v="' + q[0] + '">' + q[1] + '</button>'; }).join('') + '</div>';
   h += '<div class="vzpad">' + ['1', '2', '3', '4', '5', '6', '7', '8', '9', '00', '0', '⌫'].map(function (k) { return '<button data-act="vzk" data-v="' + k + '" aria-label="' + (k === '⌫' ? 'Delete' : k) + '">' + k + '</button>'; }).join('') + '</div>';
@@ -5519,7 +5520,7 @@ SHEETS.p7rec = function () {
   if (momo) h += '<div class="small muted">Frank\'s number: ' + esc(String(D.momo || '0244 000 000').replace(/^.*?(0\d[\d ]{8,})/, '$1')) + '</div>';
   var half = Math.round(ow / 2 / 10) * 10;
   h += '<div class="p7q">How much?</div><div class="p7qk">' + [[ow, 'All ' + p7g(ow).replace('GHS ', '')], [half, 'Half ' + p7g(half).replace('GHS ', '')], [200, '200']].filter(function (q, i, A) { return q[0] > 0 && A.map(function (z) { return z[0]; }).indexOf(q[0]) === i; }).map(function (q) { return '<button class="' + (Math.abs(a - q[0]) < 0.005 ? 'on' : '') + '" data-act="p7rq" data-v="' + q[0] + '">' + q[1] + '</button>'; }).join('') + '</div>';
-  h += p7Step('p7rs', a, 'or − / +');
+  h += p7Step('p7rs', a, 'or − / +') + '<div style="text-align:right;margin:-4px 0 6px">' + mcBtn('mcp7') + ' <span class="small muted">count it</span></div>';
   var ok = P7S.how && a > 0 && (P7S.how !== 'other' || String(P7S.note).trim().length > 1);
   return h + '<button class="main p7big" data-act="p7rcheck"' + (ok ? '' : ' disabled') + '>Check amount</button>';
 };
@@ -8195,16 +8196,17 @@ ACT.hfit = function (b) { HF.it = b.dataset.v; render(); };
 // stop up or down (a warning first: the line is sorted by urgent and time). Delivered stops leave the To deliver list.
 // Collect: the three tiles at the top are the tabs (With you / To collect / Handed to Frank). Save messages: just "Saved".
 var MFX = null; // v2.8.14: the manager fixes a delivered order
-ACT.mfix = function (b) { var o = oById(b.dataset.o), c = o && o.outcome; if (!c) return; var q = {}, mx = {}; (c.delivered || []).forEach(function (l) { q[l.sku] = (q[l.sku] || 0) + l.qty; mx[l.sku] = (mx[l.sku] || 0) + l.qty; }); (c.returned || []).forEach(function (l) { mx[l.sku] = (mx[l.sku] || 0) + l.qty; if (!(l.sku in q)) q[l.sku] = 0; }); MFX = { oid: o.oid, q: q, mx: mx, why: '' }; sheetOpen('mfix'); };
+ACT.mfix = function (b) { var o = oById(b.dataset.o), c = o && o.outcome; if (!c) return; var q = {}, mx = {}; (c.delivered || []).forEach(function (l) { q[l.sku] = (q[l.sku] || 0) + l.qty; mx[l.sku] = (mx[l.sku] || 0) + l.qty; }); (c.returned || []).forEach(function (l) { mx[l.sku] = (mx[l.sku] || 0) + l.qty; if (!(l.sku in q)) q[l.sku] = 0; }); MFX = { oid: o.oid, q: q, mx: mx, why: '', cash0: c.cad || 0, cash: String(c.cad || 0), cst: c.cst || 0 }; sheetOpen('mfix'); };
 SHEETS.mfix = function () { var o = MFX && oById(MFX.oid); if (!o) return ''; var h = '<div class="t2sh"><b>Fix: ' + esc(o.vendor) + '</b><a data-act="closeO">Close</a></div><div class="small muted" style="margin-bottom:6px">What did she really get?</div>';
   Object.keys(MFX.mx).forEach(function (k) { h += '<div class="o2cl"><div class="grow"><b>' + esc(skn(k)) + '</b><div class="small muted">of ' + MFX.mx[k] + '</div></div><button class="o2pm" data-act="mfq" data-k="' + esc(k) + '" data-d="-1">−</button><b class="o2n">' + MFX.q[k] + '</b><button class="o2pm" data-act="mfq" data-k="' + esc(k) + '" data-d="1">+</button></div>'; });
+  if (!MFX.cst) h += '<div class="o2cl"><div class="grow"><b>Cash Prince took</b><div class="small muted">recorded GHS ' + (MFX.cash0 || 0) + '</div></div><input class="o2n" style="width:96px" data-inp="mfcash" inputmode="decimal" value="' + esc(MFX.cash) + '"></div>';
   h += '<button class="ghost2" style="width:100%;margin:6px 0" data-act="mfnone">Nothing was delivered</button><input data-inp="mfwhy" value="' + esc(MFX.why) + '" placeholder="Why? e.g. Prince did not reach her">';
   return h + '<button class="main gr wide" style="margin-top:8px" data-act="mfsave">Save fix</button><div class="small muted" style="margin-top:6px">The agent, Frank and Prince are told. Her debt follows.</div>'; };
 ACT.mfq = function (b) { var k = b.dataset.k; MFX.q[k] = Math.max(0, Math.min(MFX.mx[k], MFX.q[k] + Number(b.dataset.d))); drawSheet(); };
 ACT.mfnone = function () { Object.keys(MFX.q).forEach(function (k) { MFX.q[k] = 0; }); drawSheet(); };
 INP.mfwhy = function (el) { MFX.why = el.value; };
 ACT.mfsave = function () { if (!MFX || viewBlock('mfixdel')) return; if (String(MFX.why).trim().length < 3) { toast('Write why', 'err'); return; } var m = MFX, o = oById(m.oid); MFX = null; SHEETK = ''; $('over').innerHTML = ''; if (o && o.outcome) o.outcome.delivered = Object.keys(m.q).filter(function (k) { return m.q[k] > 0; }).map(function (k) { return { sku: k, qty: m.q[k] }; });
-  bgSave('mfixdel', { oid: m.oid, lines: Object.keys(m.q).map(function (k) { return { sku: k, qty: m.q[k] }; }), why: String(m.why).trim() }, 'mf-' + m.oid + '-' + uid(), 'order fixed', null, true); render(); };
+  bgSave('mfixdel', { oid: m.oid, lines: Object.keys(m.q).map(function (k) { return { sku: k, qty: m.q[k] }; }), why: String(m.why).trim(), cash: String(m.cash).trim() !== '' && !m.cst && Math.abs((Number(m.cash) || 0) - (m.cash0 || 0)) > 0.004 ? Number(m.cash) || 0 : '' }, 'mf-' + m.oid + '-' + uid(), 'order fixed', null, true); render(); };
 var R72 = { t: 'go', open: '', c: 'with', f: '' };
 function r95Key(s) { return { t: s.town || '', a: ((s.orders || [])[0] || {}).agent || '' }; } // v2.8.13: Town / Agent filter
 function r95Fil(R) { var f = R72.f; if (!f) return R; var k = f.slice(0, 1), v = f.slice(2), L = R.filter(function (s) { return r95Key(s)[k] === v; }); if (!L.length) { R72.f = ''; return R; } return L; }
@@ -9184,7 +9186,7 @@ INP.vawhy = function (el) { if (VA.fx) VA.fx.why = el.value; };
 ACT.vaf = function (b) { VA.f = b.dataset.v; VA.op = ''; drawSheet(); };
 ACT.vacal = function () { cal74Open(VA.from, VA.to, function (a, z) { VA.from = a; VA.to = z; sheetOpen('vacct'); }); };
 ACT.vacalx = function () { VA.from = VA.to = ''; drawSheet(); };
-ACT.vatap = function (b) { VA.op = VA.op === b.dataset.i ? '' : b.dataset.i; VA.fx = null; drawSheet(); };
+ACT.vatap = function (b) { VA.op = VA.op === b.dataset.i ? '' : b.dataset.i; VA.fx = null; VA.pay = null; drawSheet(); };
 ACT.vafix = function (b) { VA.fx = { k: b.dataset.k, rid: b.dataset.r, aid: b.dataset.a || '', to: '', why: '' }; drawSheet(); };
 ACT.vato = function (b) { if (VA.fx) VA.fx.to = b.dataset.v; drawSheet(); };
 ACT.vafixgo = function (b) { var F = VA.fx, vid = VA.vid; if (!F) return; var why = String(F.why || '').trim(); if (why.length < 3) { say('Write why.'); return; } if (F.k === 'move' && !F.to) { say('Choose the order.'); return; }
@@ -9205,9 +9207,9 @@ SHEETS.vacct = function () {
   var payOf = {}; A.rows.forEach(function (p) { if (p.k === 'p' && !p.cx) (p.to || []).forEach(function (t) { (payOf[t.ref] = payOf[t.ref] || []).push([p.day, t.amt, p.how]); }); });
   return h + R.map(function (r) { var i = r.k + ':' + (r.ref || r.id), on = VA.op === i;
     if (r.k === 'o') { var k = r.open <= 0.004 ? 'g' : r.paid > 0.004 ? 'a' : 'r';
-      var d = on ? '<div class="vad">' + (r.src ? '<div><span>From</span><b>' + esc(r.src) + '</b></div>' : '') + (payOf[r.ref] || []).map(function (p) { return '<div><span>Paid ' + esc(dayLbl(p[0])) + '</span><b>' + ghs(p[1]) + ' ' + esc(p[2] === 'MoMo' ? 'MoMo' : 'cash') + '</b></div>'; }).join('') +
-        (r.pon ? '<div><span>Date paid (book)</span><b>' + esc(dayLbl(r.pon)) + '</b></div>' : '') + (r.by ? '<div><span>Received by</span><b>' + esc(r.by) + '</b></div>' : '') + (r.note ? '<p>' + esc(r.note) + '</p>' : '') + '</div>' : '';
-      return '<div class="varow k' + k + '" data-act="vatap" data-i="' + esc(i) + '"><div class="r1"><span>' + esc(dayLbl(r.day)) + (r.ln ? ' · ' + esc(r.ln) : '') + (r.old ? ' <i class="vaold">before app</i>' : '') + '</span><b>' + ghs(r.val) + '</b></div>' +
+      var d = on ? '<div class="vad"><div><span>Ordered ' + esc(dayLbl(r.day)) + '</span><b>' + esc(r.ln || '') + '</b></div>' + (r.src ? '<div><span>From</span><b>' + esc(r.src) + '</b></div>' : '') + (payOf[r.ref] || []).map(function (p) { return '<div><span>Paid ' + esc(dayLbl(p[0])) + '</span><b>' + ghs(p[1]) + ' ' + esc(p[2] === 'MoMo' ? 'MoMo' : 'cash') + '</b></div>'; }).join('') +
+        (r.pon ? '<div><span>Date paid (book)</span><b>' + esc(dayLbl(r.pon)) + '</b></div>' : '') + (r.by ? '<div><span>Received by</span><b>' + esc(r.by) + '</b></div>' : '') + (r.note ? '<p>' + esc(r.note) + '</p>' : '') + vaTot(r, payOf[r.ref]) + vaPayHtml(r) + '</div>' : '';
+      return '<div class="varow k' + k + '"' + (VA.pay && VA.pay.ref === r.ref ? '' : ' data-act="vatap" data-i="' + esc(i) + '"') + '><div class="r1"><span>' + esc(dayLbl(r.day)) + (r.ln ? ' · ' + esc(r.ln) : '') + (r.old ? ' <i class="vaold">before app</i>' : '') + '</span><b>' + ghs(r.val) + '</b></div>' +
         '<div class="r2"><span>' + (r.open <= 0.004 ? 'paid ✓' + (r.pon ? ' ' + esc(dayLbl(r.pon)) : '') : (r.paid > 0.004 ? 'paid ' + ghs(r.paid).replace('GHS ', '') + ' · ' : '') + '<b>owes ' + ghs(r.open).replace('GHS ', '') + '</b>') + '</span>' + (r.open > 0.004 ? '<span class="t-red">' + vaDays(r.day) + ' days</span>' : '') + '</div>' + d + '</div>'; }
     var to = (r.to || []).map(function (t) { return t.day ? dayLbl(t.day) : 'old book'; }), F = VA.fx && VA.fx.rid === r.id ? VA.fx : null, x = '';
     if (on) { x = '<div class="vad">' + (r.by ? '<div><span>Taken by</span><b>' + esc(r.by) + '</b></div>' : '') + (r.to || []).map(function (t) { return '<div><span>' + esc(t.day ? 'Order ' + dayLbl(t.day) : 'Old book') + '</span><b>' + ghs(t.amt) + '</b>' + (mgr && !r.cx ? ' <button class="vasm" data-act="vafix" data-k="move" data-r="' + esc(r.id) + '" data-a="' + esc(t.aid) + '">Move</button>' : '') + '</div>'; }).join('') + (r.note ? '<p>' + esc(r.note) + '</p>' : '');
@@ -9228,5 +9230,58 @@ INP.vafq = function (el) { VAF.q = el.value; clearTimeout(VAF.t); var q = VAF.q;
 ACT.rcal = function () { var f = fl('rdone'); cal74Open(f.day || '', f.to || f.day || '', function (a, z) { var g = fl('rdone'); g.day = a; if (z && z !== a) g.to = z; else delete g.to; flSave(); render(); }); };
 var R89HP = 0;
 ACT.r89hp = function (b) { R89HP = +b.dataset.v; render(); };
+// ---------------------------------------------------------------- v2.8.18: pay this order (agent and Frank, in Her account)
+function vaTot(r, P) { var app = (P || []).reduce(function (t, p) { return t + p[1]; }, 0), book = Math.round((r.paid - app) * 100) / 100;
+  return (r.old && book > 0.004 ? '<div><span>Paid in the old book' + (r.pon ? ' (' + esc(dayLbl(r.pon)) + ')' : '') + '</span><b>' + ghs(book) + '</b></div>' : '') +
+    '<div class="vatot"><span>Total paid</span><b class="t-green">' + ghs(r.paid) + '</b></div><div class="vatot"><span>Left to pay</span><b class="' + (r.open > 0.004 ? 't-red' : 't-green') + '">' + (r.open > 0.004 ? ghs(r.open) : 'nothing ✓') + '</b></div>'; }
+function vaCanPay() { var A = VA.d; if (!A || D.viewOf) return false; return D.me.role === 'Warehouse' || (D.me.role === 'Agent' && typeof p7Ven === 'function' && !!p7Ven(A.vid)); }
+function vaHows() { var A = VA.d; return D.me.role === 'Warehouse' ? [['VENDOR', 'She paid me']].concat(A.ag ? [[A.ag, 'From ' + A.agn]] : []).concat(A.pr ? [[A.pr, 'From ' + A.prn]] : []) : [['cash', 'Cash'], ['momo', 'MoMo to Frank']]; }
+function vaPayHtml(r) { if (!(r.open > 0.004) || !vaCanPay() || (D.me.role === 'Warehouse' && !r.om)) return ''; // Frank takes Omni's money only
+  var P = VA.pay && VA.pay.ref === r.ref ? VA.pay : null; if (!P) return '<button class="main gr wide" data-act="vapay" data-r="' + esc(r.ref) + '">Record payment for this order</button>';
+  return '<div class="vapf"><div class="small muted">How much did she pay for this order?</div><input class="o2q" data-inp="vapay" inputmode="decimal" value="' + esc(P.amt) + '">' +
+    '<div class="vach">' + vaHows().map(function (c) { return '<button class="' + (P.how === c[0] ? 'on' : '') + '" data-act="vaphow" data-v="' + esc(c[0]) + '">' + esc(c[1]) + '</button>'; }).join('') + '</div>' +
+    '<div class="vasp" id="vapv">' + vaPayPv(r) + '</div><div class="va3"><button class="ghost2" data-act="vapayx">Cancel</button><button class="main gr" data-act="vapaygo">Save</button></div></div>'; }
+function vaPayPv(r) { var a = Math.round((Number(VA.pay && VA.pay.amt) || 0) * 100) / 100; if (!(a > 0)) return '';
+  if (a <= r.open + 0.004) return a >= r.open - 0.004 ? 'This order is paid in full.' : 'Left on this order after: ' + ghs(r.open - a) + '.';
+  var x = Math.round((a - r.open) * 100) / 100, other = vaOpen().filter(function (o) { return o.ref !== r.ref; });
+  return 'This order is paid in full. ' + ghs(x) + (other.length ? ' goes to her oldest other order (' + esc(dayLbl(other[0].day)) + ').' : ' is extra – kept apart for the manager.'); }
+function vaRow(ref) { return ((VA.d && VA.d.rows) || []).filter(function (x) { return x.k === 'o' && x.ref === ref; })[0]; }
+ACT.vapay = function (b) { var r = vaRow(b.dataset.r); if (!r) return; VA.pay = { ref: r.ref, amt: String(r.open), how: vaHows()[0][0] }; drawSheet(); };
+ACT.vapayx = function () { VA.pay = null; drawSheet(); };
+ACT.vaphow = function (b) { if (VA.pay) VA.pay.how = b.dataset.v; drawSheet(); };
+INP.vapay = function (el) { if (!VA.pay) return; VA.pay.amt = el.value; var r = vaRow(VA.pay.ref), b = $('vapv'); if (b && r) b.innerHTML = vaPayPv(r); };
+ACT.vapaygo = function () { var P = VA.pay, A = VA.d, r = P && vaRow(P.ref); if (!r) return; var a = Math.round((Number(P.amt) || 0) * 100) / 100; if (!(a > 0)) { say('Type the amount she paid.'); return; }
+  var fr = D.me.role === 'Warehouse', rk = rkNew(), d = { vid: A.vid, amount: a, ref: r.ref, rk: rk, sure: a > A.owes + 0.004 ? 'over' : '' };
+  if (fr) d.by = P.how; else if (P.how === 'momo') d.momo = 1;
+  bgSave('payment', d, 'pay-' + rk, A.name + ' paid ' + ghs(a), null, true);
+  // shown at once: this order, then the oldest others
+  var left = a, how = fr ? 'Cash' : P.how === 'momo' ? 'MoMo' : 'Cash', to = [];
+  [r].concat(vaOpen().filter(function (o) { return o.ref !== r.ref && (!fr || o.om); })).forEach(function (o) { if (left <= 0.004) return; var p = Math.min(left, o.open); left = Math.round((left - p) * 100) / 100; o.open = Math.round((o.open - p) * 100) / 100; o.paid = Math.round((o.paid + p) * 100) / 100; to.push({ aid: '', ref: o.ref, day: o.day, amt: p }); });
+  A.rows.unshift({ k: 'p', id: 'new-' + rk, day: D.today, amt: a, how: how, by: D.me.first || '', note: '', cx: 0, to: to });
+  A.owes = Math.max(0, Math.round((A.owes - (a - left)) * 100) / 100); VA.pay = null; drawSheet();
+  var vid = A.vid; setTimeout(function () { if (VA.vid === vid && SHEETK === 'vacct' && !VA.pay && !VA.fx) vaLoad(vid); }, 6000); };
+// ---------------------------------------------------------------- v2.8.18: money counter – tap the notes and coins, then "Use this"
+var MC = null, MCD = [[200, '200'], [100, '100'], [50, '50'], [20, '20'], [10, '10'], [5, '5'], [2, '2'], [1, '1'], [0.5, '50p'], [0.2, '20p'], [0.1, '10p']];
+var MCIN = ['vaamt', 'vapay', 'mfcash', 'paid', 'npaid', 'scash', 'smomo', 'deccash', 'fkcv', 'fkov', 'scamt', 'clamt', 'cldamt', 'ovamt', 'r27cm', 'r27oth'];
+function mcBtn(act, t) { return '<button class="mcb" data-act="' + act + '"' + (t ? ' data-t="' + t + '"' : '') + ' aria-label="Count the money">🧮</button>'; }
+function mcTot() { return Math.round(MCD.reduce(function (t, d, i) { return t + d[0] * (MC.n[i] || 0); }, 0) * 100) / 100; }
+function mcOpen(cb) { MC = { n: [], cb: cb }; mcDraw(); }
+function mcDraw() { var el = $('mc89'); if (!el) { el = document.createElement('div'); el.id = 'mc89'; document.body.appendChild(el); } if (!MC) { el.innerHTML = ''; return; }
+  var t = mcTot(); el.innerHTML = '<div class="mcbg" data-act="mcx"></div><div class="mcbox"><div class="mch"><b>Count the money</b><a data-act="mcx">Close</a></div><div class="mct">' + ghs(t) + '</div><div class="mcg">' +
+    MCD.map(function (d, i) { var n = MC.n[i] || 0; return '<div class="mcr' + (n ? ' on' : '') + '"><span class="mcl">' + d[1] + '</span><button data-act="mcm" data-i="' + i + '" aria-label="Less">−</button><b>' + n + '</b><button data-act="mcp" data-i="' + i + '" aria-label="More">+</button><span class="mcs">' + (n ? ghs(d[0] * n).replace('GHS ', '') : '') + '</span></div>'; }).join('') +
+    '</div><div class="va3"><button class="ghost2" data-act="mcc">Clear</button><button class="main gr" data-act="mcuse"' + (t > 0 ? '' : ' disabled') + '>Use ' + ghs(t) + '</button></div></div>'; }
+ACT.mcp = function (b) { var i = +b.dataset.i; MC.n[i] = (MC.n[i] || 0) + 1; mcDraw(); };
+ACT.mcm = function (b) { var i = +b.dataset.i; MC.n[i] = Math.max(0, (MC.n[i] || 0) - 1); mcDraw(); };
+ACT.mcc = function () { MC.n = []; mcDraw(); };
+ACT.mcx = function () { MC = null; mcDraw(); };
+ACT.mcuse = function () { var t = mcTot(), cb = MC && MC.cb; MC = null; mcDraw(); if (cb) cb(t); };
+ACT.mcin = function (b) { var k = b.dataset.t; mcOpen(function (t) { var el = document.querySelector('[data-inp="' + k + '"]'); if (!el) return; el.value = String(t); el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); }); };
+ACT.mcvz = function () { mcOpen(function (t) { if (VZ && VZ.m) { VZ.m.amt = String(Math.round(t)); vzDraw(); } }); };
+ACT.mcp7 = function () { mcOpen(function (t) { if (P7S) { P7S.amt = t; drawSheet(); } }); };
+function mcScan() { try { MCIN.forEach(function (k) { [].forEach.call(document.querySelectorAll('[data-inp="' + k + '"]'), function (el) { var n = el.nextElementSibling; if (n && n.classList.contains('mcb')) return; el.insertAdjacentHTML('afterend', mcBtn('mcin', k)); }); }); } catch (e) { } }
+render = (function (f) { return function () { var r = f.apply(this, arguments); mcScan(); return r; }; })(render);
+drawSheet = (function (f) { return function () { var r = f.apply(this, arguments); mcScan(); return r; }; })(drawSheet);
+// ---------------------------------------------------------------- v2.8.18: the manager fixes the cash Prince took at delivery
+INP.mfcash = function (el) { if (MFX) MFX.cash = el.value; };
 if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
