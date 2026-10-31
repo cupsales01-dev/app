@@ -1013,6 +1013,9 @@ body.r27ride #main .t2tray.ph89 button .cnt{background:#080B0A !important;color:
 .sl89>div,.sp89>div{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:3px 0;font-size:13.5px}
 .sp89 input{width:96px;text-align:right;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:15px}
 .msr.on{border-color:var(--green)}
+.ha89{margin:6px 0 0;padding:6px 8px;border-radius:10px;background:var(--bg);font-size:13px}.ha89 b{font-weight:600}.ha89 .hd{display:flex;justify-content:space-between;gap:8px;cursor:pointer}
+.ha89 .ls div{display:flex;justify-content:space-between;gap:8px;padding:2px 0;border-top:1px solid var(--line)}.ha89 h4{margin:8px 0 2px;font-size:12px;color:var(--muted,#6b7280);font-weight:600}
+.yr89 td{padding:3px 4px}.yr89 .z td{color:var(--muted,#6b7280)}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -6884,7 +6887,7 @@ function pgAppr() {
   var CA = D.chgAsks || []; if (CA.length && on('chg')) h += '<div class="card"><h3>Order changes asked</h3><p class="sub" style="margin-top:0">The agent spoke to Frank. Tap OK: Frank confirms the stock with one tap and the order changes by itself.</p>' + CA.map(function (c) { var a = c.ask || {}; // v2.6.2
     return '<div style="padding:8px 0;border-top:1px solid var(--line)"><b>' + esc(c.vendor) + '</b> <span class="small muted">· ' + esc(c.agent) + (c.disp ? ' · with Prince' : '') + '</span><div>' + esc(a.diff || '') + '</div><div class="small muted">New order: ' + esc((a.lines || []).map(function (l) { return l.qty + ' ' + skn(l.sku); }).join(' + ')) + (a.at ? ' · asked ' + esc(oTm(a.at)) : '') + '</div>' + (a.note ? '<div class="small">Her note: ' + esc(a.note) + '</div>' : '') +
       '<div class="btns" style="margin-top:6px;flex-wrap:wrap"><button class="main" data-act="ochgok" data-o="' + esc(c.oid) + '" data-n="' + esc(c.vendor) + '">OK – to Frank</button><button data-act="ochgd" data-o="' + esc(c.oid) + '" data-v="1" data-n="' + esc(c.vendor) + '">Made by hand</button><button data-act="ochgd" data-o="' + esc(c.oid) + '" data-v="0" data-n="' + esc(c.vendor) + '">Not made</button></div></div>'; }).join('') + '</div>';
-  var HA = D.hasks || []; if (HA.length && on('help')) h += '<div class="card"><h3>Help items asked</h3>' + HA.map(function (a) { return '<div style="padding:8px 0;border-top:1px solid var(--line)"><b>' + esc(a.vendor) + '</b> <span class="small muted">· ' + esc(a.agent) + ' · ' + esc(dayLbl(a.day)) + '</span><div>' + esc(nHelpTxt(a.items)) + '</div><div class="btns" style="margin-top:6px"><button class="main" data-act="hasok" data-r="' + esc(a.ref) + '">Approve</button><button data-act="hasno" data-r="' + esc(a.ref) + '">Decline</button></div></div>'; }).join('') + '</div>'; // v2.8.13
+  var HA = D.hasks || []; if (HA.length && on('help')) h += '<div class="card"><h3>Help items asked</h3>' + HA.map(function (a) { return '<div style="padding:8px 0;border-top:1px solid var(--line)"><b>' + esc(a.vendor) + '</b> <span class="small muted">· ' + esc(a.agent) + ' · ' + esc(dayLbl(a.day)) + '</span><div>' + esc(nHelpTxt(a.items)) + '</div>' + ha89Html(a) + '<div class="btns" style="margin-top:6px"><button class="main" data-act="hasok" data-r="' + esc(a.ref) + '">Approve</button><button data-act="hasno" data-r="' + esc(a.ref) + '">Decline</button></div></div>'; }).join('') + '</div>'; // v2.8.13
   if (decNeeds().length && on('pay')) h += '<div class="card"><h3>Payment cases</h3><p class="sub" style="margin-top:0">Tap a case, check both sides, then record what really happened.</p>' + needsList(decNeeds()) + '</div>';
   if (on('nd') || on('out')) h += todoBox([on('nd') ? ndHtml() : '', on('out') ? outCardHtml() : '']);
   if (otherNeeds().length && on('other')) h += '<div class="card"><h3>Other problems</h3>' + needsList(otherNeeds()) + '</div>';
@@ -7297,8 +7300,9 @@ LISTR.owed = function () {
 };
 ACT.fpaid = function (b) {
   $('over').innerHTML = ''; if (OMENU) { OMENU = ''; rerenderList(); }
-  var sid = sidFor('fp-' + b.dataset.v); var who = [['VENDOR', 'The vendor']].concat((D.people || []).map(function (p) { return [p.id, p.name]; }));
-  setTimeout(function () { DLGSEL = 'VENDOR'; var f0 = document.querySelector('#dlg [data-act=dlgSel]'); if (f0) f0.className = 'on'; }, 0);
+  var sid = sidFor('fp-' + b.dataset.v); var g0 = String(b.dataset.g || '').toLowerCase().split(/\s+/)[0], ag0 = (D.people || []).filter(function (p) { return g0 && String(p.name || '').toLowerCase().split(/\s+/)[0] === g0; })[0]; // v2.8.24: the agent first
+  var who = (ag0 ? [[ag0.id, ag0.name]] : []).concat([['VENDOR', 'The vendor']], (D.people || []).filter(function (p) { return p !== ag0; }).map(function (p) { return [p.id, p.name]; }));
+  setTimeout(function () { DLGSEL = who[0][0]; var f0 = document.querySelector('#dlg [data-act=dlgSel]'); if (f0) f0.className = 'on'; }, 0);
   dlgPick(b.dataset.n + ' owes Omni ' + ghs(+b.dataset.a) + ' on this order.\nTap who brought it, then type the amount you counted (GHS):', '', who, 'SAVE', function (amt, by) {
     if (!(num(amt) > 0)) { say('Type the amount you counted, e.g. 300.'); return; }
     var rk = rkNew(); saveAsk('payment', { vid: b.dataset.v, amount: num(amt), by: by, ref: b.dataset.r, rk: rk }, sid, b, ghs(num(amt)) + ' for ' + b.dataset.n);
@@ -9031,7 +9035,7 @@ PG27.n27rep = function () { var R = mrWin(), X = mrGet();
   var h = '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['last', 'Last month'], ['dates', '📅']].map(function (c) { return '<button class="' + (MR.w === c[0] ? 'on' : '') + '" data-act="mrw" data-k="' + c[0] + '">' + (c[0] === 'dates' && MR.w === 'dates' ? '📅 ' + esc(R[0] === R[1] ? dayLbl(R[0]) : dayLbl(R[0]) + ' – ' + dayLbl(R[1])) : c[1]) + '</button>'; }).join('') + '</div>';
   if (MR.w === 'dates') h += '<div class="n72two"><label class="n72tf"><span>From (or the day)</span><input type="date" data-chg="mrd" data-f="from" value="' + esc(MR.from) + '" max="' + esc(D.today) + '"></label><label class="n72tf"><span>To (optional)</span><input type="date" data-chg="mrd" data-f="to" value="' + esc(MR.to) + '" max="' + esc(D.today) + '"></label></div>';
   if (!X) return n27Page('Reports', h + '<div class="mdsk"><i></i><i></i><i></i></div>');
-  h += mgCard(X.mg); // v2.8.12: the management report first
+  h += mgCard(X.mg) + yr89Html(X.yr); // v2.8.12: the management report first; v2.8.24 the year by month
   h += '<div class="mrhd">' + esc(R[0] === R[1] ? dayLbl(R[0]) : dayLbl(R[0]) + ' – ' + dayLbl(R[1])) + '</div>';
   var P = X.pay, pt = (P.cash || 0) + (P.credit || 0) + (P.slow || 0), cash = 0, momo = 0; X.col.way.forEach(function (w) { if (w.k === 'MoMo') momo = w.a; else cash += w.a; });
   h += '<div class="mtts">' + mm28T(String(X.ctn), 'Cartons', ghs(X.val)) + mm28T(mm28G(X.col.tot), 'Collected', 'Cash ' + mm28G(cash) + ' · MoMo ' + mm28G(momo), 'g') + '</div>';
@@ -9267,9 +9271,9 @@ SHEETS.vacct = function () {
   var payOf = {}; A.rows.forEach(function (p) { if (p.k === 'p' && !p.cx) (p.to || []).forEach(function (t) { (payOf[t.ref] = payOf[t.ref] || []).push([p.day, t.amt, p.how, p.id, t.aid, t.sku ? (t.sku + ' · ' + t.src) : '']); }); });
   return h + R.map(function (r) { var i = r.k + ':' + (r.ref || r.id), on = VA.op === i;
     if (r.k === 'o') { var k = r.open <= 0.004 ? 'g' : r.paid > 0.004 ? 'a' : 'r';
-      var d = on ? '<div class="vad"><div><span>Order date: ' + esc(dayLbl(r.day)) + '</span><b>' + esc(r.ln || '') + '</b></div>' + (r.src ? '<div><span>From</span><b>' + esc(r.src) + '</b></div>' : '') + (payOf[r.ref] || []).map(function (p) { return '<div><span>Paid ' + esc(dayLbl(p[0])) + (p[5] ? ' · ' + esc(p[5]) : '') + '</span><b>' + ghs(p[1]) + ' ' + esc(p[2] === 'MoMo' ? 'MoMo' : 'cash') + '</b>' + (mgr && p[3] ? ' <button class="vasm" data-act="vafixo" data-k="move" data-r="' + esc(p[3]) + '" data-a="' + esc(p[4] || '') + '">Move</button>' : '') + (mgr && p[3] && r.sl && !/^new-/.test(p[3]) ? ' <button class="vasm" data-act="sp89" data-r="' + esc(p[3]) + '" data-o="' + esc(r.ref) + '">Split</button>' : '') + '</div>'; }).join('') +
+      var d = on ? '<div class="vad"><div><span>Order date: ' + esc(dayLbl(r.day)) + '</span><b>' + esc(r.ln || '') + '</b></div>' + (r.src ? '<div><span>From</span><b>' + esc(r.src) + '</b></div>' : '') + (payOf[r.ref] || []).map(function (p) { return '<div><span>Paid ' + esc(dayLbl(p[0])) + (p[5] ? ' · ' + esc(p[5]) : '') + '</span><b>' + ghs(p[1]) + ' ' + esc(p[2] === 'MoMo' ? 'MoMo' : 'cash') + '</b>' + (mgr && p[3] ? ' <button class="vasm" data-act="vafixo" data-k="move" data-r="' + esc(p[3]) + '" data-a="' + esc(p[4] || '') + '">Move</button>' : '') + (mgr && p[3] && r.sl && !r.grp && !/^new-/.test(p[3]) ? ' <button class="vasm" data-act="sp89" data-r="' + esc(p[3]) + '" data-o="' + esc(r.ref) + '">Split</button>' : '') + '</div>'; }).join('') +
         (r.pon ? '<div><span>Date paid (book)</span><b>' + esc(dayLbl(r.pon)) + '</b></div>' : '') + (r.by ? '<div><span>Received by</span><b>' + esc(r.by) + '</b></div>' : '') + (r.note ? '<p>' + esc(r.note) + '</p>' : '') + vaTot(r, payOf[r.ref]) + vaPayHtml(r) + '</div>' : '';
-      return '<div class="varow k' + k + '"' + (VA.pay && VA.pay.ref === r.ref ? '' : ' data-act="vatap" data-i="' + esc(i) + '"') + '><div class="r1"><span>' + esc(dayLbl(r.day)) + (r.ln ? ' · ' + esc(r.ln) : '') + (r.old ? ' <i class="vaold">before app</i>' : '') + '</span><b>' + ghs(r.val) + '</b></div>' +
+      return '<div class="varow k' + k + '"' + (VA.pay && VA.pay.ref === r.ref ? '' : ' data-act="vatap" data-i="' + esc(i) + '"') + '><div class="r1"><span>Order ' + esc(dayLbl(r.day)) + (r.ln ? ' · ' + esc(r.ln) : '') + (r.old ? ' <i class="vaold">before app</i>' : '') + '</span><b>' + ghs(r.val) + '</b></div>' +
         '<div class="r2"><span>' + (r.open <= 0.004 ? 'paid ✓' + (r.pon ? ' ' + esc(dayLbl(r.pon)) : '') : (r.paid > 0.004 ? 'paid ' + ghs(r.paid).replace('GHS ', '') + ' · ' : '') + '<b>owes ' + ghs(r.open).replace('GHS ', '') + '</b>') + '</span>' + (r.open > 0.004 ? '<span class="t-red">' + vaDays(r.day) + ' days</span>' : '') + '</div>' + d + '</div>'; }
     var to = (r.to || []).map(function (t) { return t.day ? dayLbl(t.day) : 'old book'; }), F = VA.fx && VA.fx.rid === r.id ? VA.fx : null, x = '';
     if (on) { x = '<div class="vad">' + (r.by ? '<div><span>Taken by</span><b>' + esc(r.by) + '</b></div>' : '') + (r.to || []).map(function (t) { return '<div><span>' + vaTo89(t) + '</span><b>' + ghs(t.amt) + '</b>' + (mgr && !r.cx ? ' <button class="vasm" data-act="vafix" data-k="move" data-r="' + esc(r.id) + '" data-a="' + esc(t.aid) + '">Move</button>' : '') + '</div>'; }).join('') + (r.note ? '<p>' + esc(r.note) + '</p>' : '');
@@ -9278,8 +9282,8 @@ SHEETS.vacct = function () {
         if (F.k === 'move') x += '<div class="small muted" style="margin:6px 0 4px">Move it to which order?</div><div class="vach">' + (O.length ? O.map(function (o) { return '<button class="' + (F.to === o.ref ? 'on' : '') + '" data-act="vato" data-v="' + esc(o.ref) + '">' + esc(dayLbl(o.day)) + ' · owes ' + ghs(o.open).replace('GHS ', '') + '</button>'; }).join('') : '<span class="small muted">No other order is unpaid.</span>') + '</div>';
         x += '<input class="o2q" data-inp="vawhy" placeholder="Why? (the agent and Frank see it)" value="' + esc(F.why || '') + '"><button class="' + (F.k === 'undo' ? 'warn' : 'main gr') + ' wide" data-act="vafixgo">' + (F.k === 'undo' ? 'Undo this payment' : 'Move it') + '</button><button class="ghost2 wide" style="margin-top:6px" data-act="vafixx">Cancel</button>'; }
       x += '</div>'; }
-    return '<div class="varow kb' + (r.cx ? ' cx' : '') + '"' + (F ? '' : ' data-act="vatap" data-i="' + esc(i) + '"') + '><div class="r1"' + (F ? ' data-act="vafixx"' : '') + '><span>' + esc(dayLbl(r.day)) + ' · ' + esc(r.how === 'MoMo' ? 'MoMo' : r.how === 'Cash' ? 'cash' : r.how) + (r.by ? ' to ' + esc(r.by) : '') + '</span><b class="t-green">' + ghs(r.amt) + '</b></div>' +
-      '<div class="r2"><span>' + (r.cx ? 'undone' : to.length ? 'paid the ' + esc(to.join(', ')) : 'kept apart (extra)') + '</span></div>' + x + '</div>'; }).join('');
+    return '<div class="varow kb' + (r.cx ? ' cx' : '') + '"' + (F ? '' : ' data-act="vatap" data-i="' + esc(i) + '"') + '><div class="r1"' + (F ? ' data-act="vafixx"' : '') + '><span>Payment ' + esc(dayLbl(r.day)) + ' · ' + esc(r.how === 'MoMo' ? 'MoMo' : r.how === 'Cash' ? 'cash' : r.how) + (r.by ? ' to ' + esc(r.by) : '') + '</span><b class="t-green">' + ghs(r.amt) + '</b></div>' +
+      '<div class="r2"><span>' + (r.cx ? 'undone' : vaPd89(r)) + '</span></div>' + x + '</div>'; }).join('');
 };
 // Frank (and the manager): find any vendor's account
 function vaFindHtml() { return '<input class="o2q" data-inp="vafq" inputmode="search" placeholder="Find a vendor (name or phone)" value="' + esc(VAF.q) + '" autocomplete="off"><div id="vafl">' + vaFindRows() + '</div>'; }
@@ -9295,7 +9299,7 @@ function vaTot(r, P) { var app = (P || []).reduce(function (t, p) { return t + p
   return (r.old && book > 0.004 ? '<div><span>Paid in the old book' + (r.pon ? ' (' + esc(dayLbl(r.pon)) + ')' : '') + '</span><b>' + ghs(book) + '</b></div>' : '') +
     '<div class="vatot"><span>Total paid</span><b class="t-green">' + ghs(r.paid) + '</b></div><div class="vatot"><span>Left to pay</span><b class="' + (r.open > 0.004 ? 't-red' : 't-green') + '">' + (r.open > 0.004 ? ghs(r.open) : 'nothing ✓') + '</b></div>'; }
 function vaCanPay() { var A = VA.d; if (!A || D.viewOf) return false; return D.me.role === 'Warehouse' || (D.me.role === 'Agent' && typeof p7Ven === 'function' && !!p7Ven(A.vid)); }
-function vaHows() { var A = VA.d; return D.me.role === 'Warehouse' ? [['VENDOR', 'She paid me']].concat(A.ag ? [[A.ag, 'From ' + A.agn]] : []).concat(A.pr ? [[A.pr, 'From ' + A.prn]] : []) : [['cash', 'Cash'], ['momo', 'MoMo to Frank']]; }
+function vaHows() { var A = VA.d; return D.me.role === 'Warehouse' ? (A.ag ? [[A.ag, 'From ' + A.agn]] : []).concat([['VENDOR', 'She paid me']]).concat(A.pr ? [[A.pr, 'From ' + A.prn]] : []) : [['cash', 'Cash'], ['momo', 'MoMo to Frank']]; }
 function vaPayHtml(r) { if (!(r.open > 0.004) || !vaCanPay() || (D.me.role === 'Warehouse' && !r.om)) return ''; // Frank takes Omni's money only
   var P = VA.pay && VA.pay.ref === r.ref ? VA.pay : null; if (!P) return '<button class="main gr wide" data-act="vapay" data-r="' + esc(r.ref) + '">Record payment for this order</button>';
   return '<div class="vapf"><div class="small muted">How much did she pay for this order?</div><input class="o2q" data-inp="vapay" inputmode="decimal" value="' + esc(P.amt) + '">' +
@@ -9493,7 +9497,7 @@ drawSheet = (function (f) { return function () { if (hold89()) { clearTimeout(DS
 window.addEventListener('pointercancel', function () { [TSW, OSW, NSW, P7SW].forEach(function (s) { if (s && s.row) { s.row.style.transform = ''; s.row.classList.remove('swiping'); } }); TSW = OSW = NSW = P7SW = null; }, true);
 // ---- Her account: the order a payment paid shows its order date and its products
 function vaTo89(t) { var o = ((VA.d && VA.d.rows) || []).filter(function (r) { return r.k === 'o' && r.ref === t.ref; })[0], d = t.day || (o && o.day) || '';
-  return d ? 'Order date: ' + esc(dayLbl(d)) + (o && o.ln ? '<br><small>' + esc(o.ln) + '</small>' : '') : 'Old book'; }
+  return d ? 'Order date: ' + esc(dayLbl(d)) + (t.grp && t.sku ? '<br><small>' + esc(t.sku + ' · ' + t.src) + '</small>' : o && o.ln ? '<br><small>' + esc(o.ln) + '</small>' : '') : 'Old book'; }
 ACT.vafixx = function () { VA.fx = null; drawSheet(); };
 // ---- the agent's help items given: dates (a day or a range), items, and find a vendor or school
 function ah89Range() { var t = D.today; return AH.per === 'today' ? [t, t] : AH.per === 'week' ? [oWeekStart(), t] : AH.per === 'month' ? [t.slice(0, 8) + '01', t] : AH.per === 'cal' ? [AH.from || t, AH.to || AH.from || t] : ['0000', t]; }
@@ -9691,5 +9695,41 @@ ACT.ds89go = function () { var X = VA.dsc, r = X && vaRow(X.ref); if (!r) return
   var rk = rkNew(), vid = VA.vid, A = VA.d; bgSave('mdisc89', { ref: r.ref, amt: a, why: X.why, rk: rk }, 'dsc-' + rk, 'Discount', null, true);
   r.open = Math.round((r.open - a) * 100) / 100; r.val = Math.round((r.val - a) * 100) / 100; A.owes = Math.max(0, Math.round((A.owes - a) * 100) / 100); VA.dsc = null; DS.C = {}; drawSheet();
   setTimeout(function () { if (VA.vid === vid && SHEETK === 'vacct' && !VA.pay && !VA.fx) vaLoad(vid); }, 4000); };
+// ---------------------------------------------------------------- v2.8.24 (Yayra 31 Oct)
+// Her account: a payment row says which orders it paid; ✓ when all of it is placed on orders
+function vaPd89(r) { var T = (r.to || []).filter(function (t) { return t.ref; }), d = [], put = 0;
+  T.forEach(function (t) { var x = t.day ? dayLbl(t.day) : 'old book'; if (d.indexOf(x) < 0) d.push(x); put += t.amt; });
+  var left = Math.round((r.amt - put) * 100) / 100;
+  if (!T.length) return 'kept apart (extra)';
+  return 'paid the order' + (d.length > 1 ? 's' : '') + ' of ' + esc(d.join(', ')) + (left > 0.004 ? ' · ' + ghs(left) + ' kept apart' : ' ✓'); }
+// a workbook order of several products: no manager re-split or discount on the whole (each line is its own debt)
+vaPayHtml = (function (f) { return function (r) { if (r && r.grp && D && D.me.role === 'Supervisor' && VA.dsc && VA.dsc.ref === r.ref) VA.dsc = null;
+  var s = f.apply(this, arguments); return r && r.grp ? s.replace(/<button class="ghost wide" style="margin-top:6px" data-act="ds89o"[^>]*>Give a discount<\/button>/, '') : s; }; })(vaPayHtml);
+// the manager's help-items card: what she had before, cartons, monthly average (summary; details on tap)
+var HA89 = {};
+function ha89Mon(m) { return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][Number(m.slice(5, 7)) - 1] || m; }
+function ha89Html(a) { var H = a.hist; if (!H) return ''; var on = HA89[a.ref], gq = H.given.reduce(function (t, g) { return t + g[2]; }, 0);
+  var h = '<div class="ha89"><div class="hd" data-act="ha89t" data-r="' + esc(a.ref) + '"><span>' + (H.ctn ? '<b>' + H.ctn + ' ctn</b> since ' + esc(ha89Mon(H.from)) + ' · about <b>' + H.avg + '</b> a month' : 'No cartons bought yet') +
+    ' · ' + (H.given.length ? 'help items ' + gq + ' before' : 'no help items before') + '</span><span>' + (on ? '▴' : '▾') + '</span></div>';
+  if (!on) return h + '</div>';
+  h += '<div class="ls">';
+  if (H.mon.length) h += '<h4>Cartons by month</h4>' + H.mon.map(function (m) { return '<div><span>' + esc(ha89Mon(m[0])) + ' ' + esc(m[0].slice(0, 4)) + '</span><b>' + m[1] + '</b></div>'; }).join('');
+  h += '<h4>Help items she got</h4>' + (H.given.length ? H.given.map(function (g) { return '<div><span>' + esc(dayLbl(g[0])) + '</span><b>' + (g[2] > 1 ? g[2] + ' ' : '') + esc(g[1]) + '</b></div>'; }).join('') : '<div><span>None</span></div>');
+  if (H.dec.length) h += '<h4>Declined before</h4>' + H.dec.map(function (g) { return '<div><span>' + esc(dayLbl(g[0])) + '</span><b>' + (g[2] > 1 ? g[2] + ' ' : '') + esc(g[1]) + '</b></div>'; }).join('');
+  return h + '</div></div>'; }
+ACT.ha89t = function (b) { var r = b.dataset.r; HA89[r] = !HA89[r]; render(); };
+// Me › Reports: 2026 by month (Feb–Jul from the MoM file; March and August were school holidays)
+var YR89 = 0;
+function yr89Html(Y) { if (!Y || !Y.rows || !Y.rows.length) return '';
+  var h = '<div class="card"><div class="row" style="justify-content:space-between;cursor:pointer" data-act="yr89t"><b>2026 by month</b><span class="small">' + Math.round(Y.srv).toLocaleString('en-GB') + ' servings ' + (YR89 ? '▴' : '▾') + '</span></div>';
+  if (!YR89) return h + '</div>';
+  return h + '<table class="o2t yr89" style="width:100%"><tr><td class="small muted">Month</td><td class="r small muted">Cartons</td><td class="r small muted">Servings</td></tr>' +
+    Y.rows.map(function (x) { return '<tr' + (x[1] ? '' : ' class="z"') + '><td>' + esc(ha89Mon(x[0])) + (x[1] ? '' : ' <small>holiday</small>') + '</td><td class="r">' + x[1].toLocaleString('en-GB') + '</td><td class="r"><b>' + x[2].toLocaleString('en-GB') + '</b></td></tr>'; }).join('') +
+    '<tr><td><b>2026</b></td><td class="r"><b>' + Y.ctn.toLocaleString('en-GB') + '</b></td><td class="r"><b>' + Math.round(Y.srv).toLocaleString('en-GB') + '</b></td></tr></table>' +
+    '<p class="small muted" style="margin:6px 2px 0">Servings = cartons in 280 g (BFC) sachets × 4. Feb–Jul: the earlier team (MoM file). From September: sachets the vendors used (estimate).</p></div>'; }
+ACT.yr89t = function () { YR89 = !YR89; render(); };
+// Frank takes Omni's money only: the amount starts at what is left on the Omni lines
+ACT.vapay = (function (f) { return function (b) { var r = f.apply(this, arguments), x = VA.pay && vaRow(VA.pay.ref);
+  if (x && x.sl && D.me.role === 'Warehouse') { var o = Math.round(x.sl.filter(function (l) { return l[6] === 1; }).reduce(function (t, l) { return t + l[4]; }, 0) * 100) / 100; if (o > 0 && o < x.open) { VA.pay.amt = String(o); drawSheet(); } } return r; }; })(ACT.vapay);
 if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
