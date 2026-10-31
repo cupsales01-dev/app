@@ -9254,10 +9254,10 @@ SHEETS.vacct = function () {
   h += '<div class="vach">' + [['all', 'All'], ['un', 'Unpaid'], ['o', 'Orders'], ['p', 'Payments']].map(function (c) { return '<button class="' + (VA.f === c[0] ? 'on' : '') + '" data-act="vaf" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') +
     '<button class="' + (VA.from ? 'on' : '') + '" data-act="vacal">📅 ' + (VA.from ? esc(VA.from === (VA.to || VA.from) ? dayLbl(VA.from) : dayLbl(VA.from) + ' – ' + dayLbl(VA.to)) : 'Dates') + '</button>' + (VA.from ? '<button data-act="vacalx" aria-label="All dates">✕</button>' : '') + '</div>';
   if (!R.length) return h + '<p class="small muted" style="text-align:center;margin:16px 0">Nothing here.</p>';
-  var payOf = {}; A.rows.forEach(function (p) { if (p.k === 'p' && !p.cx) (p.to || []).forEach(function (t) { (payOf[t.ref] = payOf[t.ref] || []).push([p.day, t.amt, p.how]); }); });
+  var payOf = {}; A.rows.forEach(function (p) { if (p.k === 'p' && !p.cx) (p.to || []).forEach(function (t) { (payOf[t.ref] = payOf[t.ref] || []).push([p.day, t.amt, p.how, p.id, t.aid]); }); });
   return h + R.map(function (r) { var i = r.k + ':' + (r.ref || r.id), on = VA.op === i;
     if (r.k === 'o') { var k = r.open <= 0.004 ? 'g' : r.paid > 0.004 ? 'a' : 'r';
-      var d = on ? '<div class="vad"><div><span>Order date: ' + esc(dayLbl(r.day)) + '</span><b>' + esc(r.ln || '') + '</b></div>' + (r.src ? '<div><span>From</span><b>' + esc(r.src) + '</b></div>' : '') + (payOf[r.ref] || []).map(function (p) { return '<div><span>Paid ' + esc(dayLbl(p[0])) + '</span><b>' + ghs(p[1]) + ' ' + esc(p[2] === 'MoMo' ? 'MoMo' : 'cash') + '</b></div>'; }).join('') +
+      var d = on ? '<div class="vad"><div><span>Order date: ' + esc(dayLbl(r.day)) + '</span><b>' + esc(r.ln || '') + '</b></div>' + (r.src ? '<div><span>From</span><b>' + esc(r.src) + '</b></div>' : '') + (payOf[r.ref] || []).map(function (p) { return '<div><span>Paid ' + esc(dayLbl(p[0])) + '</span><b>' + ghs(p[1]) + ' ' + esc(p[2] === 'MoMo' ? 'MoMo' : 'cash') + '</b>' + (mgr && p[3] ? ' <button class="vasm" data-act="vafixo" data-k="move" data-r="' + esc(p[3]) + '" data-a="' + esc(p[4] || '') + '">Move</button>' : '') + '</div>'; }).join('') +
         (r.pon ? '<div><span>Date paid (book)</span><b>' + esc(dayLbl(r.pon)) + '</b></div>' : '') + (r.by ? '<div><span>Received by</span><b>' + esc(r.by) + '</b></div>' : '') + (r.note ? '<p>' + esc(r.note) + '</p>' : '') + vaTot(r, payOf[r.ref]) + vaPayHtml(r) + '</div>' : '';
       return '<div class="varow k' + k + '"' + (VA.pay && VA.pay.ref === r.ref ? '' : ' data-act="vatap" data-i="' + esc(i) + '"') + '><div class="r1"><span>' + esc(dayLbl(r.day)) + (r.ln ? ' · ' + esc(r.ln) : '') + (r.old ? ' <i class="vaold">before app</i>' : '') + '</span><b>' + ghs(r.val) + '</b></div>' +
         '<div class="r2"><span>' + (r.open <= 0.004 ? 'paid ✓' + (r.pon ? ' ' + esc(dayLbl(r.pon)) : '') : (r.paid > 0.004 ? 'paid ' + ghs(r.paid).replace('GHS ', '') + ' · ' : '') + '<b>owes ' + ghs(r.open).replace('GHS ', '') + '</b>') + '</span>' + (r.open > 0.004 ? '<span class="t-red">' + vaDays(r.day) + ' days</span>' : '') + '</div>' + d + '</div>'; }
@@ -9526,5 +9526,14 @@ function r89Pend() { if (!D || !D.me || !(D.me.role === 'Rider' || D.me.role ===
 r27Done = (function (f) { return function () { var L = f.apply(this, arguments); try { return L.concat(r89Pend().reverse()); } catch (e) { return L; } }; })(r27Done);
 r27DoneRow = (function (f) { return function (x, n) { if (!('q89' in x)) return f.apply(this, arguments);
   return r27Row(n, (x.status === 'Not delivered' ? 'red' : 'green') + (x.q89 ? ' q89' : ''), esc(x.vendor), x.status === 'Not delivered' ? 'Not delivered' : x.what === 'PART' ? 'Part delivered' : 'Delivered · ' + ghs(x.cash), ''); }; })(r27DoneRow);
+// ---------------------------------------------------------------- v2.8.22 (Yayra 31 Oct)
+// Her account and By order: every date carries the year (two digits) – "Thu 22 Oct 26"
+var Y89 = 0;
+dayLbl = (function (f) { return function (ymd) { var s = f.apply(this, arguments); if (!Y89 || !/^\d{4}-\d\d-\d\d/.test(String(ymd || ''))) return s; return s.replace(/ \d{4}$/, '') + ' ' + String(ymd).slice(2, 4); }; })(dayLbl);
+function y89(f) { return function () { Y89++; try { return f.apply(this, arguments); } finally { Y89--; } }; }
+SHEETS.vacct = y89(SHEETS.vacct); byoHtml = y89(byoHtml);
+// Her account (manager): a paid order's payment can be moved too – Move on each "Paid" line opens that payment's Move box
+ACT.vafixo = function (b) { VA.f = 'all'; VA.from = VA.to = ''; VA.op = 'p:' + b.dataset.r; ACT.vafix(b);
+  setTimeout(function () { var g = document.querySelector('#over [data-act="vafixgo"]'); if (g && g.scrollIntoView) g.scrollIntoView({ block: 'center' }); }, 60); };
 if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
