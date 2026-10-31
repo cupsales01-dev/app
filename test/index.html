@@ -1005,6 +1005,7 @@ body.r27ride .toast{background:#176B40 !important;color:#FFFFFF !important;font-
 body.r27ride .toast.err{background:#B4232D !important;color:#FFFFFF !important}
 body.r27ride #main .r27why{display:none !important}
 @media (max-width:360px){body.r27ride #main .r27nm,body.r27ride #main .r72h b,body.r27ride #main .r27row b{font-size:21px !important}body.r27ride #main .r27cd{font-size:17px !important}body.r27ride #main .r27slide .tx{font-size:18px !important}body.r27ride #main .r27link,body.r27ride #main .r72lk button{font-size:14px !important}}
+#main .r27row.q89,body.r27ride #main .r27row.q89{border-left-color:#F59E0B !important;border-left-style:dashed !important}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -9514,5 +9515,16 @@ INP.hm89q = function (el) { HF.q = el.value; clearTimeout(HM89T); HM89T = setTim
 pgHelpI = (function (f) { return function () { var hr = hRows, hx = hFilters; if (!HF.its) HF.its = []; HF.it = ''; if (HF.u89 !== (D.me.uid || '')) { HF.u89 = D.me.uid || ''; HF.q = ''; HF.its = []; } // another person on this phone starts clean
   hRows = function (g, n) { return hm89Cut(hr(g, n)); }; hFilters = function () { return hm89Filt(); };
   try { return f.apply(this, arguments); } finally { hRows = hr; hFilters = hx; } }; })(pgHelpI);
+// ---- Prince: a delivery saved on his phone but not yet at the server shows in Delivered with a thin amber edge; it turns green once sent
+var R89L = {};
+function r89Pend() { if (!D || !D.me || !(D.me.role === 'Rider' || D.me.role === 'Helper')) return []; var got = {}, L = [];
+  (D.rdone || []).forEach(function (x) { if (x.day === D.today) (x.oids || []).forEach(function (o) { got[o] = 1; }); });
+  var add = function (x, wait) { var d = x.data || {}; if (x.op !== 'stop' || (d.oids || []).some(function (o) { return got[o]; })) return; if (x.label) R89L[x.sid] = String(x.label).split(' – ')[0];
+    L.push({ q89: wait ? 1 : 0, day: D.today, status: d.what === 'NONE' ? 'Not delivered' : 'Delivered', what: d.what, vendor: R89L[x.sid] || (vend(d.vid) || {}).name || d.vid || '', cash: Number(d.cash) || 0, oids: d.oids || [], at: x.at || 0 }); };
+  CONF.forEach(function (c) { if (c.c === 1 && D.__t0 && c.at > D.__t0 - 60000) add(c, false); }); queue().forEach(function (x) { add(x, true); });
+  return L.sort(function (a, b) { return b.at - a.at; }); }
+r27Done = (function (f) { return function () { var L = f.apply(this, arguments); try { return L.concat(r89Pend().reverse()); } catch (e) { return L; } }; })(r27Done);
+r27DoneRow = (function (f) { return function (x, n) { if (!('q89' in x)) return f.apply(this, arguments);
+  return r27Row(n, (x.status === 'Not delivered' ? 'red' : 'green') + (x.q89 ? ' q89' : ''), esc(x.vendor), x.status === 'Not delivered' ? 'Not delivered' : x.what === 'PART' ? 'Part delivered' : 'Delivered · ' + ghs(x.cash), ''); }; })(r27DoneRow);
 if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
