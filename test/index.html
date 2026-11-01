@@ -1017,6 +1017,7 @@ body.r27ride #main .t2tray.ph89 button .cnt{background:#080B0A !important;color:
 .ha89 .ls div{display:flex;justify-content:space-between;gap:8px;padding:2px 0;border-top:1px solid var(--line)}.ha89 h4{margin:8px 0 2px;font-size:12px;color:var(--muted,#6b7280);font-weight:600}
 .yr89 td{padding:3px 4px}.yr89 .z td{color:var(--muted,#6b7280)}
 .n90c{display:block;margin:8px 2px 0;font-size:13px}.n90c b{display:block;margin-bottom:4px}.n90c input{width:100%;text-transform:uppercase}
+.n90dd{margin:4px 0 8px}.n90dd button i,.n90dh i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}.n90dh{display:flex;align-items:center;gap:6px;margin:10px 2px 6px;font-size:13px}.n90dh b{text-transform:uppercase;letter-spacing:.3px}.n90dh span{color:var(--muted,#6b7280);font-size:12px}.n90dh em{margin-left:auto;font-style:normal;font-weight:700;font-size:12px}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -3966,7 +3967,7 @@ function vzOrder(v) {
     if (nNewV(v)) h += x.cc && !x.ccOpen ? '<div class="n2ok" data-act="nccopen">✓ Credit checks confirmed <span>▾</span></div>' : '<div class="n2cc"><b>First order on credit: check her first</b><div class="small">If she does not pay, you answer for it.</div><label class="o2tk"><input type="checkbox" class="chk" data-chg="ncc"' + (x.cc ? ' checked' : '') + '> ' + esc(NCC_TXT) + '</label>' + (x.cc ? '<a class="n2a" data-act="nccclose">Fold ▴</a>' : '<div class="small t-red">Tick to send on credit</div>') + '</div>'; }
   // delivery
   var pref = v.pref ? String(v.pref.days || '') : '', days = dlvDays(), dshow = (x.urg ? ['today'] : []).concat(days.slice(0, NDAYO ? 12 : 3)); if (x.day && dshow.indexOf(x.day) < 0) dshow.push(x.day);
-  h += '<div class="vzl">Delivery</div><div class="t2tray">' + dshow.map(function (d) { var hd = d !== 'today' && pref.indexOf(dayLbl(d).slice(0, 3)) >= 0; return '<button class="' + (x.day === d ? 'on' : '') + '" data-act="nday" data-v="' + d + '">' + (d === 'today' ? 'Today' : esc(dayLbl(d))) + (hd ? ' ★ her day' : '') + '</button>'; }).join('') + (NDAYO ? '' : '<button data-act="ndayo">Other day</button>') + '</div>';
+  h += '<div class="vzl">Delivery</div><div class="t2tray">' + dshow.map(function (d) { var hd = d !== 'today' && pref.indexOf(dayLbl(d).slice(0, 3)) >= 0; return '<button class="' + (x.day === d ? 'on' : '') + '" data-act="nday" data-v="' + d + '">' + (d === 'today' ? 'Today' : esc(dayLbl(d))) + (o27Star(v, d) ? ' · Due' : '') + '</button>'; }).join('') + (NDAYO ? '' : '<button data-act="ndayo">Other day</button>') + '</div>';
   var cl = nClose(v); h += '<div class="t2tray">' + NTIMES.map(function (t, i) { return '<button class="' + (x.time === t ? 'on' : '') + '" data-act="ntime" data-v="' + esc(t) + '">' + esc(t) + (i === 0 && cl ? ' (' + esc(nHm(cl)) + ')' : '') + (v.pref && v.pref.time === t ? ' ★' : '') + '</button>'; }).join('') + '</div>';
   if (x.time === NTIMES[0] && !cl) h += '<div class="n2cc"><b>When does she close?</b><div class="t2tray">' + NCLOSE.map(function (c) { return '<button data-act="nclose" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div></div>';
   h += '<div class="n2urg' + (x.urg ? ' on' : '') + '" data-act="nurg"><div class="grow"><b>🚩 Urgent</b><div class="small muted">Prince sees a red flag and it goes first</div></div><span class="n2sw"><i></i></span></div>';
@@ -5179,7 +5180,7 @@ SHEETS.o27old = function () { var o = O27OLD; if (!o) return ''; var c = o.outco
   if (o.via) h += '<div class="o2l"><span>How she ordered</span><b>' + esc(o.via) + '</b></div>';
   return h + o27MoreExtra(o) + '<div class="small muted" style="margin-top:8px">Order ' + esc(o.oid) + '</div>'; };
 // ---------------------------------------------------------------- New order: her ★ day and ★ time, "Her day tomorrow", the closing time
-function o27Star(v, d) { var p = v && v.pref ? String(v.pref.days || '') : ''; return !!p && d !== 'today' && p.indexOf(dayLbl(d).slice(0, 3)) >= 0; }
+function o27Star(v, d) { if (!v || d === 'today') return false; var p = v.pref ? String(v.pref.days || '') : '', w = dayLbl(d).slice(0, 3); return p ? p.indexOf(w) >= 0 : v.wd === w; } // v2.8.26: her ★ days, else her usual delivery day
 function o27NextStar(v) { var D5 = dlvDays().slice(0, 5); for (var i = 0; i < D5.length; i++) if (o27Star(v, D5[i])) return D5[i]; return ''; }
 /** The day tray: Tomorrow, then her ★ day, then the next days. */
 function o27Days(x, v, days) { var n = NDAYO ? 12 : 4, L = (x.urg ? ['today'] : []).concat(days.slice(0, n)), s = o27NextStar(v);
@@ -5188,7 +5189,7 @@ nStart = (function (f) { return function (x, v, opts) { var d0 = x.day, t0 = x.t
   if (chg && !d0) { var s = o27NextStar(v); if (s) x.day = s; } /* her ★ day (also from a call: My day › Calls › She ordered) */
   if (chg && !t0 && v.pref && v.pref.time && NTIMES.indexOf(v.pref.time) >= 0) x.time = v.pref.time; }; })(nStart);
 function o27DayTmr(v) { var d = dlvDays()[0]; return !!d && o27Star(v, d); }
-NFIL.splice(5, 0, ['day', 'Her day tomorrow', o27DayTmr]);
+NFIL.splice(5, 0, ['day', 'Due for delivery', n90DueAny]);
 nLikely = (function (f) { return function (v) { var s = f(v); if (nOpenO(v.id).length) return s; if (s < 3 && o27NextVids().indexOf(v.id) >= 0) s = 3; /* today's next stop */ if (!s && o27DayTmr(v)) s = 1; return s; }; })(nLikely);
 /** "When does she close?" is asked once; then it folds to a green line (▾ to change it). */
 function o27CloseBox(x, v, cl) {
@@ -8033,7 +8034,7 @@ function n71DayTxt(d) { return d === 'today' ? 'Today' : d ? dayLbl(d) : 'Pick a
 /** The card on the order: the day and the time, both open the Delivery schedule; urgent and the note under them. */
 function n71When(x, v, nw) {
   var cl = nClose(v), bad = (x.time === NTIMES[0] || !x.time) && !cl;
-  var h = '<div class="n71c"><div class="n71h">' + ico(ICO.b6today) + 'When does she need it?</div><div class="n71w"><button data-act="n71o">' + ico(ICO.b6today) + '<span>' + esc(n71DayTxt(x.day)) + (o27Star(v, x.day) ? ' ★' : '') + '</span></button><button data-act="n71o" class="' + (bad ? 'amb' : '') + '">' + ico(ICO.clock) + '<span>' + esc(bad ? 'When does she close?' : n71Short(x, v)) + '</span></button></div>';
+  var h = '<div class="n71c"><div class="n71h">' + ico(ICO.b6today) + 'When does she need it?</div><div class="n71w"><button data-act="n71o">' + ico(ICO.b6today) + '<span>' + esc(n71DayTxt(x.day)) + (o27Star(v, x.day) ? ' · Due' : '') + '</span></button><button data-act="n71o" class="' + (bad ? 'amb' : '') + '">' + ico(ICO.clock) + '<span>' + esc(bad ? 'When does she close?' : n71Short(x, v)) + '</span></button></div>';
   if (nw) h += '<div class="small muted" style="margin:6px 2px 0">Send by 6 pm for tomorrow\'s first run.</div>';
   h += '<div class="n71u' + (x.urg ? ' on' : '') + '" data-act="nurg"><span class="n71ui">!</span><div class="grow"><b>Urgent delivery</b><div class="small muted">Prince does these first</div></div><span class="n2sw"><i></i></span></div>';
   if (x.urg) h += '<div class="t2tray">' + NURG.map(function (w) { return '<button class="' + (x.urgWhy === w ? 'on' : '') + '" data-act="nurgw" data-v="' + esc(w) + '">' + esc(w) + '</button>'; }).join('') + '</div>' + (x.urgWhy === 'Other' ? '<input data-inp="nurgn" value="' + esc(x.urgNote) + '" placeholder="Why? (a few words)">' : '') + (nw ? '<div class="small muted" style="margin:2px">The manager sees how often you use it.</div>' : '');
@@ -8044,7 +8045,7 @@ ACT.n71o = function () { var x = nDr(), v = vend(x.vid); DLV = Object.assign(n71
 SHEETS.n71dlv = function () { if (!DLV) return ''; var S = DLV, x = nDr(), v = vend(x.vid), L = o27Days(x, v, dlvDays()); if (S.day && L.indexOf(S.day) < 0) L.push(S.day);
   var tray = function (A, on, act, k, lbl) { return '<div class="t2tray">' + A.map(function (t) { return '<button class="' + (on === t ? 'on' : '') + '" data-act="' + act + '" data-v="' + t + '"' + (k ? ' data-k="' + k + '"' : '') + '>' + esc(lbl ? lbl(t) : t) + '</button>'; }).join('') + '</div>'; };
   var h = '<div class="t2sh"><b class="n71st">' + ico(ICO.b6today) + 'Delivery schedule</b><a data-act="n71x">Cancel</a></div>';
-  h += '<div class="vzfq">Day</div><div class="t2tray">' + L.map(function (d) { return '<button class="' + (S.day === d ? 'on' : '') + '" data-act="n71d" data-v="' + d + '">' + esc(n71DayTxt(d)) + (o27Star(v, d) ? ' ★' : '') + '</button>'; }).join('') + (NDAYO ? '' : '<button data-act="n71dother">Other day</button>') + '</div>';
+  h += '<div class="vzfq">Day</div><div class="t2tray">' + L.map(function (d) { return '<button class="' + (S.day === d ? 'on' : '') + '" data-act="n71d" data-v="' + d + '">' + esc(n71DayTxt(d)) + (o27Star(v, d) ? ' · Due' : '') + '</button>'; }).join('') + (NDAYO ? '' : '<button data-act="n71dother">Other day</button>') + '</div>';
   h += '<div class="vzfq">Time</div><div class="t2tray">' + [['close', 'Before she closes'], ['before', 'Before'], ['after', 'After'], ['between', 'Between'], ['at', 'Exact time']].map(function (m) { return '<button class="' + (S.mode === m[0] ? 'on' : '') + '" data-act="n71m" data-v="' + m[0] + '">' + m[1] + '</button>'; }).join('') + '</div>';
   if (S.mode === 'close') h += '<div class="small" style="font-weight:700;margin:4px 2px">She closes at</div>' + tray(NCLOSE.map(function (c) { return c[0]; }), S.close, 'n71cl', '', nHm) + (S.close && S.close !== nClose(v) ? '<div class="small muted">Saved to her profile.</div>' : '');
   else if (S.mode === 'between') h += '<div class="small" style="font-weight:700;margin:4px 2px">From</div>' + tray(N71T.slice(0, -1), S.t1, 'n71t', 't1', nHm) + '<div class="small" style="font-weight:700;margin:4px 2px">To</div>' + tray(N71T.filter(function (t) { return !S.t1 || t > S.t1; }), S.t2, 'n71t', 't2', nHm);
@@ -8158,7 +8159,7 @@ ACT.n71o = function () { var x = nDr(), v = vend(x.vid), p = n71Parse(x.time); i
   DLV = Object.assign(p, { day: x.day, close: nClose(v), bad: '' }); sheetOpen('n71dlv'); };
 SHEETS.n71dlv = function () { if (!DLV) return ''; var S = DLV, x = nDr(), v = vend(x.vid), A = n72Allowed(x), L = A.slice(0, 3), st = o27NextStar(v); if (st && L.indexOf(st) < 0) L[2] = st;
   var h = '<div class="n72hd"><span class="n72hi">' + ico(ICO.b6today) + '</span><div class="grow"><b>Delivery schedule</b><div class="small muted">Pick the day and time</div></div><button class="n72x" data-act="n71x" aria-label="Close">×</button></div>';
-  h += '<div class="n72l">Day</div><div class="n72days">' + L.map(function (d) { return '<button class="' + (S.day === d ? 'on' : '') + '" data-act="n71d" data-v="' + d + '"><span>' + n72Top(d) + (o27Star(v, d) ? ' ★' : '') + '</span><b>' + esc(dayLbl(d === 'today' ? D.today : d)) + '</b></button>'; }).join('') + '</div>';
+  h += '<div class="n72l">Day</div><div class="n72days">' + L.map(function (d) { return '<button class="' + (S.day === d ? 'on' : '') + '" data-act="n71d" data-v="' + d + '"><span>' + n72Top(d) + (o27Star(v, d) ? ' · Due' : '') + '</span><b>' + esc(dayLbl(d === 'today' ? D.today : d)) + '</b></button>'; }).join('') + '</div>';
   var dv = S.day === 'today' ? D.today : S.day || '';
   h += '<label class="n72cal">' + ico(ICO.b6today) + '<input type="date" data-chg="n72date" value="' + esc(dv) + '" min="' + esc(A[0] === 'today' ? D.today : A[0]) + '" max="' + esc(A[A.length - 1]) + '" aria-label="Pick a day on the calendar"><b>' + esc(dv && L.indexOf(S.day) < 0 ? dayLbl(dv) : 'Other day') + '</b></label>' + (S.bad ? '<div class="small t-red" style="margin:4px 2px">' + esc(S.bad) + '</div>' : '');
   h += '<div class="n72l">Time</div><div class="n72seg">' + [['at', 'Exact'], ['before', 'Before'], ['after', 'After'], ['between', 'Range']].map(function (m) { return '<button class="' + (S.mode === m[0] ? 'on' : '') + '" data-act="n71m" data-v="' + m[0] + '">' + m[1] + '</button>'; }).join('') + '</div>';
@@ -8902,7 +8903,7 @@ function mvNew(v) { var r = mvR(v.id), m1 = mvM1(); return !!(r && ((r[3] && r[3
 function mvBd(v) { var x = vend(v.id), b = x ? bdayIn(x.bday) : -1; return b >= 0 && b <= 7; }
 /** Days of noodles she likely has left: null = no rhythm yet. */
 function mvLeft(v) { var r = mvR(v.id); if (!r || !r[0] || r[2] < 2 || v.st === 'stop' || v.st === 'closed') return null; return r[0] - r[1]; }
-var MVF = [['all', 'All'], ['stop', 'Dormant'], ['slow', 'Slowing'], ['fu', 'Follow up'], ['new', 'New this month'], ['help', 'Help items'], ['slowpay', 'Slow payers'], ['owes', 'Owes'], ['bday', 'Birthday'], ['reg', 'Registered'], ['nocode', 'No company code']];
+var MVF = [['all', 'All'], ['stop', 'Dormant'], ['slow', 'Slowing'], ['fu', 'Follow up'], ['new', 'New this month'], ['help', 'Help items'], ['slowpay', 'Slow payers'], ['owes', 'Owes'], ['bday', 'Birthday'], ['reg', 'Registered'], ['nocode', 'No company code'], ['rel', 'Relapsed'], ['ret', 'Retired']];
 function mvOk(v, f) { return f === 'all' || (f === 'stop' && v.st === 'stop') || (f === 'slow' && v.st === 'slow') || (f === 'fu' && !!(v.pr || v.nx)) || (f === 'new' && mvNew(v)) ||
   (f === 'help' && mvHelp(v.id).length > 0) || (f === 'reg' && !!mvR(v.id) && !mvR(v.id)[4]) || (f === 'nocode' && !!mvR(v.id) && !!mvR(v.id)[4] && !mvR(v.id)[5]) || (f === 'slowpay' && !!v.slowpay) || (f === 'owes' && v.ow > 0) || (f === 'bday' && mvBd(v)); }
 function mvSort(f) { return function (a, b) {
@@ -8925,7 +8926,7 @@ function mvRow(v) {
   if (v.ow > 0) h += svMl('Owes', ghs(v.ow) + (v.late > 0 ? ' · ' + v.late + ' day' + (v.late === 1 ? '' : 's') + ' late' : ''), v.late > 0 ? 't-red' : '');
   if (H.length) h += svMl('Help items', esc(H.map(function (a) { return a.i + (a.q > 1 ? ' × ' + a.q : ''); }).join(', ')), H[0].d > 7 ? 't-amber' : '');
   if (v.pr) h += svMl('Promise', svPrTxt(v.pr), v.pr.dk < 0 ? 't-red' : v.pr.dk === 0 ? 't-amber' : ''); else if (v.nx) h += svMl('Next', esc(v.nx));
-  return h + '<div class="sv7rx">' + (v.ph ? '<a class="sv7b" href="tel:' + esc(v.ph) + '">📞 Call</a>' : '') + '<button class="sv7b" data-act="vacct" data-v="' + v.id + '">Account</button><button class="sv7b g" data-act="svopen" data-k="v" data-i="' + v.id + '">More ›</button></div></div></div>';
+  return h + '<div class="sv7rx">' + (v.ph ? '<a class="sv7b" href="tel:' + esc(v.ph) + '">📞 Call</a>' : '') + n90RetBtn(v) + '<button class="sv7b" data-act="vacct" data-v="' + v.id + '">Account</button><button class="sv7b g" data-act="svopen" data-k="v" data-i="' + v.id + '">More ›</button></div></div></div>';
 }
 function mvAgents(L) { var A = []; L.forEach(function (x) { String(x.ag || '').split(', ').forEach(function (a) { if (a && A.indexOf(a) < 0) A.push(a); }); }); return A.sort(); }
 function mvAgTray(L) { var A = mvAgents(L); if (A.length < 2) return '';
@@ -9741,5 +9742,30 @@ function n90Mgr() { return !!(D && D.me && D.me.role === 'Supervisor'); }
 function n90Pays(v) { var P = [['CASH','On delivery'],['CREDIT','Credit'],['NOW','Paid now']]; return v && nNewV(v) && !n90Mgr() ? P.filter(function (p) { return p[0] !== 'CREDIT'; }) : P; }
 INP.n90code = function (el) { var x = nDr(); x.code = el.value; nSave(x); };
 function n90CodeSave(x, v) { var c = String(x.code || '').replace(/\s+/g, '').toUpperCase(); if (!v.noc || c.length < 3) return; bgSave('vcode', { vid: v.id, code: c }, 'vc-' + x.sid, 'company code for ' + v.name, null, true); v.noc = 0; }
+// ---------------------------------------------------------------- v2.8.26: Due for delivery – the next two delivery days, each with its colour; vendors grouped by day
+var NDD = '', N90C = ['#dc2626', '#2563eb'];
+function n90Days() { return dlvDays().slice(0, 2); }
+function n90DueAny(v) { return n90Days().some(function (d) { return o27Star(v, d); }); }
+function n90DayOf(v) { var D2 = n90Days(); for (var i = 0; i < D2.length; i++) if (o27Star(v, D2[i])) return D2[i]; return ''; }
+nList = (function (f) { return function (V) {
+  if (NF !== 'day' || norm(NQ)) return f(V);
+  var D2 = n90Days(), G = D2.map(function (d) { return V.filter(function (v) { return n90DayOf(v) === d; }).sort(function (a, b) { return a.name < b.name ? -1 : 1; }); }), tot = G[0].length + G[1].length;
+  if (NDD && D2.indexOf(NDD) < 0) NDD = '';
+  var h = '<div class="t2tray n90dd"><button class="' + (!NDD ? 'on' : '') + '" data-act="n90dd" data-v="">All ' + tot + '</button>' + D2.map(function (d, i) { return '<button class="' + (NDD === d ? 'on' : '') + '" data-act="n90dd" data-v="' + d + '"><i style="background:' + N90C[i] + '"></i>' + esc(dayLbl(d).slice(0, 3)) + ' ' + G[i].length + '</button>'; }).join('') + '</div>';
+  D2.forEach(function (d, i) { if (NDD && NDD !== d) return;
+    h += '<div class="n90dh"><i style="background:' + N90C[i] + '"></i><b>Due ' + esc(dayLbl(d)) + '</b>' + (i === 0 ? '<span>Call today</span>' : '') + '<em style="color:' + N90C[i] + '">' + G[i].length + '</em></div>';
+    h += G[i].length ? G[i].slice(0, 40).map(nCard).join('') : '<p class="small muted" style="margin:0 2px 8px">Nobody due.</p>'; });
+  return h; }; })(nList);
+ACT.n90dd = function (b) { NDD = b.dataset.v || ''; render(); };
+// manager Vendors: Relapsed (bought before, not this month), Retired (only the manager retires or brings back)
+function n90Rel(v) { var r = mvR(v.id); return !!(r && r[4] && !(r[6] && r[6] >= mvM1())); }
+mvOk = (function (f) { return function (v, k) { if (k === 'ret') return v.st === 'closed'; if (v.st === 'closed') return k === 'owes' && f(v, k); if (k === 'rel') return n90Rel(v); return f(v, k); }; })(mvOk);
+mvVen = (function (f) { return function () { return f(SV.d.v); }; })(mvVen);
+function n90RetBtn(v) { if (v.st === 'closed') return '<button class="sv7b" data-act="n90ret" data-v="' + v.id + '" data-on="">Bring back</button>';
+  var r = mvR(v.id); return r && r[6] && r[6] >= mvM1() ? '' : '<button class="sv7b" data-act="n90ret" data-v="' + v.id + '" data-on="1">Retire</button>'; }
+ACT.n90ret = function (b) { var id = b.dataset.v, on = !!b.dataset.on, v = (SV.d.v || []).filter(function (x) { return x.id === id; })[0]; if (!v) return;
+  if (on && !confirm('Retire ' + v.n + '? She is not counted and agents no longer see her. You can bring her back.')) return;
+  bgSave('mretire', { vid: id, on: on ? 1 : 0 }, 'mret-' + id + '-' + uid(), (on ? 'retire ' : 'bring back ') + v.n, null, true);
+  v.st = on ? 'closed' : 'buy'; v.t = on ? 'Retired' : 'Brought back'; MV.x = ''; render(); };
 if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
