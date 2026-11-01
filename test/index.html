@@ -1019,6 +1019,10 @@ body.r27ride #main .t2tray.ph89 button .cnt{background:#080B0A !important;color:
 .n90c{display:block;margin:8px 2px 0;font-size:13px}.n90c b{display:block;margin-bottom:4px}.n90c input{width:100%;text-transform:uppercase}
 .n90dd{margin:4px 0 8px}.n90dd button i,.n90dh i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}.n90dh{display:flex;align-items:center;gap:6px;margin:10px 2px 6px;font-size:13px}.n90dh b{text-transform:uppercase;letter-spacing:.3px}.n90dh span{color:var(--muted,#6b7280);font-size:12px}.n90dh em{margin-left:auto;font-style:normal;font-weight:700;font-size:12px}
 .va91{background:var(--card2,#f3f4f6);border-radius:12px;padding:8px 10px;margin:8px 0}.va91t{display:flex;align-items:baseline;gap:8px}.va91t b{font-size:18px}.va91t span{font-size:12px;color:var(--muted,#6b7280)}.va91s{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.va91s i{font-style:normal;font-size:12px;background:var(--card,#fff);border:1px solid var(--line,#e5e7eb);border-radius:999px;padding:2px 8px}
+.dup92{border:1px solid var(--line);border-left:4px solid #f59e0b;border-radius:10px;margin:6px 0;padding:2px 10px 6px}.dup92.hi{border-left-color:#dc2626}
+.dup92t{display:flex;flex-direction:column;gap:1px;padding:6px 0;cursor:pointer}.dup92t b{font-size:13.5px}.dup92t span{font-size:12px;color:var(--mute)}
+.dup92v{display:flex;flex-direction:column;gap:1px;padding:5px 0;border-top:1px dashed var(--line)}.dup92v b{font-size:13px}.dup92v i{font-style:normal;color:var(--mute);font-weight:400;font-size:11.5px}.dup92v span{font-size:12px;color:var(--mute)}
+.dup92n{display:inline-block;min-width:17px;padding:0 5px;border-radius:9px;background:#dc2626;color:#fff;font-size:11px;line-height:17px;text-align:center}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -6136,12 +6140,12 @@ ACT.svmf = function (b) { SV[b.dataset.k] = SV[b.dataset.k] === b.dataset.v ? ''
 SHEETS.svmgr = function () {
   var h = shHead('school', 'blue', 'Schools &amp; vendors', 'Changes, merges, requests and prospects');
   if (!SVM) return h + svSkel(); if (SVM.err) return h + '<p class="sub">' + esc(SVM.err) + '</p>';
+  h += dup92Html();
   var ags = SVM.chg.map(function (c) { return c.by; }).filter(function (x, i, a) { return x && a.indexOf(x) === i; }), fs = SVM.chg.map(function (c) { return c.f; }).filter(function (x, i, a) { return a.indexOf(x) === i; });
   var C = SVM.chg.filter(function (c) { return (!SV.ma || c.by === SV.ma) && (!SV.mf || c.f === SV.mf); });
   h += '<div class="sv7lbl">Changes (' + SVM.chg.length + ')</div>' + (ags.length > 1 ? '<div class="sv7tr">' + ags.map(function (a) { return '<button class="' + (SV.ma === a ? 'on' : '') + '" data-act="svmf" data-k="ma" data-v="' + esc(a) + '">' + esc(a) + '</button>'; }).join('') + '</div>' : '') + (fs.length > 1 ? '<div class="sv7tr">' + fs.map(function (a) { return '<button class="' + (SV.mf === a ? 'on' : '') + '" data-act="svmf" data-k="mf" data-v="' + esc(a) + '">' + esc(a) + '</button>'; }).join('') + '</div>' : '');
   h += C.length ? C.slice(0, 60).map(function (c) { return '<div class="sv7chg' + (c.f === 'Phone' ? ' ph' : '') + '"><b>' + esc(c.n) + ' · ' + esc(c.f) + ': ' + (c.o ? esc(c.o) + ' → ' : '') + esc(c.nw) + '</b><span>' + esc(c.by) + ' · ' + esc(dayLbl(c.at)) + '</span></div>'; }).join('') : '<p class="sv7fine">No change in the last 60 days.</p>';
-  var M = SVM.ans.filter(function (a) { return a.k === 'dup'; }), Rq = SVM.ans.filter(function (a) { return a.k === 'ask'; });
-  if (M.length) h += '<div class="sv7lbl">Same person – to merge (' + M.length + ')</div>' + M.map(function (a) { return '<div class="sv7chg"><b>' + a.names.map(esc).join(' + ') + '</b><span>' + esc(a.by) + ' · ' + esc(dayLbl(a.at)) + (a.note ? ' · ' + esc(a.note) : '') + '</span></div>'; }).join('') + '<p class="sv7fine">Merge them in the sheet (Vendor_Master); the case is in Needs you.</p>';
+  var Rq = SVM.ans.filter(function (a) { return a.k === 'ask'; });
   if (Rq.length) h += '<div class="sv7lbl">Requests (' + Rq.length + ')</div>' + Rq.map(function (a) { return '<div class="sv7chg"><b>' + esc(a.by) + ': ' + esc(a.ans) + ' · ' + a.names.map(esc).join('') + '</b><span>' + esc(a.note) + ' · ' + esc(dayLbl(a.at)) + '</span></div>'; }).join('');
   if (SVM.stop.length) h += '<div class="sv7lbl">Why vendors stopped</div>' + SVM.stop.map(function (s) { return '<div class="sv7chg"><b>' + esc(s.n) + ' · ' + esc(s.why) + '</b><span>' + esc(s.ag) + (s.at ? ' · ' + esc(dayLbl(s.at)) : '') + '</span></div>'; }).join('');
   h += '<div class="sv7lbl">Prospects this month</div><table class="dt sv7fun"><tr><th></th><th>Prospect</th><th>Ready</th><th>Registered</th><th>First order</th></tr>' + SVM.funnel.map(function (f) { return '<tr><td>' + esc(f.n) + '</td><td>' + f.pros + '</td><td>' + f.ready + '</td><td>' + f.reg + '</td><td>' + f.first + '</td></tr>'; }).join('') + '</table>';
@@ -8935,7 +8939,7 @@ function mvAgTray(L) { var A = mvAgents(L); if (A.length < 2) return '';
 function mvAgOk(x) { return !MV.ag || String(x.ag || '').split(', ').indexOf(MV.ag) >= 0; }
 function pgMVen() {
   svLoad(); mvLoad();
-  var h = '<div class="sv7"><div class="sv7h mvh"><b>Vendors</b><button class="mvreq" data-act="svmgr">Changes and requests ›</button></div>';
+  var h = '<div class="sv7"><div class="sv7h mvh"><b>Vendors</b><button class="mvreq" data-act="svmgr">Changes and requests' + (MV.d && MV.d.dupN ? ' <span class="dup92n">' + MV.d.dupN + '</span>' : '') + ' ›</button></div>';
   if (!SV.d) return h + svSkel() + '</div>';
   var V = SV.d.v.filter(function (v) { return v.st !== 'closed'; }), S = SV.d.s;
   h += '<div class="sv7tabs t2" role="tablist">' + [['v', 'Vendors', V.length], ['s', 'Schools', S.filter(function (s) { return s.ty !== 'moe'; }).length]].map(function (t) { var on = MV.t === t[0]; return '<button role="tab" aria-selected="' + on + '" class="sv7tab' + (on ? ' on' : '') + '" data-act="mvt" data-t="' + t[0] + '"><b>' + t[1] + '</b><em>' + t[2] + '</em></button>'; }).join('') + '</div>';
@@ -9276,7 +9280,7 @@ SHEETS.vacct = function () {
   h += '<div class="vach">' + [['all', 'All'], ['un', 'Unpaid'], ['o', 'Orders'], ['p', 'Payments']].map(function (c) { return '<button class="' + (VA.f === c[0] ? 'on' : '') + '" data-act="vaf" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') +
     '<button class="' + (VA.from ? 'on' : '') + '" data-act="vacal">📅 ' + (VA.from ? esc(VA.from === (VA.to || VA.from) ? dayLbl(VA.from) : dayLbl(VA.from) + ' – ' + dayLbl(VA.to)) : 'Dates') + '</button>' + (VA.from ? '<button data-act="vacalx" aria-label="All dates">✕</button>' : '') + '</div>';
   if (!R.length) return h + '<p class="small muted" style="text-align:center;margin:16px 0">Nothing here.</p>';
-  var payOf = {}; A.rows.forEach(function (p) { if (p.k === 'p' && !p.cx) (p.to || []).forEach(function (t) { (payOf[t.ref] = payOf[t.ref] || []).push([p.day, t.amt, p.how, p.id, t.aid, t.sku ? (t.sku + ' · ' + t.src) : '']); }); });
+  var payOf = {}; A.rows.forEach(function (p) { if (p.k === 'p' && !p.cx && !p.bk) (p.to || []).forEach(function (t) { (payOf[t.ref] = payOf[t.ref] || []).push([p.day, t.amt, p.how, p.id, t.aid, t.sku ? (t.sku + ' · ' + t.src) : '']); }); });
   return h + R.map(function (r) { var i = r.k + ':' + (r.ref || r.id), on = VA.op === i;
     if (r.k === 'o') { var k = r.open <= 0.004 ? 'g' : r.paid > 0.004 ? 'a' : 'r';
       var d = on ? '<div class="vad"><div><span>Order date: ' + esc(dayLbl(r.day)) + '</span><b>' + esc(r.ln || '') + '</b></div>' + (r.src ? '<div><span>From</span><b>' + esc(r.src) + '</b></div>' : '') + (payOf[r.ref] || []).map(function (p) { return '<div><span>Paid ' + esc(dayLbl(p[0])) + (p[5] ? ' · ' + esc(p[5]) : '') + '</span><b>' + ghs(p[1]) + ' ' + esc(p[2] === 'MoMo' ? 'MoMo' : 'cash') + '</b>' + (mgr && p[3] ? ' <button class="vasm" data-act="vafixo" data-k="move" data-r="' + esc(p[3]) + '" data-a="' + esc(p[4] || '') + '">Move</button>' : '') + (mgr && p[3] && r.sl && !r.grp && !/^new-/.test(p[3]) ? ' <button class="vasm" data-act="sp89" data-r="' + esc(p[3]) + '" data-o="' + esc(r.ref) + '">Split</button>' : '') + '</div>'; }).join('') +
@@ -9284,13 +9288,13 @@ SHEETS.vacct = function () {
       return '<div class="varow k' + k + '"' + (VA.pay && VA.pay.ref === r.ref ? '' : ' data-act="vatap" data-i="' + esc(i) + '"') + '><div class="r1"><span>Order ' + esc(dayLbl(r.day)) + (r.ln ? ' · ' + esc(r.ln) : '') + (r.old ? ' <i class="vaold">before app</i>' : '') + '</span><b>' + ghs(r.val) + '</b></div>' +
         '<div class="r2"><span>' + (r.open <= 0.004 ? 'paid ✓' + (r.pon ? ' ' + esc(dayLbl(r.pon)) : '') : (r.paid > 0.004 ? 'paid ' + ghs(r.paid).replace('GHS ', '') + ' · ' : '') + '<b>owes ' + ghs(r.open).replace('GHS ', '') + '</b>') + '</span>' + (r.open > 0.004 ? '<span class="t-red">' + vaDays(r.day) + ' days</span>' : '') + '</div>' + d + '</div>'; }
     var to = (r.to || []).map(function (t) { return t.day ? dayLbl(t.day) : 'old book'; }), F = VA.fx && VA.fx.rid === r.id ? VA.fx : null, x = '';
-    if (on) { x = '<div class="vad">' + (r.by ? '<div><span>Taken by</span><b>' + esc(r.by) + '</b></div>' : '') + (r.to || []).map(function (t) { return '<div><span>' + vaTo89(t) + '</span><b>' + ghs(t.amt) + '</b>' + (mgr && !r.cx ? ' <button class="vasm" data-act="vafix" data-k="move" data-r="' + esc(r.id) + '" data-a="' + esc(t.aid) + '">Move</button>' : '') + '</div>'; }).join('') + (r.note ? '<p>' + esc(r.note) + '</p>' : '');
-      if (mgr && !r.cx && !F) x += '<button class="vasm red" data-act="vafix" data-k="undo" data-r="' + esc(r.id) + '">Not paid – undo</button>';
+    if (on) { x = '<div class="vad">' + (r.by ? '<div><span>Taken by</span><b>' + esc(r.by) + '</b></div>' : '') + (r.to || []).map(function (t) { return '<div><span>' + vaTo89(t) + '</span><b>' + ghs(t.amt) + '</b>' + (mgr && !r.cx && !r.bk ? ' <button class="vasm" data-act="vafix" data-k="move" data-r="' + esc(r.id) + '" data-a="' + esc(t.aid) + '">Move</button>' : '') + '</div>'; }).join('') + (r.note ? '<p>' + esc(r.note) + '</p>' : '');
+      if (mgr && !r.cx && !r.bk && !F) x += '<button class="vasm red" data-act="vafix" data-k="undo" data-r="' + esc(r.id) + '">Not paid – undo</button>';
       if (F) { var O = vaOpen().filter(function (o) { return !(r.to || []).some(function (t) { return t.aid === F.aid && t.ref === o.ref; }); });
         if (F.k === 'move') x += '<div class="small muted" style="margin:6px 0 4px">Move it to which order?</div><div class="vach">' + (O.length ? O.map(function (o) { return '<button class="' + (F.to === o.ref ? 'on' : '') + '" data-act="vato" data-v="' + esc(o.ref) + '">' + esc(dayLbl(o.day)) + ' · owes ' + ghs(o.open).replace('GHS ', '') + '</button>'; }).join('') : '<span class="small muted">No other order is unpaid.</span>') + '</div>';
         x += '<input class="o2q" data-inp="vawhy" placeholder="Why? (the agent and Frank see it)" value="' + esc(F.why || '') + '"><button class="' + (F.k === 'undo' ? 'warn' : 'main gr') + ' wide" data-act="vafixgo">' + (F.k === 'undo' ? 'Undo this payment' : 'Move it') + '</button><button class="ghost2 wide" style="margin-top:6px" data-act="vafixx">Cancel</button>'; }
       x += '</div>'; }
-    return '<div class="varow kb' + (r.cx ? ' cx' : '') + '"' + (F ? '' : ' data-act="vatap" data-i="' + esc(i) + '"') + '><div class="r1"' + (F ? ' data-act="vafixx"' : '') + '><span>Payment ' + esc(dayLbl(r.day)) + ' · ' + esc(r.how === 'MoMo' ? 'MoMo' : r.how === 'Cash' ? 'cash' : r.how) + (r.by ? ' to ' + esc(r.by) : '') + '</span><b class="t-green">' + ghs(r.amt) + '</b></div>' +
+    return '<div class="varow kb' + (r.cx ? ' cx' : '') + '"' + (F ? '' : ' data-act="vatap" data-i="' + esc(i) + '"') + '><div class="r1"' + (F ? ' data-act="vafixx"' : '') + '><span>Payment ' + esc(dayLbl(r.day)) + ' · ' + esc(r.how === 'MoMo' ? 'MoMo' : r.how === 'Cash' ? 'cash' : r.how) + (r.by ? ' to ' + esc(r.by) : '') + (r.bk ? ' <i class="vaold">book</i>' : '') + '</span><b class="t-green">' + ghs(r.amt) + '</b></div>' +
       '<div class="r2"><span>' + (r.cx ? 'undone' : vaPd89(r)) + '</span></div>' + x + '</div>'; }).join('');
 };
 // Frank (and the manager): find any vendor's account
@@ -9774,5 +9778,17 @@ function vaCtn91(A) { var C = A.cs || []; if (!C.length) return ''; var t = 0, s
   C.forEach(function (x) { if (VA.from) { var z = VA.to || VA.from; if (x[3] ? (x[0].slice(0, 7) < VA.from.slice(0, 7) || x[0].slice(0, 7) > z.slice(0, 7)) : (x[0] < VA.from || x[0] > z)) return; } t += x[2]; s[x[1]] = (s[x[1]] || 0) + x[2]; });
   var K = Object.keys(s).sort(function (a, b) { return s[b] - s[a]; }), n = function (x) { return String(Math.round(x * 10) / 10); };
   return '<div class="va91"><div class="va91t"><b>' + n(t) + ' ctn</b><span>' + (VA.from ? 'in these dates' : 'ordered so far') + '</span></div>' + (K.length ? '<div class="va91s">' + K.map(function (k) { return '<i>' + esc(SKN[k] || k) + ' <b>' + n(s[k]) + '</b></i>'; }).join('') + '</div>' : '') + '</div>'; }
+// ---------------------------------------------------------------- v2.8.29 (Job C): same vendor twice? – the manager joins or keeps apart
+var DUP92 = { open: '' };
+function dup92V(x) { return x ? '<div class="dup92v"><b>' + esc(x.n) + ' <i>' + esc(x.id) + '</i></b><span>' + [x.ag, x.sc, x.ph ? '☎ …' + x.ph : '', x.o ? x.o + ' order' + (x.o === 1 ? '' : 's') + (x.last ? ', last ' + dayLbl(x.last) : '') : 'no orders'].filter(String).map(esc).join(' · ') + '</span></div>' : ''; }
+function dup92Html() { var L = (SVM && SVM.dup) || [], V = (SVM && SVM.dv) || {}; if (!L.length) return '';
+  return '<div class="sv7lbl">Same vendor twice? (' + L.length + ')</div>' + L.map(function (p) { var on = DUP92.open === p.key, a = V[p.a], b = V[p.b];
+    return '<div class="dup92 ' + (p.said || p.why === 'Same phone' ? 'hi' : '') + '"><div class="dup92t" data-act="dup92t" data-k="' + esc(p.key) + '"><b>' + esc((a ? a.n : p.a) + ' + ' + (b ? b.n : p.b)) + '</b><span>' + esc(p.why) + (p.said && p.why !== 'The agent says same' ? ' · the agent says same' : '') + '</span></div>' +
+      (on ? dup92V(a) + dup92V(b) + '<div class="va3"><button class="main gr" data-act="dup92" data-h="same" data-a="' + esc(p.a) + '" data-b="' + esc(p.b) + '">Same – join them</button><button class="ghost2" data-act="dup92" data-h="diff" data-a="' + esc(p.a) + '" data-b="' + esc(p.b) + '">Different</button></div>' : '') + '</div>'; }).join(''); }
+ACT.dup92t = function (b) { DUP92.open = DUP92.open === b.dataset.k ? '' : b.dataset.k; drawSheet(); };
+ACT.dup92 = function (b) { var A = b.dataset.a, B = b.dataset.b, h = b.dataset.h, V = (SVM && SVM.dv) || {}, na = (V[A] || {}).n || A, nb = (V[B] || {}).n || B;
+  var go = function () { bgSave('dup92', { a: A, b: B, how: h }, 'd92-' + A + '-' + B + '-' + h, h === 'same' ? 'vendors joined' : 'different', b);
+    if (SVM && SVM.dup) SVM.dup = SVM.dup.filter(function (p) { return !(p.a === A && p.b === B) && !(h === 'same' && (p.a === B || p.b === B)); }); DUP92.open = ''; if (MV) { MV.got = 0; if (MV.d) MV.d.dupN = SVM.dup.length; } drawSheet(); };
+  if (h === 'same') ask('Join ' + nb + ' (' + B + ') into ' + na + ' (' + A + ')? Her orders, payments and visits go together under ' + A + '. This cannot be undone.', go); else go(); };
 if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
