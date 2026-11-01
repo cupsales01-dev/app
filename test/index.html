@@ -1018,6 +1018,7 @@ body.r27ride #main .t2tray.ph89 button .cnt{background:#080B0A !important;color:
 .yr89 td{padding:3px 4px}.yr89 .z td{color:var(--muted,#6b7280)}
 .n90c{display:block;margin:8px 2px 0;font-size:13px}.n90c b{display:block;margin-bottom:4px}.n90c input{width:100%;text-transform:uppercase}
 .n90dd{margin:4px 0 8px}.n90dd button i,.n90dh i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;vertical-align:middle}.n90dh{display:flex;align-items:center;gap:6px;margin:10px 2px 6px;font-size:13px}.n90dh b{text-transform:uppercase;letter-spacing:.3px}.n90dh span{color:var(--muted,#6b7280);font-size:12px}.n90dh em{margin-left:auto;font-style:normal;font-weight:700;font-size:12px}
+.va91{background:var(--card2,#f3f4f6);border-radius:12px;padding:8px 10px;margin:8px 0}.va91t{display:flex;align-items:baseline;gap:8px}.va91t b{font-size:18px}.va91t span{font-size:12px;color:var(--muted,#6b7280)}.va91s{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.va91s i{font-style:normal;font-size:12px;background:var(--card,#fff);border:1px solid var(--line,#e5e7eb);border-radius:999px;padding:2px 8px}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -9271,6 +9272,7 @@ SHEETS.vacct = function () {
   if (ag || A.phone) h += '<div class="va3">' + (ag && A.owes > 0.004 ? '<button class="main gr" data-act="p7recgo" data-v="' + esc(A.vid) + '">Record a payment</button>' : '') + (A.phone ? '<a class="ghost2b" href="tel:' + esc(A.phone) + '">📞 Call</a>' : '') + '</div>';
   var R = A.rows.filter(function (r) { if (VA.from && (r.day < VA.from || r.day > (VA.to || VA.from))) return false;
     return VA.f === 'un' ? r.k === 'o' && r.open > 0.004 : VA.f === 'o' ? r.k === 'o' : VA.f === 'p' ? r.k === 'p' : true; });
+  h += vaCtn91(A);
   h += '<div class="vach">' + [['all', 'All'], ['un', 'Unpaid'], ['o', 'Orders'], ['p', 'Payments']].map(function (c) { return '<button class="' + (VA.f === c[0] ? 'on' : '') + '" data-act="vaf" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') +
     '<button class="' + (VA.from ? 'on' : '') + '" data-act="vacal">📅 ' + (VA.from ? esc(VA.from === (VA.to || VA.from) ? dayLbl(VA.from) : dayLbl(VA.from) + ' – ' + dayLbl(VA.to)) : 'Dates') + '</button>' + (VA.from ? '<button data-act="vacalx" aria-label="All dates">✕</button>' : '') + '</div>';
   if (!R.length) return h + '<p class="small muted" style="text-align:center;margin:16px 0">Nothing here.</p>';
@@ -9767,5 +9769,10 @@ ACT.n90ret = function (b) { var id = b.dataset.v, on = !!b.dataset.on, v = (SV.d
   if (on && !confirm('Retire ' + v.n + '? She is not counted and agents no longer see her. You can bring her back.')) return;
   bgSave('mretire', { vid: id, on: on ? 1 : 0 }, 'mret-' + id + '-' + uid(), (on ? 'retire ' : 'bring back ') + v.n, null, true);
   v.st = on ? 'closed' : 'buy'; v.t = on ? 'Retired' : 'Brought back'; MV.x = ''; render(); };
+// v2.8.28: Her account – cartons she ordered (total and per product), following the date filter
+function vaCtn91(A) { var C = A.cs || []; if (!C.length) return ''; var t = 0, s = {};
+  C.forEach(function (x) { if (VA.from) { var z = VA.to || VA.from; if (x[3] ? (x[0].slice(0, 7) < VA.from.slice(0, 7) || x[0].slice(0, 7) > z.slice(0, 7)) : (x[0] < VA.from || x[0] > z)) return; } t += x[2]; s[x[1]] = (s[x[1]] || 0) + x[2]; });
+  var K = Object.keys(s).sort(function (a, b) { return s[b] - s[a]; }), n = function (x) { return String(Math.round(x * 10) / 10); };
+  return '<div class="va91"><div class="va91t"><b>' + n(t) + ' ctn</b><span>' + (VA.from ? 'in these dates' : 'ordered so far') + '</span></div>' + (K.length ? '<div class="va91s">' + K.map(function (k) { return '<i>' + esc(SKN[k] || k) + ' <b>' + n(s[k]) + '</b></i>'; }).join('') + '</div>' : '') + '</div>'; }
 if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
