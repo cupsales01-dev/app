@@ -1016,6 +1016,7 @@ body.r27ride #main .t2tray.ph89 button .cnt{background:#080B0A !important;color:
 .ha89{margin:6px 0 0;padding:6px 8px;border-radius:10px;background:var(--bg);font-size:13px}.ha89 b{font-weight:600}.ha89 .hd{display:flex;justify-content:space-between;gap:8px;cursor:pointer}
 .ha89 .ls div{display:flex;justify-content:space-between;gap:8px;padding:2px 0;border-top:1px solid var(--line)}.ha89 h4{margin:8px 0 2px;font-size:12px;color:var(--muted,#6b7280);font-weight:600}
 .yr89 td{padding:3px 4px}.yr89 .z td{color:var(--muted,#6b7280)}
+.n90c{display:block;margin:8px 2px 0;font-size:13px}.n90c b{display:block;margin-bottom:4px}.n90c input{width:100%;text-transform:uppercase}
 </style></head><body>
 <div id="top"></div><main id="main"><p class="muted">Loading…</p></main><div id="foot"></div><div id="over"></div><div id="dlg"></div><div id="toast"></div>
 <script>
@@ -3582,7 +3583,7 @@ function pgNew2() {
   h += '<button class="t2add' + (x.lines.length ? ' red' : '') + '" data-act="naddp">' + (x.lines.length ? '+ Add another product' : '+ Tap to add a product') + '</button>';
   // she pays
   var val = nVal(x), first = nNewV(v);
-  h += '<div class="n2st"><i>₵</i>She pays</div><div class="o2seg">' + [['CASH', 'On delivery'], ['CREDIT', 'Credit'], ['NOW', 'Paid now']].filter(function (p) { return !(D.viewOf && p[0] === 'NOW'); }).map( /* money in her hands: only on her own phone */function (p) { return '<button class="' + (x.pay === p[0] ? 'on' : '') + '" data-act="npay" data-v="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>';
+  h += '<div class="n2st"><i>₵</i>She pays</div><div class="o2seg">' + n90Pays(v).filter(function (p) { return !(D.viewOf && p[0] === 'NOW'); }).map( /* money in her hands: only on her own phone */function (p) { return '<button class="' + (x.pay === p[0] ? 'on' : '') + '" data-act="npay" data-v="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>';
   if (x.pay === 'NOW') { var pd = x.paid == null ? val : Math.min(x.paid, val);
     h += '<div class="small" style="font-weight:700;margin:6px 0 4px">How did she pay?</div><div class="t2tray">' + [['ME', 'Cash with me'], ['MOMO', 'MoMo to Frank']].map(function (p) { return '<button class="' + (x.how === p[0] ? 'on' : '') + '" data-act="nhow" data-v="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>' +
       '<div class="o2cl"><div class="grow"><b>Amount</b><div class="small muted">' + (pd < val - 0.004 ? 'The rest ' + ghs(val - pd) + ' is paid on delivery' : 'The whole order') + '</div></div><button class="o2pm" data-act="npaid" data-d="-10">−</button><input class="n2amt" inputmode="decimal" data-inp="npaid" value="' + pd + '"><button class="o2pm" data-act="npaid" data-d="10">+</button></div>' +
@@ -3616,7 +3617,7 @@ function nMissing(x, v) {
   if (!x.via) return 'How did she order?'; if (x.via === 'Other' && String(x.viaNote).trim().length < 3) return 'Write how she ordered';
   var hasL = x.lines.some(function (l) { return l.qty > 0; }); if (!hasL && !nHelpN(x)) return 'Add a product'; if (TAB === 'new' && !D.viewOf) { var wm = nWhereMiss(x, v); if (wm) return wm; } if (!hasL) return ''; // v2.8.13: help items only
   if (x.pay === 'NOW' && !x.how) return 'How did she pay?'; if (x.pay === 'NOW' && !((x.paid == null ? nVal(x) : x.paid) > 0)) return 'Type the amount she paid';
-  if (x.pay === 'CREDIT' && nNewV(v) && !x.cc) return 'Tick the credit check';
+  if (x.pay === 'CREDIT' && nNewV(v) && !n90Mgr()) return 'New customer: On delivery or Paid now';
   if (!x.day) return 'Which day?'; if (!x.time) return 'What time?'; if (x.time === NTIMES[0] && !nClose(v)) return 'When does she close?';
   if (x.urg && !x.urgWhy) return 'Why is it urgent?'; if (x.urg && x.urgWhy === 'Other' && String(x.urgNote).trim().length < 3) return 'Write why it is urgent';
   return '';
@@ -3694,9 +3695,10 @@ SHEETS.nchk = function () { var x = nDr(), v = vend(x.vid); if (!v || nMissing(x
   return '<div class="t2sh"><b>Send this order?</b><a data-act="closeO">Change</a></div><div class="n2chk">' + esc(nHasL(x) ? nSentence(x, v) : 'Help items for ' + v.name + '.') + '</div>' + (nHelpN(x) ? '<div class="n2pos">Help items: ' + esc(nHelpTxt(nHelpL(x))) + '. The manager approves first.</div>' : '') +
     (so.length ? '<div class="small t-red">⚠ ' + esc(so.map(function (l) { return skn(l.sku); }).join(', ')) + ' is out of stock – Frank cannot send it.</div>' : '') +
     (x.urg ? '<div class="n2pos">Urgent: ' + nth((((D.myOrders || []).filter(function (o) { return o.fof != null; })[0] || {}).fofu || 0) + 1) + ' in Frank\'s list</div>' : fof != null ? '<div class="n2pos">' + nth(fof + 1) + ' in Frank\'s list</div>' : '') +
-    '<button class="main big gr" data-act="nsend" style="margin-top:8px">' + (nHasL(x) ? 'Send to Frank' : 'Send to the manager') + '</button>'; };
+    '<button class="main big gr" data-act="nsend" style="margin-top:8px">' + (nHasL(x) && (!nNewV(v) || n90Mgr()) ? 'Send to Frank' : 'Send to the manager') + '</button>'; };
 ACT.nsend = function () { var x = nDr(), v = vend(x.vid); if (!v || nMissing(x, v) || viewBlock('orders')) return;
   var tw = nTw(x, v), lm = nLm(x, v); if (tw !== (v.town || '') || lm !== (v.lm || '')) { bgSave('vtown', { vid: v.id, town: tw, lm: lm }, 'vt-' + x.sid, 'place for ' + v.name, null, true); v.town = tw; v.lm = lm; } // v2.8.13
+  n90CodeSave(x, v);
   var hl = nHelpL(x); if (hl.length) bgSave('hneed', { vid: v.id, sid: x.sid, items: hl }, 'hn-' + x.sid, 'help items for ' + v.name, null, true); // v2.8.13
   if (!x.lines.some(function (l) { return l.qty > 0; })) { SHEETK = ''; $('over').innerHTML = ''; ls(nKey(), null); NUNDO = null; nSentAdd({ vid: v.id, sid: x.sid, name: v.name, ctn: 0, val: 0, day: '', urg: 0, help: nHelpN(x) }); NJUST = true; NQ = ''; NF = ''; render(); window.scrollTo(0, 0); return; }
   var val = nVal(x), pd = x.pay === 'NOW' ? (x.paid == null ? val : Math.min(x.paid, val)) : 0, pay = x.pay === 'NOW' ? (x.how === 'MOMO' ? 'PAID_MOMO' : 'PAID_ME') : x.pay;
@@ -3955,7 +3957,7 @@ function vzOrder(v) {
   if (!x.lines.length) return h + (VZ.o.none ? '<div class="vzok">No order today.</div>' : '') + vzNextBtn('o', '', VZ.o.none ? '' : 'No order today');
   // she pays
   var val = nVal(x);
-  h += '<div class="vzl">She pays</div><div class="o2seg">' + [['CASH', 'On delivery'], ['CREDIT', 'Credit'], ['NOW', 'Paid now']].map(function (p) { return '<button class="' + (x.pay === p[0] ? 'on' : '') + '" data-act="npay" data-v="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>';
+  h += '<div class="vzl">She pays</div><div class="o2seg">' + n90Pays(v).map(function (p) { return '<button class="' + (x.pay === p[0] ? 'on' : '') + '" data-act="npay" data-v="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>';
   if (x.pay === 'NOW') { var pd = x.paid == null ? val : Math.min(x.paid, val);
     h += '<div class="small muted" style="margin:6px 2px 4px">Money for this order only' + (left > 0.004 ? ' – old debt goes on the Money tab' : '') + '.</div><div class="t2tray">' + [['ME', 'Cash with me'], ['MOMO', 'MoMo to Frank']].map(function (p) { return '<button class="' + (x.how === p[0] ? 'on' : '') + '" data-act="nhow" data-v="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>' +
       '<div class="o2cl"><div class="grow"><b>Amount</b><div class="small muted">' + (pd < val - 0.004 ? 'The rest ' + ghs(val - pd) + ' is paid on delivery' : 'The whole order') + '</div></div><button class="o2pm" data-act="npaid" data-d="-10">−</button><input class="n2amt" inputmode="decimal" data-inp="npaid" data-chg="npaid" value="' + pd + '"><button class="o2pm" data-act="npaid" data-d="10">+</button></div>' + (x.how === 'MOMO' ? '<div class="small muted">Frank\'s MoMo: ' + esc(D.momo || '') + '</div>' : ''); }
@@ -4266,7 +4268,7 @@ function vzSaveVisit() {
   if (ordered) { var val = nVal(x), pd = x.pay === 'NOW' ? (x.paid == null ? val : Math.min(x.paid, val)) : 0, pay = x.pay === 'NOW' ? (x.how === 'MOMO' ? 'PAID_MOMO' : 'PAID_ME') : x.pay, rk = pay === 'PAID_ME' && pd > 0 ? rkNew() : '';
     var od = { vendors: [{ vid: v.id, lines: x.lines.filter(function (l) { return l.qty > 0; }).map(function (l) { return { sku: l.sku, qty: l.qty }; }), pay: pay, paid: pd, promised: 0, note: tx(x.note), dlv: x.day === 'today' ? '' : x.day, rk: rk, via: 'At her spot', time: nTimeTxt(x, v), urg: x.urg ? nUrgTxt(x) : '', cc: x.pay === 'CREDIT' && nNewV(v) && x.cc ? 1 : 0, ccNote: x.ccNote || '' }] };
     osid = x.sid; ls('cs_nsent_' + x.sid, JSON.stringify(Object.assign({}, x, { via: 'At her spot' }))); nSentAdd({ vid: v.id, sid: x.sid, name: v.name, ctn: vzCtn(x), val: val, day: x.day, urg: x.urg ? 1 : 0 });
-    bgSave('orders', od, x.sid, 'order for ' + v.name, null, true);
+    bgSave('orders', od, x.sid, 'order for ' + v.name, null, true); n90CodeSave(x, v);
     if (rk) rcptOffer({ rk: rk, rids: [], vendor: v.name, phone: v.phone || '', amount: pd, by: D.me.first }); }
   var H = X.h, sel = function (M, O) { var o = []; Object.keys(M).forEach(function (l) { Object.keys(M[l]).forEach(function (it) { o.push({ lever: l, item: it, detail: it === 'Other' ? tx(O[l]) : '', qty: M[l][it] || 1 }); }); }); return o; };
   var need = sel(H.nd, H.ndO), gave = sel(H.gv, H.gvO), closed = [];
@@ -8063,7 +8065,7 @@ ACT.n71ok = function () { var S = DLV, x = nDr(), v = vend(x.vid), t = n71Txt(S)
   DLV = null; SHEETK = ''; $('over').innerHTML = ''; nEdit(function (y) { y.day = S.day; y.time = t; if (S.day === 'today' && !y.urg) y.day = dlvDays()[0] || ''; }); };
 // ---------------------------------------------------------------- Payment (also used by New order)
 function n71Pay(x, v, o) { o = o || {};
-  var val = nVal(x), h = '<div class="n71c"><div class="n71h">' + ico(ICO.b6pay) + 'Payment</div><div class="o2seg n71red">' + [['CASH', 'On delivery'], ['CREDIT', 'Credit'], ['NOW', 'Paid now']].filter(function (p) { return !(D.viewOf && p[0] === 'NOW'); }).map(function (p) { return '<button class="' + (x.pay === p[0] ? 'on' : '') + '" data-act="npay" data-v="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>';
+  var val = nVal(x), h = '<div class="n71c"><div class="n71h">' + ico(ICO.b6pay) + 'Payment</div><div class="o2seg n71red">' + n90Pays(v).filter(function (p) { return !(D.viewOf && p[0] === 'NOW'); }).map(function (p) { return '<button class="' + (x.pay === p[0] ? 'on' : '') + '" data-act="npay" data-v="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>';
   if (x.pay === 'NOW') { var pd = x.paid == null ? val : Math.min(x.paid, val);
     h += '<div class="n71pm"><span class="small muted">Payment method:</span>' + [['ME', 'Cash with me', ICO.cash], ['MOMO', 'MoMo to Frank', ICO.phone]].map(function (p) { return '<button class="' + (x.how === p[0] ? 'on' : '') + '" data-act="nhow" data-v="' + p[0] + '">' + ico(p[2]) + p[1] + '</button>'; }).join('') + '</div>';
     h += '<div class="n71amt"><span>Amount: <b>' + ghs(pd) + '</b>' + (pd < val - 0.004 ? ' <span class="small muted">· the rest ' + ghs(val - pd) + ' on delivery</span>' : '') + '</span><a data-act="n71amt">' + (x.amtOpen ? 'Done' : 'Part paid?') + '</a></div>';
@@ -8074,6 +8076,8 @@ function n71Pay(x, v, o) { o = o || {};
     if (v.pace && v.pace.slow) h += '<div class="o2chg">She pays slowly (about ' + v.pace.avg + ' days). Give about half on credit.' + (x.lines.some(function (l) { return l.qty > 1; }) ? ' <a class="n2a" data-act="nhalf2">Halve it</a>' : '') + '</div>';
     if (o.nw && v.debt > 0 && (Number(v.days) || 0) > 7) h += '<div class="small t-red" style="margin:4px 2px">She already owes ' + ghs(v.debt) + ' for ' + v.days + ' days.</div>';
     if (nNewV(v)) h += x.cc && !x.ccOpen ? '<div class="n2ok" data-act="nccopen">✓ Credit checks confirmed' + (String(x.ccNote || '').trim() ? ' · ' + esc(String(x.ccNote).trim().slice(0, 40)) : '') + ' <span>▾</span></div>' : '<div class="n2cc"><b>First order on credit: check her first</b><div class="small">If she does not pay, you answer for it.</div><label class="o2tk"><input type="checkbox" class="chk" data-chg="ncc"' + (x.cc ? ' checked' : '') + '> ' + esc(NCC_TXT) + '</label>' + (o.nw ? '<input data-inp="nccn" value="' + esc(x.ccNote) + '" placeholder="Anything else? (optional)">' : '') + (x.cc ? '<a class="n2a" data-act="nccclose">Fold ▴</a>' : '<div class="small t-red">Tick to send on credit</div>') + '</div>'; }
+  if (nNewV(v) && !n90Mgr()) h += '<div class="small muted" style="margin:6px 2px 0">New customer: paid only. The manager approves first.</div>';
+  else if (v.noc) h += '<label class="n90c"><b>Company code</b><input data-inp="n90code" value="' + esc(x.code || '') + '" placeholder="Ask her (if registered)" autocapitalize="characters" autocomplete="off" spellcheck="false"></label>';
   return h + '</div>'; }
 ACT.n71amt = function () { nEdit(function (x) { x.amtOpen = !x.amtOpen; }); };
 // ---------------------------------------------------------------- the order at her spot, in cards
@@ -8898,9 +8902,9 @@ function mvNew(v) { var r = mvR(v.id), m1 = mvM1(); return !!(r && ((r[3] && r[3
 function mvBd(v) { var x = vend(v.id), b = x ? bdayIn(x.bday) : -1; return b >= 0 && b <= 7; }
 /** Days of noodles she likely has left: null = no rhythm yet. */
 function mvLeft(v) { var r = mvR(v.id); if (!r || !r[0] || r[2] < 2 || v.st === 'stop' || v.st === 'closed') return null; return r[0] - r[1]; }
-var MVF = [['all', 'All'], ['stop', 'Dormant'], ['slow', 'Slowing'], ['fu', 'Follow up'], ['new', 'New this month'], ['help', 'Help items'], ['slowpay', 'Slow payers'], ['owes', 'Owes'], ['bday', 'Birthday']];
+var MVF = [['all', 'All'], ['stop', 'Dormant'], ['slow', 'Slowing'], ['fu', 'Follow up'], ['new', 'New this month'], ['help', 'Help items'], ['slowpay', 'Slow payers'], ['owes', 'Owes'], ['bday', 'Birthday'], ['reg', 'Registered'], ['nocode', 'No company code']];
 function mvOk(v, f) { return f === 'all' || (f === 'stop' && v.st === 'stop') || (f === 'slow' && v.st === 'slow') || (f === 'fu' && !!(v.pr || v.nx)) || (f === 'new' && mvNew(v)) ||
-  (f === 'help' && mvHelp(v.id).length > 0) || (f === 'slowpay' && !!v.slowpay) || (f === 'owes' && v.ow > 0) || (f === 'bday' && mvBd(v)); }
+  (f === 'help' && mvHelp(v.id).length > 0) || (f === 'reg' && !!mvR(v.id) && !mvR(v.id)[4]) || (f === 'nocode' && !!mvR(v.id) && !!mvR(v.id)[4] && !mvR(v.id)[5]) || (f === 'slowpay' && !!v.slowpay) || (f === 'owes' && v.ow > 0) || (f === 'bday' && mvBd(v)); }
 function mvSort(f) { return function (a, b) {
   if (f === 'stop' || f === 'slow') { var na = (mvR(a.id) || [0, 0])[1], nb = (mvR(b.id) || [0, 0])[1]; if (na !== nb) return nb - na; }
   if (f === 'owes' || f === 'slowpay') { if ((b.ow || 0) !== (a.ow || 0)) return (b.ow || 0) - (a.ow || 0); }
@@ -8917,6 +8921,7 @@ function mvRow(v) {
   var h = '<div class="sv7r' + (op ? ' open' : '') + '" style="--k:' + SVC[v.st] + '"><div class="sv7rh"><button class="sv7n" data-act="mvx" data-x="' + k + '"><b>' + esc(v.n) + (H.length ? ' <i class="mvdot" aria-label="help items waiting"></i>' : '') + '</b><span>' + esc(v.sn || 'School not recorded') + (MV.ag ? '' : ' · ' + esc(v.ag || 'no agent')) + '</span></button>' + mvGauge(v) + '</div>';
   if (!op) return h + '</div>';
   h += '<div class="sv7rb">' + svMl(SVL[v.st], esc(v.t), v.st === 'stop' ? 't-red' : v.st === 'slow' ? 't-amber' : '') + (v.st === 'stop' ? svMl('Why', v.why ? esc(v.why) : v.said ? 'said' : '<span class="t-amber">agent has not said</span>') : '') + svMl('Stock', esc(mvLeftTxt(v)), l != null && l <= 0 ? 't-red' : '') + svMl('Last visit', svLv(v.lv));
+  var r90 = mvR(v.id); if (r90) h += r90[4] ? svMl('Company code', r90[5] ? esc(r90[5]) : 'none yet', r90[5] ? '' : 't-amber') : svMl('Stage', 'Registered – not bought yet', 't-amber');
   if (v.ow > 0) h += svMl('Owes', ghs(v.ow) + (v.late > 0 ? ' · ' + v.late + ' day' + (v.late === 1 ? '' : 's') + ' late' : ''), v.late > 0 ? 't-red' : '');
   if (H.length) h += svMl('Help items', esc(H.map(function (a) { return a.i + (a.q > 1 ? ' × ' + a.q : ''); }).join(', ')), H[0].d > 7 ? 't-amber' : '');
   if (v.pr) h += svMl('Promise', svPrTxt(v.pr), v.pr.dk < 0 ? 't-red' : v.pr.dk === 0 ? 't-amber' : ''); else if (v.nx) h += svMl('Next', esc(v.nx));
@@ -9731,5 +9736,10 @@ ACT.yr89t = function () { YR89 = !YR89; render(); };
 // Frank takes Omni's money only: the amount starts at what is left on the Omni lines
 ACT.vapay = (function (f) { return function (b) { var r = f.apply(this, arguments), x = VA.pay && vaRow(VA.pay.ref);
   if (x && x.sl && D.me.role === 'Warehouse') { var o = Math.round(x.sl.filter(function (l) { return l[6] === 1; }).reduce(function (t, l) { return t + l[4]; }, 0) * 100) / 100; if (o > 0 && o < x.open) { VA.pay.amt = String(o); drawSheet(); } } return r; }; })(ACT.vapay);
+// ---------------------------------------------------------------- v2.8.25: a new customer pays (no credit); her company code from the second order
+function n90Mgr() { return !!(D && D.me && D.me.role === 'Supervisor'); }
+function n90Pays(v) { var P = [['CASH','On delivery'],['CREDIT','Credit'],['NOW','Paid now']]; return v && nNewV(v) && !n90Mgr() ? P.filter(function (p) { return p[0] !== 'CREDIT'; }) : P; }
+INP.n90code = function (el) { var x = nDr(); x.code = el.value; nSave(x); };
+function n90CodeSave(x, v) { var c = String(x.code || '').replace(/\s+/g, '').toUpperCase(); if (!v.noc || c.length < 3) return; bgSave('vcode', { vid: v.id, code: c }, 'vc-' + x.sid, 'company code for ' + v.name, null, true); v.noc = 0; }
 if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
