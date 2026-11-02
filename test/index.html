@@ -9328,8 +9328,8 @@ ACT.r89hp = function (b) { R89HP = +b.dataset.v; render(); };
 function vaTot(r, P) { var app = (P || []).reduce(function (t, p) { return t + p[1]; }, 0), book = Math.round((r.paid - app) * 100) / 100;
   return (r.old && book > 0.004 ? '<div><span>Paid in the old book' + (r.pon ? ' (' + esc(dayLbl(r.pon)) + ')' : '') + '</span><b>' + ghs(book) + '</b></div>' : '') +
     '<div class="vatot"><span>Total paid</span><b class="t-green">' + ghs(r.paid) + '</b></div><div class="vatot"><span>Left to pay</span><b class="' + (r.open > 0.004 ? 't-red' : 't-green') + '">' + (r.open > 0.004 ? ghs(r.open) : 'nothing ✓') + '</b></div>'; }
-function vaCanPay() { var A = VA.d; if (!A || D.viewOf) return false; return D.me.role === 'Warehouse' || (D.me.role === 'Agent' && typeof p7Ven === 'function' && !!p7Ven(A.vid)); }
-function vaHows() { var A = VA.d; return D.me.role === 'Warehouse' ? (A.ag ? [[A.ag, 'From ' + A.agn]] : []).concat([['VENDOR', 'She paid me']]).concat(A.pr ? [[A.pr, 'From ' + A.prn]] : []) : [['cash', 'Cash'], ['momo', 'MoMo to Frank']]; }
+function vaCanPay() { var A = VA.d; if (!A || D.viewOf) return false; return D.me.role === 'Warehouse' || D.me.role === 'Supervisor' || (D.me.role === 'Agent' && typeof p7Ven === 'function' && !!p7Ven(A.vid)); }
+function vaHows() { var A = VA.d; return D.me.role === 'Warehouse' ? (A.ag ? [[A.ag, 'From ' + A.agn]] : []).concat([['VENDOR', 'She paid me']]).concat(A.pr ? [[A.pr, 'From ' + A.prn]] : []) : D.me.role === 'Supervisor' ? [['cash', 'Cash'], ['momo', 'MoMo']] : [['cash', 'Cash'], ['momo', 'MoMo to Frank']]; }
 function vaPayHtml(r) { if (!(r.open > 0.004) || !vaCanPay() || (D.me.role === 'Warehouse' && !r.om)) return ''; // Frank takes Omni's money only
   var P = VA.pay && VA.pay.ref === r.ref ? VA.pay : null; if (!P) return '<button class="main gr wide" data-act="vapay" data-r="' + esc(r.ref) + '">Record payment for this order</button>';
   return '<div class="vapf"><div class="small muted">How much did she pay for this order?</div><input class="o2q" data-inp="vapay" inputmode="decimal" value="' + esc(P.amt) + '">' +
@@ -9354,6 +9354,23 @@ ACT.vapaygo = function () { var P = VA.pay, A = VA.d, r = P && vaRow(P.ref); if 
   A.rows.unshift({ k: 'p', id: 'new-' + rk, day: D.today, amt: a, how: how, by: D.me.first || '', note: '', cx: 0, to: to });
   A.owes = Math.max(0, Math.round((A.owes - (a - left)) * 100) / 100); VA.pay = null; drawSheet();
   var vid = A.vid; setTimeout(function () { if (VA.vid === vid && SHEETK === 'vacct' && !VA.pay && !VA.fx && !VA.bf) vaLoad(vid); }, 6000); };
+// ---------------------------------------------------------------- v2.8.32: the manager says where an order came from (Her account › an order)
+var SR32 = null, SRC32 = [['SRC-OMINI', 'Omni Haven'], ['SRC-CLEMENT', 'Clement'], ['SRC-BERNICE', 'Bernice'], ['SRC-MARKET', 'Open market']];
+function sr32Html(r) { if (!r || r.k !== 'o' || !D || D.me.role !== 'Supervisor' || D.viewOf || !/^(ORD-|LEG-W|LEGG-)/.test(String(r.ref))) return '';
+  var F = SR32 && SR32.ref === r.ref ? SR32 : null, cur = r.sid || '';
+  if (!F) return '<button class="vasm" style="margin-top:6px" data-act="sr32o" data-r="' + esc(r.ref) + '">✎ Came from</button>';
+  return '<div class="vapf"><div class="small muted">Where did this order come from?</div><div class="vach">' + SRC32.map(function (c) { return '<button class="' + (F.to === c[0] ? 'on' : '') + '" data-act="sr32t" data-v="' + c[0] + '">' + c[1] + (c[0] === cur ? ' ✓' : '') + '</button>'; }).join('') + '</div>' +
+    '<input class="o2q" data-inp="sr32w" placeholder="Why? (the agent sees it)" value="' + esc(F.why) + '"><div class="va3"><button class="ghost2" data-act="sr32x">Cancel</button><button class="main gr" data-act="sr32go">Save</button></div></div>'; }
+ACT.sr32o = function (b) { var r = vaRow(b.dataset.r); if (!r) return; SR32 = { ref: r.ref, to: r.sid || '', why: '' }; drawSheet(); };
+ACT.sr32t = function (b) { if (SR32) SR32.to = b.dataset.v; drawSheet(); };
+INP.sr32w = function (el) { if (SR32) SR32.why = el.value; };
+ACT.sr32x = function () { SR32 = null; drawSheet(); };
+ACT.sr32go = function () { var F = SR32, r = F && vaRow(F.ref), vid = VA.vid; if (!r) return; if (!F.to || F.to === (r.sid || '')) { say('Choose where it came from.'); return; }
+  if (String(F.why || '').trim().length < 3) { say('Write why.'); return; }
+  bgSave('msrc32', { ref: r.ref, vid: vid, src: F.to, why: String(F.why).trim() }, 'src32-' + r.ref + '-' + Date.now(), 'Saved', null, true);
+  r.sid = F.to; r.src = SRC32.filter(function (c) { return c[0] === F.to; })[0][1]; r.om = F.to === 'SRC-OMINI' ? 1 : 0; SR32 = null; drawSheet();
+  setTimeout(function () { if (VA.vid === vid && SHEETK === 'vacct' && !VA.pay && !VA.fx && !VA.bf) vaLoad(vid); }, 5000); };
+vaPayHtml = (function (f) { return function (r) { return f.apply(this, arguments) + sr32Html(r); }; })(vaPayHtml);
 // ---------------------------------------------------------------- v2.8.18: money counter – tap the notes and coins, then "Use this"
 var MC = null, MCD = [[200, '200'], [100, '100'], [50, '50'], [20, '20'], [10, '10'], [5, '5'], [2, '2'], [1, '1'], [0.5, '50p'], [0.2, '20p'], [0.1, '10p']];
 var MCIN = ['vaamt', 'vapay', 'mfcash', 'paid', 'npaid', 'scash', 'smomo', 'deccash', 'fkcv', 'fkov', 'scamt', 'clamt', 'cldamt', 'ovamt', 'r27cm', 'r27oth'];
@@ -9464,6 +9481,63 @@ ACT.byop = function (b) { var v = b.dataset.v; BY.sel = {}; if (v !== 'cal') { B
 // handed over now: the manager's line carries its distributor for the filter
 ACT.byosave = (function (f) { return function () { var srcs = {}; ((BY.d && BY.d.rows) || []).forEach(function (r) { if (BY.sel[r.ref] && !r.om) srcs[r.src] = 1; }); var n = (BY.d && BY.d.hist || []).length; f.apply(this, arguments);
   if (BY.d && BY.d.hist.length > n) BY.d.hist.slice(0, BY.d.hist.length - n).forEach(function (x) { x.src = x.sn === 'Omni Haven' ? 'SRC-OMINI' : Object.keys(srcs).length === 1 ? Object.keys(srcs)[0] : ''; }); render(); }; })(ACT.byosave);
+// ---------------------------------------------------------------- v2.8.32: the manager's Money › Distributors – Pay · By order · Profit · Details
+var DP = { s: 'pay', st: '', d: null, go: null };
+function dp32Load() { DP.st = 'wait'; readOp('mpay32', {}, function (r) { if (r && r.ok) { DP.d = r; DP.st = 'ok'; } else { DP.st = 'err'; DP.err = (r && r.error) || 'Try again.'; } if (TAB === 'money') render(); }, function (m) { DP.st = 'err'; DP.err = m; if (TAB === 'money') render(); }); }
+byoLoad = (function (f) { return function () { if (!(D && D.me.role === 'Supervisor' && !D.viewOf)) return f.apply(this, arguments);
+  BY.st = 'wait'; readOp('mbyo32', {}, function (r) { if (r && r.ok) { BY.d = r; BY.st = 'ok'; } else { BY.st = 'err'; BY.err = (r && r.error) || 'Try again.'; } if (TAB === 'money') render(); }, function (m) { BY.st = 'err'; BY.err = m; if (TAB === 'money') render(); }); }; })(byoLoad);
+byoRow = (function (f) { return function (r) { var s = f.apply(this, arguments); if (!(D && D.me.role === 'Supervisor' && !D.viewOf)) return s;
+  s = s.replace(/<button class="by89t"[^>]*>[^<]*<\/button>/, ''); // the manager pays by total, not by ticking orders
+  return BY.open === r.ref && r.vid ? s.replace(/<\/div><b class="fkam">/, '<button class="vasm" style="margin-top:6px" data-act="vacct" data-v="' + esc(r.vid) + '">Her account › fix a payment</button></div><b class="fkam">') : s; }; })(byoRow);
+function dp32Card(x) { var ow = x.om ? x.held : x.left;
+  return '<div class="varow k' + (ow > 0.004 ? 'a' : 'g') + '"><div class="r1"><span>' + esc(x.name) + '</span><b>' + (x.om ? (x.held > 0.004 ? ghs(x.held) + ' with you' : 'nothing with you ✓') : x.left > 0.004 ? 'owe ' + ghs(x.left) : 'nothing owed ✓') + '</b></div>' +
+    '<div class="r2"><span>' + (x.om ? 'Omni money you took' : 'Their money with you ' + ghs(x.held)) + ' · vendors still owe ' + ghs(x.vo) + '</span></div>' +
+    ((x.om ? x.held > 0.004 : x.left > 0.004) ? '<div class="va3"><button class="main gr" data-act="dp32o" data-v="' + esc(x.src) + '">' + (x.om ? 'Hand over' : 'Pay ' + esc(x.name)) + '</button></div>' : '') + '</div>'; }
+function dp32Pays(L) { if (!L || !L.length) return '';
+  return '<div class="fkq2">Paid and handed over</div>' + L.map(function (p) { return '<div class="fkr" style="border-left-color:' + (p.pf ? '#7c3aed' : p.st === 'Sent' ? '#d97706' : '#15803d') + '"><div class="grow"><b>' + esc(p.to ? p.sn + ' → ' + p.to : p.sn) + '</b><div class="fks">' + esc(dayLbl(p.day)) + (p.pf ? ' · from your profit' : '') + (p.st === 'Sent' ? ' · waiting for Frank' : '') + (p.note ? ' · ' + esc(p.note) : '') + '</div></div><b class="fkam">' + ghs(p.amt) + '</b></div>'; }).join(''); }
+function dp32Html() { if (!DP.st) dp32Load(); var X = DP.d; if (!X) return DP.st === 'err' ? emptyHtml(DP.err) + '<button class="ghost" data-act="dp32r">Try again</button>' : '<div class="mdsk"><i></i><i></i></div>';
+  if (DP.s === 'prof') { var P = X.prof;
+    return '<div class="by3"><div><span>Profit (GHS 5 a carton)</span><b>' + ghs(P.earned) + '</b></div><div><span>Used – to get back</span><b>' + ghs(P.out) + '</b></div><div class="b"><span>Available</span><b>' + ghs(P.avail) + '</b></div></div>' +
+      (P.avail > 0.004 ? '<div class="va3"><button class="main gr" data-act="dp32o" data-v="" data-f="profit">Use profit to pay a distributor</button></div>' : '') +
+      '<div class="fkq2">To get back from vendors</div>' + (P.back.length ? P.back.map(function (b) { return '<div class="fkr" style="border-left-color:#7c3aed" data-act="vacct" data-v="' + esc(b.vid) + '"><div class="grow"><b>' + esc(b.v) + '</b><div class="fks">' + esc(dayLbl(b.day)) + ' · ' + esc(b.sn) + '</div></div><b class="fkam">' + ghs(b.amt) + '</b></div>'; }).join('') : emptyHtml('Nothing to get back.')) +
+      dp32Pays(X.pays.filter(function (p) { return p.pf; })); }
+  return X.list.map(dp32Card).join('') + dp32Pays(X.pays); }
+pgMMoney = (function (f) { return function (m0) { if (MM.s !== 'dist') return f.apply(this, arguments);
+  var s = f.apply(this, arguments), i = s.indexOf('</div>') + 6, top = s.slice(0, i), rest = s.slice(i);
+  var tr = '<div class="t2tray">' + [['pay', 'Pay'], ['byo', 'By order'], ['prof', 'Profit'], ['more', 'Details']].map(function (c) { return '<button class="' + (DP.s === c[0] ? 'on' : '') + '" data-act="dp32s" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
+  return top + tr + (DP.s === 'more' ? rest : DP.s === 'byo' ? byoHtml() : dp32Html()); }; })(pgMMoney);
+ACT.dp32r = function () { DP.st = ''; render(); };
+ACT.dp32s = function (b) { DP.s = b.dataset.v; if (DP.s === 'byo') BY.st = ''; if (DP.s === 'pay' || DP.s === 'prof') DP.st = ''; render(); };
+ACT.dp32o = function (b) { var X = DP.d, f = b.dataset.f || 'cash', src = b.dataset.v || '', L = (X && X.list) || [], x = L.filter(function (y) { return y.src === src; })[0];
+  if (!x && f === 'profit') x = L.filter(function (y) { return !y.om && y.left > 0.004; })[0]; if (!x) { say('Nothing owed.'); return; }
+  DP.go = { src: x.src, from: x.om ? 'cash' : f, to: 'frank', proof: '', note: '', amt: '' }; DP.go.amt = String(dp32Def()); sheetOpen('dp32'); };
+function dp32Def() { var G = DP.go, x = (DP.d.list || []).filter(function (y) { return y.src === G.src; })[0] || {}; if (x.om) return x.held || 0;
+  return G.from === 'profit' ? Math.min(x.left || 0, DP.d.prof.avail || 0) : Math.min(x.left || 0, x.held || 0) || 0; }
+SHEETS.dp32 = function () { var G = DP.go, X = DP.d; if (!G || !X) return ''; var x = X.list.filter(function (y) { return y.src === G.src; })[0] || {};
+  var h = shHead('cash', 'green', x.om ? 'Hand over Omni money' : 'Pay ' + x.name, x.om ? ghs(x.held) + ' with you' : 'You owe ' + ghs(x.left));
+  if (!x.om) h += '<div class="vach">' + X.list.filter(function (y) { return !y.om; }).map(function (y) { return '<button class="' + (G.src === y.src ? 'on' : '') + '" data-act="dp32src" data-v="' + esc(y.src) + '">' + esc(y.name) + '</button>'; }).join('') + '</div>' +
+    '<div class="fkq2">Paid from</div><div class="vach">' + [['cash', 'Their money with me (' + ghs(x.held) + ')'], ['profit', 'My profit (' + ghs(X.prof.avail) + ')']].map(function (c) { return '<button class="' + (G.from === c[0] ? 'on' : '') + '" data-act="dp32f" data-v="' + c[0] + '">' + esc(c[1]) + '</button>'; }).join('') + '</div>';
+  else h += '<div class="fkq2">To</div><div class="vach">' + [['frank', 'Frank (he confirms)'], ['acct', 'The accountant']].map(function (c) { return '<button class="' + (G.to === c[0] ? 'on' : '') + '" data-act="dp32t" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>' +
+    (G.to === 'acct' ? '<div class="fkq2">Proof</div><div class="vach">' + [['wa', 'WhatsApp'], ['signed', 'He signed – check with me']].map(function (c) { return '<button class="' + (G.proof === c[0] ? 'on' : '') + '" data-act="dp32p" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>' : '');
+  h += '<div class="fkq2">Amount</div><input class="o2q" data-inp="dp32a" inputmode="decimal" value="' + esc(G.amt) + '"><input data-inp="dp32n" value="' + esc(G.note) + '" placeholder="Note (optional)" autocomplete="off">';
+  if (!x.om && G.from === 'profit') h += '<p class="small muted">It pays their oldest unpaid orders. Those vendors then owe it back to your profit.</p>';
+  return h + '<div class="va3"><button class="ghost2" data-act="closeO">Cancel</button><button class="main gr" data-act="dp32go">Save</button></div>'; };
+ACT.dp32src = function (b) { DP.go.src = b.dataset.v; DP.go.amt = String(dp32Def()); drawSheet(); };
+ACT.dp32f = function (b) { DP.go.from = b.dataset.v; DP.go.amt = String(dp32Def()); drawSheet(); };
+ACT.dp32t = function (b) { DP.go.to = b.dataset.v; drawSheet(); };
+ACT.dp32p = function (b) { DP.go.proof = b.dataset.v; drawSheet(); };
+INP.dp32a = function (el) { if (DP.go) DP.go.amt = el.value; };
+INP.dp32n = function (el) { if (DP.go) DP.go.note = el.value; };
+ACT.dp32go = function () { var G = DP.go, X = DP.d; if (!G || !X) return; var x = X.list.filter(function (y) { return y.src === G.src; })[0] || {}, a = Math.round((Number(String(G.amt).replace(/[,\s]/g, '')) || 0) * 100) / 100;
+  if (!(a > 0)) { say('Type the amount.'); return; }
+  if (x.om) { if (a > x.held + 0.01) { say('You have ' + ghs(x.held) + ' of Omni money.'); return; } if (G.to === 'acct' && !G.proof) { say('Choose the proof.'); return; } }
+  else { if (a > x.left + 0.01) { say('You owe ' + x.name + ' ' + ghs(x.left) + '.'); return; }
+    if (G.from === 'cash' && a > x.held + 0.01) { say('You have ' + ghs(x.held) + ' of their money. Use your profit for the rest.'); return; }
+    if (G.from === 'profit' && a > X.prof.avail + 0.01) { say('Your profit now is ' + ghs(X.prof.avail) + '.'); return; } }
+  bgSave('mpaygo32', { src: G.src, amt: a, from: G.from, to: G.to, proof: G.proof, note: String(G.note || '').trim() }, 'dp32-' + uid(), 'Saved', null, true);
+  if (x.om) x.held = Math.round((x.held - a) * 100) / 100; else { x.left = Math.round((x.left - a) * 100) / 100; if (G.from === 'cash') x.held = Math.round((x.held - a) * 100) / 100; else X.prof.avail = Math.round((X.prof.avail - a) * 100) / 100; }
+  X.pays.unshift({ day: D.today, src: G.src, sn: x.name, amt: a, pf: !x.om && G.from === 'profit' ? 1 : 0, to: x.om ? (G.to === 'frank' ? 'Frank' : 'Accountant') : '', st: x.om && G.to === 'frank' ? 'Sent' : 'Confirmed', note: '' });
+  DP.go = null; SHEETK = ''; $('over').innerHTML = ''; DS.C = {}; render(); setTimeout(function () { DP.st = ''; if (TAB === 'money') render(); }, 6000); };
 // ---------------------------------------------------------------- v2.8.20: Prince's last place – in the order's details (on the way), Team › Prince, and always fresh while his app is open
 var RLW = null, RLS = { t: 0, lat: 0, lng: 0 };
 function rl89Dist(a, b, c, d) { var R = 6371000, x = (c - a) * Math.PI / 180, y = (d - b) * Math.PI / 180 * Math.cos((a + c) / 2 * Math.PI / 180); return Math.sqrt(x * x + y * y) * R; }
