@@ -9494,17 +9494,17 @@ function dp32Card(x) { var ow = x.om ? x.held : x.left;
     '<div class="r2"><span>' + (x.om ? 'Omni money you took' : 'Their money with you ' + ghs(x.held)) + ' · vendors still owe ' + ghs(x.vo) + '</span></div>' +
     ((x.om ? x.held > 0.004 : x.left > 0.004) ? '<div class="va3"><button class="main gr" data-act="dp32o" data-v="' + esc(x.src) + '">' + (x.om ? 'Hand over' : 'Pay ' + esc(x.name)) + '</button></div>' : '') + '</div>'; }
 function dp32Pays(L) { if (!L || !L.length) return '';
-  return '<div class="fkq2">Paid and handed over</div>' + L.map(function (p) { return '<div class="fkr" style="border-left-color:' + (p.pf ? '#7c3aed' : p.st === 'Sent' ? '#d97706' : '#15803d') + '"><div class="grow"><b>' + esc(p.to ? p.sn + ' → ' + p.to : p.sn) + '</b><div class="fks">' + esc(dayLbl(p.day)) + (p.pf ? ' · from your profit' : '') + (p.st === 'Sent' ? ' · waiting for Frank' : '') + (p.note ? ' · ' + esc(p.note) : '') + '</div></div><b class="fkam">' + ghs(p.amt) + '</b></div>'; }).join(''); }
+  return '<div class="fkq2">Paid and handed over</div>' + L.map(function (p) { return '<div class="fkr" style="border-left-color:' + (p.pf ? '#7c3aed' : p.st === 'Sent' ? '#d97706' : '#15803d') + '"><div class="grow"><b>' + esc(p.to ? p.sn + ' → ' + p.to : p.sn) + '</b><div class="fks">' + esc(dayLbl(p.day)) + (p.pf ? ' · from your PP' : '') + (p.st === 'Sent' ? ' · waiting for Frank' : '') + (p.note ? ' · ' + esc(p.note) : '') + '</div></div><b class="fkam">' + ghs(p.amt) + '</b></div>'; }).join(''); }
 function dp32Html() { if (!DP.st) dp32Load(); var X = DP.d; if (!X) return DP.st === 'err' ? emptyHtml(DP.err) + '<button class="ghost" data-act="dp32r">Try again</button>' : '<div class="mdsk"><i></i><i></i></div>';
   if (DP.s === 'prof') { var P = X.prof;
-    return '<div class="by3"><div><span>Profit (GHS 5 a carton)</span><b>' + ghs(P.earned) + '</b></div><div><span>Used – to get back</span><b>' + ghs(P.out) + '</b></div><div class="b"><span>Available</span><b>' + ghs(P.avail) + '</b></div></div>' +
-      (P.avail > 0.004 ? '<div class="va3"><button class="main gr" data-act="dp32o" data-v="" data-f="profit">Use profit to pay a distributor</button></div>' : '') +
+    return '<div class="by3"><div><span>PP (GHS 5 a carton)</span><b>' + ghs(P.earned) + '</b></div><div><span>Used – to get back</span><b>' + ghs(P.out) + '</b></div><div class="b"><span>Available</span><b>' + ghs(P.avail) + '</b></div></div>' +
+      (P.avail > 0.004 ? '<div class="va3"><button class="main gr" data-act="dp32o" data-v="" data-f="profit">Use PP to pay a distributor</button></div>' : '') +
       '<div class="fkq2">To get back from vendors</div>' + (P.back.length ? P.back.map(function (b) { return '<div class="fkr" style="border-left-color:#7c3aed" data-act="vacct" data-v="' + esc(b.vid) + '"><div class="grow"><b>' + esc(b.v) + '</b><div class="fks">' + esc(dayLbl(b.day)) + ' · ' + esc(b.sn) + '</div></div><b class="fkam">' + ghs(b.amt) + '</b></div>'; }).join('') : emptyHtml('Nothing to get back.')) +
       dp32Pays(X.pays.filter(function (p) { return p.pf; })); }
   return X.list.map(dp32Card).join('') + dp32Pays(X.pays); }
 pgMMoney = (function (f) { return function (m0) { if (MM.s !== 'dist') return f.apply(this, arguments);
   var s = f.apply(this, arguments), i = s.indexOf('</div>') + 6, top = s.slice(0, i), rest = s.slice(i);
-  var tr = '<div class="t2tray">' + [['pay', 'Pay'], ['byo', 'By order'], ['prof', 'Profit'], ['more', 'Details']].map(function (c) { return '<button class="' + (DP.s === c[0] ? 'on' : '') + '" data-act="dp32s" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
+  var tr = '<div class="t2tray">' + [['pay', 'Pay'], ['byo', 'By order'], ['prof', 'PP'], ['more', 'Details']].map(function (c) { return '<button class="' + (DP.s === c[0] ? 'on' : '') + '" data-act="dp32s" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
   return top + tr + (DP.s === 'more' ? rest : DP.s === 'byo' ? byoHtml() : dp32Html()); }; })(pgMMoney);
 ACT.dp32r = function () { DP.st = ''; render(); };
 ACT.dp32s = function (b) { DP.s = b.dataset.v; if (DP.s === 'byo') BY.st = ''; if (DP.s === 'pay' || DP.s === 'prof') DP.st = ''; render(); };
@@ -9516,11 +9516,11 @@ function dp32Def() { var G = DP.go, x = (DP.d.list || []).filter(function (y) { 
 SHEETS.dp32 = function () { var G = DP.go, X = DP.d; if (!G || !X) return ''; var x = X.list.filter(function (y) { return y.src === G.src; })[0] || {};
   var h = shHead('cash', 'green', x.om ? 'Hand over Omni money' : 'Pay ' + x.name, x.om ? ghs(x.held) + ' with you' : 'You owe ' + ghs(x.left));
   if (!x.om) h += '<div class="vach">' + X.list.filter(function (y) { return !y.om; }).map(function (y) { return '<button class="' + (G.src === y.src ? 'on' : '') + '" data-act="dp32src" data-v="' + esc(y.src) + '">' + esc(y.name) + '</button>'; }).join('') + '</div>' +
-    '<div class="fkq2">Paid from</div><div class="vach">' + [['cash', 'Their money with me (' + ghs(x.held) + ')'], ['profit', 'My profit (' + ghs(X.prof.avail) + ')']].map(function (c) { return '<button class="' + (G.from === c[0] ? 'on' : '') + '" data-act="dp32f" data-v="' + c[0] + '">' + esc(c[1]) + '</button>'; }).join('') + '</div>';
+    '<div class="fkq2">Paid from</div><div class="vach">' + [['cash', 'Their money with me (' + ghs(x.held) + ')'], ['profit', 'My PP (' + ghs(X.prof.avail) + ')']].map(function (c) { return '<button class="' + (G.from === c[0] ? 'on' : '') + '" data-act="dp32f" data-v="' + c[0] + '">' + esc(c[1]) + '</button>'; }).join('') + '</div>';
   else h += '<div class="fkq2">To</div><div class="vach">' + [['frank', 'Frank (he confirms)'], ['acct', 'The accountant']].map(function (c) { return '<button class="' + (G.to === c[0] ? 'on' : '') + '" data-act="dp32t" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>' +
     (G.to === 'acct' ? '<div class="fkq2">Proof</div><div class="vach">' + [['wa', 'WhatsApp'], ['signed', 'He signed – check with me']].map(function (c) { return '<button class="' + (G.proof === c[0] ? 'on' : '') + '" data-act="dp32p" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>' : '');
   h += '<div class="fkq2">Amount</div><input class="o2q" data-inp="dp32a" inputmode="decimal" value="' + esc(G.amt) + '"><input data-inp="dp32n" value="' + esc(G.note) + '" placeholder="Note (optional)" autocomplete="off">';
-  if (!x.om && G.from === 'profit') h += '<p class="small muted">It pays their oldest unpaid orders. Those vendors then owe it back to your profit.</p>';
+  if (!x.om && G.from === 'profit') h += '<p class="small muted">It pays their oldest unpaid orders. Those vendors then owe it back to your PP.</p>';
   return h + '<div class="va3"><button class="ghost2" data-act="closeO">Cancel</button><button class="main gr" data-act="dp32go">Save</button></div>'; };
 ACT.dp32src = function (b) { DP.go.src = b.dataset.v; DP.go.amt = String(dp32Def()); drawSheet(); };
 ACT.dp32f = function (b) { DP.go.from = b.dataset.v; DP.go.amt = String(dp32Def()); drawSheet(); };
@@ -9532,8 +9532,8 @@ ACT.dp32go = function () { var G = DP.go, X = DP.d; if (!G || !X) return; var x 
   if (!(a > 0)) { say('Type the amount.'); return; }
   if (x.om) { if (a > x.held + 0.01) { say('You have ' + ghs(x.held) + ' of Omni money.'); return; } if (G.to === 'acct' && !G.proof) { say('Choose the proof.'); return; } }
   else { if (a > x.left + 0.01) { say('You owe ' + x.name + ' ' + ghs(x.left) + '.'); return; }
-    if (G.from === 'cash' && a > x.held + 0.01) { say('You have ' + ghs(x.held) + ' of their money. Use your profit for the rest.'); return; }
-    if (G.from === 'profit' && a > X.prof.avail + 0.01) { say('Your profit now is ' + ghs(X.prof.avail) + '.'); return; } }
+    if (G.from === 'cash' && a > x.held + 0.01) { say('You have ' + ghs(x.held) + ' of their money. Use your PP for the rest.'); return; }
+    if (G.from === 'profit' && a > X.prof.avail + 0.01) { say('Your PP now is ' + ghs(X.prof.avail) + '.'); return; } }
   bgSave('mpaygo32', { src: G.src, amt: a, from: G.from, to: G.to, proof: G.proof, note: String(G.note || '').trim() }, 'dp32-' + uid(), 'Saved', null, true);
   if (x.om) x.held = Math.round((x.held - a) * 100) / 100; else { x.left = Math.round((x.left - a) * 100) / 100; if (G.from === 'cash') x.held = Math.round((x.held - a) * 100) / 100; else X.prof.avail = Math.round((X.prof.avail - a) * 100) / 100; }
   X.pays.unshift({ day: D.today, src: G.src, sn: x.name, amt: a, pf: !x.om && G.from === 'profit' ? 1 : 0, to: x.om ? (G.to === 'frank' ? 'Frank' : 'Accountant') : '', st: x.om && G.to === 'frank' ? 'Sent' : 'Confirmed', note: '' });
