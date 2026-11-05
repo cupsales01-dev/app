@@ -1312,7 +1312,7 @@ function render() {
 var OVK = '';
 function overDraw(h, key) { var o = document.querySelector('#over .sheet'), st = o && OVK === key ? o.scrollTop : 0; $('over').innerHTML = h; OVK = key; var n = document.querySelector('#over .sheet'); if (n && st) n.scrollTop = st; }
 /** v2.5.9: a read that changes nothing (history, a place's name) – no save queue, no refresh. */
-function readOp(op, data, ok, fail) { data = data || {}; if (D && D.viewOf && (op === 'hist' || op === 'place')) data.actAs = D.viewOf.uid; rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: op, data: data }, function (r) { if (!r) { if (fail) fail('No answer – try again.'); return; } if (r.auth) { if (fail) fail('Open the app again and sign in.'); return; } ok(r); }, function () { if (fail) fail('No connection – try again when you have signal.'); }); }
+function readOp(op, data, ok, fail) { data = data || {}; if (D && D.viewOf && (op === 'hist' || op === 'place' || op === 'svdir' || op === 'svpage' || op === 'aghelp')) data.actAs = D.viewOf.uid; rpc({ t: TOKEN, s: SESSION || ls(SKEY) || '', op: op, data: data }, function (r) { if (!r) { if (fail) fail('No answer – try again.'); return; } if (r.auth) { if (fail) fail('Open the app again and sign in.'); return; } ok(r); }, function () { if (fail) fail('No connection – try again when you have signal.'); }); }
 /** v2.5.3: details and decisions open in a sheet from the bottom; it is drawn again whenever the screen is. */
 var SHEETK = ''; // SHEETS: defined at the top of the page (first used there)
 function sheetOpen(k) { SHEETK = k; drawSheet(); }
@@ -3492,8 +3492,8 @@ var NVIA = ['Phone call', 'WhatsApp', 'At her spot', 'Other'], NURG = ['New vend
 var NTIMES = ['Any time before she closes', 'Before 7 am', '7 to 9 am', '9 am to 12', 'After 12'], NCLOSE = [['11:00', '11 am'], ['12:00', '12 noon'], ['13:00', '1 pm'], ['14:00', '2 pm'], ['15:00', '3 pm'], ['16:00', '4 pm'], ['17:00', '5 pm']];
 var NCC_TXT = 'I agree that I have done all the necessary checks that the company policy stipulates for credit for a newly onboarded vendor.';
 function nKey() { return VZ && !VZ.done && TAB === 'visit' ? DKEY + '_vo' : DKEY + '_n2'; } // v2.6.5: the order at her spot has its own basket
-function nNew(vid) { return { sid: uid(), vid: vid || '', via: '', viaNote: '', lines: [], open: -1, pay: 'CASH', how: '', paid: null, promised: 0, pOpen: false, cc: false, ccNote: '', ccOpen: false, day: '', time: '', urg: false, urgWhy: '', urgNote: '', note: '', noteOn: false, any: false }; }
-function nDr() { var x = null; try { x = JSON.parse(ls(nKey()) || 'null'); } catch (e) { } if (!x || !x.sid) { x = nNew(); nSave(x); } if (x.vid && !vend(x.vid)) { x = nNew(); nSave(x); } if (x.day && x.day !== 'today' && x.day < D.today) { x.day = ''; nSave(x); } /* an old draft: a fresh delivery day */ return x; }
+function nNew(vid) { return { v36: 1, sid: uid(), vid: vid || '', via: '', viaNote: '', lines: [], open: -1, pay: 'CASH', how: '', paid: null, promised: 0, pOpen: false, cc: false, ccNote: '', ccOpen: false, day: '', time: '', urg: false, urgWhy: '', urgNote: '', note: '', noteOn: false, any: false }; }
+function nDr() { var x = null; try { x = JSON.parse(ls(nKey()) || 'null'); } catch (e) { } if (!x || !x.sid) { x = nNew(); nSave(x); } if (x.vid && !vend(x.vid)) { x = nNew(); nSave(x); } if (x.day && x.day !== 'today' && x.day < D.today) { x.day = ''; nSave(x); } /* an old draft: a fresh delivery day */ if (!x.v36) { x.v36 = 1; if (!x.dayTap) x.day = ''; if (!x.urg) x.urgWhy = ''; nSave(x); } /* v2.8.36: days picked by the old version go */ return x; }
 function nSave(x) { ls(nKey(), JSON.stringify(x)); }
 /** v2.8.13: help items on New order – optional, the manager approves first. */
 function nHasL(x) { return x.lines.some(function (l) { return l.qty > 0; }); }
@@ -3684,7 +3684,7 @@ ACT.nccopen = function () { nEdit(function (x) { x.ccOpen = true; }); }; ACT.ncc
 ACT.npopen = function () { nEdit(function (x) { x.pOpen = !x.pOpen; }); };
 INP.nprm = function (el) { var x = nDr(), v = vend(x.vid) || { debt: 0 }, p = num(el.value); x.promised = p > 0 ? Math.min(Math.round(v.debt * 100) / 100, Math.round(p * 100) / 100) : 0; nSave(x); }; CHG.nprm = function () { render(); }; // v2.8.31: type the exact amount
 ACT.nprom = function (b) { nEdit(function (x) { var v = vend(x.vid) || { debt: 0 }; x.promised = Math.max(0, Math.min(Math.round(v.debt * 100) / 100, (Number(x.promised) || 0) + Number(b.dataset.d))); }); };
-ACT.nday = function (b) { nEdit(function (x) { x.day = b.dataset.v; }); }; ACT.ndayo = function () { NDAYO = true; render(); };
+ACT.nday = function (b) { nEdit(function (x) { x.day = b.dataset.v; x.dayTap = 1; }); }; ACT.ndayo = function () { NDAYO = true; render(); };
 ACT.ntime = function (b) { nEdit(function (x) { x.time = b.dataset.v; }); };
 ACT.nclose = function (b) { var x = nDr(), v = vend(x.vid); if (!v || viewBlock('vprofile')) return; v.prof = v.prof || {}; v.prof.close = b.dataset.v; bgSave('vprofile', { vid: v.id, prof: { close: b.dataset.v } }, 'vpc-' + v.id + '-' + uid(), 'closing time for ' + v.name, null, true); render(); };
 ACT.nurg = function () { nEdit(function (x) { x.urg = !x.urg; if (!x.urg) { x.urgWhy = ''; } }); };
@@ -5655,13 +5655,15 @@ var SVK = ['buy', 'slow', 'stop', 'new'], SSK = ['pros', 'ready', 'our', 'noint'
 var SVX = [['owes', 'Owes money'], ['out', 'Likely out'], ['slowpay', 'Pays slowly'], ['miss', 'Missing details']], SSX = [['promdue', 'Promise due'], ['never', 'Never visited'], ['field', 'Found in the field']];
 var SVKC = { Visit: '#2563eb', Call: '#9ca3af', "Can't visit": '#dc2626', Note: '#8b5cf6' };
 var SVROW = [['met', 'Who we met'], ['disc', 'Talked about'], ['concl', 'Result'], ['money', 'Money'], ['order', 'Order'], ['out', 'What happened'], ['asked', 'She asked for'], ['gave', 'Gave'], ['worry', 'Her worry'], ['next', 'Next step'], ['note', 'Note']], SVKEY = ['concl', 'order', 'out', 'money', 'next'];
-function svOn() { return !!(D && D.me && D.me.role === 'Agent' && !D.viewOf); }
-function svKey() { return 'cs_sv_' + TOKEN; }
+function svOn() { return !!(D && D.me && D.me.role === 'Agent'); } // v2.8.36: also when the manager looks at her screen
+function svVu() { return D && D.viewOf ? D.viewOf.uid : ''; }
+function svKey() { return 'cs_sv_' + TOKEN + (svVu() ? '_' + svVu() : ''); }
 /** The section's data: kept on the phone (same day), read again after 5 minutes or after a save. */
 function svLoad(force) {
-  if (!SV.d) { try { var c = JSON.parse(ls(svKey()) || 'null'); if (c && c.today === D.today) SV.d = c; } catch (e) { } }
+  if (SV.d && (SV.d.vu || '') !== svVu()) { SV.d = null; SV.pd = {}; SV.pg = null; SV.f = null; } // v2.8.36: another person's screen
+  if (!SV.d) { try { var c = JSON.parse(ls(svKey()) || 'null'); if (c && c.today === D.today && (c.vu || '') === svVu()) SV.d = c; } catch (e) { } }
   if (SV.busy || (!force && SV.d && Date.now() - (SV.d.got || 0) < 5 * 60000)) return;
-  SV.busy = true; readOp('svdir', {}, function (r) { SV.busy = false; if (r && r.ok) { r.got = Date.now(); SV.d = r; ls(svKey(), JSON.stringify(r)); if (TAB === 'vendors' || SHEETK.indexOf('sv') === 0) { render(); } } }, function () { SV.busy = false; });
+  SV.busy = true; var vu36 = svVu(); readOp('svdir', {}, function (r) { SV.busy = false; if (r && r.ok) { if (vu36 !== svVu()) return; r.got = Date.now(); r.vu = vu36; SV.d = r; ls(svKey(), JSON.stringify(r)); if (TAB === 'vendors' || SHEETK.indexOf('sv') === 0) { render(); } } }, function () { SV.busy = false; });
 }
 function svV(id) { var L = (SV.d || {}).v || []; for (var i = 0; i < L.length; i++) if (L[i].id === id) return L[i]; return null; }
 function svS(id) { var L = (SV.d || {}).s || []; for (var i = 0; i < L.length; i++) if (L[i].id === id) return L[i]; return null; }
@@ -7383,7 +7385,16 @@ function spreadRet(s, st) {
   Object.keys(st.retp || {}).forEach(function (sk) { var n = st.retp[sk] || 0; for (var i = 0; i < ord.length && n > 0; i++) { var o = ord[i]; o.lines.forEach(function (l) { if (l.sku !== sk || n <= 0) return; var k = Math.min(n, l.qty); o.retn[sk] = (o.retn[sk] || 0) + k; n -= k; }); } });
   st.ret = {}; s.orders.forEach(function (o) { Object.keys(o.retn).forEach(function (sk) { if (o.retn[sk] > 0) st.ret[o.oid + '|' + sk] = o.retn[sk]; }); });
 }
-function pgRoute() { return pgRoute0() + laterHtml(); } // v2.5.15
+function pgRoute() { return r36Bar() + pgRoute0() + laterHtml(); } // v2.5.15; v2.8.36: the red bar
+// v2.8.36: deliveries still on the phone – a red bar until they reach the system
+var R36N = -1;
+function r36Waiting() { if (!D || !D.me || ['Rider', 'Helper'].indexOf(D.me.role) < 0) return []; return queue().filter(function (x) { return x.op === 'stop' || x.op === 'rload'; }); }
+function r36Bar() { var L = r36Waiting(), n = L.filter(function (x) { return x.op === 'stop'; }).length; if (!L.length) return ''; var old = Date.now() - Math.min.apply(null, L.map(function (x) { return x.at || Date.now(); }));
+  if (old < 20000) return '';
+  return '<div class="r36un" data-act="r36go"><b>' + (n ? n + ' deliver' + (n === 1 ? 'y' : 'ies') : 'Your load') + ' not sent yet</b><span>Keep CupSales open with signal until this bar goes. Tap to send now.</span></div>'; }
+ACT.r36go = function () { FAILS = {}; clearTimeout(RETRYT); FLUSHING = false; flush(); toast('Sending…'); };
+setInterval(function () { try { var n = r36Bar() ? r36Waiting().length : 0; if (n !== R36N) { R36N = n; if (TAB === 'route' && !SHEETK && !touching()) render(); } } catch (e) { } }, 8000);
+try { document.head.insertAdjacentHTML('beforeend', '<style>.r36un{display:block;background:#FDECEA;border:1.5px solid #D93025;color:#A50E0E;border-radius:12px;padding:10px 12px;margin:0 0 10px;cursor:pointer}.r36un b{display:block;font-size:15px}.r36un span{display:block;font-size:13px;margin-top:2px}</style>'); } catch (e) { }
 function pgRoute0() {
   var R = routeStops(), P = pickStops();
   if (!R.length && !P.length && !(D.hstops || []).length) return emptyHtml('Nothing to deliver right now.'); // v2.5.18: or help items to bring
@@ -8068,7 +8079,7 @@ CHG.n71ti = function (el) { if (/^\d{2}:\d{2}$/.test(el.value)) DLV.t1 = el.valu
 ACT.n71win = function (b) { DLV.mode = 'win'; DLV.win = b.dataset.v; drawSheet(); };
 ACT.n71ok = function () { var S = DLV, x = nDr(), v = vend(x.vid), t = n71Txt(S); if (!S || !S.day || !t) return;
   if (S.mode === 'close' && S.close && S.close !== nClose(v)) ACT.nclose({ dataset: { v: S.close } });
-  DLV = null; SHEETK = ''; $('over').innerHTML = ''; nEdit(function (y) { y.day = S.day; y.time = t; }); };
+  DLV = null; SHEETK = ''; $('over').innerHTML = ''; nEdit(function (y) { y.day = S.day; y.time = t; y.dayTap = 1; }); };
 // ---------------------------------------------------------------- Payment (also used by New order)
 function n71Pay(x, v, o) { o = o || {};
   var val = nVal(x), h = '<div class="n71c"><div class="n71h">' + ico(ICO.b6pay) + 'Payment</div><div class="o2seg n71red">' + n90Pays(v).filter(function (p) { return !(D.viewOf && p[0] === 'NOW'); }).map(function (p) { return '<button class="' + (x.pay === p[0] ? 'on' : '') + '" data-act="npay" data-v="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>';
@@ -8171,7 +8182,7 @@ SHEETS.n71dlv = function () { if (!DLV) return ''; var S = DLV, x = nDr(), v = v
   var h = '<div class="n72hd"><span class="n72hi">' + ico(ICO.b6today) + '</span><div class="grow"><b>Delivery schedule</b><div class="small muted">Pick the day and time</div></div><button class="n72x" data-act="n71x" aria-label="Close">×</button></div>';
   h += '<div class="n72l">Day</div><div class="n72days">' + L.map(function (d) { return '<button class="' + (S.day === d ? 'on' : '') + '" data-act="n71d" data-v="' + d + '"><span>' + n72Top(d) + (o27Star(v, d) ? ' · Due' : '') + '</span><b>' + esc(dayLbl(d === 'today' ? D.today : d)) + '</b></button>'; }).join('') + '</div>';
   var dv = S.day === 'today' ? D.today : S.day || '';
-  h += '<label class="n72cal">' + ico(ICO.b6today) + '<input type="date" data-chg="n72date" value="' + esc(dv) + '" min="' + esc(A[0] === 'today' ? D.today : A[0]) + '" max="' + esc(A[A.length - 1]) + '" aria-label="Pick a day on the calendar"><b>' + esc(dv && L.indexOf(S.day) < 0 ? dayLbl(dv) : 'Other day') + '</b></label>' + (S.bad ? '<div class="small t-red" style="margin:4px 2px">' + esc(S.bad) + '</div>' : '');
+  h += '<button class="n72cal' + (S.cal ? ' on' : '') + '" data-act="n72cal">' + ico(ICO.b6today) + '<b>' + esc(dv && L.indexOf(S.day) < 0 ? dayLbl(dv) : 'Other day') + '</b></button>' + (S.cal ? (function () { var s0 = dv || A[0] === 'today' && A[1] || A[0] || D.today; if (S.cy == null) { S.cy = +s0.slice(0, 4); S.cm = +s0.slice(5, 7) - 1; } return dv34Grid(dv, 'n72g', S.cy, S.cm, 'n72gm'); })() : '') + (S.bad ? '<div class="small t-red" style="margin:4px 2px">' + esc(S.bad) + '</div>' : '');
   h += '<div class="n72l">Time</div><div class="n72seg">' + [['at', 'Exact'], ['before', 'Before'], ['after', 'After'], ['between', 'Range']].map(function (m) { return '<button class="' + (S.mode === m[0] ? 'on' : '') + '" data-act="n71m" data-v="' + m[0] + '">' + m[1] + '</button>'; }).join('') + '</div>';
   var tf = function (k, lb) { return '<label class="n72tf"><span>' + lb + '</span><input type="time" data-chg="n72t" data-k="' + k + '" value="' + esc(S[k] || '') + '"></label>'; };
   if (S.mode === 'between') h += '<div class="n72two">' + tf('t1', 'From') + tf('t2', 'To') + '</div>';
@@ -8185,6 +8196,9 @@ ACT.n71d = function (b) { DLV.day = b.dataset.v; DLV.bad = ''; drawSheet(); };
 ACT.n71m = function (b) { var m = b.dataset.v; DLV.mode = m; if (!DLV.t1) DLV.t1 = '10:00'; if (m === 'between' && !(DLV.t2 > DLV.t1)) DLV.t2 = DLV.t1 < '14:00' ? '14:00' : ''; drawSheet(); };
 ACT.n72q = function (b) { var k = b.dataset.k; if (k === 'close') DLV.mode = 'close'; else if (k === 'at12') { DLV.mode = 'at'; DLV.t1 = '12:00'; } else { DLV.mode = 'win'; DLV.win = b.dataset.v; } drawSheet(); };
 CHG.n72t = function (el) { if (/^\d{2}:\d{2}$/.test(el.value)) DLV[el.dataset.k] = el.value; setTimeout(drawSheet, 0); };
+ACT.n72cal = function () { DLV.cal = !DLV.cal; drawSheet(); }; // v2.8.36
+ACT.n72gm = function (b) { var m = DLV.cm + Number(b.dataset.v); DLV.cy += Math.floor(m / 12); DLV.cm = ((m % 12) + 12) % 12; drawSheet(); };
+ACT.n72g = function (b) { CHG.n72date({ value: b.dataset.v }); };
 CHG.n72date = function (el) { var d = el.value, x = nDr(), A = n72Allowed(x); if (!d) return;
   if (d === D.today) { DLV.day = 'today'; DLV.bad = ''; }
   else if (A.indexOf(d) >= 0) { DLV.day = d; DLV.bad = ''; NDAYO = true; }
@@ -8556,7 +8570,10 @@ rcptSend = (function (f) { return function (r, via) { if (via === 'SMS' || !D ||
   var go = function () { if (done) return; done = true; document.addEventListener('visibilitychange', hid); try { location.href = 'whatsapp://send?' + (wa ? 'phone=' + wa + '&' : '') + 'text=' + encodeURIComponent(txt); } catch (e) { }
     setTimeout(function () { document.removeEventListener('visibilitychange', hid); if (left || document.visibilityState !== 'visible') return; // the phone did not open WhatsApp: one tap opens it
       dlgChoose('Send ' + r.vendor + ' the receipt on WhatsApp', [['OPEN WHATSAPP', function () { location.href = 'https://wa.me/' + (wa || '') + '?text=' + encodeURIComponent(txt); }, 'main'], ['Not now', null, 'ghost']]); }, 2500); };
-  if (!queue().length) return go(); flush(); var t0 = Date.now(), w = setInterval(function () { if (!queue().length || Date.now() - t0 > 6000) { clearInterval(w); go(); } }, 300); }; })(rcptSend);
+  var stops36 = function () { return queue().filter(function (x) { return x.op === 'stop'; }).length; }; // v2.8.36: the delivery first, then WhatsApp
+  if (!stops36()) return go(); flush(); var t0 = Date.now(), told = false, w = setInterval(function () { if (!stops36()) { clearInterval(w); go(); return; }
+    if (!told && Date.now() - t0 > 1500) { told = true; toast('Sending the delivery first – keep CupSales open'); }
+    if (Date.now() - t0 > 25000) { clearInterval(w); dlgChoose('The delivery is not sent yet (weak signal?). It goes by itself while CupSales stays open.', [['WAIT HERE', function () { flush(); }, 'main'], ['Open WhatsApp anyway', go, 'ghost']]); } }, 400); }; })(rcptSend);
 try { document.head.insertAdjacentHTML('beforeend', '<style>.fk89trip{font-size:14px;margin:2px 2px 8px;color:var(--ink)}.fk73ld .fkbig{position:sticky;bottom:calc(70px + env(safe-area-inset-bottom));z-index:4;box-shadow:0 6px 16px rgba(16,24,40,.18)}.fk89st{margin:6px 0 2px}.fk89st .fkln.t-red b{color:var(--red)}</style>'); } catch (e) { } // v2.8.9: Frank
 // ---------------------------------------------------------------- v2.8.9: help items are deliveries on Prince's Route
 // Today's help items (no day, or today) are on the Route: first in To confirm (with the cartons, "I have it"), then in
@@ -8795,16 +8812,18 @@ function moTray() {
   return '<input class="o2q" data-inp="moq" placeholder="Find a vendor or order number" value="' + esc(MO.q) + '" autocomplete="off">' +
     '<div class="t2tray"><button class="' + (!MO.ag ? 'on' : '') + '" data-act="moag" data-k="">All agents</button>' + A.map(function (a) { return '<button class="' + (MO.ag === a ? 'on' : '') + '" data-act="moag" data-k="' + esc(a) + '">' + esc(a) + '</button>'; }).join('') + '</div>' +
     '<div class="t2tray">' + S.map(function (s) { return '<button class="' + (MO.src.indexOf(s) >= 0 ? 'on' : '') + '" data-act="mosrc" data-k="' + esc(s) + '">' + esc(s) + '</button>'; }).join('') + '<button class="' + (MO.urg ? 'on' : '') + '" data-act="mourg">🚩 Urgent</button>' + (n ? '<button data-act="moclr">Clear</button>' : '') + '</div>'; }
+// v2.8.36: Done lists an order under the day it was DELIVERED (the report counts that way); 'ordered …' shows when different
+function moDay(o) { var c = o && o.outcome; return c && c.at && !/^Not delivered/.test(c.status || '') && !/Cancel|Rejected/.test(o.status) ? c.at : o.date; }
 function moWin() { var t = D.today;
   if (MO.w === 'today') return [t, t];
   if (MO.w === 'month') return [t.slice(0, 8) + '01', t];
   if (MO.w === 'dates') { var f = MO.from || t, e = MO.to || f; return f <= e ? [f, e] : [e, f]; }
   return [oWeekStart(), t]; }
 function moDone() { var R = moWin(), k = 'm|' + R[0] + '|' + R[1], L = [], seen = {}, ph = addDays(D.today, -13);
-  oAll().forEach(function (o) { if (!oOpen(o) && o.date >= R[0] && o.date <= R[1]) { seen[o.oid] = 1; L.push(o); } });
-  if (R[0] < ph || R[0] < '2026-10-26') { ph = R[0] < ph ? ph : '9999'; if (!OHIST[k] && OHTRY[k] !== 1 && OHTRY[k] !== 2) { OHTRY[k] = 1; readOp('ordhist', { from: R[0], to: R[1], uid: '*' }, function (r) { if (r && r.orders) { OHIST[k] = r.orders; OHTRY[k] = 0; render(); } else { OHTRY[k] = 2; render(); } }, function () { OHTRY[k] = 2; render(); }); }
-    (OHIST[k] || []).forEach(function (o) { if (!seen[o.oid]) { seen[o.oid] = 1; L.push(o); } }); }
-  return { L: L, wait: R[0] < ph && !OHIST[k] && OHTRY[k] !== 2 }; }
+  oAll().forEach(function (o) { var md = moDay(o); if (oOpen(o)) { seen[o.oid] = 1; return; } if (md >= R[0] && md <= R[1]) { seen[o.oid] = 1; L.push(o); } });
+  if (true) { k += '|d'; ph = R[0] < ph ? ph : '9999'; if (!OHIST[k] && OHTRY[k] !== 1 && OHTRY[k] !== 2) { OHTRY[k] = 1; readOp('ordhist', { from: R[0], to: R[1], uid: '*', by: 'dlv' }, function (r) { if (r && r.orders) { OHIST[k] = r.orders; OHTRY[k] = 0; render(); } else { OHTRY[k] = 2; render(); } }, function () { OHTRY[k] = 2; render(); }); }
+    (OHIST[k] || []).forEach(function (o) { var md = moDay(o); if (!seen[o.oid] && md >= R[0] && md <= R[1]) { seen[o.oid] = 1; L.push(o); } }); }
+  return { L: L, wait: !OHIST[k] && OHTRY[k] !== 2 && (R[0] < ph || L.length === 0) }; }
 function pgMOrd() {
   var A = oAll().filter(moOk), N = moNeeds().filter(function (x) { return moOk(x.o); }), W = A.filter(oOpen), CA = (D.chgAsks || []).length;
   if (!MO.t) MO.t = N.length || CA ? 'n' : 'w';
@@ -8827,10 +8846,10 @@ function pgMOrd() {
     if (MO.w === 'dates') h += '<div class="n72two"><label class="n72tf"><span>From (or the day)</span><input type="date" data-chg="mod" data-f="from" value="' + esc(MO.from) + '" max="' + esc(D.today) + '"></label><label class="n72tf"><span>To (optional)</span><input type="date" data-chg="mod" data-f="to" value="' + esc(MO.to) + '" max="' + esc(D.today) + '"></label></div>';
     h += '<div class="t2tray">' + [['', 'All'], ['del', 'Delivered'], ['cx', 'Cancelled']].map(function (c) { return '<button class="' + ((MO.dst || '') === c[0] ? 'on' : '') + '" data-act="modst" data-k="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>'; // v2.8.12
     X.L = X.L.filter(function (o) { return !MO.dst || (MO.dst === 'cx' ? /Cancel|Rejected/.test(o.status) : o.status === 'Delivered'); });
-    var L = X.L.filter(moOk).sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; }), ok = L.filter(function (o) { return !/Cancel|Rejected/.test(o.status); });
+    var L = X.L.filter(moOk).sort(function (a, b) { var x = moDay(a), y = moDay(b); return x < y ? 1 : x > y ? -1 : 0; }), ok = L.filter(function (o) { return !/Cancel|Rejected/.test(o.status); });
     h += '<div class="o2wk">' + ok.length + ' order' + (ok.length === 1 ? '' : 's') + ' · ' + ok.reduce(function (t, o) { return t + oCtnAll(o); }, 0) + ' cartons · ' + ghs(ok.reduce(function (t, o) { return t + oValAll(o); }, 0)) + '</div>';
     if (X.wait) h += '<div class="mdsk"><i></i><i></i></div>';
-    var cur = null; L.forEach(function (o) { if (o.date !== cur) { cur = o.date; var g = L.filter(function (y) { return y.date === cur && !/Cancel|Rejected/.test(y.status); }); h += '<div class="o2dh"><span>' + esc(dayLbl(cur)) + '</span><span>' + g.reduce(function (t, y) { return t + oCtnAll(y); }, 0) + ' ctn · ' + ghs(g.reduce(function (t, y) { return t + oValAll(y); }, 0)) + '</span></div>'; } h += moRow(o); });
+    var cur = null; L.forEach(function (o) { if (moDay(o) !== cur) { cur = moDay(o); var g = L.filter(function (y) { return moDay(y) === cur && !/Cancel|Rejected/.test(y.status); }); h += '<div class="o2dh"><span>' + esc(dayLbl(cur)) + '</span><span>' + g.reduce(function (t, y) { return t + oCtnAll(y); }, 0) + ' ctn · ' + ghs(g.reduce(function (t, y) { return t + oValAll(y); }, 0)) + '</span></div>'; } var r36 = moRow(o); if (moDay(o) !== o.date && o.date) r36 = r36.replace(/(<div class="o2s ell">)/, '$1ordered ' + esc(dayLbl(o.date)) + ' · '); h += r36; });
     if (!L.length && !X.wait) h += emptyHtml('No order matches.');
   }
   return h; }
@@ -9144,6 +9163,7 @@ r27Open = (function (f) { return function () { try { if (navigator.vibrate) navi
 // ---- the route: "2 of 5 done" with a progress bar
 function r82Pg(h) { return String(h).replace(/<div class="r27hd"><span>(\d+) of (\d+) done<\/span>/, function (m, a, b) { var p = +b ? Math.round(100 * a / b) : 0; return '<div class="r27hd"><span class="r82pg"><b>' + a + ' of ' + b + ' done</b><i><em style="width:' + p + '%"></em></i></span>'; }); }
 pgR27Route = (function (f) { return function () { return r82Pg(f.apply(this, arguments)); }; })(pgR27Route); PG27.route = pgR27Route;
+pgR27Route = (function (f) { return function () { return r36Bar() + f.apply(this, arguments); }; })(pgR27Route); PG27.route = pgR27Route; // v2.8.36
 // ---- a forgotten PIN: an email with a one-time link
 ACT.n27forgot = function () { var e = $('n27er'); if (e) e.textContent = 'Sending…';
   rpc({ t: TOKEN, op: 'pinforgot' }, function (x) { var e2 = $('n27er'); if (e2) e2.textContent = (x && x.msg) || 'Try again.'; }, function () { var e2 = $('n27er'); if (e2) e2.textContent = 'No signal – try again.'; }); };
