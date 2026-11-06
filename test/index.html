@@ -3737,7 +3737,7 @@ var ICO4 = {
 function tasksN4() { try { return D && (D.me.role === 'Agent' || D.viewOf) && D.plan !== undefined ? tTaskN() : 0; } catch (e) { return 0; } }
 function bellHtml() { var n = tasksN4(); if (!n) return '';
   return '<button class="tbell" data-act="sheet" data-k="tasks" aria-label="' + n + (n === 1 ? ' task needs you' : ' tasks need you') + '" title="' + n + (n === 1 ? ' task needs you' : ' tasks need you') + '">' + ico(ICO4.bell) + '<b>' + n + '</b></button>'; }
-function greetHtml() { if (!D || D.viewOf || D.me.role !== 'Agent') return '';
+function greetHtml() { if (!D || D.me.role !== 'Agent') return ''; // v2.8.37: also on the manager's view of her screen
   var hr = new Date().getHours(), w = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
   return '<div class="greet"><span class="gi ' + (hr < 17 ? 'day' : 'eve') + '">' + ico(hr < 17 ? ICO4.sun : ICO4.moon) + '</span><div class="grow"><b>' + w + ', ' + esc(D.me.first) + '</b><span>' + esc(dayLbl(D.today)) + '</span></div></div>'; }
 function kTone(v, t, pace) { var r = pace > 0.05 && t ? Math.min(1, v / t) / pace : 1; return r >= 0.95 ? 'ok' : r >= 0.8 ? 'amb' : 'red'; }
@@ -4354,12 +4354,12 @@ function ohDot27(m) { return m && m.length ? '<span class="ohdot oh27" title="Om
 function ohDet27(m) { return '<div class="t2d"><div class="small t-amber"><span class="ohdot"></span>Omni Haven: not ticked ' + esc(m.join(', ')) + '</div><div class="small muted">The manager sees this.</div></div>'; }
 // ---------------------------------------------------------------- End my day from 3 pm, then the day in one card (A50, A51)
 function hm27(t) { var m = String(t || '').match(/^(\d{1,2}):(\d{2})/); if (!m) return t || ''; var h = +m[1]; return (h % 12 || 12) + ':' + m[2] + (h < 12 ? ' am' : ' pm'); }
-function endBtn27() { var P = D.plan, Y = D.myDay || {}; if (!P || !P.work || P.leave || P.hol || D.viewOf || D.me.role !== 'Agent' || !Y.start || Y.end) return '';
+function endBtn27() { var P = D.plan, Y = D.myDay || {}; if (!P || !P.work || P.leave || P.hol || D.me.role !== 'Agent' || !Y.start || Y.end) return ''; /* v2.8.37: shown on the manager's view too (tapping it is still hers only) */
   var left = planLeft(); if (left && new Date().getHours() < 15) return '';
   return '<div class="t2end"><div class="grow"><b>' + (left ? 'Finished for today?' : 'All visits done') + '</b><span>' + (left ? left + ' visit' + (left === 1 ? '' : 's') + ' still open' : 'Your time and place are saved') + '</span></div><button class="' + (left ? 'ghost2' : 'main gr') + '" data-act="endday">End my day</button></div>'; }
 function daySum27() { var P = D.plan || {}, V = (P.visits || []), C = (P.called || []), O = (D.myOrders || []).filter(function (o) { return o.date === D.today && !/Cancel|Rejected/.test(o.status) && !o.parent; });
   return { visits: V.length, planned: planItems().filter(function (x) { return tLive(x) && !x.skip; }).length, orders: O.length, ctn: O.reduce(function (t, o) { return t + oCtn(o); }, 0), cash: null, schools: V.filter(function (v) { return v.sid && !v.vid; }).length, calls: C.length }; }
-function dayEndCard27() { var Y = D.myDay || {}; if (!Y.end || D.me.role !== 'Agent' || D.viewOf) return ''; var L0 = daySum27(), s = Y.sum ? Object.assign({}, Y.sum, { planned: L0.planned }) : L0;
+function dayEndCard27() { var Y = D.myDay || {}; if (!Y.end || D.me.role !== 'Agent') return ''; /* v2.8.37: also on the manager's view */ var L0 = daySum27(), s = Y.sum ? Object.assign({}, Y.sum, { planned: L0.planned }) : L0;
   var t = function (n, w) { return '<div><b>' + n + '</b><span>' + w + '</span></div>'; };
   return '<div class="t2dayend"><div class="dh"><span class="di">✓</span><b class="grow">Day ended ' + (Y.end === 'now' ? 'just now' : 'at ' + esc(hm27(Y.end))) + '</b></div><div class="dk">' +
     t(s.visits + (s.planned ? '<small>/' + s.planned + '</small>' : ''), 'visits') + t(s.orders, 'order' + (s.orders === 1 ? '' : 's')) + t(s.ctn, 'cartons') + t(s.cash == null ? '–' : ghs(s.cash).replace('GHS ', ''), 'cash (GHS)') + t(s.schools, 'new school' + (s.schools === 1 ? '' : 's')) + t(s.calls, 'call' + (s.calls === 1 ? '' : 's')) +
@@ -5218,7 +5218,7 @@ ACT.nclo27 = function () { nEdit(function (x) { x.closeOpen = !x.closeOpen; }); 
 // ---------------------------------------------------------------- the I'M HERE hint: today's next stop only
 function o27NextVids() { try { var P = D.plan || {}; if (P.day && P.day !== D.today) return []; var G = tGroups(planItems()), g = G.filter(function (z) { return ndOpenIn(z).length; })[0];
   return g ? ndOpenIn(g).filter(function (y) { return y.x.k === 'v'; }).map(function (y) { return y.x.id; }) : []; } catch (e) { return []; } }
-function o27HereHint(v, head) { if (!v || D.viewOf || o27NextVids().indexOf(v.id) < 0) return '';
+function o27HereHint(v, head) { if (!v || o27NextVids().indexOf(v.id) < 0) return ''; /* v2.8.37 */
   return '<div class="o27hint" data-act="goTab" data-t="plan">At her spot? Use I\'M HERE so it counts as a visit<b>Today ›</b></div>'; }
 nCard = (function (f) { return function (v) { var h = f(v), t = o27HereHint(v); return t ? h.replace(/<\/div>$/, t + '</div>') : h; }; })(nCard);
 // ---------------------------------------------------------------- My day next stop: "On the way: 6 cartons · Prince brings Tue ›"
@@ -7917,7 +7917,7 @@ function tReorder(kind, order) {
   else { var L2 = Dr.items.slice(); Dr.items = [].concat.apply([], order.map(function (k) { return L2.filter(function (x) { return tLive(x) && stopKeyOf(x) === k; }); })).concat(L2.filter(function (x) { return !tLive(x) || order.indexOf(stopKeyOf(x)) < 0; })); }
   tSave(); render(); }
 /** The day in one slim line under a tick: visits, orders, cartons, calls (cash and new schools only when there are some). */
-function dayEndCard27() { var Y = D.myDay || {}; if (!Y.end || D.me.role !== 'Agent' || D.viewOf) return ''; var L0 = daySum27(), s = Y.sum ? Object.assign({}, Y.sum, { planned: L0.planned }) : L0;
+function dayEndCard27() { var Y = D.myDay || {}; if (!Y.end || D.me.role !== 'Agent') return ''; /* v2.8.37: also on the manager's view */ var L0 = daySum27(), s = Y.sum ? Object.assign({}, Y.sum, { planned: L0.planned }) : L0;
   var t = function (i, n, w) { return '<span>' + ico(ICO[i] || ICO.info) + '<b>' + n + '</b> ' + w + '</span>'; };
   return '<div class="t2dayend t2de2"><div class="dh"><span class="di">✓</span><b class="grow">Day ended ' + (Y.end === 'now' ? 'just now' : 'at ' + esc(hm27(Y.end))) + '</b><a data-act="endday" class="small">End again</a></div><div class="dl">' +
     t('pin', s.visits + (s.planned ? '/' + s.planned : ''), 'visits') + t('box', s.orders, 'order' + (s.orders === 1 ? '' : 's')) + t('box', s.ctn, 'ctn') + t('phone', s.calls, 'call' + (s.calls === 1 ? '' : 's')) +
@@ -8231,7 +8231,7 @@ function pgFCash() {
   if (FK.ct === 'byo') return h + byoHtml();
   if (FK.ct === 'rc') { var cur = PSEC.fcash || 'rcpt'; return h + chips('fcash', [['rcpt', 'Receipts'], ['hist', 'History'], ['acct', 'Accounts'], ['ho', 'Hand-overs']], cur) + (cur === 'ho' ? hoh89Html() : cur === 'acct' ? vaFindHtml() : cur === 'rcpt' ? filterBar('prcpt', 'Find a vendor') + '<div id="flist">' + LISTR.prcpt() + '</div>' : filterBar('phist', 'Find a person or amount') + '<div id="flist">' + LISTR.phist() + '</div>'); }
   if (FK.ct === 'dist') return h + fkDistHtml();
-  if (D.book && D.book.wp35) return h + fc35Html(T, D.book.wp35); // v2.8.35
+  if (D.book && D.book.wp35) return h + fc37Html(T, D.book.wp35); // v2.8.35; v2.8.37: one row per vendor
   h += fc34Rows(T); // v2.8.34: one total per person
   h += W.map(function (p) { var red = late; return '<div class="fkr" style="border-left-color:' + (red ? '#d0021b' : '#9a9aa3') + '" data-act="fkcnt" data-u="' + esc(p.uid) + '"><div class="grow"><b>' + esc(p.name) + '</b><div class="fks ell">' + esc((F.since || {})[p.uid] || '') + (red ? ' · <span class="t-red">the manager sees it</span>' : ' · red after 5 pm') + '</div></div><b class="fkam' + (red ? ' t-red' : '') + '">' + ghs(p.total) + '</b></div>' +
     '<button class="wp92b" data-act="wp92" data-u="' + esc(p.uid) + '">' + (WP92[p.uid] ? '▴ Hide' : '▾ ' + (p.items || []).length + ' payment' + ((p.items || []).length === 1 ? '' : 's')) + '</button>' + (WP92[p.uid] ? '<div class="wp92">' + (p.items || []).map(function (x) { return '<div><span>' + esc(x.text) + '<small>' + esc(x.when) + '</small></span><b>' + ghs(x.amt) + '</b></div>'; }).join('') + '</div>' : ''); }).join(''); // v2.8.30: each payment
@@ -8368,7 +8368,7 @@ var N73V = false, ONS = 'do';
 ACT.n73v = function () { N73V = !N73V; render(); };
 // ---- Needs you: + help items Prince gave (did she get it?), Prince's part deliveries, Prince's deliveries to rate
 function r27AgentStrip() { return ''; }
-oNeeds = (function (f) { return function () { var L = f(), A = D && D.r27a; if (!A || !D.me || D.me.role !== 'Agent' || D.viewOf) return L;
+oNeeds = (function (f) { return function () { var L = f(), A = D && D.r27a; if (!A || !D.me || D.me.role !== 'Agent') return L; /* v2.8.37: also on the manager's view */
   (A.conf || []).forEach(function (c) { L.push({ k: 'hconf', c: c }); }); (A.part || []).forEach(function (p) { L.push({ k: 'ppart', p: p }); }); (A.rate || []).forEach(function (x) { L.push({ k: 'rate', x: x }); }); return L; }; })(oNeeds);
 oNeedsHtml = (function (f) { return function (N) {
   var R = N.filter(function (x) { return x.k === 'rate'; }), T = N.filter(function (x) { return x.k !== 'rate'; }), mine = T.filter(function (x) { return x.k !== 'hconf' && x.k !== 'ppart'; });
@@ -8886,7 +8886,7 @@ function pgMMoney(m0) {
   if (MM.s === 'dist') { var ph = p7HeldHtml, mh; p7HeldHtml = function () { return ''; }; try { mh = m0(); } finally { p7HeldHtml = ph; } return h + ds89Html() + mm28Dist(X) + mh; } /* cash with people has its own tab */
   if (!X) return h + '<div class="mdsk"><i></i><i></i><i></i><i></i></div>';
   if (MM.s === 'cr') return h + mm28Cr(X);
-  if (MM.s === 'wp') return h + mm28Wp(X);
+  if (MM.s === 'wp') return h + mm37Wp(X); // v2.8.37: as Frank sees it
   return h + mm28Col(X); }
 ACT.mms = function (b) { MM.s = b.dataset.k; render(); window.scrollTo(0, 0); };
 ACT.mmw = function (b) { MM.w = b.dataset.k; if (MM.w === 'dates' && !MM.from) MM.from = D.today; render(); };
@@ -10029,5 +10029,75 @@ ACT.dup92 = function (b) { var A = b.dataset.a, B = b.dataset.b, h = b.dataset.h
   var kp = b.dataset.keep || A; var go = function () { bgSave('dup92', { a: A, b: B, how: h, keep: kp }, 'd92-' + A + '-' + B + '-' + h, h === 'same' ? 'vendors joined' : 'different', b);
     if (SVM && SVM.dup) SVM.dup = SVM.dup.filter(function (p) { return !(p.a === A && p.b === B) && !(h === 'same' && (p.a === B || p.b === B)); }); DUP92.open = ''; if (MV) { MV.got = 0; if (MV.d) MV.d.dupN = SVM.dup.length; } drawSheet(); };
   if (h === 'same') ask('Join ' + nb + ' (' + B + ') into ' + na + ' (' + A + ')? Her orders, payments and visits go together under ' + A + ', named ' + (kp === B ? nb : na) + '. This cannot be undone.', go); else go(); };
+// v2.8.37: the manager's New order – first "For which agent?", then that agent's own New order with Act for
+var N37 = 0;
+function n37Pick() { var A = (D.views || []).filter(function (x) { return x.v && x.role === 'Agent'; });
+  return '<div class="sech">New order – for which agent?</div><div class="list">' + A.map(function (x) { return '<div class="li" data-act="n37go" data-v="' + esc(x.v) + '">' + avatar(x.name) + '<div class="grow"><div class="t">' + esc(x.name) + '</div><div class="s">Her New order, saved as you for her</div></div><span class="go">' + ico(ICO.right) + '</span></div>'; }).join('') + '</div>'; }
+ACT.n37go = function (b) { N37 = Date.now(); setView(b.dataset.v); };
+(function () { var n0 = pgNew; pgNew = function () { if (O2 && D && D.me && D.me.role === 'Supervisor' && !D.viewOf && (D.views || []).some(function (x) { return x.v && x.role === 'Agent'; })) return n37Pick(); return n0.apply(this, arguments); }; })();
+render = (function (f) { return function () { if (N37 && Date.now() - N37 > 30000) N37 = 0; if (N37 && D && D.viewOf && D.me) { N37 = 0; TAB = 'new'; setTimeout(function () { if (D && D.viewOf && !ACTF.agent) actAgent(true); }, 400); } return f.apply(this, arguments); }; })(render);
+// what the manager now sees on an agent's screen stays hers to do: the taps say so instead of changing the screen
+['endday', 'r27up', 'r27dn', 'r27hc'].forEach(function (k) { var f = ACT[k]; if (f) ACT[k] = function () { if (D && D.viewOf && viewBlock(k === 'endday' ? 'endday' : 'rate')) return; return f.apply(this, arguments); }; });
+mt28Frank = (function (f) { return function () { var h = f.apply(this, arguments), X = null; try { X = mt28Read('mfrank', {}, 'frank'); } catch (e) { } if (!X || !X.ld) return h;
+  var L = X.ld, days = []; L.forEach(function (x) { if (days.indexOf(x.day) < 0) days.push(x.day); });
+  var add = fold('mtfload', '<b>To load</b> <span class="small muted">' + L.length + '</span><div class="small ell">' + (L.length ? days.map(function (d) { var n = L.filter(function (x) { return x.day === d; }).length; return (d === D.today ? 'Today' : dayLbl(d)) + ' ' + n; }).join(' · ') : 'Nothing waiting') + '</div>', function () {
+    return days.map(function (d) { var g = L.filter(function (x) { return x.day === d; }); return '<div class="sech">' + esc(d === D.today ? 'Today' : dayLbl(d)) + ' <span>' + g.reduce(function (t, x) { return t + x.ctn; }, 0) + ' ctn</span></div>' + g.map(function (x) { return '<div class="mdev"><b class="grow ell">' + esc(x.v) + (x.urg ? ' <span class="t-red">Urgent</span>' : '') + '<div class="small muted" style="font-weight:600">' + esc(x.ag) + '</div></b><span>' + x.ctn + ' ctn</span></div>'; }).join(''); }).join(''); });
+  var i = h.indexOf('<div class="card fold'); return i > 0 ? h.slice(0, i) + add + h.slice(i) : h + add; }; })(mt28Frank);
+// v2.8.37: With people – one row per vendor (Frank, and the manager's Money › With people)
+var VR37 = {}, M37 = { st: '', d: null, at: 0 }, BY37W = 0;
+function vr37Grp(L) { var G = {}, O = [];
+  L.forEach(function (x) { var ln = x.ln.slice(), s = ln.reduce(function (t, l) { return t + (Number(l.amt) || 0); }, 0);
+    if (!ln.length || x.amt - s > 0.009) ln.push({ v: ln.length ? (x.text || 'Not on an order yet') : (x.text || x.who), day: '', amt: Math.round((x.amt - s) * 100) / 100, full: true, none: 1 });
+    ln.forEach(function (l) { var k = x.who + '|' + l.v + (x.momo ? '|m' : ''), g = G[k]; /* MoMo apart: checked one by one */
+      if (!g) { g = G[k] = { k: k, v: l.v, who: x.who, amt: 0, dist: [], keys: [], ln: [], momo: false, hid: '' }; O.push(g); }
+      g.amt += Number(l.amt) || 0; if (g.dist.indexOf(x.dist) < 0) g.dist.push(x.dist); if (!x.momo && g.keys.indexOf(x.key) < 0) g.keys.push(x.key);
+      if (x.momo) { g.momo = true; g.hid = x.hid; }
+      g.ln.push({ day: l.day, amt: Number(l.amt) || 0, full: l.full, val: l.val, left: l.left, dist: x.dist, when: x.when, none: l.none, key: x.key, momo: x.momo }); }); });
+  O.forEach(function (g) { g.amt = Math.round(g.amt * 100) / 100; });
+  return O.sort(function (a, b) { return b.amt - a.amt; }); }
+function vr37Row(g, ro, all, showWho) {
+  var on = !ro && g.keys.length && g.keys.every(function (k) { return FC35.tk[k]; }), op = !!VR37[g.k];
+  var full = g.ln.every(function (l) { return l.full; }), tag = '<em class="' + (full ? 'g' : 'a') + '">' + (full ? 'Full' : 'Part') + '</em>';
+  var mates = 0; g.keys.forEach(function (k) { if (/^h:/.test(k)) all.forEach(function (o) { if (o !== g && o.keys.indexOf(k) >= 0) mates++; }); });
+  var det = op ? '<div class="fc35m vr37d">' + g.ln.map(function (l) { return '<div><span>' + (l.none ? 'Not on an order yet' : 'Order ' + esc(l.day ? dayLbl(l.day) : '')) + ' · ' + esc(l.dist) + ' · ' + (l.full ? 'Full' : 'Part' + (l.val ? ' (' + ghs(l.amt) + ' of ' + ghs(l.val) + ')' : '')) + '<small>' + esc(l.when) + (l.momo ? ' · MoMo' : '') + '</small></span><b>' + ghs(l.amt) + '</b></div>'; }).join('') +
+    (mates ? '<div class="small muted">Handed over together with ' + mates + ' other vendor' + (mates === 1 ? '' : 's') + ' – ticked together</div>' : '') + '</div>' : '';
+  var col = g.momo ? '#7c3aed' : g.ln.some(function (l) { return /^h:/.test(l.key || ''); }) ? '#2563eb' : '#9a9aa3';
+  var box = ro || g.momo || !g.keys.length ? '' : '<input type="checkbox" class="chk" data-chg="vr37t" data-k="' + esc(g.keys.join(',')) + '"' + (on ? ' checked' : '') + '>';
+  return '<div class="fkr fc35r vr37' + (on ? ' on' : '') + '" style="border-left-color:' + col + '">' + box +
+    '<div class="grow" data-act="vr37o" data-k="' + esc(g.k) + '"><b class="ell">' + esc(g.v) + '</b><div class="fks">' + (showWho ? esc(g.who) + ' · ' : '') + esc(g.dist.join(' · ')) + (g.momo ? ' · MoMo' : '') + ' · ' + g.ln.length + ' order' + (g.ln.length === 1 ? '' : 's') + '</div>' + tag + det + '</div>' +
+    '<b class="fkam" data-act="vr37o" data-k="' + esc(g.k) + '">' + ghs(g.amt) + '</b></div>'; }
+function fc37Html(T, W, ro) { var L = fc35Items(T, W), P = []; L.forEach(function (x) { if (P.indexOf(x.who) < 0) P.push(x.who); }); P.sort();
+  if (FC35.p !== 'all' && P.indexOf(FC35.p) < 0) FC35.p = 'all';
+  var sum = function (A) { return Math.round(A.reduce(function (t, x) { return t + x.amt; }, 0) * 100) / 100; };
+  if (!L.length) return '<div class="fkok sm">' + (ro ? 'Nothing waiting for Frank ✓' : 'All counted ✓') + '</div>';
+  var h = '<div class="t2tray fc35p">' + [['all', 'All', sum(L)]].concat(P.map(function (n) { return [n, n, sum(L.filter(function (x) { return x.who === n; }))]; })).map(function (c) { return '<button class="' + (FC35.p === c[0] ? 'on' : '') + '" data-act="fc35p" data-v="' + esc(c[0]) + '">' + esc(c[1]) + ' <small>' + ghs(c[2]) + '</small></button>'; }).join('') + '</div>';
+  var M = FC35.p === 'all' ? L : L.filter(function (x) { return x.who === FC35.p; }), late = new Date().getHours() >= 17 && M.some(function (x) { return x.k === 'w'; });
+  h += '<div class="fc35c' + (late ? ' late' : '') + '" style="cursor:default"><div class="fc35h"><span>' + (FC35.p === 'all' ? 'Expected from everyone' : 'Expected from ' + esc(FC35.p)) + '</span><b>' + ghs(sum(M)) + '</b></div>' +
+    '<div class="fc35d">' + FC35D.map(function (d) { var a = sum(M.filter(function (x) { return x.dist === d; })); return '<div class="' + (a > 0.004 ? '' : 'z') + '"><span>' + esc(d) + '</span><b>' + ghs(a) + '</b></div>'; }).join('') + '</div>' +
+    (late && !ro ? '<div class="small t-red" style="margin-top:4px">After 5 pm – the manager sees money still with people.</div>' : '') + '</div>';
+  var G = vr37Grp(M), C = M.filter(function (x) { return !x.momo; }), on = C.filter(function (x) { return FC35.tk[x.key]; }), all = C.length && on.length === C.length;
+  if (!ro && C.length) h += '<label class="fc35all"><input type="checkbox" class="chk" data-chg="fc35all"' + (all ? ' checked' : '') + '><span>Select all</span><small>' + G.filter(function (g) { return g.keys.length && g.keys.every(function (k) { return FC35.tk[k]; }); }).length + ' of ' + G.filter(function (g) { return g.keys.length; }).length + '</small></label>';
+  h += G.map(function (g) { return vr37Row(g, ro, G, FC35.p === 'all'); }).join('');
+  if (!ro && on.length && !D.viewOf && D.me.role === 'Warehouse') { h += '<div class="by89go"><button class="main gr wide" data-act="fc35go">Received ' + ghs(sum(on)) + '</button>' + (on.some(function (x) { return x.k === 'h'; }) ? '<a class="small" data-act="fc35cnt" style="display:block;text-align:center;margin-top:6px">Not the same amount? Count it</a>' : '') + '</div>'; }
+  return h; }
+CHG.vr37t = function (el) { String(el.dataset.k || '').split(',').forEach(function (k) { if (k) FC35.tk[k] = el.checked; }); render(); };
+ACT.vr37o = function (b) { var k = b.dataset.k, g; if (D.me.role === 'Warehouse' && !D.viewOf) { var L = fc35Items(D.toConfirm, (D.book || {}).wp35); g = vr37Grp(L).filter(function (y) { return y.k === k; })[0]; if (g && g.momo && g.hid && VR37[k]) { ACT.fkcnt({ dataset: { h: g.hid } }); return; } }
+  VR37[k] = !VR37[k]; render(); };
+// after "Received": By order reloads once the save has reached the system
+bgSave = (function (f) { return function (op) { if (op === 'fcount' || op === 'receive') { BY37W = Date.now(); BY.st = ''; } return f.apply(this, arguments); }; })(bgSave);
+setInterval(function () { try { if (!BY37W) return; var busy = queue().some(function (x) { return x.op === 'fcount' || x.op === 'receive'; }); if (busy && Date.now() - BY37W < 120000) return;
+  BY37W = 0; BY.st = ''; if (typeof FK !== 'undefined' && FK.ct === 'byo' && !SHEETK && !touching()) render(); } catch (e) { } }, 1500);
+// the manager: Money › With people
+function mm37Load() { if (M37.st === 'wait' || (M37.d && Date.now() - M37.at < 60000)) return; M37.st = 'wait';
+  readOp('mfk37', {}, function (r) { M37.st = ''; if (r && r.ok) { M37.d = r; M37.at = Date.now(); if (TAB === 'money') render(); } }, function () { M37.st = ''; M37.at = Date.now(); }); }
+function mm37Wp(X) { mm37Load(); var d = M37.d; if (!d) return '<div class="mdsk"><i></i><i></i></div>';
+  var h = '<div class="mtts">' + mm28T(d.box === null || d.box === undefined ? '–' : mm28G(d.box), 'Frank\'s cash box now', (d.hr || []).map(function (s) { return esc(s.name) + ' ' + ghs(s.frank); }).join(' · '), 'g') + '</div>';
+  h += '<div class="sech">Coming to Frank</div>' + fc37Html(d.tc, d.wp, true);
+  if ((d.cnt || []).length) h += fold('mm37cnt', '<b>Counted today</b> <span class="small muted">' + d.cnt.length + '</span><div class="small ell">' + ghs(d.cnt.reduce(function (t, c) { return t + c.amt; }, 0)) + '</div>', function () {
+    return d.cnt.map(function (c, i) { var k = 'c' + i, o = !!VR37[k]; return '<div class="mdev" data-act="vr37o" data-k="' + k + '"><span>' + esc(c.t) + '</span><b class="grow">' + esc(c.from) + (Math.abs(c.amt - c.exp) > 0.009 && c.exp ? ' <span class="t-red">expected ' + ghs(c.exp) + '</span>' : '') + '</b><span>' + ghs(c.amt) + '</span></div>' +
+      (o ? '<div class="fc35m vr37d" style="margin:0 0 8px 12px">' + ((c.bd || []).length ? c.bd.map(function (l) { return '<div><span>' + esc(l.v) + (l.day ? ' · order ' + esc(dayLbl(l.day)) : '') + (l.left > 0.004 ? ' · Part' : ' · Full') + '</span><b>' + ghs(l.amt) + '</b></div>'; }).join('') : '<div><span>No order details</span></div>') + '</div>' : ''); }).join(''); });
+  if (X && (X.held || []).length) h += fold('mm37old', '<b>By person</b><div class="small ell">All money not with Frank yet, MoMo included</div>', function () { return mm28Wp(X); });
+  return h; }
+try { document.head.insertAdjacentHTML('beforeend', '<style>.vr37{align-items:flex-start}.vr37 .chk{margin-top:4px}.vr37d{margin-top:6px}.vr37d small{display:block;color:var(--mute);font-size:11px}</style>'); } catch (e) { }
 if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
