@@ -9302,7 +9302,7 @@ ACT.vatap = function (b) { VA.op = VA.op === b.dataset.i ? '' : b.dataset.i; VA.
 ACT.vafix = function (b) { VA.fx = { k: b.dataset.k, rid: b.dataset.r, aid: b.dataset.a || '', to: '', why: '' }; drawSheet(); };
 ACT.vato = function (b) { if (VA.fx) VA.fx.to = b.dataset.v; drawSheet(); };
 ACT.vafixgo = function (b) { var F = VA.fx, vid = VA.vid; if (!F) return; var why = String(F.why || '').trim(); if (why.length < 3) { say('Write why.'); return; } if (F.k === 'move' && !F.to) { say('Choose the order.'); return; }
-  bgSave('mpayfix', { rid: F.rid, how: F.k, aid: F.aid, to: F.to, why: why }, 'pf-' + F.rid + '-' + (F.aid || 'u') + '-' + Date.now(), F.k === 'undo' ? 'payment undone' : 'payment moved', b, true);
+  bgSave('mpayfix', { rid: F.rid, how: F.k, aid: F.aid, to: F.to, why: why }, 'pf-' + F.rid + '-' + (F.aid || 'u') + '-' + Date.now(), F.k === 'move' ? 'payment moved' : 'payment undone', b, true);
   va35Show(F); VA.fx = null; VA.op = ''; drawSheet(); va35Wait(vid); };
 // v2.8.30: the manager fixes a workbook order – cartons, price, paid at the sale, per line; kept after every workbook load unless the workbook changes that value
 function bk92Html(r) { var F = VA.bf && VA.bf.ref === r.ref ? VA.bf : null;
@@ -9327,7 +9327,7 @@ SHEETS.vacct = function () {
   var ag = D.me.role === 'Agent' && !D.viewOf && typeof p7Ven === 'function' && p7Ven(A.vid);
   if (ag || A.phone) h += '<div class="va3">' + (ag && A.owes > 0.004 ? '<button class="main gr" data-act="p7recgo" data-v="' + esc(A.vid) + '">Record a payment</button>' : '') + (A.phone ? '<a class="ghost2b" href="tel:' + esc(A.phone) + '">📞 Call</a>' : '') + '</div>';
   var R = A.rows.filter(function (r) { if (VA.from && (r.day < VA.from || r.day > (VA.to || VA.from))) return false;
-    return VA.f === 'un' ? r.k === 'o' && r.open > 0.004 : VA.f === 'o' ? r.k === 'o' : VA.f === 'p' ? r.k === 'p' : true; });
+    return VA.f === 'un' ? r.k === 'o' && r.open + (r.hw || 0) > 0.004 : VA.f === 'o' ? r.k === 'o' : VA.f === 'p' ? r.k === 'p' : true; });
   h += vaCtn91(A);
   h += '<div class="vach">' + [['all', 'All'], ['un', 'Unpaid'], ['o', 'Orders'], ['p', 'Payments']].map(function (c) { return '<button class="' + (VA.f === c[0] ? 'on' : '') + '" data-act="vaf" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') +
     '<button class="' + (VA.from ? 'on' : '') + '" data-act="vacal">📅 ' + (VA.from ? esc(VA.from === (VA.to || VA.from) ? dayLbl(VA.from) : dayLbl(VA.from) + ' – ' + dayLbl(VA.to)) : 'Dates') + '</button>' + (VA.from ? '<button data-act="vacalx" aria-label="All dates">✕</button>' : '') + '</div>';
@@ -9335,17 +9335,18 @@ SHEETS.vacct = function () {
   var PX39 = {}; A.rows.forEach(function (p) { if (p.k === 'p') PX39[p.id] = p; });
   var payOf = {}; A.rows.forEach(function (p) { if (p.k === 'p' && !p.cx && !p.bk) (p.to || []).forEach(function (t) { (payOf[t.ref] = payOf[t.ref] || []).push([p.day, t.amt, p.how, p.id, t.aid, t.sku ? (t.sku + ' · ' + t.src) : '']); }); });
   return h + R.map(function (r) { var i = r.k + ':' + (r.ref || r.id), on = VA.op === i;
-    if (r.k === 'o') { var k = r.open <= 0.004 ? (r.wa ? 'a' : 'g') : r.paid > 0.004 ? 'a' : 'r', wa = r.wa ? r.wa.map(function (w) { return w.n; }).join(' + ') : '', waA = r.wa ? r.wa.reduce(function (t, w) { return t + w.a; }, 0) : 0;
-      var d = on ? '<div class="vad"><div><span>Order date: ' + esc(dayLbl(r.day)) + '</span><b>' + esc(r.ln || '') + '</b></div>' + (r.src ? '<div><span>From</span><b>' + esc(r.src) + '</b></div>' : '') + (payOf[r.ref] || []).map(function (p) { return '<div><span>Paid ' + esc(dayLbl(p[0])) + (p[5] ? ' · ' + esc(p[5]) : '') + '</span><b>' + ghs(p[1]) + ' ' + esc(p[2] === 'MoMo' ? 'MoMo' : 'cash') + '</b>' + (p[3] && va39Mv(PX39[p[3]], p[4]) ? ' <button class="vasm" data-act="vafixo" data-k="move" data-r="' + esc(p[3]) + '" data-a="' + esc(p[4] || '') + '">Move</button>' : '') + (p[3] && va39Un(PX39[p[3]]) ? ' <button class="vasm red" data-act="vafixo" data-k="undo" data-r="' + esc(p[3]) + '">Undo</button>' : '') + (mgr && p[3] && r.sl && !r.grp && !/^new-/.test(p[3]) ? ' <button class="vasm" data-act="sp89" data-r="' + esc(p[3]) + '" data-o="' + esc(r.ref) + '">Split</button>' : '') + '</div>'; }).join('') +
+    if (r.k === 'o') { var oo42 = Math.round((r.open + (r.hw || 0)) * 100) / 100, pp42 = Math.max(0, Math.round((r.paid - (r.hw || 0)) * 100) / 100); var k = oo42 <= 0.004 ? (r.wa ? 'a' : 'g') : pp42 > 0.004 ? 'a' : 'r', wa = r.wa ? r.wa.map(function (w) { return w.n; }).join(' + ') : '', waA = r.wa ? r.wa.reduce(function (t, w) { return t + w.a; }, 0) : 0;
+      var d = on ? '<div class="vad"><div><span>Order date: ' + esc(dayLbl(r.day)) + '</span><b>' + esc(r.ln || '') + '</b></div>' + (r.src ? '<div><span>From</span><b>' + esc(r.src) + '</b></div>' : '') + (payOf[r.ref] || []).map(function (p) { return '<div><span>Paid ' + esc(dayLbl(p[0])) + (p[5] ? ' · ' + esc(p[5]) : '') + '</span><b>' + ghs(p[1]) + ' ' + esc(p[2] === 'MoMo' ? 'MoMo' : 'cash') + '</b>' + (p[3] && va39Mv(PX39[p[3]], p[4]) ? ' <button class="vasm" data-act="vafixo" data-k="move" data-r="' + esc(p[3]) + '" data-a="' + esc(p[4] || '') + '">Move</button>' : '') + (p[3] && va39Un(PX39[p[3]]) ? ' <button class="vasm red" data-act="vafixo" data-k="' + (va42Part(PX39[p[3]], p[4]) ? 'undopart' : 'undo') + '" data-r="' + esc(p[3]) + '" data-a="' + esc(p[4] || '') + '">Undo</button>' : '') + (mgr && p[3] && r.sl && !r.grp && !/^new-/.test(p[3]) ? ' <button class="vasm" data-act="sp89" data-r="' + esc(p[3]) + '" data-o="' + esc(r.ref) + '">Split</button>' : '') + '</div>'; }).join('') +
         (r.pon ? '<div><span>Date paid (book)</span><b>' + esc(dayLbl(r.pon)) + '</b></div>' : '') + (r.by ? '<div><span>Received by</span><b>' + esc(r.by) + '</b></div>' : '') + (r.note ? '<p>' + esc(r.note) + '</p>' : '') + (r.bfx ? '<div class="bk92x"><span>Fixed in the app</span><b>' + r.bfx.map(esc).join('<br>') + '</b></div>' : '') + vaTot(r, payOf[r.ref]) + vaPayHtml(r) + (mgr && r.bl ? bk92Html(r) : '') + '</div>' : '';
       return '<div class="varow k' + k + '"' + ((VA.pay && VA.pay.ref === r.ref) || (VA.bf && VA.bf.ref === r.ref) || (SR32 && SR32.ref === r.ref) || (R38 && R38.ref === r.ref) ? '' : ' data-act="vatap" data-i="' + esc(i) + '"') + '><div class="r1"><span>Order ' + esc(dayLbl(r.day)) + (r.ln ? ' · ' + esc(r.ln) : '') + (r.old ? ' <i class="vaold">before app</i>' : '') + (r.bfx ? ' <i class="vaold bk92f">fixed</i>' : '') + '</span><b>' + ghs(r.val) + '</b></div>' +
-        '<div class="r2"><span>' + (r.wa ? '<b class="t-amber">Paid to ' + esc(wa) + ' – not with Frank yet' + (r.open > 0.004 || waA < r.paid - 0.004 ? ' (' + ghs(waA).replace('GHS ', '') + ')' : '') + '</b>' + (r.open > 0.004 ? ' · ' : '') : '') + (r.open <= 0.004 ? (r.wa ? '' : 'paid ✓' + (r.pon ? ' ' + esc(dayLbl(r.pon)) : '')) : (r.paid > 0.004 ? 'paid ' + ghs(r.paid).replace('GHS ', '') + ' · ' : '') + '<b>owes ' + ghs(r.open).replace('GHS ', '') + '</b>') + '</span>' + (r.open > 0.004 ? '<span class="t-red">' + vaDays(r.day) + ' days</span>' : '') + '</div>' + d + '</div>'; }
+        '<div class="r2"><span>' + (r.wa ? '<b class="t-amber">Paid to ' + esc(wa) + ' – not with Frank yet' + (oo42 > 0.004 || waA < r.paid - 0.004 ? ' (' + ghs(waA).replace('GHS ', '') + ')' : '') + '</b>' + (oo42 > 0.004 ? ' · ' : '') : '') + (oo42 <= 0.004 ? (r.wa ? '' : 'paid ✓' + (r.pon ? ' ' + esc(dayLbl(r.pon)) : '')) : (pp42 > 0.004 ? 'paid ' + ghs(pp42).replace('GHS ', '') + ' · ' : '') + '<b>owes ' + ghs(oo42).replace('GHS ', '') + '</b>') + '</span>' + (oo42 > 0.004 ? '<span class="t-red">' + vaDays(r.day) + ' days</span>' : '') + '</div>' + d + '</div>'; }
     var to = (r.to || []).map(function (t) { return t.day ? dayLbl(t.day) : 'old book'; }), F = VA.fx && VA.fx.rid === r.id ? VA.fx : null, x = '';
-    if (on) { x = '<div class="vad">' + (r.by ? '<div><span>Taken by</span><b>' + esc(r.by) + '</b></div>' : '') + (r.to || []).map(function (t) { return '<div><span>' + vaTo89(t) + '</span><b>' + ghs(t.amt) + '</b>' + (va39Mv(r, t.aid) ? ' <button class="vasm" data-act="vafix" data-k="move" data-r="' + esc(r.id) + '" data-a="' + esc(t.aid) + '">Move</button>' : '') + '</div>'; }).join('') + (r.note ? '<p>' + esc(r.note) + '</p>' : '');
+    if (on) { x = '<div class="vad">' + (r.by ? '<div><span>Taken by</span><b>' + esc(r.by) + '</b></div>' : '') + (r.to || []).map(function (t) { return '<div><span>' + vaTo89(t) + '</span><b>' + ghs(t.amt) + '</b>' + (va39Mv(r, t.aid) ? ' <button class="vasm" data-act="vafix" data-k="move" data-r="' + esc(r.id) + '" data-a="' + esc(t.aid) + '">Move</button>' : '') + (!F && va39Un(r) && va42Part(r, t.aid) ? ' <button class="vasm red" data-act="vafix" data-k="undopart" data-r="' + esc(r.id) + '" data-a="' + esc(t.aid) + '">Undo</button>' : '') + '</div>'; }).join('') + (r.note ? '<p>' + esc(r.note) + '</p>' : '');
+      if (!F && D.me.role === 'Supervisor' && !D.viewOf && r.bk && !r.cx) x += '<button class="vasm red" data-act="vafix" data-k="bkundo" data-r="' + esc(r.id) + '">Not paid – undo</button>'; /* v2.8.42 */
       if (va39Un(r) && !F) x += '<button class="vasm red" data-act="vafix" data-k="undo" data-r="' + esc(r.id) + '">Not paid – undo</button>';
       if (F) { var O = vaOpen().filter(function (o) { return !(r.to || []).some(function (t) { return t.aid === F.aid && t.ref === o.ref; }); }).filter(function (o) { return D.me.role !== 'Warehouse' || String(o.src || '').split(', ').indexOf((r.fs || {})[F.aid] || '-') >= 0; });
         if (F.k === 'move') x += '<div class="small muted" style="margin:6px 0 4px">Move it to which order?</div><div class="vach">' + (O.length ? O.map(function (o) { return '<button class="' + (F.to === o.ref ? 'on' : '') + '" data-act="vato" data-v="' + esc(o.ref) + '">' + esc(dayLbl(o.day)) + ' · owes ' + ghs(o.open).replace('GHS ', '') + '</button>'; }).join('') : '<span class="small muted">' + (D.me.role === 'Warehouse' && (r.fs || {})[F.aid] ? 'No other ' + esc(r.fs[F.aid]) + ' order is unpaid.' : 'No other order is unpaid.') + '</span>') + '</div>';
-        x += '<input class="o2q" data-inp="vawhy" placeholder="' + (D.me.role === 'Warehouse' ? 'Why? (the agent and the manager see it)' : 'Why? (the agent and Frank see it)') + '" value="' + esc(F.why || '') + '"><button class="' + (F.k === 'undo' ? 'warn' : 'main gr') + ' wide" data-act="vafixgo">' + (F.k === 'undo' ? 'Undo the whole payment' : 'Move it') + '</button><button class="ghost2 wide" style="margin-top:6px" data-act="vafixx">Cancel</button>'; }
+        x += '<input class="o2q" data-inp="vawhy" placeholder="' + (D.me.role === 'Warehouse' ? 'Why? (the agent and the manager see it)' : 'Why? (the agent and Frank see it)') + '" value="' + esc(F.why || '') + '"><button class="' + (F.k === 'move' ? 'main gr' : 'warn') + ' wide" data-act="vafixgo">' + va42Lbl(r, F) + '</button><button class="ghost2 wide" style="margin-top:6px" data-act="vafixx">Cancel</button>'; }
       x += '</div>'; }
     return '<div class="varow kb' + (r.cx ? ' cx' : '') + '"' + (F ? '' : ' data-act="vatap" data-i="' + esc(i) + '"') + '><div class="r1"' + (F ? ' data-act="vafixx"' : '') + '><span>Payment ' + esc(dayLbl(r.day)) + ' · ' + esc(r.how === 'MoMo' ? 'MoMo' : r.how === 'Cash' ? 'cash' : r.how) + (r.by ? ' to ' + esc(r.by) : '') + (r.bk ? ' <i class="vaold">book</i>' : '') + '</span><b class="' + (r.wa && !r.cx ? 't-amber' : 't-green') + '">' + ghs(r.amt) + '</b></div>' +
       '<div class="r2"><span>' + (r.cx ? 'undone' : vaPd89(r)) + (r.wa && !r.cx ? ' · <b class="t-amber">' + (r.wa.a < r.amt - 0.004 ? ghs(r.wa.a) + ' ' : '') + 'with ' + esc(r.wa.n) + ', not with Frank yet</b>' : '') + '</span></div>' + x + '</div>'; }).join('');
@@ -9362,7 +9363,7 @@ ACT.r89hp = function (b) { R89HP = +b.dataset.v; render(); };
 // ---------------------------------------------------------------- v2.8.18: pay this order (agent and Frank, in Her account)
 function vaTot(r, P) { var app = (P || []).reduce(function (t, p) { return t + p[1]; }, 0), book = Math.round((r.paid - app) * 100) / 100;
   return (r.old && book > 0.004 ? '<div><span>Paid in the old book' + (r.pon ? ' (' + esc(dayLbl(r.pon)) + ')' : '') + '</span><b>' + ghs(book) + '</b></div>' : '') +
-    '<div class="vatot"><span>Total paid</span><b class="t-green">' + ghs(r.paid) + '</b></div><div class="vatot"><span>Left to pay</span><b class="' + (r.open > 0.004 ? 't-red' : 't-green') + '">' + (r.open > 0.004 ? ghs(r.open) : 'nothing ✓') + '</b></div>'; }
+    vaHw42(r) + '<div class="vatot"><span>Total paid</span><b class="t-green">' + ghs(Math.max(0, r.paid - (r.hw || 0))) + '</b></div><div class="vatot"><span>Left to pay</span><b class="' + (r.open + (r.hw || 0) > 0.004 ? 't-red' : 't-green') + '">' + (r.open + (r.hw || 0) > 0.004 ? ghs(Math.round((r.open + (r.hw || 0)) * 100) / 100) : 'nothing ✓') + '</b></div>'; }
 function vaCanPay() { var A = VA.d; if (!A || D.viewOf) return false; return D.me.role === 'Warehouse' || D.me.role === 'Supervisor' || (D.me.role === 'Agent' && typeof p7Ven === 'function' && !!p7Ven(A.vid)); }
 function vaHows() { var A = VA.d; return D.me.role === 'Warehouse' ? (A.ag ? [[A.ag, 'From ' + A.agn]] : []).concat([['VENDOR', 'She paid me']]).concat(A.pr ? [[A.pr, 'From ' + A.prn]] : []) : D.me.role === 'Supervisor' ? [['cash', 'Cash'], ['momo', 'MoMo']] : [['cash', 'Cash'], ['momo', 'MoMo to Frank']]; }
 function vaPayHtml(r) { if (!(r.open > 0.004) || !vaCanPay() ) return ''; // v2.8.39: Frank takes every distributor's money (it all comes to him)
@@ -9402,7 +9403,9 @@ INP.sr32w = function (el) { if (SR32) SR32.why = el.value; };
 ACT.sr32x = function () { SR32 = null; drawSheet(); };
 ACT.sr32go = function () { var F = SR32, r = F && vaRow(F.ref), vid = VA.vid; if (!r) return; if (!F.to || F.to === (r.sid || '')) { say('Choose where it came from.'); return; }
   if (String(F.why || '').trim().length < 3) { say('Write why.'); return; }
-  bgSave('msrc32', { ref: r.ref, vid: vid, src: F.to, why: String(F.why).trim() }, 'src32-' + r.ref + '-' + Date.now(), 'Saved', null, true);
+  bgSave('msrc32', { ref: r.ref, vid: vid, src: F.to, sku: F.sku || '', why: String(F.why).trim() }, 'src32-' + r.ref + '-' + Date.now(), 'Saved', null, true);
+  if (r.sl) r.sl.forEach(function (l) { if (!F.sku || l[0] === F.sku) { l[5] = F.to; l[1] = SRC32.filter(function (c) { return c[0] === F.to; })[0][1]; } }); /* v2.8.42 */
+  if (F.sku) { SR32 = null; drawSheet(); va35Wait(vid); return; }
   r.sid = F.to; r.src = SRC32.filter(function (c) { return c[0] === F.to; })[0][1]; r.om = F.to === 'SRC-OMINI' ? 1 : 0; SR32 = null; drawSheet();
   va35Wait(vid); };
 vaPayHtml = (function (f) { return function (r) { return f.apply(this, arguments) + sr32Html(r); }; })(vaPayHtml);
@@ -9865,7 +9868,7 @@ ACT.fkcgo = (function (f) { return function () { var C = FK.cnt; if (!C || !C.hi
   D.toConfirm = (D.toConfirm || []).filter(function (y) { return ids.indexOf(y.hid) < 0; }); if (D.book) (D.book.received = D.book.received || []).push({ from: C.name, amount: got });
   bgSave('fcount', { hids: ids, notes: notes, counted: got, reason: why }, 'fk-' + ids[0] + '-' + uid(), ghs(got) + ' from ' + C.name, null, true); FK.done = { rc: rc, name: C.name }; FK.cnt = null; sheetOpen('frc'); toast('Saved'); }; })(ACT.fkcgo);
 // ---------------------------------------------------------------- v2.8.35 (C): Her account – the screen keeps the change until the system has it
-function va35Busy() { return queue().some(function (x) { return /^(payment|mpayfix|bkfix92|msplit89|mdisc89|mfixdel|msrc32|mpaygo32)$/.test(x.op); }) || FLUSHING; }
+function va35Busy() { return queue().some(function (x) { return /^(payment|mpayfix|bkfix92|bkundo42|msplit89|mdisc89|mfixdel|msrc32|mpaygo32)$/.test(x.op); }) || FLUSHING; }
 function va35Wait(vid, n) { n = n || 0; if (VA.vid !== vid || SHEETK !== 'vacct') return;
   if (va35Busy() && n < 80) { setTimeout(function () { va35Wait(vid, n + 1); }, 1500); return; }
   if ((VA.pay || VA.fx || VA.bf || SR32) && n < 120) { setTimeout(function () { va35Wait(vid, n + 1); }, 3000); return; }
@@ -10103,7 +10106,7 @@ try { document.head.insertAdjacentHTML('beforeend', '<style>.vr37{align-items:fl
 // v2.8.38: Frank confirms money still with an agent – on the order (Her account) or the vendor row (With people)
 var R38 = null, R38S = {};
 try { R38S = JSON.parse(localStorage.getItem('r38s') || '{}') || {}; } catch (e) { R38S = {}; }
-function r38Can() { return !!(D && D.me && D.me.role === 'Warehouse' && !D.viewOf); }
+function r38Can() { return !!(D && D.me && (D.me.role === 'Warehouse' || D.me.role === 'Supervisor') && !D.viewOf); } /* v2.8.42: the manager too */
 function r38Num(v) { return Math.round((Number(String(v == null ? '' : v).replace(/[,\s]/g, '')) || 0) * 100) / 100; }
 function r38R(a) { return Math.round(a * 100) / 100; }
 function r38Box(ref, n, max) { var R = R38 && R38.ref === ref && R38.n === n ? R38 : null;
@@ -10119,10 +10122,10 @@ function r38Va(r) { if (!r38Can() || !r || !r.wr || !r.wr.length) return ''; var
     });
   return h; }
 function r38WpEnts(g) { return (g.ln || []).filter(function (l) { return /^w:/.test(l.key || '') && !l.momo && l.amt > 0.004; }).map(function (l) { var p = String(l.key).split(':'); return { uid: p[1], src: p[2], rid: p.slice(3).join(':'), a: l.amt }; }); }
-function r38Wp(g, ro) { if (ro || !r38Can() || g.momo) return ''; var E = r38WpEnts(g); if (!E.length) return '';
+function r38Wp(g, ro) { if ((ro && D.me.role !== 'Supervisor') || !r38Can() || g.momo) return ''; var E = r38WpEnts(g); if (!E.length) return '';
   return r38Box('g:' + g.k, g.who, r38R(E.reduce(function (t, e) { return t + e.a; }, 0))); }
 function r38Ents(ref, n) { var E = [], vend = '', day = '';
-  if (/^g:/.test(ref)) { var k = ref.slice(2), g = vr37Grp(fc35Items(D.toConfirm, (D.book || {}).wp35)).filter(function (y) { return y.k === k; })[0]; if (!g) return null; E = r38WpEnts(g); vend = g.v; }
+  if (/^g:/.test(ref)) { var k = ref.slice(2), g = vr37Grp(D.me.role === 'Supervisor' && typeof M37 !== 'undefined' && M37.d ? fc35Items(M37.d.tc, M37.d.wp) : fc35Items(D.toConfirm, (D.book || {}).wp35)).filter(function (y) { return y.k === k; })[0]; if (!g) return null; E = r38WpEnts(g); vend = g.v; }
   else { var r = typeof vaRow === 'function' ? vaRow(ref) : null; if (!r) return null; E = (r.wr || []).filter(function (w) { return w.n === n; }).map(function (w) { return { uid: w.u, src: w.src, rid: w.rid, a: w.a, ref: w.ref }; }); vend = (VA.d && (VA.d.name || VA.d.n)) || ''; day = r.day; }
   if (!E.length) return null; return { uid: E[0].uid, ents: E, max: r38R(E.reduce(function (t, e) { return t + e.a; }, 0)), vend: vend, day: day }; }
 function r38Draw(ref) { if (/^g:/.test(ref || '')) render(); else drawSheet(); }
@@ -10139,14 +10142,15 @@ ACT.r38go = function () { var R = R38; if (!R) return; var a = r38Num(R.amt);
     R.ents.forEach(function (e) { if (rem <= 0.004) return; var k = r38R(Math.min(e.a, rem)); rem = r38R(rem - k); var g = G[e.src] = G[e.src] || { items: [] };
       var it = g.items.filter(function (i) { return i.id === e.rid && (i.ref || '') === (e.ref || ''); })[0]; if (it) it.amt = r38R(it.amt + k); else g.items.push(e.ref ? { id: e.rid, amt: k, ref: e.ref } : { id: e.rid, amt: k }); got[e.src + '|' + e.rid] = r38R((got[e.src + '|' + e.rid] || 0) + k); });
     Object.keys(G).forEach(function (s) { var g = G[s], t = r38R(g.items.reduce(function (x, i) { return x + i.amt; }, 0));
-      bgSave('receive', { from: R.uid, amount: t, items: g.items, src: s, sure: 'pend', part: 1 }, 'r38-' + R.uid + '-' + uid(), ghs(t) + ' from ' + R.n, null, true); });
+      bgSave('receive', { from: R.uid, amount: t, items: g.items, src: s, sure: 'pend', part: 1, mg42: D.me.role === 'Supervisor' ? 1 : 0 }, 'r38-' + R.uid + '-' + uid(), ghs(t) + ' from ' + R.n, null, true); });
     // on the phone at once: out of With people and the order, into Receipts for agents
     if (D.book) { (D.book.wp35 || []).forEach(function (p) { if (p.uid !== R.uid) return; p.items.forEach(function (i) { var k = got[i.src + '|' + i.id]; if (k) i.amt = r38R(i.amt - k); }); p.items = p.items.filter(function (i) { return i.amt > 0.004; }); });
       D.book.wp35 = (D.book.wp35 || []).filter(function (p) { return p.items.length; }); (D.book.received = D.book.received || []).push({ from: R.n, amount: a }); }
     if (!/^g:/.test(R.ref)) { var r = vaRow(R.ref); if (r) { var left = a; (r.wr || []).forEach(function (w) { if (w.n !== R.n || left <= 0.004) return; var k = r38R(Math.min(w.a, left)); w.a = r38R(w.a - k); left = r38R(left - k); });
-      r.wr = (r.wr || []).filter(function (w) { return w.a > 0.004; }); (r.wa || []).forEach(function (w) { if (w.n === R.n) w.a = r38R(w.a - a); }); r.wa = (r.wa || []).filter(function (w) { return w.a > 0.004; }); if (!r.wa.length) r.wa = null; } }
+      r.wr = (r.wr || []).filter(function (w) { return w.a > 0.004; }); (r.wa || []).forEach(function (w) { if (w.n === R.n) w.a = r38R(w.a - a); }); r.wa = (r.wa || []).filter(function (w) { return w.a > 0.004; }); if (!r.wa.length) r.wa = null; if (r.hw) { r.hw = r38R((r.wr || []).reduce(function (t, w) { return t + (w.n === 'the manager' ? 0 : w.a); }, 0)); if (!(r.hw > 0.004)) delete r.hw; } } }
     var t = new Date(), hm = ('0' + t.getHours()).slice(-2) + ':' + ('0' + t.getMinutes()).slice(-2);
     (D.handovers = D.handovers || []).unshift({ hid: 'new-' + uid(), day: D.today, at: hm, from: R.n, to: D.me.first || 'Frank', out: false, amount: a, received: a, status: 'Confirmed', money: '', note: '', parts: [{ text: (R.vend || 'Payment') + (R.day ? ' · order ' + dayLbl(R.day) : ''), amt: a }] });
+    if (D.me.role === 'Supervisor' && typeof M37 !== 'undefined' && M37.d) { (M37.d.wp || []).forEach(function (p) { if (p.uid !== R.uid) return; p.items.forEach(function (i) { var k = got[i.src + '|' + i.id]; if (k) i.amt = r38R(i.amt - k); }); p.items = p.items.filter(function (i) { return i.amt > 0.004; }); }); M37.d.wp = (M37.d.wp || []).filter(function (p) { return p.items.length; }); setTimeout(function () { M37.at = 0; mm37Load(); }, 8000); }
     var ref = R.ref; R38 = null; r38Draw(ref); toast('Saved'); }, 'YES, RECEIVED'); };
 // Cash › Receipts: receipts for agents (Frank sends the agent hers; vendors get theirs from the agent)
 function r38Key(x) { return x.day + '|' + x.from + '|' + x.received; }
@@ -10193,5 +10197,36 @@ try { document.head.insertAdjacentHTML('beforeend', '<style>.q38{margin:6px 0 8p
 // v2.8.39: Frank moves a payment (same distributor) and undoes one he took himself and has not handed on
 function va39Mv(p, aid) { if (!p || p.cx || p.bk || D.viewOf) return false; if (D.me.role === 'Supervisor') return true; return D.me.role === 'Warehouse' && !!(p.fs && aid && p.fs[aid]); }
 function va39Un(p) { if (!p || p.cx || p.bk || D.viewOf) return false; return D.me.role === 'Supervisor' || (D.me.role === 'Warehouse' && !!p.fu); }
+// v2.8.42: Her account – money still with an agent shows apart and is still owed (Frank + manager); undo one line; undo a book payment
+function vaHw42(r) { if (!r || !(r.hw > 0.004)) return ''; var n = (r.wa || []).filter(function (w) { return w.n !== 'the manager'; }).map(function (w) { return w.n; }).join(' + ');
+  return '<div><span class="t-amber">With ' + esc(n || 'the agent') + ' – not with Frank yet</span><b class="t-amber">' + ghs(r.hw) + '</b></div>'; }
+function va42Part(p, aid) { return !!(p && aid && !p.bk && (p.to || []).length > 1 && (p.to || []).some(function (t) { return t.aid === aid; })); }
+function va42Amt(r, F) { if (F.k === 'undopart') return ((r.to || []).filter(function (t) { return t.aid === F.aid; })[0] || {}).amt || 0;
+  return (r.to || []).filter(function (t) { return !F.oref || t.ref === F.oref; }).reduce(function (s, t) { return s + t.amt; }, 0); }
+function va42Lbl(r, F) { return F.k === 'undo' ? 'Undo the whole payment' : F.k === 'undopart' ? 'Undo ' + ghs(va42Amt(r, F)) + ' (this line only)' : F.k === 'bkundo' ? (F.oref ? 'Undo ' + ghs(va42Amt(r, F)) + ' (this order only)' : 'Undo this book payment') : 'Move it'; }
+ACT.bk42o = function (b) { VA.f = 'all'; VA.from = VA.to = ''; VA.op = 'p:' + b.dataset.r; VA.fx = { k: 'bkundo', rid: b.dataset.r, aid: '', to: '', why: '', oref: b.dataset.o || '', refs: String(b.dataset.g || '').split(',').filter(String) }; drawSheet();
+  setTimeout(function () { var g = document.querySelector('#over [data-act="vafixgo"]'); if (g && g.scrollIntoView) g.scrollIntoView({ block: 'center' }); }, 60); };
+ACT.vafixgo = (function (f) { return function (b) { var F = VA.fx, vid = VA.vid; if (!F || F.k !== 'bkundo') return f.apply(this, arguments);
+  var why = String(F.why || '').trim(); if (why.length < 3) { say('Write why.'); return; }
+  bgSave('bkundo42', { vid: vid, key: F.rid, refs: F.refs || [], why: why }, 'bku-' + vid + '-' + Date.now(), 'Saved', b, true);
+  va35Show(F); VA.fx = null; VA.op = ''; drawSheet(); va35Wait(vid); }; })(ACT.vafixgo);
+va35Show = (function (f) { return function (F) { if (!F || (F.k !== 'undopart' && F.k !== 'bkundo')) return f.apply(this, arguments); var A = VA.d; if (!A) return;
+  var p = (A.rows || []).filter(function (x) { return x.k === 'p' && x.id === F.rid; })[0]; if (!p) return;
+  var T = (p.to || []).filter(function (t) { return F.k === 'undopart' ? t.aid === F.aid : !F.oref || t.ref === F.oref; });
+  T.forEach(function (t) { var o = vaRow(t.ref); if (o) { o.open = Math.round((o.open + t.amt) * 100) / 100; o.paid = Math.max(0, Math.round((o.paid - t.amt) * 100) / 100); } A.owes = Math.round(((A.owes || 0) + t.amt) * 100) / 100; p.amt = Math.round((p.amt - t.amt) * 100) / 100; });
+  p.to = (p.to || []).filter(function (t) { return T.indexOf(t) < 0; }); if (!p.to.length) p.cx = 1; }; })(va35Show);
+// the order's book payments, each with Undo (manager)
+vaTot = (function (f) { return function (r, P) { var s = f.apply(this, arguments); if (!r || !r.old || !D || D.me.role !== 'Supervisor' || D.viewOf || !VA.d) return s;
+  var B = (VA.d.rows || []).filter(function (p) { return p.k === 'p' && p.bk && !p.cx && (p.to || []).some(function (t) { return t.ref === r.ref; }); }); if (!B.length) return s;
+  var h = B.map(function (p) { var a = (p.to || []).filter(function (t) { return t.ref === r.ref; }).reduce(function (x, t) { return x + t.amt; }, 0);
+    return '<div><span>Paid ' + esc(dayLbl(p.day)) + ' (old book)' + (p.by ? ' · ' + esc(p.by) : '') + '</span><b>' + ghs(a) + '</b> <button class="vasm red" data-act="bk42o" data-r="' + esc(p.id) + '" data-o="' + esc(r.ref) + '" data-g="' + esc((r.grp || [r.ref]).join(',')) + '">Undo</button></div>'; }).join('');
+  return s.replace(/<div><span>Paid in the old book[\s\S]*?<\/b><\/div>/, '') .replace('<div class="vatot">', h + '<div class="vatot">'); }; })(vaTot);
+// v2.8.42: Came from – one product at a time (app orders of more than one product)
+sr32Html = (function (f) { return function (r) { var s = f.apply(this, arguments); var F = SR32 && r && SR32.ref === r.ref ? SR32 : null; if (!F || !r.sl || !/^ORD-/.test(String(r.ref))) return s;
+  var P = [], cur = {}; r.sl.forEach(function (l) { if (P.indexOf(l[0]) < 0) P.push(l[0]); cur[l[0]] = l[5] || 'SRC-OMINI'; }); if (P.length < 2) return s;
+  var chips = '<div class="small muted">Which product?</div><div class="vach">' + [['', 'All']].concat(P.map(function (p) { return [p, p]; })).map(function (c) { return '<button class="' + ((F.sku || '') === c[0] ? 'on' : '') + '" data-act="sr42p" data-v="' + esc(c[0]) + '">' + esc(c[1]) + '</button>'; }).join('') + '</div>';
+  if (F.sku) s = s.replace(/ ✓<\/button>/g, '</button>').replace(new RegExp('(data-v="' + cur[F.sku] + '">[^<]*)</button>'), '$1 ✓</button>');
+  return s.replace('<div class="vapf"><div class="small muted">Where did this order come from?</div>', '<div class="vapf">' + chips + '<div class="small muted">' + (F.sku ? 'Where did the ' + esc(F.sku) + ' come from?' : 'Where did this order come from?') + '</div>'); }; })(sr32Html);
+ACT.sr42p = function (b) { if (!SR32) return; SR32.sku = b.dataset.v || ''; var r = vaRow(SR32.ref); if (SR32.sku && r && r.sl) { var l = r.sl.filter(function (x) { return x[0] === SR32.sku; })[0]; SR32.to = l ? (l[5] || 'SRC-OMINI') : SR32.to; } drawSheet(); };
 if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
