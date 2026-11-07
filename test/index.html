@@ -10311,4 +10311,22 @@ ACT.vapaygo = (function (f) { return function () { var P = VA.pay, A = VA.d, r =
   var a = pk46r(num(P.amt)); if (!(a > r.open + 0.004)) return f.apply(self, args);
   pk46Go(A.vid, a, function () { f.apply(self, args); }, function (row) { return pk46Match(row, r.ref) ? r.open : false; }); }; })(ACT.vapaygo);
 vaPayPv = (function (f) { return function (r) { var a = pk46r(num(VA.pay && VA.pay.amt)); if (VA.d && pk46On(VA.d.vid) && a > r.open + 0.004) return 'This order is paid in full. Tap Save, then tick which other orders get ' + ghs(pk46r(a - r.open)) + '.'; return f(r); }; })(vaPayPv);
+// ---------------------------------------------------------------- v2.8.47: Frank / the manager pays an order someone still holds money for
+var Q47NEW = 0;
+function q47Who(r) { if (!r38Can() || !r || !r.wr || !r.wr.length) return null; var by = {}, L = [];
+  r.wr.forEach(function (w) { if (w.n === 'the manager' || w.momo) return; if (!(w.n in by)) { by[w.n] = 0; L.push(w.n); } by[w.n] = r38R(by[w.n] + (Number(w.a) || 0)); });
+  var n = L.filter(function (k) { return by[k] > 0.004; })[0]; return n ? { n: n, a: by[n] } : null; }
+function q47Asks(P) { return D.me.role === 'Supervisor' || (D.me.role === 'Warehouse' && P.how === 'VENDOR'); }
+ACT.vapaygo = (function (f) { return function () { var P = VA.pay, r = P && vaRow(P.ref), self = this, args = arguments;
+  if (!P || !r || P.q47 === 'new' || !q47Asks(P) || !q47Who(r)) { if (P && P.q47 === 'new') Q47NEW = 1; try { return f.apply(self, args); } finally { Q47NEW = 0; } }
+  P.q47 = 'ask'; drawSheet(); }; })(ACT.vapaygo);
+vaPayHtml = (function (f) { return function (r) { var P = VA.pay; if (!P || P.ref !== r.ref || P.q47 !== 'ask') return f(r); var q = q47Who(r); if (!q) { P.q47 = ''; return f(r); }
+  return '<div class="vapf"><div><b>' + esc(q.n) + ' already has ' + ghs(q.a) + ' for this order.</b></div><div class="small muted" style="margin:2px 0 8px">Is the ' + ghs(Number(P.amt) || 0) + ' you got that money?</div>' +
+    '<div class="va3"><button class="main gr" data-act="q47y">Yes – ' + esc(q.n) + '\'s money</button><button class="ghost2" data-act="q47n">No – new money</button></div><button class="p7lnk" style="display:block;margin:8px auto 0" data-act="vapayx">Cancel</button></div>'; }; })(vaPayHtml);
+ACT.q47y = function () { var P = VA.pay, r = P && vaRow(P.ref), q = q47Who(r); if (!q) return; var a = r38R(r38Num(P.amt));
+  ACT.r38o({ dataset: { r: r.ref, n: q.n } }); if (R38 && a > 0) { R38.amt = String(Math.min(a, R38.max)); drawSheet(); } };
+INP.vapay = (function (f) { return function (el) { if (VA.pay) VA.pay.q47 = ''; return f(el); }; })(INP.vapay);
+ACT.vaphow = (function (f) { return function (b) { if (VA.pay) VA.pay.q47 = ''; return f(b); }; })(ACT.vaphow);
+ACT.q47n = function () { if (!VA.pay) return; VA.pay.q47 = 'new'; ACT.vapaygo(); };
+bgSave = (function (f) { return function (op, data) { if (op === 'payment' && Q47NEW && data) data.sure = [data.sure, 'held47'].filter(Boolean).join(','); return f.apply(this, arguments); }; })(bgSave);
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
