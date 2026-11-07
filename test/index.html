@@ -10110,13 +10110,14 @@ function r38Can() { return !!(D && D.me && (D.me.role === 'Warehouse' || D.me.ro
 function r38Num(v) { return Math.round((Number(String(v == null ? '' : v).replace(/[,\s]/g, '')) || 0) * 100) / 100; }
 function r38R(a) { return Math.round(a * 100) / 100; }
 function r38Box(ref, n, max) { var R = R38 && R38.ref === ref && R38.n === n ? R38 : null;
-  if (!R) return '<div class="r38"><span>' + esc(n) + ' has ' + ghs(max) + ' of this</span><button class="main gr" data-act="r38o" data-r="' + esc(ref) + '" data-n="' + esc(n) + '">Received from ' + esc(n) + '</button></div>';
-  return '<div class="vapf r38f"><div class="small muted">How much did ' + esc(n) + ' give you for this?</div><input class="o2q" data-inp="r38a" inputmode="decimal" value="' + esc(R.amt) + '"><div class="small t-amber" id="r38l">' + r38Left(R) + '</div>' +
-    '<div class="va3"><button class="ghost2" data-act="r38x">Cancel</button><button class="main gr" data-act="r38go">Received</button></div></div>'; }
+  if (!R) return '<div class="r38"><span>' + (r43Me(n) ? 'You have ' : esc(n) + ' has ') + ghs(max) + ' of this</span><button class="main gr" data-act="r38o" data-r="' + esc(ref) + '" data-n="' + esc(n) + '">' + (r43Me(n) ? 'Gave it to Frank' : 'Received from ' + esc(n)) + '</button></div>';
+  return '<div class="vapf r38f"><div class="small muted">' + (r43Me(n) ? 'How much did you give Frank?' : 'How much did ' + esc(n) + ' give you for this?') + '</div><input class="o2q" data-inp="r38a" inputmode="decimal" value="' + esc(R.amt) + '"><div class="small t-amber" id="r38l">' + r38Left(R) + '</div>' +
+    '<div class="va3"><button class="ghost2" data-act="r38x">Cancel</button><button class="main gr" data-act="r38go">' + (r43Me(n) ? 'Gave to Frank' : 'Received') + '</button></div></div>'; }
+function r43Me(n) { return !!(D && D.me && D.me.role === 'Supervisor' && n === 'the manager'); }
 function r38Left(R) { var a = r38Num(R.amt); return a > R.max + 0.004 ? 'More than ' + esc(R.n) + ' has for this' : a > 0 && a < R.max - 0.004 ? ghs(r38R(R.max - a)) + ' stays with ' + esc(R.n) : ''; }
 function r38Va(r) { if (!r38Can() || !r || !r.wr || !r.wr.length) return ''; var P = [], h = '';
-  r.wr.forEach(function (w) { if (w.n !== 'the manager' && P.indexOf(w.n) < 0) P.push(w.n); });
-  P.forEach(function (n) { var W = r.wr.filter(function (w) { return w.n === n; }), free = W;
+  r.wr.forEach(function (w) { if ((w.n !== 'the manager' || D.me.role === 'Warehouse' || (D.me.role === 'Supervisor' && w.src === 'SRC-OMINI')) && P.indexOf(w.n) < 0) P.push(w.n); }); /* v2.8.43 */
+  P.forEach(function (n) { var W = r.wr.filter(function (w) { return w.n === n && (n !== 'the manager' || w.src === 'SRC-OMINI'); }), free = W;
     var max = r38R(free.reduce(function (t, w) { return t + w.a; }, 0));
     if (max > 0.004) h += r38Box(r.ref, n, max);
     });
@@ -10126,7 +10127,7 @@ function r38Wp(g, ro) { if ((ro && D.me.role !== 'Supervisor') || !r38Can() || g
   return r38Box('g:' + g.k, g.who, r38R(E.reduce(function (t, e) { return t + e.a; }, 0))); }
 function r38Ents(ref, n) { var E = [], vend = '', day = '';
   if (/^g:/.test(ref)) { var k = ref.slice(2), g = vr37Grp(D.me.role === 'Supervisor' && typeof M37 !== 'undefined' && M37.d ? fc35Items(M37.d.tc, M37.d.wp) : fc35Items(D.toConfirm, (D.book || {}).wp35)).filter(function (y) { return y.k === k; })[0]; if (!g) return null; E = r38WpEnts(g); vend = g.v; }
-  else { var r = typeof vaRow === 'function' ? vaRow(ref) : null; if (!r) return null; E = (r.wr || []).filter(function (w) { return w.n === n; }).map(function (w) { return { uid: w.u, src: w.src, rid: w.rid, a: w.a, ref: w.ref }; }); vend = (VA.d && (VA.d.name || VA.d.n)) || ''; day = r.day; }
+  else { var r = typeof vaRow === 'function' ? vaRow(ref) : null; if (!r) return null; E = (r.wr || []).filter(function (w) { return w.n === n && (n !== 'the manager' || w.src === 'SRC-OMINI'); }).map(function (w) { return { uid: w.u, src: w.src, rid: w.rid, a: w.a, ref: w.ref }; }); vend = (VA.d && (VA.d.name || VA.d.n)) || ''; day = r.day; }
   if (!E.length) return null; return { uid: E[0].uid, ents: E, max: r38R(E.reduce(function (t, e) { return t + e.a; }, 0)), vend: vend, day: day }; }
 function r38Draw(ref) { if (/^g:/.test(ref || '')) render(); else drawSheet(); }
 ACT.r38o = function (b) { var ref = b.dataset.r, n = b.dataset.n, X = r38Ents(ref, n); if (!X) return; if (typeof VA !== 'undefined') VA.pay = null;
@@ -10137,6 +10138,13 @@ INP.r38a = function (el) { if (!R38) return; R38.amt = el.value; var s = $('r38l
 ACT.r38go = function () { var R = R38; if (!R) return; var a = r38Num(R.amt);
   if (!(a > 0)) { say('Type the amount.'); return; }
   if (a > R.max + 0.004) { say(R.n + ' has ' + ghs(R.max) + ' for this. Other money: With people.'); return; }
+  if (r43Me(R.n)) { ask('You gave ' + ghs(a) + ' to Frank?\nHe confirms it in his Cash tab.', function () { var rem = a, it = []; /* v2.8.43 */
+    R.ents.forEach(function (e) { if (rem <= 0.004 || e.src !== 'SRC-OMINI') return; var k = r38R(Math.min(e.a, rem)); rem = r38R(rem - k); var x = it.filter(function (i) { return i.id === e.rid && (i.ref || '') === (e.ref || ''); })[0]; if (x) x.amt = r38R(x.amt + k); else it.push(e.ref ? { id: e.rid, amt: k, ref: e.ref } : { id: e.rid, amt: k }); });
+    var t = r38R(it.reduce(function (s, i) { return s + i.amt; }, 0)); if (!(t > 0)) return;
+    bgSave('mpaygo32', { src: 'SRC-OMINI', amt: t, to: 'frank', items: it, note: String(R.vend || '').slice(0, 60) }, 'dp43-' + uid(), 'Saved', null, true);
+    var r = vaRow(R.ref); if (r) { var left = t; (r.wr || []).forEach(function (w) { if (w.n !== R.n || left <= 0.004) return; var k = r38R(Math.min(w.a, left)); w.a = r38R(w.a - k); left = r38R(left - k); }); r.wr = (r.wr || []).filter(function (w) { return w.a > 0.004; });
+      (r.wa || []).forEach(function (w) { if (w.n === R.n) w.a = r38R(w.a - t); }); r.wa = (r.wa || []).filter(function (w) { return w.a > 0.004; }); if (!r.wa.length) r.wa = null; }
+    var ref = R.ref; R38 = null; r38Draw(ref); toast('Saved'); }, 'YES, GAVE IT'); return; }
   ask('You received ' + ghs(a) + ' from ' + R.n + '?\nCount the cash first.', function () {
     var rem = a, G = {}, got = {};
     R.ents.forEach(function (e) { if (rem <= 0.004) return; var k = r38R(Math.min(e.a, rem)); rem = r38R(rem - k); var g = G[e.src] = G[e.src] || { items: [] };
