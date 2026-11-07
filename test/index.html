@@ -581,7 +581,7 @@ button.sm{padding:7px 12px;font-size:13px;flex:none}
 .p7key{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:11px;color:var(--mute);font-weight:600;margin:4px 2px 8px}.p7key span{display:inline-flex;align-items:center;gap:4px}.p7key i{display:inline-block;width:11px;height:11px;border-radius:3px}.p7key i.dsh{border:2px dashed #94a3b8;width:8px;height:8px;background:none}
 .p7r{display:block;width:100%;text-align:left;border:1px solid var(--line);border-left:6px solid #94a3b8;background:#fff;border-radius:10px;padding:0;margin:0 0 6px;color:var(--ink);box-shadow:none;min-height:0}
 .p7r.k-late,.p7r.k-melate{border-left-color:#dc2626}.p7r.k-due,.p7r.k-me{border-left-color:#d97706}.p7r.k-later{border-left-color:#94a3b8}.p7r.k-frank{border-left-color:#1d4ed8}.p7r.k-ok{border-left-color:#15803d}.p7r.k-mgr{border-left-color:#7c3aed}.p7r.k-canc{border-left-color:#cbd5e1;opacity:.75}
-.p7r.slow{border-left-style:dashed}.p7r.op{box-shadow:0 1px 6px rgba(0,0,0,.08)}
+.p7r.slow{border-left-style:dashed}#pk46w .pk46bg{position:fixed;inset:0;background:rgba(16,20,28,.45);z-index:40;display:flex;align-items:flex-end;justify-content:center}.pk46{background:#fff;width:100%;max-width:520px;max-height:72vh;display:flex;flex-direction:column;border-radius:18px 18px 0 0;padding:12px 12px calc(12px + env(safe-area-inset-bottom));box-sizing:border-box}.pk46h{display:flex;flex-direction:column;gap:2px;margin:0 0 8px}.pk46h b{font-size:16px}.pk46l{overflow:auto;flex:1 1 auto;min-height:0}.pk46r{border:1px solid var(--line);border-left:6px solid #94a3b8;border-radius:10px;margin:0 0 6px;background:#fff}.pk46r.on{border-left-color:#15803d;background:#f0fdf4}.pk46t{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;box-shadow:none;padding:9px 10px;min-height:0;color:var(--ink)}.pk46t i{flex:0 0 22px;height:22px;border:2px solid #94a3b8;border-radius:6px;display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:800;color:#fff;box-sizing:border-box}.pk46r.on .pk46t i{background:#15803d;border-color:#15803d}.pk46t span{display:flex;flex-direction:column;min-width:0}.pk46t small{color:var(--mute);font-size:12px}.pk46a{display:flex;align-items:center;gap:8px;padding:0 10px 9px 42px}.pk46a input{width:110px;font-size:16px;padding:6px 8px;border:1px solid var(--line);border-radius:8px}.pk46a em{font-style:normal;font-size:12.5px;color:var(--mute);font-weight:700}.pk46s{font-size:13.5px;margin:8px 2px;min-height:18px}.p7r.op{box-shadow:0 1px 6px rgba(0,0,0,.08)}
 .p7h{display:flex;align-items:center;gap:6px;padding:0 8px 0 0}.p7nb{flex:1;min-width:0;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 4px 10px 10px;cursor:pointer}
 .p7nb .nm{min-width:0;font-weight:700;font-size:14px;overflow-wrap:anywhere}.p7nb .nm small{display:block;font-weight:600;color:var(--mute);font-size:11.5px}.p7nb .am{font-weight:800;font-size:14px;white-space:nowrap}.p7h .go{color:var(--mute);font-size:18px}
 .p7ic{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#F1F3F6;border:0;box-shadow:none;padding:0;min-height:0;font-size:16px;text-decoration:none}.p7ic.red{color:var(--red);font-weight:800}
@@ -1886,7 +1886,7 @@ ACT.rcv = function (b) {
   askIn('Cash received from ' + v.name + (v.debt > 0 ? '\nShe owes ' + ghs(v.debt) + ' (oldest ' + v.days + ' days).' : '\nShe owes nothing.') + '\nHow much did she give you (GHS)?', '', 'decimal', function (amt) {
     if (!(num(amt) > 0)) { say('Type the amount, e.g. 300.'); return; }
     var over = v.debt < num(amt) - 0.004;
-    var rk = rkNew(); var go = function (sure) { saveAsk('payment', { vid: v.id, amount: num(amt), sure: sure, rk: rk }, sid, b, ghs(num(amt)) + ' from ' + v.name); rcptOffer({ rk: rk, rids: [], vendor: v.name, phone: v.phone, amount: num(amt), by: D.me.first }); };
+    var rk = rkNew(); var go = function (sure) { pk46Go(v.id, num(amt), function () { saveAsk('payment', { vid: v.id, amount: num(amt), sure: sure, rk: rk }, sid, b, ghs(num(amt)) + ' from ' + v.name); rcptOffer({ rk: rk, rids: [], vendor: v.name, phone: v.phone, amount: num(amt), by: D.me.first }); }); };
     if (over) ask(v.name + ' owes ' + ghs(v.debt) + ' but you typed ' + ghs(num(amt)) + '. Record it? The extra is kept apart for the manager.', function () { go('over'); }, 'YES, SAVE'); else go('');
   }, 'SAVE');
 };
@@ -1895,7 +1895,7 @@ ACT.rcvm = function (b) {
   var v = vend(b.dataset.v); if (!v) return; SHEETK = ''; $('over').innerHTML = ''; var sid = sidFor('momo-' + v.id);
   askIn('MoMo from ' + v.name + ' to Frank\'s number ' + (D.momo || '') + (v.debt > 0 ? '\nShe owes ' + ghs(v.debt) + '.' : '\nShe owes nothing.') + '\nHow much did she send (GHS)?\nFrank checks his MoMo and confirms.', '', 'decimal', function (amt) {
     if (!(num(amt) > 0)) { say('Type the amount, e.g. 300.'); return; }
-    var rk = rkNew(); var go = function (sure) { saveAsk('payment', { vid: v.id, amount: num(amt), sure: sure, rk: rk, momo: 1 }, sid, b, ghs(num(amt)) + ' MoMo from ' + v.name); rcptOffer({ rk: rk, rids: [], vendor: v.name, phone: v.phone, amount: num(amt), by: D.me.first }); };
+    var rk = rkNew(); var go = function (sure) { pk46Go(v.id, num(amt), function () { saveAsk('payment', { vid: v.id, amount: num(amt), sure: sure, rk: rk, momo: 1 }, sid, b, ghs(num(amt)) + ' MoMo from ' + v.name); rcptOffer({ rk: rk, rids: [], vendor: v.name, phone: v.phone, amount: num(amt), by: D.me.first }); }); };
     if (v.debt < num(amt) - 0.004) ask(v.name + ' owes ' + ghs(v.debt) + ' but you typed ' + ghs(num(amt)) + '. Record it? The extra is kept apart for the manager.', function () { go('over'); }, 'YES, SAVE'); else go('');
   }, 'SAVE');
 };
@@ -6675,6 +6675,7 @@ ACT.visSave = function () {
       rcptOffer({ rk: rk, rids: [], vendor: v.name, phone: v.phone, amount: Math.round(dpart * 100) / 100, by: D.me.first }); }
     if (isV && ordered) setTimeout(function () { ACT.orderV({ dataset: { v: X.id, pay: opart > 0.004 ? (X.how === 'momo' ? 'PAID_MOMO' : 'PAID_ME') : '', paid: opart > 0.004 ? String(opart) : '', via: 'At her spot' } }); }, 60); // v2.5.10: her order next – no second search
   };
+  var go46 = go; go = function () { if (isV && dpart > 0.004) pk46Go(v.id, Math.round(dpart * 100) / 100, function () { go46(); }); else go46(); }; /* v2.8.46 */
   if (isV && !ordered && amt > debt + 0.004) ask(X.name + (debt > 0.004 ? ' owes ' + ghs(debt) : ' owes nothing') + ' but you typed ' + ghs(amt) + '.\nSave it? The extra ' + ghs(amt - debt) + ' is kept apart for the manager.', go, 'YES, SAVE'); else go();
 };
 // ---------------------------------------------------------------- the manager's Today: Team today and interventions
@@ -10253,4 +10254,61 @@ sr32Html = (function (f) { return function (r) { var s = f.apply(this, arguments
   return s.replace('<div class="vapf"><div class="small muted">Where did this order come from?</div>', '<div class="vapf">' + chips + '<div class="small muted">' + (F.sku ? 'Where did the ' + esc(F.sku) + ' come from?' : 'Where did this order come from?') + '</div>'); }; })(sr32Html);
 ACT.sr42p = function (b) { if (!SR32) return; SR32.sku = b.dataset.v || ''; var r = vaRow(SR32.ref); if (SR32.sku && r && r.sl) { var l = r.sl.filter(function (x) { return x[0] === SR32.sku; })[0]; SR32.to = l ? (l[5] || 'SRC-OMINI') : SR32.to; } drawSheet(); };
 if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
+// ---------------------------------------------------------------- v2.8.46: the agent ticks the orders a payment pays
+var PK46 = null, PK46P = null;
+function pk46r(n) { return Math.round((Number(n) || 0) * 100) / 100; }
+function pk46On(vid) { if (!D || !((D.me.role === 'Agent' && !D.viewOf) || (D.viewOf && ACTF.agent))) return null; var v = typeof p7Ven === 'function' ? p7Ven(vid) : null; return v && v.oi && v.oi.length ? v : null; }
+function pk46Rows(v) { var R = [], bk = {};
+  v.oi.slice().sort(function (a, b) { return a.dd < b.dd ? -1 : a.dd > b.dd ? 1 : (a.ref < b.ref ? -1 : 1); }).forEach(function (o) {
+    if (o.sep && o.od) { var k = 'b' + o.od; if (bk[k]) { bk[k].refs.push(o.ref); bk[k].o = pk46r(bk[k].o + o.o); bk[k].ctn = bk[k].ctn.concat(o.ctn || []); return; }
+      bk[k] = { refs: [o.ref], o: o.o, od: o.od, sep: 1, ctn: (o.ctn || []).slice() }; R.push(bk[k]); return; }
+    R.push({ refs: [o.ref], o: o.o, od: o.od, sep: o.sep, ctn: (o.ctn || []).slice() }); });
+  return R; }
+function pk46Lbl(r) { return r.sep ? (r.od ? 'Book order ' + dayLbl(r.od) : 'Old debt') : (r.od ? dayLbl(r.od) + ' order' : 'Order'); }
+function pk46Sub(r) { var c = r.ctn.length ? p7Ctn(r) : ''; return (c ? c + ' · ' : '') + 'owes ' + ghs(r.o); }
+/** Run fn after she ticks the orders (at once when nothing needs ticking). pre(row) = rows ticked at the start. */
+function pk46Go(vid, amt, fn, pre) { var v = pk46On(vid); amt = pk46r(amt); if (!v || !(amt > 0)) { PK46P = { vid: vid, nopick: 1 }; try { fn(null); } finally { PK46P = null; } return; } /* nothing to tick on this phone: the server uses the oldest first */
+  var R = pk46Rows(v); R.forEach(function (r) { r.on = 0; r.a = ''; });
+  if (pre) { var left = amt; R.forEach(function (r) { var w = pre(r); if (w && left > 0.004) { r.on = 1; r.a = String(pk46r(Math.min(r.o, left, w === true ? r.o : Number(w) || r.o))); left = pk46r(left - Number(r.a)); } }); }
+  PK46 = { vid: vid, n: v.n, amt: amt, R: R, fn: fn }; pk46Draw(); }
+function pk46Match(r, ref) { return r.refs.indexOf(ref) >= 0 || (/^LEGG-/.test(ref) && r.sep && r.od === String(ref).slice(5, 15)); }
+function pk46State() { var P = PK46, t = 0, bad = false, all = true;
+  P.R.forEach(function (r) { var a = r.on ? pk46r(num(r.a)) : 0; if (r.on && !(a > 0 && a <= r.o + 0.004)) bad = true; if (!(r.on && Math.abs(a - r.o) < 0.005)) all = false; t += a; });
+  t = pk46r(t); var rest = pk46r(P.amt - t); return { t: t, rest: rest, ok: !bad && t > 0 && (Math.abs(rest) < 0.005 || (rest > 0 && all)), extra: rest > 0.004 && all }; }
+function pk46Left(r) { var a = pk46r(num(r.a)); if (a > r.o + 0.004) return '<span class="t-red">More than it owes</span>'; var l = pk46r(r.o - a); return a > 0 ? (l > 0.004 ? ghs(l) + ' left' : 'paid ✓') : ''; }
+function pk46Sum(s) { return s.rest > 0.004 ? (s.extra ? ghs(s.rest) + ' extra – kept apart for the manager.' : '<b class="t-red">' + ghs(s.rest) + ' not placed yet</b> – tick an order or type.') : s.rest < -0.004 ? '<b class="t-red">' + ghs(-s.rest) + ' too much</b> – lower a number.' : s.t > 0 ? '<b class="t-green">All ' + ghs(s.t) + ' placed ✓</b>' : ''; }
+function pk46Html() { var P = PK46, s = pk46State();
+  return '<div class="pk46bg"><div class="pk46"><div class="pk46h"><b>Which orders does ' + ghs(P.amt) + ' pay?</b><span class="small muted">' + esc(P.n) + ' · tick each order she is paying</span></div><div class="pk46l">' +
+    P.R.map(function (r, i) { return '<div class="pk46r' + (r.on ? ' on' : '') + '"><button class="pk46t" data-act="pk46t" data-i="' + i + '"><i>' + (r.on ? '✓' : '') + '</i><span><b>' + esc(pk46Lbl(r)) + '</b><small>' + esc(pk46Sub(r)) + '</small></span></button>' +
+      (r.on ? '<div class="pk46a"><span class="small">Pays</span><input inputmode="decimal" data-inp="pk46a" data-i="' + i + '" value="' + esc(r.a) + '"><em id="pk46x' + i + '">' + pk46Left(r) + '</em></div>' : '') + '</div>'; }).join('') +
+    '</div><div class="pk46s" id="pk46s">' + pk46Sum(s) + '</div><div class="t2b2"><button class="ghost2" data-act="pk46x">Back</button><button class="main gr" id="pk46go" data-act="pk46go"' + (s.ok ? '' : ' disabled') + '>Save</button></div></div></div>'; }
+function pk46Draw() { var el = document.getElementById('pk46w'); if (!el) { el = document.createElement('div'); el.id = 'pk46w'; document.body.appendChild(el); } el.innerHTML = PK46 ? pk46Html() : ''; }
+ACT.pk46t = function (b) { var P = PK46, r = P && P.R[+b.dataset.i]; if (!r) return;
+  if (r.on) { r.on = 0; r.a = ''; } else { var s = pk46State(); r.on = 1; var f = pk46r(Math.min(r.o, Math.max(0, s.rest))); r.a = f > 0 ? String(f) : ''; }
+  pk46Draw(); if (r.on && !r.a) { var el = document.querySelector('#pk46w [data-inp=pk46a][data-i="' + b.dataset.i + '"]'); if (el) el.focus(); } };
+INP.pk46a = function (el) { var P = PK46, r = P && P.R[+el.dataset.i]; if (!r) return; r.a = el.value; var x = document.getElementById('pk46x' + el.dataset.i); if (x) x.innerHTML = pk46Left(r);
+  var s = pk46State(), sm = document.getElementById('pk46s'), g = document.getElementById('pk46go'); if (sm) sm.innerHTML = pk46Sum(s); if (g) g.disabled = !s.ok; };
+ACT.pk46x = function () { PK46 = null; pk46Draw(); };
+ACT.pk46go = function () { var P = PK46; if (!P || !pk46State().ok) return;
+  var L = P.R.filter(function (r) { return r.on && pk46r(num(r.a)) > 0; }).map(function (r) { return { r: r.refs, a: pk46r(num(r.a)), n: pk46Lbl(r), l: pk46r(r.o - num(r.a)) }; });
+  PK46 = null; pk46Draw(); PK46P = { vid: P.vid, l: L }; try { P.fn(L); } finally { PK46P = null; }
+  var v = p7Ven(P.vid); if (v) L.forEach(function (x) { var k = x.a; v.oi.forEach(function (o) { if (k > 0.004 && x.r.indexOf(o.ref) >= 0) { var t = Math.min(k, o.o); o.o = pk46r(o.o - t); k = pk46r(k - t); } }); }); /* shown at once until the next refresh */
+  if (v) v.oi = v.oi.filter(function (o) { return o.o > 0.004; }); };
+bgSave = (function (f) { return function (op, data) { if (op === 'payment' && PK46P && PK46P.nopick && data && data.vid === PK46P.vid) data.nopick = 1; else if (op === 'payment' && PK46P && data && data.vid === PK46P.vid && !data.pays) data.pays = PK46P.l.map(function (x) { return { r: x.r, a: x.a }; }); return f.apply(this, arguments); }; })(bgSave);
+// the visit Money tab
+ACT.vzpsave = (function (f) { return function () { var m = VZ && VZ.m, v = vzV(), self = this, args = arguments; if (!m || !v || m.fix >= 0) return f.apply(self, args);
+  pk46Go(v.id, pk46r(num(m.amt)), function () { f.apply(self, args); }); }; })(ACT.vzpsave);
+// Payments › Record a payment: tick the orders at "Check amount"; the check then says what she chose
+ACT.p7rcheck = (function (f) { return function () { var v = p7Ven(P7S.vid); P7S.pays = null; if (!v) return f(); var a = P7S.amt === null ? p7Owes(v) : P7S.amt;
+  pk46Go(v.id, a, function (L) { P7S.pays = L; f(); }); }; })(ACT.p7rcheck);
+p7Sentence = (function (f) { return function (v, amt) { var L = P7S && P7S.pays; if (!L || !v || P7S.vid !== v.id) return f(v, amt);
+  var t = 0, p = L.map(function (x) { t += x.a; return (x.l > 0.004 ? 'pays ' + ghs(x.a) + ' of the ' : 'pays off the ') + x.n + (x.l > 0.004 ? ' (' + ghs(x.l) + ' left on it)' : ''); }), ex = pk46r(amt - t), left = Math.max(0, pk46r(p7Owes(v) - t));
+  return 'This ' + p.join(', and ') + '.' + (ex > 0.004 ? ' ' + ghs(ex) + ' is extra and kept apart for the manager.' : '') + (left > 0.004 ? ' She will still owe ' + ghs(left) + '.' : ' She owes nothing after this.'); }; })(p7Sentence);
+ACT.p7rsave = (function (f) { return function () { var L = P7S && P7S.pays; PK46P = L ? { vid: P7S.vid, l: L } : { vid: P7S.vid, nopick: 1 }; try { return f.apply(this, arguments); } finally { PK46P = null; P7S.pays = null; } }; })(ACT.p7rsave);
+ACT.p7recback = (function (f) { return function () { P7S.pays = null; return f.apply(this, arguments); }; })(ACT.p7recback);
+// Her account: more than this order owes – she ticks where the rest goes
+ACT.vapaygo = (function (f) { return function () { var P = VA.pay, A = VA.d, r = P && vaRow(P.ref), self = this, args = arguments; if (!r || !A || !pk46On(A.vid)) return f.apply(self, args);
+  var a = pk46r(num(P.amt)); if (!(a > r.open + 0.004)) return f.apply(self, args);
+  pk46Go(A.vid, a, function () { f.apply(self, args); }, function (row) { return pk46Match(row, r.ref) ? r.open : false; }); }; })(ACT.vapaygo);
+vaPayPv = (function (f) { return function (r) { var a = pk46r(num(VA.pay && VA.pay.amt)); if (VA.d && pk46On(VA.d.vid) && a > r.open + 0.004) return 'This order is paid in full. Tap Save, then tick which other orders get ' + ghs(pk46r(a - r.open)) + '.'; return f(r); }; })(vaPayPv);
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
