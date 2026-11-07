@@ -10138,7 +10138,7 @@ INP.r38a = function (el) { if (!R38) return; R38.amt = el.value; var s = $('r38l
 ACT.r38go = function () { var R = R38; if (!R) return; var a = r38Num(R.amt);
   if (!(a > 0)) { say('Type the amount.'); return; }
   if (a > R.max + 0.004) { say(R.n + ' has ' + ghs(R.max) + ' for this. Other money: With people.'); return; }
-  if (r43Me(R.n)) { ask('You gave ' + ghs(a) + ' to Frank?\nHe confirms it in his Cash tab.', function () { var rem = a, it = []; /* v2.8.43 */
+  if (r43Me(R.n)) { ask('You gave ' + ghs(a) + ' to Frank? He confirms it in his Cash tab.', function () { var rem = a, it = []; /* v2.8.43 */
     R.ents.forEach(function (e) { if (rem <= 0.004 || e.src !== 'SRC-OMINI') return; var k = r38R(Math.min(e.a, rem)); rem = r38R(rem - k); var x = it.filter(function (i) { return i.id === e.rid && (i.ref || '') === (e.ref || ''); })[0]; if (x) x.amt = r38R(x.amt + k); else it.push(e.ref ? { id: e.rid, amt: k, ref: e.ref } : { id: e.rid, amt: k }); });
     var t = r38R(it.reduce(function (s, i) { return s + i.amt; }, 0)); if (!(t > 0)) return;
     bgSave('mpaygo32', { src: 'SRC-OMINI', amt: t, to: 'frank', items: it, note: String(R.vend || '').slice(0, 60) }, 'dp43-' + uid(), 'Saved', null, true);
