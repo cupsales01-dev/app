@@ -7181,11 +7181,11 @@ function delRangeHtml(B) {
   var t = D.today, wd = new Date(t + 'T12:00:00Z').getUTCDay(), wk = addDays(t, -((wd + 6) % 7)), mo = t.slice(0, 8) + '01';
   var r = DRG.k === 'today' ? [t, t] : DRG.k === 'week' ? [wk, t] : DRG.k === 'month' ? [mo, t] : [DRG.from || mo, DRG.to || t];
   if (r[0] > r[1]) r = [r[1], r[0]];
-  var L = (B.history || []).filter(function (x) { return !x.old && (DRG.src === 'omni' ? x.omni !== false : DRG.src ? x.from === DRG.src : true) && x.date >= r[0] && x.date <= r[1]; }); /* v2.9.2: All by default */
+  var L = (B.history || []).concat(B.wb93 || []).filter(function (x) { return (!x.old || x.wb) && (DRG.src === 'omni' ? x.omni !== false : DRG.src ? (x.from === DRG.src || (DRG.src === 'Open market' && /^Open market/.test(x.from || ''))) : true) && x.date >= r[0] && x.date <= r[1]; }); /* v2.9.2: All by default */
   var by = {}, tot = 0, pd = 0, ow = 0, val = 0, paid = 0, owing = 0;
   L.forEach(function (x) { var full = !(x.owing > 0.004); val += x.value || 0; paid += x.paid || 0; owing += x.owing || 0; (x.lines || []).forEach(function (l) { var b = by[l.sku] = by[l.sku] || { t: 0, p: 0, o: 0 }; b.t += l.qty; tot += l.qty; if (full) { b.p += l.qty; pd += l.qty; } else { b.o += l.qty; ow += l.qty; } }); });
   var r1 = function (n) { return Math.round(n * 10) / 10; };
-  var h = '<div class="sech">Delivered <span>Omni Haven goods</span></div><div class="card" style="padding:12px 14px"><div class="seg wrap" style="margin:0 0 10px">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['dates', 'Dates']].map(function (x) { return '<button class="' + (lm92c(DRG.k, x[0], DRG.from, DRG.to, 'dates') ? 'on' : '') + '" data-act="drg" data-k="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
+  var h = '<div class="sech">Delivered <span>' + esc(DRG.src || 'all distributors') + '</span></div><div class="card" style="padding:12px 14px"><div class="seg wrap" style="margin:0 0 10px">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['dates', 'Dates']].map(function (x) { return '<button class="' + (lm92c(DRG.k, x[0], DRG.from, DRG.to, 'dates') ? 'on' : '') + '" data-act="drg" data-k="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
   if (DRG.k === 'dates') h += '<div class="fgrid"><label><span>From</span><input type="date" data-chg="drgd" data-f="from" value="' + esc(r[0]) + '" min="' + esc(addDays(t, -60)) + '" max="' + esc(t) + '"></label><label><span>To</span><input type="date" data-chg="drgd" data-f="to" value="' + esc(r[1]) + '" max="' + esc(t) + '"></label></div>';
   h += '<div class="small muted" style="margin:2px 0 8px">' + esc(r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) + ' · ' + L.length + ' order' + (L.length === 1 ? '' : 's') + '</div>' +
     '<div class="tiles"><div class="tile"><b>' + r1(tot) + '</b><span>cartons delivered</span></div><div class="tile"><b class="t-green">' + r1(pd) + '</b><span>cartons paid</span></div><div class="tile"><b class="t-red">' + r1(ow) + '</b><span>cartons owed (' + ghs(owing) + ')</span></div></div>';
@@ -8231,7 +8231,7 @@ function pgFCash() {
   var h = '<div class="fk72t">' + tabs.map(function (t) { return '<button class="' + (FK.ct === t[0] ? 'on' : '') + (t[4] ? ' red' : '') + '" data-act="fk72t" data-v="' + t[0] + '"><span>' + t[1] + (t[3] ? ' <i class="cnt">' + t[3] + '</i>' : '') + '</span><b>' + t[2] + '</b></button>'; }).join('') + '</div>';
   if (FK.ct === 'cnt') return h + fk87Box() + cnt89Html(); // v2.8.19: + what each pays, + his own receipts
   if (FK.ct === 'byo') return h + byoHtml();
-  if (FK.ct === 'rc') { var cur = PSEC.fcash || 'rcpt'; return h + chips('fcash', [['rcpt', 'Receipts'], ['hist', 'History'], ['acct', 'Accounts'], ['ho', 'Hand-overs']], cur) + (cur === 'ho' ? hoh89Html() : cur === 'acct' ? vaFindHtml() : cur === 'rcpt' ? filterBar('prcpt', 'Find a vendor') + '<div id="flist">' + LISTR.prcpt() + '</div>' : filterBar('phist', 'Find a person or amount') + '<div id="flist">' + LISTR.phist() + '</div>'); }
+  if (FK.ct === 'rc') { var cur = PSEC.fcash || 'agr'; return h + chips('fcash', [['agr', 'Agents & riders'], ['rcpt', 'Vendors'], ['hist', 'History'], ['acct', 'Accounts'], ['ho', 'Hand-overs']], cur) + (cur === 'agr' ? r93Ag() : cur === 'ho' ? hoh89Html() : cur === 'acct' ? vaFindHtml() : cur === 'rcpt' ? filterBar('prcpt', 'Find a vendor') + '<div id="flist">' + LISTR.prcpt() + '</div>' : filterBar('phist', 'Find a person or amount') + '<div id="flist">' + LISTR.phist() + '</div>'); }
   if (FK.ct === 'dist') return h + fkDistHtml();
   if (D.book && D.book.wp35) return h + fc37Html(T, D.book.wp35); // v2.8.35; v2.8.37: one row per vendor
   h += fc34Rows(T); // v2.8.34: one total per person
@@ -8268,7 +8268,7 @@ function pgFDay() {
   h += '<div class="fk72n"><div><b>' + om.length + '</b><span>orders approved</span></div><div><b>' + ctn + '</b><span>cartons out</span></div><div><b>' + ghs(cf) + '</b><span>cash confirmed</span></div></div>' + (nw ? '<div class="fkln" data-act="sheet" data-k="fwait"><span>Waiting for the manager</span><b>' + nw + ' ›</b></div>' : '');
   var sub = FK.dsub;
   h += '<div class="t2tray fk72tr">' + [['ctn', 'Cartons out'], ['hist', 'Delivered'], ['help', 'Help items'], ['owed', 'Owed to Omni'], ['rep', 'Reports']].map(function (x) { return '<button class="' + (sub === x[0] ? 'on' : '') + '" data-act="fkds" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
-  if (sub === 'ctn') h += delRangeHtml(B).replace('<div class="sech">Delivered <span>Omni Haven goods</span></div>', '');
+  if (sub === 'ctn') h += delRangeHtml(B).replace(/<div class="sech">Delivered <span>[^<]*<\/span><\/div>/, '');
   else if (sub === 'help') h += helpBookHtml().replace(/^<div class="sech">[\s\S]*?<\/div>/, '');
   else if (sub === 'owed') h += owedByDayHtml(B);
   else if (sub === 'rep') { h += '<div class="wrep">' + (B.reportS ? '<a href="https://wa.me/?text=' + encodeURIComponent(B.reportS) + '" target="_blank"><button class="main">' + ico(ICO.wa) + 'Summary</button></a>' : '') + (B.report ? '<a href="https://wa.me/?text=' + encodeURIComponent(B.report) + '" target="_blank"><button>' + ico(ICO.wa) + 'Full report</button></a>' : '') + '</div>';
@@ -8440,7 +8440,7 @@ function pgFDay() {
   h += '<div class="fk72n"><div><b>' + om.length + '</b><span>orders approved</span></div><div><b>' + ctn + '</b><span>cartons out</span></div><div><b>' + ghs(cf) + '</b><span>cash confirmed</span></div></div>' + (nw ? '<div class="fkln" data-act="sheet" data-k="fwait"><span>Waiting for the manager</span><b>' + nw + ' ›</b></div>' : '');
   var sub = FK.dsub;
   h += '<div class="t2tray fk72tr">' + [['ctn', 'Cartons out'], ['hist', 'Delivered'], ['help', 'Help items'], ['owed', 'Owed'], ['rep', 'Reports']].map(function (x) { return '<button class="' + (sub === x[0] ? 'on' : '') + '" data-act="fkds" data-v="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
-  if (sub === 'ctn') h += delRangeHtml(B).replace('<div class="sech">Delivered <span>Omni Haven goods</span></div>', '');
+  if (sub === 'ctn') h += delRangeHtml(B).replace(/<div class="sech">Delivered <span>[^<]*<\/span><\/div>/, '');
   else if (sub === 'help') h += fk73HelpHtml();
   else if (sub === 'owed') h += fk73OwedHtml();
   else if (sub === 'rep') { h += '<div class="wrep">' + (B.reportS ? '<a href="https://wa.me/?text=' + encodeURIComponent(B.reportS) + '" target="_blank"><button class="main">' + ico(ICO.wa) + 'Summary</button></a>' : '') + (B.report ? '<a href="https://wa.me/?text=' + encodeURIComponent(B.report) + '" target="_blank"><button>' + ico(ICO.wa) + 'Full report</button></a>' : '') + '</div>';
@@ -9810,7 +9810,7 @@ function hoh89Html() { if (HO.u !== (D.me.uid || '')) HO = { per: 'week', from: 
   var h = '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['cal', HO.per === 'cal' ? '📅 ' + (r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) : '📅']].map(function (x) { return '<button class="' + (lm92c(HO.per, x[0], HO.from, HO.to, 'cal') ? 'on' : '') + '" data-act="ho89per" data-v="' + x[0] + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>';
   if (c.st === 'wait') return h + '<div class="mdsk"><i></i><i></i><i></i></div>'; if (c.st === 'err') return h + emptyHtml(esc(c.err || 'Try again.'));
   var L = c.d.list || [], ppl = {}; L.forEach(function (x) { ppl[x.from] = 1; });
-  if (mgr && Object.keys(ppl).length > 1) h += '<div class="t2tray">' + Object.keys(ppl).sort().map(function (p) { return '<button class="' + (HO.who === p ? 'on' : '') + '" data-act="ho89who" data-v="' + esc(p) + '">' + esc(p) + '</button>'; }).join('') + '</div>';
+  if (mgr && Object.keys(ppl).length > 1) h += '<div class="t2tray">' + [''].concat(Object.keys(ppl).sort()).map(function (p) { return '<button class="' + (HO.who === p ? 'on' : '') + '" data-act="ho89who" data-v="' + esc(p) + '">' + esc(p || 'Everyone') + '</button>'; }).join('') + '</div>';
   if (HO.who) L = L.filter(function (x) { return x.from === HO.who; });
   if (!L.length) return h + emptyHtml('No hand-overs on these days.');
   var tot = L.reduce(function (t, x) { return t + x.amt; }, 0);
@@ -10522,19 +10522,19 @@ ACT.np91go = function (b) { var k = NP91K, y = b.dataset.v === '1'; if (!k) retu
 // 1: Receipts for agents – tick several, one SEND; filters who paid, distributor and days (Frank and the manager)
 var R91 = { g: '', p: '', s: '', d: 3, sel: {} };
 function r91Grp(n) { var r = ((r92Fk().arole) || {})[n] || ''; return r === 'Rider' ? 'r' : r === 'Supervisor' ? 'm' : 'a'; }
-function r91All() { var ph = r92Fk().aph || {}, L92 = R91.d === 'lm' ? lm92() : [addDays(D.today, -(R91.d - 1)), D.today];
+function r91All() { var ph = r92Fk().aph || {}, L92 = R91.d === 'lm' ? lm92() : R91.d === 'cal' ? [R91.f, R91.t] : [addDays(D.today, -(R91.d - 1)), D.today];
   return r92Hs().filter(function (x) { return !x.out && /^(Confirmed|Disputed)$/.test(x.status) && x.day >= L92[0] && x.day <= L92[1] && ph.hasOwnProperty(x.from); }); }
 function r91List() { return r91All().filter(function (x) { return (!R91.w || (x.rby || '') === R91.w) && (!R91.g || r91Grp(x.from) === R91.g) && (!R91.p || x.from === R91.p) && (!R91.s || x.money === R91.s); }); }
 function r91Chips(act, cur, L) { return '<div class="t2tray">' + L.map(function (c) { return '<button class="' + (cur === c[0] ? 'on' : '') + '" data-act="' + act + '" data-v="' + esc(c[0]) + '">' + esc(c[1]) + '</button>'; }).join('') + '</div>'; }
-r38Rcp = function () { var A = r91All(); if (!A.length && R91.d === 3 && !R91.g && !R91.p && !R91.s) return '';
+r38Rcp = function () { var A = r91All();
   var G = {}, P = {}, S = {}; A.forEach(function (x) { G[r91Grp(x.from)] = 1; if (!R91.g || r91Grp(x.from) === R91.g) P[x.from] = 1; if (x.money) S[x.money] = 1; });
   if (R91.p && !P[R91.p]) R91.p = '';
-  var h = '<div class="sech">Receipts for agents</div>' + r91Chips('r91d', String(R91.d), [['1', 'Today'], ['3', '3 days'], ['7', '7 days'], ['30', '30 days'], ['lm', 'Last month']]);
+  var h = r91Chips('r91d', String(R91.d), [['1', 'Today'], ['3', '3 days'], ['7', '7 days'], ['30', '30 days'], ['lm', 'Last month'], ['cal', R91.d === 'cal' ? '📅 ' + (R91.f === R91.t ? dayLbl(R91.f) : dayLbl(R91.f) + ' – ' + dayLbl(R91.t)) : '📅']]);
   var gl = [['', 'All']].concat([['a', 'Agents'], ['r', 'Riders'], ['m', 'Manager']].filter(function (g) { return G[g[0]]; })); if (gl.length > 2) h += r91Chips('r91g', R91.g, gl);
   var pl = Object.keys(P).sort(); if (pl.length > 1) h += r91Chips('r91p', R91.p, [['', 'Everyone']].concat(pl.map(function (n) { return [n, n]; })));
   var sl = Object.keys(S).sort(); if (sl.length > 1) h += r91Chips('r91s', R91.s, [['', 'All distributors']].concat(sl.map(function (n) { return [n, n]; })));
   var H = r91List(); Object.keys(R91.sel).forEach(function (k) { if (!H.some(function (x) { return r38Key(x) === k; })) delete R91.sel[k]; });
-  if (!H.length) return h + '<p class="small muted" style="text-align:center">No receipts here.</p>';
+  if (!H.length) return h + '<p class="small muted" style="text-align:center;margin:14px 0">Nothing handed over in these dates.</p>';
   h += '<div class="card" style="padding:4px 12px">' + H.slice(0, 60).map(function (x) { var k = r38Key(x), on = !!R91.sel[k], s = !!R38S[k], Pp = x.parts || [];
     return '<div class="srow r91r" data-act="r91t" data-k="' + esc(k) + '"><span class="fkbx' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><div class="grow"><b>' + ghs(x.received) + '</b> from ' + esc(x.from) + (x.rby === 'Frank' ? ' to Frank' : '') + '<div class="small muted">' + esc(dayLbl(x.day)) + (x.at ? ' · ' + esc(String(x.at).slice(-5)) : '') + (x.money ? ' · ' + esc(x.money) : '') + (Pp.length ? ' · ' + Pp.length + ' payment' + (Pp.length === 1 ? '' : 's') : '') + '</div></div>' + (s ? '<span class="pill green">Sent ✓</span>' : '') + '</div>'; }).join('') + '</div>';
   var T = H.filter(function (x) { return R91.sel[r38Key(x)]; }), tot = T.reduce(function (t, x) { return t + (Number(x.received) || 0); }, 0);
@@ -10637,7 +10637,7 @@ pgMMoney = (function (f) { return function (m0) { var self = this, X = mm28Get()
   if (MM91.t === 'wp') return h + (tc.length ? confirmHtml() : '') + sub('wp');
   if (MM91.t === 'cnt') return h + md91Got();
   if (MM91.t === 'byo') return h + byoHtml();
-  if (MM91.t === 'rc') { var cur = PSEC.mrc || 'rcpt'; return h + chips('mrc', [['rcpt', 'Receipts'], ['hist', 'History'], ['acct', 'Accounts']], cur) + (cur === 'acct' ? vaFindHtml() : cur === 'rcpt' ? filterBar('prcpt', 'Find a vendor') + '<div id="flist">' + LISTR.prcpt() + '</div>' : filterBar('phist', 'Find a person or amount') + '<div id="flist">' + LISTR.phist() + '</div>'); }
+  if (MM91.t === 'rc') { var cur = PSEC.mrc || 'agr'; return h + chips('mrc', [['agr', 'Agents & riders'], ['rcpt', 'Vendors'], ['hist', 'History'], ['acct', 'Accounts']], cur) + (cur === 'agr' ? r93Ag() : cur === 'acct' ? vaFindHtml() : cur === 'rcpt' ? filterBar('prcpt', 'Find a vendor') + '<div id="flist">' + LISTR.prcpt() + '</div>' : filterBar('phist', 'Find a person or amount') + '<div id="flist">' + LISTR.phist() + '</div>'); }
   if (MM91.t === 'dist') return h + sub('dist');
   if (MM91.t === 'ho') return h + hoh89Html();
   return h + '<div class="t2tray">' + [['col', 'Collected'], ['cr', 'Credit']].map(function (c) { return '<button class="' + (MM91.c === c[0] ? 'on' : '') + '" data-act="mm91c" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>' + (X ? sub(MM91.c) : '<div class="mdsk"><i></i><i></i></div>'); }; })(pgMMoney);
@@ -10690,7 +10690,7 @@ LISTR.rdone = (function (f) { return function () { PF92C = []; var h = f.apply(t
 // Frank's Cartons out: All · Omni Haven · Clement · Bernice · Open market (the ones in his history)
 if (typeof DRG !== 'undefined' && DRG.src === undefined) DRG.src = '';
 delRangeHtml = (function (f) { return function (B) { var h = f.apply(this, arguments), N = {}; ((B && B.history) || []).forEach(function (x) { if (!x.old && x.from) N[x.from] = 1; });
-  var K = Object.keys(N).sort(function (a, b) { return a === 'Omni Haven' ? -1 : b === 'Omni Haven' ? 1 : a < b ? -1 : 1; }); if (K.length < 2 && !DRG.src) return h;
+  var K = ['Omni Haven', 'Clement', 'Bernice', 'Open market']; /* v2.9.3: always the four */
   var tr = '<div class="t2tray dr92">' + [['', 'All']].concat(K.map(function (n) { return [n, n]; })).map(function (x) { return '<button class="' + ((DRG.src || '') === x[0] ? 'on' : '') + '" data-act="dr92" data-v="' + esc(x[0]) + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>';
   var i = h.indexOf('<div class="card"'); return i >= 0 ? h.slice(0, i) + tr + h.slice(i) : tr + h; }; })(delRangeHtml);
 ACT.dr92 = function (b) { DRG.src = b.dataset.v; render(); };
@@ -10788,7 +10788,7 @@ function pgMD92() { md91Load(); md92Load(); var X = MD91.d, B = MD92.b, T = md92
   if (s === 'appr') return h + pgAppr.call(this);
   if (s === 'money') return h + md91Page.call(this).replace(/<div class="sub" style="margin:14px 2px 4px">Send today[\s\S]*$/, '');
   if (!B) return h + '<div class="mdsk"><i></i><i></i><i></i></div>';
-  if (s === 'ctn') return h + delRangeHtml(B).replace('<div class="sech">Delivered <span>Omni Haven goods</span></div>', '');
+  if (s === 'ctn') return h + delRangeHtml(B).replace(/<div class="sech">Delivered <span>[^<]*<\/span><\/div>/, '');
   if (s === 'hist') return h + filterBar('hist', 'Find a customer or school') + '<div id="flist">' + LISTR.hist() + '</div>';
   if (s === 'owed') return h + fk73OwedHtml();
   var by = Object.keys(T.by);
@@ -10799,4 +10799,32 @@ PG27.mday = pgMD92;
 ACT.md92s = function (b) { MD92.s = b.dataset.v; if (MD92.s !== 'appr') APK = ''; render(); };
 // every way into Approvals lands on My day › Approvals
 render = (function (f) { return function () { if (D && D.me && D.me.role === 'Supervisor' && !D.viewOf && TAB === 'appr') { TAB = 'mday'; MD92.s = 'appr'; MD92.o = 1; } return f.apply(this, arguments); }; })(render);
+// ---------------------------------------------------------------- v2.9.3: Receipts › Agents & riders on its own tab (the vendor list no longer carries it)
+var R93 = { on: 0 };
+r38Rcp = (function (f) { return function () { return R93.on ? f.apply(this, arguments) : ''; }; })(r38Rcp);
+function r93Ag() { R93.on = 1; var h = ''; try { h = r38Rcp(); } finally { R93.on = 0; } return h || '<p class="small muted" style="text-align:center;margin:14px 0">Nothing handed over in these dates.</p>'; }
+ACT.r91d = (function (f) { return function (b) { if (!b || !b.dataset || b.dataset.v !== 'cal') return f.apply(this, arguments);
+  cal74Open(R91.f || '', R91.t || '', function (a, z) { R91.d = 'cal'; R91.f = a; R91.t = z || a; if (R91.t < R91.f) { var s = R91.f; R91.f = R91.t; R91.t = s; } R91.sel = {}; render(); }); }; })(ACT.r91d);
+// ---------------------------------------------------------------- v2.9.3: two or more chip rows (filters) fold into one Filters button with a one-line summary (Frank + manager)
+var FD93 = {}, NAV93 = { byof: 1, dp32s: 1, mm91c: 1, mts: 1, fc35p: 1, fkflt: 1, md92s: 1, psec: 1 };
+function fd93Tray(el) { if (!el || !el.classList || !el.classList.contains('t2tray') || el.classList.contains('fk72tr')) return false; var b = el.querySelector('button'); return !!(b && b.dataset.act && !NAV93[b.dataset.act]); }
+function fd93Tx(b) { return String(b.textContent || '').replace(/\s+/g, ' ').replace(/^✓\s*/, '').trim(); }
+function fd93All(t) { return /^(all|everyone|all .+)$/i.test(t); }
+function fd93Scan() { if (!D || !D.me || D.viewOf || !/^(Warehouse|Supervisor)$/.test(D.me.role)) return; var M = document.getElementById('main'); if (!M) return;
+  [].slice.call(M.querySelectorAll('.t2tray')).forEach(function (el) { if (!el.parentNode || (el.parentNode.classList && el.parentNode.classList.contains('fd93p')) || !fd93Tray(el) || fd93Tray(el.previousElementSibling)) return;
+    var G = [el], n = el.nextElementSibling; while (fd93Tray(n)) { G.push(n); n = n.nextElementSibling; } if (G.length < 2) return;
+    var k = el.querySelector('button').dataset.act, S = [], nd = 0;
+    G.forEach(function (t) { var f = t.querySelector('button'), fa = fd93All(fd93Tx(f)); [].forEach.call(t.querySelectorAll('button.on'), function (b) { var x = fd93Tx(b); if (fd93All(x)) return; S.push(x); if (fa) nd++; }); });
+    var box = document.createElement('div'); box.className = 'fd93';
+    box.innerHTML = '<div class="fd93b"><button class="fbtn' + (FD93[k] ? ' on' : '') + '" data-act="fd93" data-k="' + esc(k) + '" aria-label="Filter" title="Filter">' + ico(ICO.filter) + (nd ? '<span class="bdg">' + nd + '</span>' : '') + '</button><span class="fd93s">' + esc(S.join(' · ') || 'All') + '</span>' + (nd ? '<a class="fd93x" data-act="fd93x" data-k="' + esc(k) + '" aria-label="Clear">✕</a>' : '') + '</div><div class="fd93p"' + (FD93[k] ? '' : ' hidden') + '></div>';
+    el.parentNode.insertBefore(box, el); var p = box.lastChild; G.forEach(function (t) { p.appendChild(t); }); }); }
+mcScan = (function (f) { return function () { var r = f.apply(this, arguments); try { fd93Scan(); } catch (e) { } return r; }; })(mcScan);
+ACT.fd93 = function (b) { var k = b.dataset.k; FD93[k] = !FD93[k]; var bx = b.closest('.fd93'), p = bx && bx.querySelector('.fd93p'); if (!p) { render(); return; } p.hidden = !FD93[k]; b.classList.toggle('on', !!FD93[k]); };
+ACT.fd93x = function (b) { var bx = b.closest('.fd93'); if (!bx) return; var L = [];
+  [].forEach.call(bx.querySelectorAll('.fd93p > .t2tray'), function (t) { var f = t.querySelector('button'); if (f && fd93All(fd93Tx(f)) && !f.classList.contains('on') && ACT[f.dataset.act]) L.push(f); });
+  var R = render; render = function () { }; try { L.forEach(function (f) { try { ACT[f.dataset.act](f); } catch (e) { } }); } finally { render = R; } render(); };
+/* a search box redraws only the list: fold its rows again */
+INP.flq = (function (f) { return function () { var r = f.apply(this, arguments); try { fd93Scan(); } catch (e) { } return r; }; })(INP.flq);
+rerenderList = (function (f) { return function () { var r = f.apply(this, arguments); try { fd93Scan(); } catch (e) { } return r; }; })(rerenderList);
+try { document.head.insertAdjacentHTML('beforeend', '<style>.fd93b{display:flex;align-items:center;gap:10px;margin:6px 0 8px}.fd93s{flex:1 1 auto;min-width:0;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fd93x{flex:0 0 auto;font-size:17px;padding:6px 10px;color:var(--muted);cursor:pointer}.fd93p{margin:0 0 6px}.fd93p[hidden]{display:none}</style>'); } catch (e) { }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
