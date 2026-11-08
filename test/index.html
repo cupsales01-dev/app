@@ -10827,4 +10827,13 @@ ACT.fd93x = function (b) { var bx = b.closest('.fd93'); if (!bx) return; var L =
 INP.flq = (function (f) { return function () { var r = f.apply(this, arguments); try { fd93Scan(); } catch (e) { } return r; }; })(INP.flq);
 rerenderList = (function (f) { return function () { var r = f.apply(this, arguments); try { fd93Scan(); } catch (e) { } return r; }; })(rerenderList);
 try { document.head.insertAdjacentHTML('beforeend', '<style>.fd93b{display:flex;align-items:center;gap:10px;margin:6px 0 8px}.fd93s{flex:1 1 auto;min-width:0;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fd93x{flex:0 0 auto;font-size:17px;padding:6px 10px;color:var(--muted);cursor:pointer}.fd93p{margin:0 0 6px}.fd93p[hidden]{display:none}</style>'); } catch (e) { }
+// ---------------------------------------------------------------- v2.9.4 (4): the manager's My day "cartons out" tile follows Cartons out (dates + distributor); on the other tabs it says "today"
+function md94R() { var t = D.today, wd = new Date(t + 'T12:00:00Z').getUTCDay(), wk = addDays(t, -((wd + 6) % 7)), mo = t.slice(0, 8) + '01';
+  var r = DRG.k === 'today' ? [t, t] : DRG.k === 'week' ? [wk, t] : DRG.k === 'month' ? [mo, t] : [DRG.from || mo, DRG.to || t]; return r[0] > r[1] ? [r[1], r[0]] : r; }
+function md94Ctn(B) { var r = md94R(), c = 0; (B.history || []).concat(B.wb93 || []).forEach(function (x) { if ((x.old && !x.wb) || x.date < r[0] || x.date > r[1]) return;
+    if (DRG.src && !(x.from === DRG.src || (DRG.src === 'Open market' && /^Open market/.test(x.from || '')))) return; (x.lines || []).forEach(function (l) { c += Number(l.qty) || 0; }); }); return Math.round(c * 10) / 10; }
+function md94Lbl() { var r = md94R(), w = DRG.k === 'today' ? 'today' : DRG.k === 'week' ? 'this week' : DRG.k === 'month' ? 'this month' : (r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])); return w + (DRG.src ? ' · ' + DRG.src : ''); }
+PG27.mday = (function (f) { return function () { var h = f.apply(this, arguments); if (!md92On() || typeof h !== 'string') return h;
+  if (MD92.s === 'ctn') return h.replace(/<b>[^<]*<\/b><span>cartons out<\/span>/, '<b>' + md94Ctn(MD92.b) + '</b><span>cartons out · ' + esc(md94Lbl()) + '</span>');
+  return h.replace('<span>cartons out</span>', '<span>cartons out today</span>'); }; })(PG27.mday);
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
