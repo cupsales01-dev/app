@@ -10364,7 +10364,7 @@ ACT.rd90as = function (b) { var v = b.dataset.v; if (v === RD90.pick) return;
 n86Keep = (function (f) { return function (p) { f(p); ls('cs_pa86_' + TOKEN, rd90As() || ''); }; })(n86Keep);
 n86Open = (function (f) { return function (p) { if (rd90L().length > 1 && (rd90As() || '') !== (ls('cs_pa86_' + TOKEN) || '')) return false; return f(p); }; })(n86Open);
 /** "Riding: Theophilus · Not you?" on his tabs; switching waits until his saves are sent. */
-function rd90Bar() { if (!D || !D.me || D.me.role !== 'Rider' || D.viewOf || rd90L().length < 2) return '';
+function rd90Bar() { rd91Seed(); if (!D || !D.me || D.me.role !== 'Rider' || D.viewOf || rd90L().length < 2) return '';
   return '<div class="rd90b"><span class="grow">Riding: <b>' + esc(D.me.first) + '</b></span><button class="ghost" data-act="rd90sw">Not you? Switch</button></div>'; }
 ACT.rd90sw = function () { if (queue().length) { say('Your saves are still sending. Switch when they are sent.'); return; }
   ask('Switch to another rider?', function () { SESSION = ''; ls(SKEY, null); ls(CKEY, null); ls('cs_as90_' + TOKEN, null); RD90.pick = ''; D = null; SHEETK = ''; $('over').innerHTML = ''; n27Auth({ auth: 'pin' }); }, 'SWITCH'); };
@@ -10472,4 +10472,174 @@ SHEETS.ms90a = function () { return '<div class="n27h"></div><div class="t2sh"><
   '<button class="main wide" data-act="ms90ago" style="margin-top:10px">Save</button><p class="small muted" style="margin:6px 2px 0">He signs in on the Rider link: Who is riding? shows his name, and he chooses his own PIN.</p></div>'; };
 HALFK.ms90a = 1;
 ACT.ms90ago = function () { var n = ($('ms90an') || {}).value || '', ph = ($('ms90ap') || {}).value || ''; if (n.trim().length < 2) { say('Type the name.'); return; } ms90Go({ add: 1, name: n, phone: ph }, function () { SHEETK = ''; $('over').innerHTML = ''; render(); }); };
+// ---------------------------------------------------------------- v2.9.1 (job A)
+var NL91 = String.fromCharCode(10);
+// 3: a phone signed in before v2.9.0 gets "Who is riding?" too – the riders list comes from the screen
+function rd91Seed() { try { if (!D || !D.me || D.me.role !== 'Rider' || D.viewOf || rd90L().length > 1) return; var R = D.riders || []; if (R.length < 2 || !D.me.uid) return;
+  ls('cs_rd90_' + TOKEN, JSON.stringify(R.map(function (r) { return { id: r.id, name: r.name, pin: r.id === D.me.uid ? 1 : (r.pin ? 1 : 0) }; })));
+  RD90.pick = D.me.uid; ls('cs_as90_' + TOKEN, D.me.uid); if (!ls('cs_pa86_' + TOKEN)) ls('cs_pa86_' + TOKEN, D.me.uid); } catch (e) { } }
+// General first in the bar and on opening (when General has orders); set here because the first screen is drawn before this part loads
+(function () { var R = TABS.route, g = R.filter(function (t) { return t[0] === 'general'; })[0]; if (g && R[0] !== g) { TABS.route = [g].concat(R.filter(function (t) { return t !== g; })); } })();
+var RD91F = 0;
+render = (function (f) { return function () { try { if (!RD91F && D && D.me && D.me.role === 'Rider' && SCREEN === 'route' && !D.viewOf) { RD91F = 1; if (TAB === 'route' && (D.pool || []).length) TAB = 'general'; } } catch (e) { } return f.apply(this, arguments); }; })(render);
+// 4: on delivery, not paid – he asks her agent first
+var NP91 = {};
+function np91Rec(vid, gap) { var s = (D.np91 || []).filter(function (x) { return x.vid === vid; })[0], l = NP91[vid], sm = s && Math.abs((s.gap || 0) - gap) < 0.01;
+  if (l && Math.abs(l.gap - gap) < 0.01 && (l.D === D || !sm)) return l; return sm ? s : null; } /* what he asked on this phone, until the next screen data says more */
+function np91Need(st, s) { if (!st || !s || ['ALL', 'PART', 'LESS'].indexOf(st.k) < 0 || st.claim && !(Number(String(st.camt || '').replace(/,/g, '')) > 0)) return null; /* MoMo still asks; a claim counts what she says she paid */
+  var amt = r27Due(s, r27Kept(s, st.q)); if (!(amt > 0.004)) return null;
+  var paid = st.gave === 'none' ? 0 : st.gave === 'other' ? (Number(String(st.other || '').replace(/,/g, '')) || 0) : st.gave ? Number(st.gave) || 0 : null; if (paid !== null && st.claim) paid += Number(String(st.camt || '').replace(/,/g, '')) || 0; if (paid === null || paid >= amt - 0.004) return null;
+  var O = s.orders.filter(function (o) { return !/credit/i.test(o.pay); }); return { due: amt, paid: paid, gap: Math.round((amt - paid) * 100) / 100, oids: O.map(function (o) { return o.oid; }), an: (O[0] || s.orders[0]).agent || 'the agent' }; }
+SHEETS.r27rec = (function (f) { return function () { var h = f.apply(this, arguments), st = R27.rec, s = st && stop(st.vid), n = np91Need(st, s); if (!h || !n) return h;
+  var r = np91Rec(s.id, n.gap), who = esc(n.an), box;
+  if (!r) box = '<div class="np91 a">' + (n.paid > 0 ? 'She paid ' + ghs(n.paid) + ' of ' + ghs(n.due) + '. ' + ghs(n.gap) + ' is missing' : 'She did not pay ' + ghs(n.gap)) + '. Ask ' + who + ' before you give the cartons.</div><button class="r27big g" data-act="np91ask">Ask ' + who + '</button>';
+  else if (r.st === 'ask') box = '<div class="np91 a">Waiting for ' + who + ' … Do not give the cartons yet.</div><button class="r27big g" disabled>Save</button><button class="r27link" data-act="np91rf">Check again</button>';
+  else if (r.st === 'yes') box = '<div class="np91 g">' + esc(r.by || n.an) + ' says yes: ' + ghs(n.gap) + ' on credit ✓</div><button class="r27big g" data-act="r27save">Save</button>';
+  else box = '<div class="np91 r">' + esc(r.by || n.an) + ' says: not without the money.</div><button class="r27big g" data-act="r27k" data-k="NONE">Not delivered ›</button><button class="r27link" data-act="np91ask">Ask again</button>';
+  return h.replace(/<button class="r27big g" data-act="r27save"[^>]*>Save<\/button>/, box); }; })(SHEETS.r27rec);
+ACT.r27save = (function (f) { return function () { var st = R27.rec, s = st && stop(st.vid), n = np91Need(st, s); if (n) { var r = np91Rec(s.id, n.gap); if (!r || r.st !== 'yes') { drawSheet(); toast('Ask ' + n.an + ' first'); return; } } return f.apply(this, arguments); }; })(ACT.r27save); /* typed amounts do not redraw: checked again here */
+ACT.stopsave = (function (f) { return function (b) { try { var st = STOP[b.dataset.v], s = st && stop(b.dataset.v); if (st && s && st.what && st.what !== 'NONE' && !st.claim && String(st.cash || '').trim() !== '') {
+  var due = Math.max(0, s.collect - (stopDue(s, null) - stopDue(s, st))), cash = (num(st.cash) || 0) + Math.max(0, num(st.momo || '') || 0);
+  if (cash + 0.004 < due) { say('She paid less than ' + ghs(due) + '. Record it on the route screen (Slide to record) so her agent is asked first.'); return; } } } catch (e) { } return f.apply(this, arguments); }; })(ACT.stopsave); /* v2.9.1 review: the old stop form cannot skip the ask */
+ACT.np91ask = function () { var st = R27.rec, s = st && stop(st.vid), n = np91Need(st, s); if (!n) return;
+  bgSave('np91', { vid: s.id, oids: n.oids, gap: n.gap, due: n.due }, 'np-' + uid(), 'ask ' + n.an + ': ' + s.name + ' did not pay', null, true);
+  NP91[s.id] = { vid: s.id, gap: n.gap, st: 'ask', D: D }; toast('Sent'); drawSheet(); };
+ACT.np91rf = function () { load(function () { if (SHEETK === 'r27rec') drawSheet(); }); };
+// the agent (her orders) and the manager (every one): a task with two answers
+function np91Mine() { if (!D || !D.me || D.viewOf || !/^(Agent|Supervisor)$/.test(D.me.role)) return []; return (D.np91 || []).filter(function (x) { return x.st === 'ask' && !NP91['a:' + x.k + ':' + x.at]; }); }
+n27Tasks = (function (f) { return function () { var L = f.apply(this, arguments) || []; return np91Mine().map(function (x) { return ['np91:' + x.k, x.vn + (x.paid > 0 ? ' paid ' + ghs(x.paid) + ' of ' + ghs(x.due) : ' did not pay ' + ghs(x.gap)), (x.rn || 'The rider') + ' is there. ' + (x.paid > 0 ? 'Give the remaining ' + ghs(x.gap) + ' on credit?' : 'Give the cartons on credit?')]; }).concat(L); }; })(n27Tasks);
+n27TaskRows = (function (f) { return function () { return String(f.apply(this, arguments) || '').replace(/ › <a data-act="n27later" data-k="np91:[^"]*">Later<\/a>/g, ' › Answer'); }; })(n27TaskRows);
+var NP91K = '';
+ACT.n27task = (function (f) { return function (b) { var k = b && b.dataset ? b.dataset.k || '' : ''; if (k.indexOf('np91:') !== 0) return f.apply(this, arguments); NP91K = k.slice(5); sheetOpen('np91'); }; })(ACT.n27task);
+SHEETS.np91 = function () { var x = (D.np91 || []).filter(function (y) { return y.k === NP91K; })[0]; if (!x) return '';
+  return '<div class="n27h"></div><div class="t2sh"><b>' + esc(x.vn) + '</b><a data-act="closeO">Close</a></div><p style="margin:4px 2px 12px">' + esc(x.rn || 'The rider') + ' is there with the cartons. ' + (x.paid > 0 ? 'She paid ' + ghs(x.paid) + ' of ' + ghs(x.due) + '. Give the remaining <b>' + ghs(x.gap) + '</b> on credit?' : 'She did not pay <b>' + ghs(x.gap) + '</b>. Give the cartons on credit?') + '</p>' +
+    '<button class="main wide" data-act="np91go" data-v="1">Yes, ' + ghs(x.gap) + ' on credit</button><button class="ghost wide" data-act="np91go" data-v="0" style="margin-top:8px">No, not without the money</button>'; };
+HALFK.np91 = 1;
+ACT.np91go = function (b) { var k = NP91K, y = b.dataset.v === '1'; if (!k) return; bgSave('np91a', { k: k, yes: y ? 1 : 0 }, 'na-' + uid(), (y ? 'yes' : 'no') + ' to the rider', null, true);
+  NP91['a:' + k + ':' + ((D.np91 || []).filter(function (x) { return x.k === k; })[0] || {}).at] = 1; SHEETK = ''; $('over').innerHTML = ''; toast('Saved'); render(); };
+// 1: Receipts for agents – tick several, one SEND; filters who paid, distributor and days (Frank and the manager)
+var R91 = { g: '', p: '', s: '', d: 3, sel: {} };
+function r91Grp(n) { var r = ((D.fk && D.fk.arole) || {})[n] || ''; return r === 'Rider' ? 'r' : r === 'Supervisor' ? 'm' : 'a'; }
+function r91All() { var ph = (D.fk && D.fk.aph) || {}, from = addDays(D.today, -(R91.d - 1));
+  return (D.handovers || []).filter(function (x) { return !x.out && /^(Confirmed|Disputed)$/.test(x.status) && x.day >= from && ph.hasOwnProperty(x.from); }); }
+function r91List() { return r91All().filter(function (x) { return (!R91.g || r91Grp(x.from) === R91.g) && (!R91.p || x.from === R91.p) && (!R91.s || x.money === R91.s); }); }
+function r91Chips(act, cur, L) { return '<div class="t2tray">' + L.map(function (c) { return '<button class="' + (cur === c[0] ? 'on' : '') + '" data-act="' + act + '" data-v="' + esc(c[0]) + '">' + esc(c[1]) + '</button>'; }).join('') + '</div>'; }
+r38Rcp = function () { var A = r91All(); if (!A.length && R91.d === 3 && !R91.g && !R91.p && !R91.s) return '';
+  var G = {}, P = {}, S = {}; A.forEach(function (x) { G[r91Grp(x.from)] = 1; if (!R91.g || r91Grp(x.from) === R91.g) P[x.from] = 1; if (x.money) S[x.money] = 1; });
+  if (R91.p && !P[R91.p]) R91.p = '';
+  var h = '<div class="sech">Receipts for agents</div>' + r91Chips('r91d', String(R91.d), [['1', 'Today'], ['3', '3 days'], ['7', '7 days'], ['30', '30 days']]);
+  var gl = [['', 'All']].concat([['a', 'Agents'], ['r', 'Riders'], ['m', 'Manager']].filter(function (g) { return G[g[0]]; })); if (gl.length > 2) h += r91Chips('r91g', R91.g, gl);
+  var pl = Object.keys(P).sort(); if (pl.length > 1) h += r91Chips('r91p', R91.p, [['', 'Everyone']].concat(pl.map(function (n) { return [n, n]; })));
+  var sl = Object.keys(S).sort(); if (sl.length > 1) h += r91Chips('r91s', R91.s, [['', 'All distributors']].concat(sl.map(function (n) { return [n, n]; })));
+  var H = r91List(); Object.keys(R91.sel).forEach(function (k) { if (!H.some(function (x) { return r38Key(x) === k; })) delete R91.sel[k]; });
+  if (!H.length) return h + '<p class="small muted" style="text-align:center">No receipts here.</p>';
+  h += '<div class="card" style="padding:4px 12px">' + H.slice(0, 60).map(function (x) { var k = r38Key(x), on = !!R91.sel[k], s = !!R38S[k], Pp = x.parts || [];
+    return '<div class="srow r91r" data-act="r91t" data-k="' + esc(k) + '"><span class="fkbx' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><div class="grow"><b>' + ghs(x.received) + '</b> from ' + esc(x.from) + '<div class="small muted">' + esc(dayLbl(x.day)) + (x.at ? ' · ' + esc(String(x.at).slice(-5)) : '') + (x.money ? ' · ' + esc(x.money) : '') + (Pp.length ? ' · ' + Pp.length + ' payment' + (Pp.length === 1 ? '' : 's') : '') + '</div></div>' + (s ? '<span class="pill green">Sent ✓</span>' : '') + '</div>'; }).join('') + '</div>';
+  var T = H.filter(function (x) { return R91.sel[r38Key(x)]; }), tot = T.reduce(function (t, x) { return t + (Number(x.received) || 0); }, 0);
+  h += '<div class="r91go"><button class="main wide" data-act="r91send"' + (T.length ? '' : ' disabled') + '>' + (T.length ? 'SEND to ' + esc(T[0].from) + ' · ' + T.length + ' · ' + ghs(tot) : 'Tick the receipts to send') + '</button></div>';
+  return h; };
+ACT.r91d = function (b) { R91.d = Number(b.dataset.v) || 3; R91.sel = {}; render(); };
+ACT.r91g = function (b) { R91.g = b.dataset.v; R91.p = ''; R91.sel = {}; render(); };
+ACT.r91p = function (b) { R91.p = b.dataset.v; R91.sel = {}; render(); };
+ACT.r91s = function (b) { R91.s = b.dataset.v; R91.sel = {}; render(); };
+ACT.r91t = function (b) { var k = b.dataset.k, x = r91List().filter(function (y) { return r38Key(y) === k; })[0]; if (!x) return;
+  if (R91.sel[k]) { delete R91.sel[k]; render(); return; }
+  var other = r91List().some(function (y) { return R91.sel[r38Key(y)] && y.from !== x.from; }); if (other) { R91.sel = {}; toast('One person at a time'); }
+  R91.sel[k] = 1; render(); };
+ACT.r91send = function () { var T = r91List().filter(function (x) { return R91.sel[r38Key(x)]; }); if (!T.length) return;
+  var nm = T[0].from, w = waNum(((D.fk && D.fk.aph) || {})[nm]), tot = T.reduce(function (t, x) { return t + (Number(x.received) || 0); }, 0), me = D.me.role === 'Supervisor' ? 'The manager' : D.me.first;
+  var L = ['CupSales receipt', me + ' received ' + ghs(tot) + ' from ' + nm + (T.length > 1 ? ' (' + T.length + ' hand-overs)' : '') + ':'];
+  T.forEach(function (x) { L.push(''); L.push(dayLbl(x.day) + (x.at ? ' ' + String(x.at).slice(-5) : '') + ' – ' + ghs(x.received) + (x.money ? ' (' + x.money + ')' : ''));
+    (x.parts || []).slice(0, 25).forEach(function (p) { L.push('- ' + p.text + ': ' + ghs(p.amt)); }); });
+  L.push(''); L.push('Total: ' + ghs(tot)); L.push('Thank you.');
+  var u = 'https://wa.me/' + (w || '') + '?text=' + encodeURIComponent(L.join(NL91)); window.open(wb87On() ? wb87(u) : u, '_blank');
+  T.forEach(function (x) { R38S[r38Key(x)] = 1; }); try { var K = Object.keys(R38S); if (K.length > 200) K.slice(0, K.length - 200).forEach(function (z) { delete R38S[z]; }); localStorage.setItem('r38s', JSON.stringify(R38S)); } catch (e) { }
+  R91.sel = {}; render(); };
+try { document.head.insertAdjacentHTML('beforeend', '<style>.np91{margin:10px 0 8px;padding:10px 12px;border-radius:10px;font-weight:700}.np91.a{background:#3a2a06;color:#ffd27a}.np91.g{background:#0d2e1b;color:#7ee2a8}.np91.r{background:#3a1212;color:#ff9b9b}' +
+  '.r91r{cursor:pointer;gap:10px}.r91r .fkbx{flex:0 0 24px;height:24px;border:2px solid #98a2b3;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800}.r91r .fkbx.on{background:#12b76a;border-color:#12b76a;color:#fff}.r91go{position:sticky;bottom:72px;margin:8px 0 12px}</style>'); } catch (e) { }
+// ---------------------------------------------------------------- v2.9.1 (job B)
+// a bonus for every rider (Team › Riders: the chosen rider's bonus, only the manager sees it)
+mt28Prince = (function (f) { return function () { var h = f.apply(this, arguments), M = D.r27m, RS = (M && M.riders) || []; if (RS.length < 2) return h; var R91 = typeof MT90 !== 'undefined' ? MT90.r : '';
+  if (h.indexOf('rw89') < 0) { var i = h.indexOf('</div>'); var w = rwHtml(); if (i >= 0 && w) h = h.slice(0, i + 6) + w + h.slice(i + 6); }
+  var cur = RS.filter(function (r) { return r.id === R91; })[0]; if (!cur || cur.id === 'USR-PRINCE' || !cur.bonus) return h; var B = cur.bonus;
+  return h + '<button class="lev6" data-act="rb91" style="margin-top:8px"><span class="grow"><b>Bonus ' + ghs(B.ghs) + '</b><span class="small muted" style="display:block">' + (B.qualifies ? 'qualifies ✓' : md28N(B.need) + ' cartons to go') + ' · volume only, at 80% · only you see it' + (B.set ? '' : ' · tap to set') + '</span></span>›</button>'; }; })(mt28Prince);
+ACT.rb91 = function () { var M = D.r27m, cur = ((M && M.riders) || []).filter(function (r) { return r.id === MT90.r; })[0]; if (!cur) return;
+  askIn(cur.name + '\'s bonus for ' + M.month.slice(8) + ' (GHS) – paid on volume only, at 80%:', String(cur.bonus.ghs), 'numeric', function (v) { var g = num(v); if (!(g >= 0)) return;
+    bgSave('rbonus', { month: M.month, ghs: g, rid: cur.id }, 'rb-' + uid(), cur.name + ' bonus ' + ghs(g), null, true); cur.bonus.ghs = g; cur.bonus.set = true; toast('Saved'); render(); }, 'SAVE'); };
+// each rider's place: the order's own rider in its details, the chosen rider on Team › Riders
+var RW91 = '';
+rwHtml = (function (f) { return function () { if (!RW91 || !RW.t) return f.apply(this, arguments); var L0 = RW.list;
+  RW.list = L0.filter(function (x) { return x.u === RW91 || (!x.u && !x.h && RW91 === 'USR-PRINCE'); });
+  try { var h = f.apply(this, arguments); if (!RW.list.length) { var nm = ((D.riders || []).filter(function (r) { return r.id === RW91; })[0] || {}).name; if (nm) h = h.replace(/Prince has not shared his place yet/, esc(nm) + ' has not shared his place yet'); } return h; } finally { RW.list = L0; } }; })(rwHtml);
+SHEETS.ord = (function (f) { return function () { var o = typeof oById === 'function' ? oById(OSEL) : null; RW91 = (D.riders || []).length > 1 && o ? (o.rdr || '') : ''; try { return f.apply(this, arguments); } finally { RW91 = ''; } }; })(SHEETS.ord);
+mt28Prince = (function (f) { return function () { RW91 = (D.r27m && (D.r27m.riders || []).length > 1 && typeof MT90 !== 'undefined') ? MT90.r : ''; try { return f.apply(this, arguments); } finally { RW91 = ''; } }; })(mt28Prince);
+// the manager: Money › With people › Clear (never paid)
+var CL91 = { u: '', tk: {}, why: '' };
+mm37Wp = (function (f) { return function (X) { var h = f.apply(this, arguments), d = M37.d; if (!d || !(d.wp || []).length) return h;
+  return h + '<button class="ghost wide" data-act="cl91" style="margin:12px 0 4px">Clear money with people…</button><p class="small muted" style="margin:0 2px 12px">For wrong records: the payment is cancelled and the vendor owes it again.</p>'; }; })(mm37Wp);
+function cl91Items() { var p = ((M37.d && M37.d.wp) || []).filter(function (x) { return x.uid === CL91.u; })[0]; return p ? p.items : []; }
+function cl91K(x) { return x.id + '|' + x.src; }
+ACT.cl91 = function () { var W = (M37.d && M37.d.wp) || []; if (!W.length) return; if (!W.some(function (p) { return p.uid === CL91.u; })) CL91.u = W[0].uid; CL91.tk = {}; CL91.why = ''; sheetOpen('cl91'); };
+SHEETS.cl91 = function () { var W = (M37.d && M37.d.wp) || [], I = cl91Items(), T = I.filter(function (x) { return CL91.tk[cl91K(x)]; }), tot = T.reduce(function (t, x) { return t + x.amt; }, 0);
+  var h = '<div class="n27h"></div><div class="t2sh"><b>Clear money with people</b><a data-act="closeO">Close</a></div><div class="t2tray">' + W.map(function (p) { return '<button class="' + (p.uid === CL91.u ? 'on' : '') + '" data-act="cl91u" data-v="' + esc(p.uid) + '">' + esc(p.name) + '</button>'; }).join('') + '</div>';
+  h += '<button class="ghost" data-act="cl91all" style="margin:6px 0">' + (T.length === I.length && I.length ? 'Untick all' : 'Select all') + '</button>';
+  h += '<div class="cl91">' + I.map(function (x) { var on = !!CL91.tk[cl91K(x)]; return '<button class="fkck' + (on ? ' on' : '') + '" data-act="cl91t" data-k="' + esc(cl91K(x)) + '"><span class="fkbx">' + (on ? '✓' : '') + '</span><span class="grow ell">' + esc(x.text) + '<small>' + esc(x.money || '') + (x.when ? ' · ' + esc(x.when) : '') + '</small></span><b>' + ghs(x.amt) + '</b></button>'; }).join('') + '</div>';
+  h += '<input class="o2q" data-inp="cl91w" placeholder="Why? (e.g. reconciliation 8 Nov)" value="' + esc(CL91.why) + '" style="margin-top:10px">';
+  h += '<button class="main wide" data-act="cl91go" style="margin-top:10px"' + (T.length ? '' : ' disabled') + '>' + (T.length ? 'CLEAR · ' + T.length + ' · ' + ghs(tot) : 'Tick what to clear') + '</button><p class="small muted" style="margin:6px 2px 0">Cleared = never paid. The vendors owe it again.</p>';
+  return h; };
+try { document.head.insertAdjacentHTML('beforeend', '<style>.cl91 .fkck small{display:block;font-weight:400;color:#667085;font-size:12px}</style>'); } catch (e) { }
+ACT.cl91u = function (b) { CL91.u = b.dataset.v; CL91.tk = {}; drawSheet(); };
+ACT.cl91all = function () { var I = cl91Items(), all = I.every(function (x) { return CL91.tk[cl91K(x)]; }); CL91.tk = {}; if (!all) I.forEach(function (x) { CL91.tk[cl91K(x)] = 1; }); drawSheet(); };
+ACT.cl91t = function (b) { var k = b.dataset.k; if (CL91.tk[k]) delete CL91.tk[k]; else CL91.tk[k] = 1; drawSheet(); };
+INP.cl91w = function (el) { CL91.why = el.value; };
+ACT.cl91go = function () { var I = cl91Items(), T = I.filter(function (x) { return CL91.tk[cl91K(x)]; }); if (!T.length) return; if (String(CL91.why || '').trim().length < 3) { say('Write why.'); return; }
+  var p = ((M37.d && M37.d.wp) || []).filter(function (x) { return x.uid === CL91.u; })[0], tot = T.reduce(function (t, x) { return t + x.amt; }, 0);
+  ask('Clear ' + ghs(tot) + ' with ' + p.name + '?' + String.fromCharCode(10) + 'Never paid: the vendors owe it again.', function () {
+    bgSave('clr91', { uid: CL91.u, why: CL91.why, items: T.map(function (x) { return { id: x.id, src: x.src, amt: x.amt }; }) }, 'cl-' + uid(), 'clear ' + ghs(tot) + ' with ' + p.name, null, true);
+    p.items = p.items.filter(function (x) { return !CL91.tk[cl91K(x)]; }); M37.d.wp = M37.d.wp.filter(function (x) { return x.items.length; }); CL91.tk = {};
+    SHEETK = ''; $('over').innerHTML = ''; toast('Saved'); setTimeout(function () { M37.at = 0; mm37Load(); }, 8000); render(); }, 'CLEAR'); };
+// ---------------------------------------------------------------- v2.9.1 (job C): the manager's My day and Money (Frank's Cash layout)
+var MD91 = { st: '', d: null, at: 0, op: '' }, MM91 = { t: 'wp', c: 'col' };
+function md91Load(force) { if (MD91.st === 'wait' || (!force && MD91.d && Date.now() - MD91.at < 60000)) return; MD91.st = 'wait';
+  readOp('mday91', {}, function (r) { MD91.st = ''; MD91.at = Date.now(); if (r && r.ok) MD91.d = r; if (TAB === 'mday' || TAB === 'money') render(); }, function () { MD91.st = ''; MD91.at = Date.now(); }); }
+function md91Sum(L) { return Math.round((L || []).reduce(function (t, x) { return t + (Number(x.amt) || 0); }, 0) * 100) / 100; }
+function md91Got() { var X = MD91.d; if (!X) return '<div class="mdsk"><i></i><i></i></div>'; if (!X.got.length) return emptyHtml('Nothing received yet today.');
+  return X.got.map(function (g, i) { var k = 'g' + i, o = MD91.op === k; return '<div class="fkr" style="border-left-color:' + (g.v ? '#2563eb' : '#15803d') + '" data-act="md91o" data-k="' + k + '"><div class="grow"><b>' + esc(g.from) + '</b><div class="fks">' + esc(g.t) + ' · ' + esc(g.src) + (g.v ? ' · paid to you' : '') + ((g.parts || []).length && !o ? ' · ' + g.parts.length + ' payment' + (g.parts.length === 1 ? '' : 's') + ' ›' : '') + '</div></div><b class="fkam">' + ghs(g.amt) + '</b></div>' +
+    (o && (g.parts || []).length ? '<div class="wp92">' + g.parts.map(function (p) { return '<div><span>' + esc(p.text) + '</span><b>' + ghs(p.amt) + '</b></div>'; }).join('') + '</div>' : ''); }).join(''); }
+ACT.md91o = function (b) { MD91.op = MD91.op === b.dataset.k ? '' : b.dataset.k; render(); };
+function md91Text() { var X = MD91.d, NL = String.fromCharCode(10); if (!X) return ''; var L = ['CupSales – the manager\'s day ' + dayLbl(X.day), 'Received: ' + ghs(md91Sum(X.got)) + ' (' + X.got.length + ')', 'Handed over: ' + ghs(md91Sum(X.gave)), 'With me now: ' + ghs(md91Sum(X.me)) + (X.me.length ? ' (' + X.me.map(function (m) { return m.src + ' ' + ghs(m.amt); }).join(', ') + ')' : ''), 'Still with people: ' + ghs(X.wp)];
+  if (X.got.length) { L.push(''); L.push('Received'); X.got.forEach(function (g) { L.push('- ' + g.t + ' ' + g.from + ': ' + ghs(g.amt) + ' (' + g.src + ')'); }); }
+  if (X.gave.length) { L.push(''); L.push('Handed over'); X.gave.forEach(function (g) { L.push('- ' + g.t + ' to ' + g.to + ': ' + ghs(g.amt) + ' (' + g.src + (g.st === 'Sent' ? ', not confirmed yet' : '') + ')'); }); }
+  return L.join(NL); }
+function pgMD91() { md91Load(); var X = MD91.d, h = '<div class="fkpan"><div class="fkph"><b>' + esc(dayLbl(D.today)) + '</b><span class="fkpill">Your money today</span></div>';
+  if (!X) return h + '</div><div class="mdsk"><i></i><i></i><i></i></div>';
+  h += fkLn('Received', ghs(md91Sum(X.got))) + fkLn('Handed over', ghs(md91Sum(X.gave))) + fkLn('With you now', ghs(md91Sum(X.me))) + '<div class="fkln" data-act="md91wp"><span>Still with people</span><b>' + ghs(X.wp) + ' ›</b></div></div>';
+  var ap = typeof apprCount === 'function' ? apprCount() : 0, tc = (D.toConfirm || []).length, np = typeof np91Mine === 'function' ? np91Mine().length : 0;
+  var W = [[tc, 'Money handed to you – count it', 'md91tc'], [ap, 'Approvals', 'mdtasks'], [np, 'A rider asks: not paid', 'mdtasks']].filter(function (x) { return x[0]; });
+  h += '<div class="fkpan"><div class="fkph"><b>Waiting for you</b></div>' + (W.length ? W.map(function (x) { return '<div class="fkln" data-act="' + x[2] + '"><span>' + x[1] + '</span><b>' + x[0] + ' ›</b></div>'; }).join('') : '<div class="fkok sm">Nothing ✓</div>') + '</div>';
+  if (X.me.length) h += '<div class="fkq2">With you now</div><div class="fkpan">' + X.me.map(function (m) { return fkLn(esc(m.src), ghs(m.amt)); }).join('') + '</div>';
+  h += '<div class="fkq2">Received today</div>' + md91Got();
+  h += '<div class="fkq2">Handed over today</div>' + (X.gave.length ? X.gave.map(function (g) { return '<div class="fkr" style="border-left-color:' + (g.st === 'Sent' ? '#d97706' : '#15803d') + '"><div class="grow"><b>To ' + esc(g.to) + '</b><div class="fks">' + esc(g.t) + ' · ' + esc(g.src) + (g.st === 'Sent' ? ' · not confirmed yet' : '') + '</div></div><b class="fkam">' + ghs(g.amt) + '</b></div>'; }).join('') : '<p class="small muted" style="margin:4px 2px">Nothing handed over today.</p>');
+  h += '<div class="sub" style="margin:14px 2px 4px">Send today\'s summary on WhatsApp</div><div class="wrep"><a href="https://wa.me/?text=' + encodeURIComponent(md91Text()) + '" target="_blank" rel="noopener"><button class="main">' + ico(ICO.wa) + 'Summary</button></a></div>';
+  return h; }
+ACT.md91wp = function () { TAB = 'money'; MM91.t = 'wp'; render(); window.scrollTo(0, 0); };
+ACT.md91tc = function () { TAB = 'money'; MM91.t = 'wp'; render(); window.scrollTo(0, 0); };
+(function () { if (!TABS.mgr.some(function (t) { return t[0] === 'mday'; })) TABS.mgr = TABS.mgr.concat([['mday', 'My day', 'b6today']]); })();
+PG27.mday = pgMD91;
+// Money: the tiles of Frank's Cash + Distributors, Hand-overs, Collected
+pgMMoney = (function (f) { return function (m0) { var self = this, X = mm28Get(); mm37Load(); md91Load();
+  var tc = D.toConfirm || [], wpT = ((M37.d && M37.d.wp) || []).reduce(function (t, p) { return t + p.items.reduce(function (s, i) { return s + i.amt; }, 0); }, 0) + ((M37.d && M37.d.tc) || []).concat(tc).reduce(function (t, x) { return t + (Number(x.amount) || 0); }, 0); /* as "Expected from everyone" below, + what is handed to her */
+  var tiles = [['wp', 'With people', M37.d ? ghs(wpT) : '…', tc.length], ['cnt', 'Counted today', MD91.d ? ghs(md91Sum(MD91.d.got)) : '…', 0], ['byo', 'By order', BY.d ? ghs(byoBal()) : 'hand over', 0], ['rc', 'Receipts', 'and history', 0], ['dist', 'Distributors', 'pay · PP', 0], ['ho', 'Hand-overs', 'history', 0], ['col', 'Collected', 'and credit', 0]];
+  var h = '<div class="fk72t mm91">' + tiles.map(function (t) { return '<button class="' + (MM91.t === t[0] ? 'on' : '') + '" data-act="mm91t" data-v="' + t[0] + '"><span>' + t[1] + (t[3] ? ' <i class="cnt">' + t[3] + '</i>' : '') + '</span><b>' + t[2] + '</b></button>'; }).join('') + '</div>';
+  var sub = function (s) { var keep = MM.s; MM.s = s; try { var x = f.call(self, m0), i = x.indexOf('</div>'); return i >= 0 ? x.slice(i + 6) : x; } finally { MM.s = keep; } };
+  if (MM91.t === 'wp') return h + (tc.length ? confirmHtml() : '') + sub('wp');
+  if (MM91.t === 'cnt') return h + md91Got();
+  if (MM91.t === 'byo') return h + byoHtml();
+  if (MM91.t === 'rc') { var cur = PSEC.mrc || 'rcpt'; return h + chips('mrc', [['rcpt', 'Receipts'], ['hist', 'History'], ['acct', 'Accounts']], cur) + (cur === 'acct' ? vaFindHtml() : cur === 'rcpt' ? filterBar('prcpt', 'Find a vendor') + '<div id="flist">' + LISTR.prcpt() + '</div>' : filterBar('phist', 'Find a person or amount') + '<div id="flist">' + LISTR.phist() + '</div>'); }
+  if (MM91.t === 'dist') return h + sub('dist');
+  if (MM91.t === 'ho') return h + hoh89Html();
+  return h + '<div class="t2tray">' + [['col', 'Collected'], ['cr', 'Credit']].map(function (c) { return '<button class="' + (MM91.c === c[0] ? 'on' : '') + '" data-act="mm91c" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>' + (X ? sub(MM91.c) : '<div class="mdsk"><i></i><i></i></div>'); }; })(pgMMoney);
+ACT.mm91t = function (b) { MM91.t = b.dataset.v; if (MM91.t === 'byo') BY.st = ''; if (MM91.t === 'cnt') md91Load(true); render(); window.scrollTo(0, 0); };
+try { document.head.insertAdjacentHTML('beforeend', '<style>.fk72t.mm91{grid-auto-columns:minmax(112px,1fr)}</style>'); } catch (e) { }
+ACT.mm91c = function (b) { MM91.c = b.dataset.v; render(); };
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
