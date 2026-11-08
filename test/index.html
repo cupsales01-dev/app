@@ -5152,7 +5152,7 @@ ACT.ochgok = function (b) { var nm = b.dataset.n, oid = b.dataset.o;
     if (D.chgAsks) D.chgAsks = D.chgAsks.filter(function (c) { return c.oid !== oid; });
     bgSave('ochgok', { oid: oid, note: String(t || '').trim() }, 'ock-' + oid + '-' + uid(), 'change OK, to Frank: ' + nm, null, true); render(); }, 'OK – TO FRANK'); };
 // ---------------------------------------------------------------- Done: the tab counts the chosen period; Pick dates (older ones come from the system)
-FDEF.odone = [['per', 'When', [['', 'This week'], ['today', 'Today'], ['month', 'This month'], ['all', 'All'], ['pick', 'Pick dates']]], ['from', 'From', 'date'], ['to', 'To', 'date'],
+FDEF.odone = [['per', 'When', [['', 'This week'], ['today', 'Today'], ['month', 'This month'], ['all', 'All'], ['lm', 'Last month'], ['pick', 'Pick dates']]], ['from', 'From', 'date'], ['to', 'To', 'date'],
   ['st', 'Show', [['', 'All'], ['del', 'Delivered'], ['owe', 'She still owes'], ['canc', 'Cancelled'], ['dec', 'Frank declined']]]];
 var OHIST = {}, OHTRY = {};
 function o27Range() { var f = fl('odone'), per = f.per || '';
@@ -5177,7 +5177,7 @@ function o27DoneLbl(A) { var S = o27DoneSet(A); return S.L.length + ' ' + (S.R.p
 function o27Row(o) { return o.old ? oRow2(o).replace('data-act="oopen"', 'data-act="o27oldo"') : oRow2(o); }
 oDoneList = function (A) {
   var f = fl('odone'), S = o27DoneSet(A), F = { '': function () { return true; }, del: function (o) { return o.status === 'Delivered'; }, owe: function (o) { return o.status === 'Delivered' && o.outcome && o.outcome.owing > 0.004; }, canc: function (o) { return /Cancel/.test(o.status); }, dec: function (o) { return o.status === 'Rejected'; } };
-  var L = S.L.filter(function (o) { return (F[f.st || ''] || F[''])(o) && hasQ('odone', o.vendor + ' ' + (o.school || '')); });
+  var L0 = S.L.filter(function (o) { return (F[f.st || ''] || F[''])(o) && hasQ('odone', o.vendor + ' ' + (o.school || '')); }), L = L0.filter(function (o) { return pf92Ok('ag', pf92Lines(o)); }); PF92T.ag = pf92Tray('ag', L0.map(pf92Lines)) + pf92Sum('ag', L.filter(function (o) { return o.status === 'Delivered'; }).map(pf92Lines)); /* v2.9.2 */
   var head = '<div class="small muted" style="text-align:center;margin:-2px 0 6px">' + esc(S.R.pick ? 'Picked: ' + S.R.w : 'Done ' + S.R.w) + ' · ' + L.length + ' order' + (L.length === 1 ? '' : 's') + '</div>' +
     (S.fail ? '<div class="o27old" data-act="o27old">Orders before ' + esc(dayLbl(o27PhoneFrom())) + ' are not on this phone · tap to get them</div>' : '');
   if (!L.length) return head + (S.wait && !S.fail ? '' : '<p class="small muted" style="text-align:center">No order here.</p>');
@@ -5416,7 +5416,7 @@ function p7HfOk(p, f) { var s = p7St(p); return f === 'all' || (f === 'cash' && 
 function p7Range() { var t = D.today; if (P7HP === 'today') return [t, t]; if (P7HP === 'week') return [p7Week(), t]; if (P7HP === 'month') return [t.slice(0, 8) + '01', t]; var a = P7FROM || addDays(t, -30), z = P7TO || t; return a > z ? [z, a] : [a, z]; }
 function p7HistPays() { var r = p7Range(), src = P7HP === 'dates' && P7OLD && P7OLD.k === r.join('|') ? P7OLD.pays : p7Pays(); return src.filter(function (p) { return p.day >= r[0] && p.day <= r[1]; }); }
 function p7HistHtml() {
-  var h = '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['dates', 'Pick dates']].map(function (x) { return '<button class="' + (P7HP === x[0] ? 'on' : '') + '" data-act="p7hp" data-v="' + x[0] + '">' + (P7HP === x[0] ? '✓ ' : '') + x[1] + '</button>'; }).join('') + '</div>';
+  var h = '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['dates', 'Pick dates']].map(function (x) { return '<button class="' + (lm92c(P7HP, x[0], P7FROM, P7TO, 'dates') ? 'on' : '') + '" data-act="p7hp" data-v="' + x[0] + '">' + (lm92c(P7HP, x[0], P7FROM, P7TO, 'dates') ? '✓ ' : '') + x[1] + '</button>'; }).join('') + '</div>';
   if (P7HP === 'dates') { var r0 = p7Range(); h += '<div class="p7dates"><label>From<input type="date" data-chg="p7d" data-f="from" value="' + esc(r0[0]) + '" max="' + esc(D.today) + '"></label><label>To<input type="date" data-chg="p7d" data-f="to" value="' + esc(r0[1]) + '" max="' + esc(D.today) + '"></label></div>';
     if (r0[0] < addDays(D.today, -60) && !(P7OLD && P7OLD.k === r0.join('|'))) h += '<p class="small muted" style="text-align:center">' + (P7OLD && P7OLD.k === 'wait' ? 'Getting them…' : '') + '</p>'; }
   var L = p7HistPays();
@@ -6942,7 +6942,7 @@ function hRows(gOnly, noSt) { var R = (D.hlog && D.hlog.rows) || [], r = hRange(
 function hOpts(f, gOnly) { var R = ((D.hlog && D.hlog.rows) || []).filter(function (x) { return !gOnly || x.k === 'G'; }), s = {}; R.forEach(function (x) { if (x[f]) s[x[f]] = 1; }); return Object.keys(s).sort(); }
 function hFilters(gOnly) {
   var r = hRange(), sel = function (f, lbl, all, L) { return '<label><span>' + lbl + '</span><select data-chg="hf" data-f="' + f + '"><option value="">' + all + '</option>' + L.map(function (x) { return '<option value="' + esc(x[0]) + '"' + (HF[f] === x[0] ? ' selected' : '') + '>' + esc(x[1]) + '</option>'; }).join('') + '</select></label>'; }, two = function (L) { return L.map(function (x) { return [x, x]; }); };
-  return '<div class="seg wrap" style="margin:0 0 8px">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['all', '4 months'], ['dates', 'Dates']].map(function (x) { return '<button class="' + (HF.r === x[0] ? 'on' : '') + '" data-act="hfr" data-r="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>' +
+  return '<div class="seg wrap" style="margin:0 0 8px">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['all', '4 months'], ['dates', 'Dates']].map(function (x) { return '<button class="' + (lm92c(HF.r, x[0], HF.from, HF.to, 'dates') ? 'on' : '') + '" data-act="hfr" data-r="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>' +
     (HF.r === 'dates' ? '<div class="fgrid"><label><span>From</span><input type="date" data-chg="hf" data-f="from" value="' + esc(r[0]) + '" max="' + esc(D.today) + '"></label><label><span>To</span><input type="date" data-chg="hf" data-f="to" value="' + esc(r[1]) + '" max="' + esc(D.today) + '"></label></div>' : '') +
     '<div class="fgrid">' + sel('it', 'Item', 'All items', two(hOpts('i', gOnly))) + (gOnly ? '' : sel('st', 'Status', 'All', [['asked', 'Asked for'], ['given', 'Given'], ['open', 'Not given yet']])) + sel('ag', 'Agent', 'All agents', two(hOpts('a', gOnly))) + sel('sch', 'School', 'All schools', two(hOpts('s', gOnly))) + '</div>' +
     '<div class="small muted" style="margin:0 0 8px">' + esc(r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) + '</div>';
@@ -7181,11 +7181,11 @@ function delRangeHtml(B) {
   var t = D.today, wd = new Date(t + 'T12:00:00Z').getUTCDay(), wk = addDays(t, -((wd + 6) % 7)), mo = t.slice(0, 8) + '01';
   var r = DRG.k === 'today' ? [t, t] : DRG.k === 'week' ? [wk, t] : DRG.k === 'month' ? [mo, t] : [DRG.from || mo, DRG.to || t];
   if (r[0] > r[1]) r = [r[1], r[0]];
-  var L = (B.history || []).filter(function (x) { return !x.old && x.omni !== false && x.date >= r[0] && x.date <= r[1]; });
+  var L = (B.history || []).filter(function (x) { return !x.old && (DRG.src === 'omni' ? x.omni !== false : DRG.src ? x.from === DRG.src : true) && x.date >= r[0] && x.date <= r[1]; }); /* v2.9.2: All by default */
   var by = {}, tot = 0, pd = 0, ow = 0, val = 0, paid = 0, owing = 0;
   L.forEach(function (x) { var full = !(x.owing > 0.004); val += x.value || 0; paid += x.paid || 0; owing += x.owing || 0; (x.lines || []).forEach(function (l) { var b = by[l.sku] = by[l.sku] || { t: 0, p: 0, o: 0 }; b.t += l.qty; tot += l.qty; if (full) { b.p += l.qty; pd += l.qty; } else { b.o += l.qty; ow += l.qty; } }); });
   var r1 = function (n) { return Math.round(n * 10) / 10; };
-  var h = '<div class="sech">Delivered <span>Omni Haven goods</span></div><div class="card" style="padding:12px 14px"><div class="seg wrap" style="margin:0 0 10px">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['dates', 'Dates']].map(function (x) { return '<button class="' + (DRG.k === x[0] ? 'on' : '') + '" data-act="drg" data-k="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
+  var h = '<div class="sech">Delivered <span>Omni Haven goods</span></div><div class="card" style="padding:12px 14px"><div class="seg wrap" style="margin:0 0 10px">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['dates', 'Dates']].map(function (x) { return '<button class="' + (lm92c(DRG.k, x[0], DRG.from, DRG.to, 'dates') ? 'on' : '') + '" data-act="drg" data-k="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
   if (DRG.k === 'dates') h += '<div class="fgrid"><label><span>From</span><input type="date" data-chg="drgd" data-f="from" value="' + esc(r[0]) + '" min="' + esc(addDays(t, -60)) + '" max="' + esc(t) + '"></label><label><span>To</span><input type="date" data-chg="drgd" data-f="to" value="' + esc(r[1]) + '" max="' + esc(t) + '"></label></div>';
   h += '<div class="small muted" style="margin:2px 0 8px">' + esc(r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) + ' · ' + L.length + ' order' + (L.length === 1 ? '' : 's') + '</div>' +
     '<div class="tiles"><div class="tile"><b>' + r1(tot) + '</b><span>cartons delivered</span></div><div class="tile"><b class="t-green">' + r1(pd) + '</b><span>cartons paid</span></div><div class="tile"><b class="t-red">' + r1(ow) + '</b><span>cartons owed (' + ghs(owing) + ')</span></div></div>';
@@ -7278,6 +7278,7 @@ LISTR.hist = function () {
     if (f.pay === 'owing' && paid) return false; if (f.pay === 'paid' && !paid) return false; if (f.pay === 'part' && !part) return false; if (f.pay === 'wait' && !x.wait) return false;
     return true;
   });
+  PF92T.fh = pf92Tray('fh', L.map(function (x) { return x.lines || []; })); L = L.filter(function (x) { return pf92Ok('fh', x.lines || []); }); PF92T.fh += pf92Sum('fh', L.map(function (x) { return x.lines || []; })); /* v2.9.2 */
   if (f.sort === 'old') L = L.slice().reverse();
   if (!L.length) return emptyHtml('No delivered order matches. Change the filter or the search.');
   var owe = L.reduce(function (t, x) { return t + x.owing; }, 0), val = L.reduce(function (t, x) { return t + x.value; }, 0);
@@ -7511,7 +7512,7 @@ function pgDone() {
   var h = top + (D.me.role === 'Helper' ? '<div class="tiles"><div class="tile"><b>' + D.done.length + '</b><span>stops today</span></div><div class="tile"><b>' + (tk ? tk.split(' ')[0] : 0) + '</b><span>cartons delivered</span></div><div class="tile"><b>' + ghs(tot).replace('GHS ', '') + '</b><span>cash taken today (GHS)</span></div></div>' : ''); // v2.5.15: Prince filters by day himself
   if (D.me.role === 'Helper') { if (D.cash && D.cash.length) h += '<div class="card"><h3>Cash with me</h3>' + cashTable(D.cash) + '</div>'; h += receiptsHtml(); }
   var nd = 0; if (nd && D.me.role !== 'Helper' && fl('rdone').mgr !== 'dec') h += todoBox(['<div class="li" data-act="rdec">' + leadI('check', 'blue') + '<div class="grow"><div class="t">Manager decisions – last 7 days</div><div class="s">Each one drops off 7 days after the decision</div></div><span class="cnt g">' + nd + '</span><span class="go">' + ico(ICO.right) + '</span></div>']);
-  if (D.me.role !== 'Helper') { var f0 = fl('rdone'); h += '<div class="chips" style="margin:0 0 8px">' + [['', 'All days'], [D.today, 'Today'], [addDays(D.today, -1), 'Yesterday']].map(function (c) { return '<button class="' + ((f0.day || '') === c[0] && !f0.to ? 'on' : '') + '" data-act="rday" data-d="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '<button class="' + (f0.to || (f0.day && f0.day !== D.today && f0.day !== addDays(D.today, -1)) ? 'on' : '') + '" data-act="rcal">📅 ' + (f0.to ? esc(dayLbl(f0.day) + ' – ' + dayLbl(f0.to)) : f0.day && f0.day !== D.today && f0.day !== addDays(D.today, -1) ? esc(dayLbl(f0.day)) : 'Pick days') + '</button></div>'; }
+  if (D.me.role !== 'Helper') { var f0 = fl('rdone'); h += '<div class="chips" style="margin:0 0 8px">' + [['', 'All days'], [D.today, 'Today'], [addDays(D.today, -1), 'Yesterday']].map(function (c) { return '<button class="' + ((f0.day || '') === c[0] && !f0.to ? 'on' : '') + '" data-act="rday" data-d="' + c[0] + '">' + c[1] + '</button>'; }).join('') + lm92Btn(f0) + '<button class="' + (f0.to || (f0.day && f0.day !== D.today && f0.day !== addDays(D.today, -1)) ? 'on' : '') + '" data-act="rcal">📅 ' + (f0.to ? esc(dayLbl(f0.day) + ' – ' + dayLbl(f0.to)) : f0.day && f0.day !== D.today && f0.day !== addDays(D.today, -1) ? esc(dayLbl(f0.day)) : 'Pick days') + '</button></div>'; }
   return h + filterBar('rdone', 'Find a vendor or agent') + '<div id="flist">' + LISTR.rdone() + '</div>';
 }
 ACT.rday = function (b) { var f = fl('rdone'); delete f.to; if (b.dataset.d) f.day = b.dataset.d; else delete f.day; flSave(); render(); };
@@ -7519,7 +7520,7 @@ ACT.rdec = function () { fl('rdone').mgr = 'dec'; flSave(); render(); };
 LISTR.rdone = function () {
   var f = fl('rdone'), L = (D.rdone || D.done.map(function (x) { return Object.assign({ day: D.today, oids: [] }, x); })).filter(function (x) {
     if (f.day && (f.to ? x.day < f.day || x.day > f.to : x.day !== f.day)) return false; if (f.st && x.status !== f.st) return false;
-    if (f.mgr === 'dec' && !x.dec) return false; if (f.mgr === 'wait' && !x.wait) return false; if (f.mgr === 'vno' && !x.vno) return false;
+    if (f.mgr === 'dec' && !x.dec) return false; if (f.mgr === 'wait' && !x.wait) return false; if (f.mgr === 'vno' && !x.vno) return false; PF92C.push(x); if (!pf92Ok('rd', pf92Map(x.kept))) return false; /* v2.9.2 */
     return hasQ('rdone', x.vendor + ' ' + (x.agent || '') + ' ' + (x.oids || []).join(' ') + ' ' + Object.keys(x.kept || {}).concat(Object.keys(x.back || {})).map(skn).join(' '));
   });
   if (!L.length) return emptyHtml(Object.keys(f).some(function (k) { return f[k] && k !== 'q'; }) || f.q ? 'Nothing matches. Deliveries of the last 14 days are here.' : 'No deliveries yet.');
@@ -8243,7 +8244,7 @@ function pgFCash() {
 ACT.fk72t = function (b) { FK.ct = b.dataset.v; render(); };
 function fkDistHtml() {
   var X = fkDist(), R = FK.dr, r = fkDRange(), S = fkDSrcs(), days = Object.keys(X.days || {}).filter(function (d) { return d >= r[0] && d <= r[1]; }).sort().reverse();
-  var h = '<div class="seg wrap" style="margin:0 0 8px">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['dates', 'Dates']].map(function (x) { return '<button class="' + (R.k === x[0] ? 'on' : '') + '" data-act="fkdr" data-k="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
+  var h = '<div class="seg wrap" style="margin:0 0 8px">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['dates', 'Dates']].map(function (x) { return '<button class="' + (lm92c(R.k, x[0], R.from, R.to, 'dates') ? 'on' : '') + '" data-act="fkdr" data-k="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
   if (R.k === 'dates') h += '<div class="fgrid"><label><span>From</span><input type="date" data-chg="fkdrd" data-f="from" value="' + esc(r[0]) + '" min="' + esc(addDays(D.today, -90)) + '" max="' + esc(D.today) + '"></label><label><span>To</span><input type="date" data-chg="fkdrd" data-f="to" value="' + esc(r[1]) + '" max="' + esc(D.today) + '"></label></div>';
   var F = [['all', 'All']].concat(S.map(function (s) { return [s === 'SRC-OMINI' ? 'omni' : s, fkDName(s)]; }));
   h += '<div class="t2tray">' + F.map(function (f) { return '<button class="' + (R.f === f[0] ? 'on' : '') + '" data-act="fkdf" data-v="' + esc(f[0]) + '">' + esc(f[1]) + '</button>'; }).join('') + '</div>';
@@ -8452,6 +8453,7 @@ var OW = { q: '', ag: '', age: '', from: '', to: '', src: 'SRC-OMINI' };
 function fk73All() { var B = D.book || {}; return (B.owedOrders || []).map(function (x) { return Object.assign({ src: 'SRC-OMINI', srcN: 'Omni Haven' }, x); }).concat(B.owedOther || [], B.withAg || []); }
 function fk73OwedL() { var q = norm(OW.q), to = OW.to || OW.from; return fk73All().filter(function (x) {
   if (OW.src !== 'all' && x.src !== OW.src) return false; if (OW.ag && x.agent !== OW.ag) return false; if (q && norm(x.vendor + ' ' + x.agent).indexOf(q) < 0) return false;
+  if (OW.age === 'lm') { var L92 = lm92(); return x.date >= L92[0] && x.date <= L92[1]; }
   if (OW.age === 'dates') return !OW.from || (x.date >= (OW.from < to ? OW.from : to) && x.date <= (OW.from < to ? to : OW.from));
   return !OW.age || (OW.age === '0' ? x.days <= 7 : OW.age === '8' ? x.days >= 8 && x.days <= 14 : x.days >= 15); }).sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : (a.vendor < b.vendor ? -1 : 1); }); }
 function fk73OwedHtml() {
@@ -8459,7 +8461,7 @@ function fk73OwedHtml() {
   var ags = (D.agents || []).map(function (a) { return a.name; }); A.forEach(function (x) { if (x.agent && ags.indexOf(x.agent) < 0) ags.push(x.agent); });
   var sel = function (f, L) { return '<select data-chg="ow73" data-f="' + f + '">' + L.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (OW[f] === o[0] ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select>'; };
   var h = '<input class="o2q" data-inp="ow73q" placeholder="Find a vendor" value="' + esc(OW.q) + '" autocomplete="off">';
-  h += '<div class="fk73g3"><label><span class="n72l">Agent</span>' + sel('ag', [['', 'All agents']].concat(ags.map(function (a) { return [a, a]; }))) + '</label><label><span class="n72l">Sold</span>' + sel('age', [['', 'Any time'], ['0', '0–7 days ago'], ['8', '8–14 days ago'], ['15', '15+ days ago'], ['dates', '📅 Dates']]) + '</label>' +
+  h += '<div class="fk73g3"><label><span class="n72l">Agent</span>' + sel('ag', [['', 'All agents']].concat(ags.map(function (a) { return [a, a]; }))) + '</label><label><span class="n72l">Sold</span>' + sel('age', [['', 'Any time'], ['0', '0–7 days ago'], ['8', '8–14 days ago'], ['15', '15+ days ago'], ['lm', 'Last month'], ['dates', '📅 Dates']]) + '</label>' +
     '<label><span class="n72l">Distributor</span>' + sel('src', [['SRC-OMINI', 'Omni Haven']].concat(S.map(function (s) { return [s, sn[s]]; }), [['all', 'All']])) + '</label></div>';
   if (OW.age === 'dates') h += '<div class="n72two"><label class="n72tf"><span>From (or the day)</span><input type="date" data-chg="ow73" data-f="from" value="' + esc(OW.from) + '" max="' + esc(D.today) + '"></label><label class="n72tf"><span>To (optional)</span><input type="date" data-chg="ow73" data-f="to" value="' + esc(OW.to) + '" max="' + esc(D.today) + '"></label></div>';
   return h + '<div id="ow73l">' + fk73OwedList() + '</div>';
@@ -8490,7 +8492,7 @@ function fk73HelpHtml() {
   var sel = function (f, all, L2) { return '<select data-chg="hf" data-f="' + f + '"><option value="">' + all + '</option>' + L2.map(function (x) { return '<option value="' + esc(x) + '"' + (HF[f] === x ? ' selected' : '') + '>' + esc(x) + '</option>'; }).join('') + '</select>'; };
   var its = HF.its, lab = !its.length ? 'All items' : its.join(', ');
   var h = '<div class="fk73c"><div class="fk73hd">' + ico(ICO.gift) + '<div class="grow"><b>Help items given</b><div class="small muted">' + n + ' item' + (n === 1 ? '' : 's') + ' · ' + esc(per) + '</div></div></div>';
-  h += '<div class="n72l">Time window</div><div class="n72seg">' + [['today', 'Today'], ['week', 'Week'], ['month', 'Month'], ['dates', '📅']].map(function (x) { return '<button class="' + (HF.r === x[0] ? 'on' : '') + '" data-act="hfr" data-r="' + x[0] + '"' + (x[0] === 'dates' ? ' aria-label="Pick dates"' : '') + '>' + x[1] + '</button>'; }).join('') + '</div>';
+  h += '<div class="n72l">Time window</div><div class="n72seg">' + [['today', 'Today'], ['week', 'Week'], ['month', 'Month'], ['lm', 'Last month'], ['dates', '📅']].map(function (x) { return '<button class="' + (lm92c(HF.r, x[0], HF.from, HF.to, 'dates') ? 'on' : '') + '" data-act="hfr" data-r="' + x[0] + '"' + (x[0] === 'dates' ? ' aria-label="Pick dates"' : '') + '>' + x[1] + '</button>'; }).join('') + '</div>';
   if (HF.r === 'dates') h += '<div class="n72two"><label class="n72tf"><span>From (or the day)</span><input type="date" data-chg="hf73d" data-f="from" value="' + esc(HF.from) + '" max="' + esc(D.today) + '"></label><label class="n72tf"><span>To (optional)</span><input type="date" data-chg="hf73d" data-f="to" value="' + esc(HF.to) + '" max="' + esc(D.today) + '"></label></div>';
   h += '<div class="n72l">Items</div><button class="fk73dd" data-act="sheet" data-k="fk73it">' + ico(its.length === 1 ? fk73Ico(its[0]) : ICO.gift) + '<span>' + esc(lab) + '</span>▾</button>';
   h += '<div class="fk73g"><label><span class="n72l">Agent</span>' + sel('ag', 'All agents', ags) + '</label><label><span class="n72l">School</span>' + sel('sch', 'All schools', sch) + '</label></div>';
@@ -8843,10 +8845,11 @@ function pgMOrd() {
       return '<div class="o2dh"><span>' + OCOL[k][0] + '</span><span>' + g.length + ' · ' + g.reduce(function (t, o) { return t + oCtnAll(o); }, 0) + ' ctn</span></div>' + g.map(function (o) { return moRow(o); }).join(''); }).join('') : emptyHtml('No order on the way.');
   } else {
     var R = moWin(), X = moDone();
-    h += '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['dates', '📅']].map(function (c) { return '<button class="' + (MO.w === c[0] ? 'on' : '') + '" data-act="mow" data-k="' + c[0] + '">' + (c[0] === 'dates' && MO.w === 'dates' ? '📅 ' + esc(R[0] === R[1] ? dayLbl(R[0]) : dayLbl(R[0]) + ' – ' + dayLbl(R[1])) : c[1]) + '</button>'; }).join('') + '</div>';
+    h += '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['dates', '📅']].map(function (c) { return '<button class="' + (lm92c(MO.w, c[0], MO.from, MO.to, 'dates') ? 'on' : '') + '" data-act="mow" data-k="' + c[0] + '">' + (c[0] === 'dates' && MO.w === 'dates' ? '📅 ' + esc(R[0] === R[1] ? dayLbl(R[0]) : dayLbl(R[0]) + ' – ' + dayLbl(R[1])) : c[1]) + '</button>'; }).join('') + '</div>';
     if (MO.w === 'dates') h += '<div class="n72two"><label class="n72tf"><span>From (or the day)</span><input type="date" data-chg="mod" data-f="from" value="' + esc(MO.from) + '" max="' + esc(D.today) + '"></label><label class="n72tf"><span>To (optional)</span><input type="date" data-chg="mod" data-f="to" value="' + esc(MO.to) + '" max="' + esc(D.today) + '"></label></div>';
     h += '<div class="t2tray">' + [['', 'All'], ['del', 'Delivered'], ['cx', 'Cancelled']].map(function (c) { return '<button class="' + ((MO.dst || '') === c[0] ? 'on' : '') + '" data-act="modst" data-k="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>'; // v2.8.12
     X.L = X.L.filter(function (o) { return !MO.dst || (MO.dst === 'cx' ? /Cancel|Rejected/.test(o.status) : o.status === 'Delivered'); });
+    h += pf92Tray('mo', X.L.filter(moOk).map(pf92Lines)); X.L = X.L.filter(function (o) { return pf92Ok('mo', pf92Lines(o)); }); h += pf92Sum('mo', X.L.filter(function (o) { return moOk(o) && o.status === 'Delivered'; }).map(pf92Lines)); // v2.9.2
     var L = X.L.filter(moOk).sort(function (a, b) { var x = moDay(a), y = moDay(b); return x < y ? 1 : x > y ? -1 : 0; }), ok = L.filter(function (o) { return !/Cancel|Rejected/.test(o.status); });
     h += '<div class="o2wk">' + ok.length + ' order' + (ok.length === 1 ? '' : 's') + ' · ' + ok.reduce(function (t, o) { return t + oCtnAll(o); }, 0) + ' cartons · ' + ghs(ok.reduce(function (t, o) { return t + oValAll(o); }, 0)) + '</div>';
     if (X.wait) h += '<div class="mdsk"><i></i><i></i></div>';
@@ -8895,7 +8898,7 @@ CHG.mmd = function (e) { MM[e.dataset.f] = e.value || ''; setTimeout(render, 0);
 function mm28T(v, l, s, tone) { return '<div class="mtt ' + (tone || '') + '"><b>' + v + '</b><span>' + l + '</span>' + (s ? '<small>' + s + '</small>' : '') + '</div>'; }
 function mm28G(n) { return ghs(n).replace('GHS ', 'GHS '); }
 function mm28Col(X) { var R = mm28Win(), C = X.col;
-  var h = '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['dates', '📅']].map(function (c) { return '<button class="' + (MM.w === c[0] ? 'on' : '') + '" data-act="mmw" data-k="' + c[0] + '">' + (c[0] === 'dates' && MM.w === 'dates' ? '📅 ' + esc(R[0] === R[1] ? dayLbl(R[0]) : dayLbl(R[0]) + ' – ' + dayLbl(R[1])) : c[1]) + '</button>'; }).join('') + '</div>';
+  var h = '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['dates', '📅']].map(function (c) { return '<button class="' + (lm92c(MM.w, c[0], MM.from, MM.to, 'dates') ? 'on' : '') + '" data-act="mmw" data-k="' + c[0] + '">' + (c[0] === 'dates' && MM.w === 'dates' ? '📅 ' + esc(R[0] === R[1] ? dayLbl(R[0]) : dayLbl(R[0]) + ' – ' + dayLbl(R[1])) : c[1]) + '</button>'; }).join('') + '</div>';
   if (MM.w === 'dates') h += '<div class="n72two"><label class="n72tf"><span>From (or the day)</span><input type="date" data-chg="mmd" data-f="from" value="' + esc(MM.from) + '" max="' + esc(D.today) + '"></label><label class="n72tf"><span>To (optional)</span><input type="date" data-chg="mmd" data-f="to" value="' + esc(MM.to) + '" max="' + esc(D.today) + '"></label></div>';
   if (X.from !== R[0] || X.to !== R[1]) return h + '<div class="mdsk"><i></i><i></i></div>';
   var cash = 0, momo = 0; C.way.forEach(function (w) { if (w.k === 'MoMo') momo = w.a; else cash += w.a; });
@@ -9524,7 +9527,7 @@ function byoHtml() {
   var d = BY.d, R = byoList('ready'), P = byoList('part'), H = byoHist(), rg = byoRange();
   var h = '<div class="t2tray by89f">' + [['all', 'All']].concat(fkDSrcs().map(function (s) { return [s, fkDName(s)]; })).map(function (x) { return '<button class="' + (BY.s === x[0] ? 'on' : '') + '" data-act="byos" data-v="' + esc(x[0]) + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>';
   var AG35 = by35Names(); if (AG35.length > 1) h += '<div class="t2tray by89f">' + [['all', 'Everyone']].concat(AG35.map(function (n) { return [n, n === 'Frank' ? 'Frank himself' : n]; })).map(function (x) { return '<button class="' + ((BY.a || 'all') === x[0] ? 'on' : '') + '" data-act="by35a" data-v="' + esc(x[0]) + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>'; // v2.8.35
-  h += '<div class="t2tray by89f">' + [['all', 'All dates'], ['today', 'Today'], ['week', '7 days'], ['month', '30 days'], ['cal', BY.p === 'cal' ? '📅 ' + (rg[0] === rg[1] ? dayLbl(rg[0]) : dayLbl(rg[0]) + ' – ' + dayLbl(rg[1])) : '📅']].map(function (x) { return '<button class="' + (BY.p === x[0] ? 'on' : '') + '" data-act="byop" data-v="' + x[0] + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>';
+  h += '<div class="t2tray by89f">' + [['all', 'All dates'], ['today', 'Today'], ['week', '7 days'], ['month', '30 days'], ['lm', 'Last month'], ['cal', BY.p === 'cal' ? '📅 ' + (rg[0] === rg[1] ? dayLbl(rg[0]) : dayLbl(rg[0]) + ' – ' + dayLbl(rg[1])) : '📅']].map(function (x) { return '<button class="' + (lm92c(BY.p, x[0], BY.from, BY.to, 'cal') ? 'on' : '') + '" data-act="byop" data-v="' + x[0] + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>';
   h += '<div class="by3"><div><span>Received</span><b>' + ghs(byoSum(d.rd, d.rs)) + '</b></div><div><span>Given out</span><b>' + ghs(byoSum(d.gd, d.gs)) + '</b></div><div class="b"><span>Balance now</span><b>' + ghs(byoBal()) + '</b></div></div>';
   h += '<div class="t2tray">' + [['ready', 'Paid in full', R.length], ['part', 'Part paid', P.length], ['done', 'Handed over', H.length]].map(function (x) { return '<button class="' + (BY.f === x[0] ? 'on' : '') + '" data-act="byof" data-v="' + x[0] + '">' + x[1] + (x[2] ? ' <i class="cnt">' + x[2] + '</i>' : '') + '</button>'; }).join('') + '</div>';
   if (BY.f === 'done') return h + (H.length ? H.map(function (x) { return '<div class="fkr" style="border-left-color:' + (x.st === 'Sent' ? '#d97706' : '#15803d') + '"><div class="grow"><b>' + esc(x.to) + '</b><div class="fks">' + esc(dayLbl(x.day)) + ' ' + esc(x.t) + ' · ' + esc(x.sn) + (x.n ? ' · ' + x.n + ' order' + (x.n === 1 ? '' : 's') : '') + (x.proof ? ' · ' + esc(x.proof) : '') + (x.st === 'Sent' ? ' · waiting for the manager' : '') + (x.note ? '<br>' + esc(x.note) : '') + '</div></div><b class="fkam">' + ghs(x.amt) + '</b></div>'; }).join('') : emptyHtml('Nothing handed over here.'));
@@ -9543,7 +9546,6 @@ function dp32Load() { DP.st = 'wait'; readOp('mpay32', {}, function (r) { if (r 
 byoLoad = (function (f) { return function () { if (!(D && D.me.role === 'Supervisor' && !D.viewOf)) return f.apply(this, arguments);
   BY.st = 'wait'; readOp('mbyo32', {}, function (r) { if (r && r.ok) { BY.d = r; BY.st = 'ok'; } else { BY.st = 'err'; BY.err = (r && r.error) || 'Try again.'; } if (TAB === 'money') render(); }, function (m) { BY.st = 'err'; BY.err = m; if (TAB === 'money') render(); }); }; })(byoLoad);
 byoRow = (function (f) { return function (r) { var s = f.apply(this, arguments); if (!(D && D.me.role === 'Supervisor' && !D.viewOf)) return s;
-  s = s.replace(/<button class="by89t"[^>]*>[^<]*<\/button>/, ''); // the manager pays by total, not by ticking orders
   return BY.open === r.ref && r.vid ? s.replace(/<\/div><b class="fkam">/, '<button class="vasm" style="margin-top:6px" data-act="vacct" data-v="' + esc(r.vid) + '">Her account › fix a payment</button></div><b class="fkam">') : s; }; })(byoRow);
 function dp32Card(x) { var ow = x.om ? x.held : x.left;
   return '<div class="varow k' + (ow > 0.004 ? 'a' : 'g') + '"><div class="r1"><span>' + esc(x.name) + '</span><b>' + (x.om ? (x.held > 0.004 ? ghs(x.held) + ' with you' : 'nothing with you ✓') : x.left > 0.004 ? 'owe ' + ghs(x.left) : 'nothing owed ✓') + '</b></div>' +
@@ -9668,7 +9670,7 @@ function ah89List() { var q = norm(AH.q || ''), sel = Object.keys(AH.it).filter(
   return keys.map(function (k) { var n = G[k].reduce(function (t, x) { return t + x.q; }, 0); return '<div class="fkq2">' + esc(dayLbl(k)) + ' · ' + n + ' item' + (n === 1 ? '' : 's') + '</div>' + G[k].map(function (x) { return '<div class="fkr" style="border-left-color:#9333EA"><div class="grow"><b>' + esc(x.v) + '</b><div class="fks">' + esc(x.s) + (x.by ? ' · by ' + esc(x.by) : '') + (x.det ? ' · ' + esc(x.det) : '') + '</div></div><b class="fkam">' + (x.q > 1 ? x.q + ' × ' : '') + esc(x.it) + '</b></div>'; }).join(''); }).join(''); }
 ahHtml = function () { if (AH.u !== (D.me.uid || '')) { AH = { on: true, st: '', list: [], per: 'week', it: {}, t: 0, u: D.me.uid || '', q: '', from: '', to: '' }; } if (!AH.st || (AH.st === 'ok' && Date.now() - AH.t > 60000)) ahLoad(); if (AH.st === 'err') return emptyHtml(AH.err || 'Try again.'); if (AH.st !== 'ok') return '';
   var r = ah89Range(), its = {}; AH.list.forEach(function (x) { if (x.d >= r[0] && x.d <= r[1]) its[x.it] = (its[x.it] || 0) + x.q; });
-  var h = '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['all', 'All'], ['cal', AH.per === 'cal' ? '📅 ' + (r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) : '📅']].map(function (x) { return '<button class="' + (AH.per === x[0] ? 'on' : '') + '" data-act="ahper" data-v="' + x[0] + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>';
+  var h = '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['all', 'All'], ['cal', AH.per === 'cal' ? '📅 ' + (r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) : '📅']].map(function (x) { return '<button class="' + (lm92c(AH.per, x[0], AH.from, AH.to, 'cal') ? 'on' : '') + '" data-act="ahper" data-v="' + x[0] + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>';
   if (Object.keys(its).length > 1) h += '<div class="t2tray">' + Object.keys(its).sort().map(function (k) { return '<button class="' + (AH.it[k] ? 'on' : '') + '" data-act="ahit" data-v="' + esc(k) + '">' + esc(k) + ' <i class="cnt g">' + its[k] + '</i></button>'; }).join('') + '</div>';
   h += '<input class="o2q ah89q" data-inp="ah89q" inputmode="search" placeholder="Find a vendor or school" value="' + esc(AH.q || '') + '" autocomplete="off">';
   return h + '<div id="ah89l">' + ah89List() + '</div>'; };
@@ -9680,7 +9682,7 @@ function hm89Cut(L) { var q = norm(HF.q || ''); if (q) L = L.filter(function (x)
 function hm89Filt() { var r = hRange(), per = r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1]), its = HF.its || [];
   var sel = function (f, lbl, all, L) { return '<label><span>' + lbl + '</span><select data-chg="hf" data-f="' + f + '"><option value="">' + all + '</option>' + L.map(function (x) { return '<option value="' + esc(x[0]) + '"' + (HF[f] === x[0] ? ' selected' : '') + '>' + esc(x[1]) + '</option>'; }).join('') + '</select></label>'; }, two = function (L) { return L.map(function (x) { return [x, x]; }); };
   var ags = (D.agents || []).map(function (a) { return a.name; }); hOpts('a', false).forEach(function (a) { if (ags.indexOf(a) < 0) ags.push(a); });
-  return '<div class="t2tray hm89">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['all', '4 months'], ['dates', HF.r === 'dates' ? '📅 ' + per : '📅']].map(function (x) { return '<button class="' + (HF.r === x[0] ? 'on' : '') + '" data-act="hm89r" data-r="' + x[0] + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>' +
+  return '<div class="t2tray hm89">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['all', '4 months'], ['dates', HF.r === 'dates' ? '📅 ' + per : '📅']].map(function (x) { return '<button class="' + (lm92c(HF.r, x[0], HF.from, HF.to, 'dates') ? 'on' : '') + '" data-act="hm89r" data-r="' + x[0] + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>' +
     '<button class="fk73dd hm89" data-act="sheet" data-k="fk73it">' + ico(ICO.gift) + '<span>' + esc(!its.length ? 'All items' : its.join(', ')) + '</span>▾</button>' +
     '<div class="fgrid">' + sel('ag', 'Agent', 'All agents', two(ags)) + sel('sch', 'School', 'All schools', two(hOpts('s', false))) + sel('st', 'Status', 'All', [['asked', 'Asked for'], ['given', 'Given'], ['open', 'Not given yet']]) + '</div>' +
     '<input class="o2q hm89" data-inp="hm89q" inputmode="search" placeholder="Find a vendor or school" value="' + esc(HF.q || '') + '" autocomplete="off">'; }
@@ -9729,7 +9731,7 @@ pgR27Help = function () { if (PH.u !== (D.me.uid || '')) PH = { per: 'today', fr
   S.H.concat(S.G).forEach(function (x) { if (ph89Ok(x, 'it')) ph89Its(x).forEach(function (i) { its[i] = (its[i] || 0) + 1; }); if (ph89Ok(x, 'ag') && x.agent) ags[x.agent] = (ags[x.agent] || 0) + 1; });
   Object.keys(PH.it).forEach(function (k) { if (PH.it[k] && !its[k]) its[k] = 0; }); if (PH.ag && !ags[PH.ag]) ags[PH.ag] = 0;
   var chip = function (on, act, v, t, n) { return '<button class="' + (on ? 'on' : '') + '" data-act="' + act + '" data-v="' + esc(v) + '">' + esc(t) + (n == null ? '' : ' <i class="cnt g">' + n + '</i>') + '</button>'; };
-  var h = '<p class="r27why">Released by Frank. Tick when you give it; the agent confirms.</p><div class="t2tray ph89">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['cal', PH.per === 'cal' ? '📅 ' + (r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) : '📅']].map(function (x) { return chip(PH.per === x[0], 'ph89per', x[0], x[1]); }).join('') + '</div>';
+  var h = '<p class="r27why">Released by Frank. Tick when you give it; the agent confirms.</p><div class="t2tray ph89">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['cal', PH.per === 'cal' ? '📅 ' + (r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) : '📅']].map(function (x) { return chip(lm92c(PH.per, x[0], PH.from, PH.to, 'cal'), 'ph89per', x[0], x[1]); }).join('') + '</div>';
   if (Object.keys(its).length > 1 || Object.keys(PH.it).some(function (k) { return PH.it[k]; })) h += '<div class="t2tray ph89">' + Object.keys(its).sort().map(function (k) { return chip(PH.it[k], 'ph89it', k, k, its[k]); }).join('') + '</div>';
   if (Object.keys(ags).length > 1 || PH.ag) h += '<div class="t2tray ph89">' + Object.keys(ags).sort().map(function (k) { return chip(PH.ag === k, 'ph89ag', k, k, ags[k]); }).join('') + '</div>';
   if (S.H.length + S.G.length > 3 || PH.q) h += '<input class="o2q ph89q" data-inp="ph89q" inputmode="search" placeholder="Find a vendor or school" value="' + esc(PH.q || '') + '" autocomplete="off">';
@@ -9805,7 +9807,7 @@ function ho89Range() { var t = D.today, wd = new Date(t + 'T12:00:00Z').getUTCDa
 function hoh89Html() { if (HO.u !== (D.me.uid || '')) HO = { per: 'week', from: '', to: '', C: {}, op: '', who: '', u: D.me.uid || '' };
   var r = ho89Range(), key = r[0] + '|' + r[1], c = HO.C[key], mgr = D.me.role === 'Supervisor';
   if (!c || (c.st !== 'wait' && Date.now() - c.t > 60000)) { var c0 = c; HO.C[key] = c = c0 && c0.st === 'ok' ? c0 : { st: 'wait' }; c.t = Date.now(); readOp('hoh89', { from: r[0], to: r[1] }, function (x) { if (x && x.ok) { c.st = 'ok'; c.d = x; } else if (c.st !== 'ok') { c.st = 'err'; c.err = x && x.error; } c.t = Date.now(); render(); }, function () { if (c.st !== 'ok') c.st = 'err'; render(); }); }
-  var h = '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['cal', HO.per === 'cal' ? '📅 ' + (r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) : '📅']].map(function (x) { return '<button class="' + (HO.per === x[0] ? 'on' : '') + '" data-act="ho89per" data-v="' + x[0] + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>';
+  var h = '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['cal', HO.per === 'cal' ? '📅 ' + (r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) : '📅']].map(function (x) { return '<button class="' + (lm92c(HO.per, x[0], HO.from, HO.to, 'cal') ? 'on' : '') + '" data-act="ho89per" data-v="' + x[0] + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>';
   if (c.st === 'wait') return h + '<div class="mdsk"><i></i><i></i><i></i></div>'; if (c.st === 'err') return h + emptyHtml(esc(c.err || 'Try again.'));
   var L = c.d.list || [], ppl = {}; L.forEach(function (x) { ppl[x.from] = 1; });
   if (mgr && Object.keys(ppl).length > 1) h += '<div class="t2tray">' + Object.keys(ppl).sort().map(function (p) { return '<button class="' + (HO.who === p ? 'on' : '') + '" data-act="ho89who" data-v="' + esc(p) + '">' + esc(p) + '</button>'; }).join('') + '</div>';
@@ -9830,7 +9832,7 @@ function ds89Range() { var t = D.today; return DS.per === 'all' ? ['', t] : DS.p
 function ds89Html() { if (!D || D.me.role !== 'Supervisor' || D.viewOf) return '';
   var r = ds89Range(), key = r[0] + '|' + r[1], c = DS.C[key];
   if (!c || (c.st !== 'wait' && Date.now() - c.t > 60000)) { var c0 = c; DS.C[key] = c = c0 && c0.st === 'ok' ? c0 : { st: 'wait' }; c.t = Date.now(); readOp('mdist89', { from: r[0], to: r[1] }, function (x) { if (x && x.ok) { c.st = 'ok'; c.d = x; } else if (c.st !== 'ok') c.st = 'err'; c.t = Date.now(); render(); }, function () { if (c.st !== 'ok') c.st = 'err'; render(); }); }
-  var h = '<div class="sech">What you owe the distributors <span class="muted small">only you see this</span></div><div class="t2tray">' + [['month', 'This month'], ['all', 'All'], ['cal', DS.per === 'cal' ? '📅 ' + (r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) : '📅']].map(function (x) { return '<button class="' + (DS.per === x[0] ? 'on' : '') + '" data-act="ds89per" data-v="' + x[0] + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>';
+  var h = '<div class="sech">What you owe the distributors <span class="muted small">only you see this</span></div><div class="t2tray">' + [['month', 'This month'], ['lm', 'Last month'], ['all', 'All'], ['cal', DS.per === 'cal' ? '📅 ' + (r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) : '📅']].map(function (x) { return '<button class="' + (lm92c(DS.per, x[0], DS.from, DS.to, 'cal') ? 'on' : '') + '" data-act="ds89per" data-v="' + x[0] + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>';
   if (c.st !== 'ok') return h + (c.st === 'err' ? emptyHtml('Try again.') : '<div class="mdsk"><i></i><i></i></div>');
   return h + c.d.list.filter(function (x) { return x.ctn || x.left > 0.004 || x.paid > 0.004 || !x.mk; }).map(function (x) { var on = DS.op === x.src;
     return '<div class="varow k' + (x.left > 0.004 ? 'a' : 'g') + '" data-act="ds89t" data-i="' + esc(x.src) + '"><div class="r1"><span>' + esc(x.name) + '</span><b>' + (x.mk ? ghs(x.owe) : x.left > 0.004 ? 'owe ' + ghs(x.left) : 'nothing owed ✓') + '</b></div>' +
@@ -10519,35 +10521,35 @@ ACT.np91go = function (b) { var k = NP91K, y = b.dataset.v === '1'; if (!k) retu
   NP91['a:' + k + ':' + ((D.np91 || []).filter(function (x) { return x.k === k; })[0] || {}).at] = 1; SHEETK = ''; $('over').innerHTML = ''; toast('Saved'); render(); };
 // 1: Receipts for agents – tick several, one SEND; filters who paid, distributor and days (Frank and the manager)
 var R91 = { g: '', p: '', s: '', d: 3, sel: {} };
-function r91Grp(n) { var r = ((D.fk && D.fk.arole) || {})[n] || ''; return r === 'Rider' ? 'r' : r === 'Supervisor' ? 'm' : 'a'; }
-function r91All() { var ph = (D.fk && D.fk.aph) || {}, from = addDays(D.today, -(R91.d - 1));
-  return (D.handovers || []).filter(function (x) { return !x.out && /^(Confirmed|Disputed)$/.test(x.status) && x.day >= from && ph.hasOwnProperty(x.from); }); }
-function r91List() { return r91All().filter(function (x) { return (!R91.g || r91Grp(x.from) === R91.g) && (!R91.p || x.from === R91.p) && (!R91.s || x.money === R91.s); }); }
+function r91Grp(n) { var r = ((r92Fk().arole) || {})[n] || ''; return r === 'Rider' ? 'r' : r === 'Supervisor' ? 'm' : 'a'; }
+function r91All() { var ph = r92Fk().aph || {}, L92 = R91.d === 'lm' ? lm92() : [addDays(D.today, -(R91.d - 1)), D.today];
+  return r92Hs().filter(function (x) { return !x.out && /^(Confirmed|Disputed)$/.test(x.status) && x.day >= L92[0] && x.day <= L92[1] && ph.hasOwnProperty(x.from); }); }
+function r91List() { return r91All().filter(function (x) { return (!R91.w || (x.rby || '') === R91.w) && (!R91.g || r91Grp(x.from) === R91.g) && (!R91.p || x.from === R91.p) && (!R91.s || x.money === R91.s); }); }
 function r91Chips(act, cur, L) { return '<div class="t2tray">' + L.map(function (c) { return '<button class="' + (cur === c[0] ? 'on' : '') + '" data-act="' + act + '" data-v="' + esc(c[0]) + '">' + esc(c[1]) + '</button>'; }).join('') + '</div>'; }
 r38Rcp = function () { var A = r91All(); if (!A.length && R91.d === 3 && !R91.g && !R91.p && !R91.s) return '';
   var G = {}, P = {}, S = {}; A.forEach(function (x) { G[r91Grp(x.from)] = 1; if (!R91.g || r91Grp(x.from) === R91.g) P[x.from] = 1; if (x.money) S[x.money] = 1; });
   if (R91.p && !P[R91.p]) R91.p = '';
-  var h = '<div class="sech">Receipts for agents</div>' + r91Chips('r91d', String(R91.d), [['1', 'Today'], ['3', '3 days'], ['7', '7 days'], ['30', '30 days']]);
+  var h = '<div class="sech">Receipts for agents</div>' + r91Chips('r91d', String(R91.d), [['1', 'Today'], ['3', '3 days'], ['7', '7 days'], ['30', '30 days'], ['lm', 'Last month']]);
   var gl = [['', 'All']].concat([['a', 'Agents'], ['r', 'Riders'], ['m', 'Manager']].filter(function (g) { return G[g[0]]; })); if (gl.length > 2) h += r91Chips('r91g', R91.g, gl);
   var pl = Object.keys(P).sort(); if (pl.length > 1) h += r91Chips('r91p', R91.p, [['', 'Everyone']].concat(pl.map(function (n) { return [n, n]; })));
   var sl = Object.keys(S).sort(); if (sl.length > 1) h += r91Chips('r91s', R91.s, [['', 'All distributors']].concat(sl.map(function (n) { return [n, n]; })));
   var H = r91List(); Object.keys(R91.sel).forEach(function (k) { if (!H.some(function (x) { return r38Key(x) === k; })) delete R91.sel[k]; });
   if (!H.length) return h + '<p class="small muted" style="text-align:center">No receipts here.</p>';
   h += '<div class="card" style="padding:4px 12px">' + H.slice(0, 60).map(function (x) { var k = r38Key(x), on = !!R91.sel[k], s = !!R38S[k], Pp = x.parts || [];
-    return '<div class="srow r91r" data-act="r91t" data-k="' + esc(k) + '"><span class="fkbx' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><div class="grow"><b>' + ghs(x.received) + '</b> from ' + esc(x.from) + '<div class="small muted">' + esc(dayLbl(x.day)) + (x.at ? ' · ' + esc(String(x.at).slice(-5)) : '') + (x.money ? ' · ' + esc(x.money) : '') + (Pp.length ? ' · ' + Pp.length + ' payment' + (Pp.length === 1 ? '' : 's') : '') + '</div></div>' + (s ? '<span class="pill green">Sent ✓</span>' : '') + '</div>'; }).join('') + '</div>';
+    return '<div class="srow r91r" data-act="r91t" data-k="' + esc(k) + '"><span class="fkbx' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><div class="grow"><b>' + ghs(x.received) + '</b> from ' + esc(x.from) + (x.rby === 'Frank' ? ' to Frank' : '') + '<div class="small muted">' + esc(dayLbl(x.day)) + (x.at ? ' · ' + esc(String(x.at).slice(-5)) : '') + (x.money ? ' · ' + esc(x.money) : '') + (Pp.length ? ' · ' + Pp.length + ' payment' + (Pp.length === 1 ? '' : 's') : '') + '</div></div>' + (s ? '<span class="pill green">Sent ✓</span>' : '') + '</div>'; }).join('') + '</div>';
   var T = H.filter(function (x) { return R91.sel[r38Key(x)]; }), tot = T.reduce(function (t, x) { return t + (Number(x.received) || 0); }, 0);
   h += '<div class="r91go"><button class="main wide" data-act="r91send"' + (T.length ? '' : ' disabled') + '>' + (T.length ? 'SEND to ' + esc(T[0].from) + ' · ' + T.length + ' · ' + ghs(tot) : 'Tick the receipts to send') + '</button></div>';
   return h; };
-ACT.r91d = function (b) { R91.d = Number(b.dataset.v) || 3; R91.sel = {}; render(); };
+ACT.r91d = function (b) { R91.d = b.dataset.v === 'lm' ? 'lm' : Number(b.dataset.v) || 3; R91.sel = {}; render(); };
 ACT.r91g = function (b) { R91.g = b.dataset.v; R91.p = ''; R91.sel = {}; render(); };
 ACT.r91p = function (b) { R91.p = b.dataset.v; R91.sel = {}; render(); };
 ACT.r91s = function (b) { R91.s = b.dataset.v; R91.sel = {}; render(); };
 ACT.r91t = function (b) { var k = b.dataset.k, x = r91List().filter(function (y) { return r38Key(y) === k; })[0]; if (!x) return;
   if (R91.sel[k]) { delete R91.sel[k]; render(); return; }
-  var other = r91List().some(function (y) { return R91.sel[r38Key(y)] && y.from !== x.from; }); if (other) { R91.sel = {}; toast('One person at a time'); }
+  var other = r91List().some(function (y) { return R91.sel[r38Key(y)] && (y.from !== x.from || (y.rby || '') !== (x.rby || '')); }); if (other) { R91.sel = {}; toast('One person at a time'); }
   R91.sel[k] = 1; render(); };
 ACT.r91send = function () { var T = r91List().filter(function (x) { return R91.sel[r38Key(x)]; }); if (!T.length) return;
-  var nm = T[0].from, w = waNum(((D.fk && D.fk.aph) || {})[nm]), tot = T.reduce(function (t, x) { return t + (Number(x.received) || 0); }, 0), me = D.me.role === 'Supervisor' ? 'The manager' : D.me.first;
+  var nm = T[0].from, w = waNum((r92Fk().aph || {})[nm]), tot = T.reduce(function (t, x) { return t + (Number(x.received) || 0); }, 0), me = T[0].rby === 'Frank' ? 'Frank' : D.me.role === 'Supervisor' ? 'The manager' : D.me.first;
   var L = ['CupSales receipt', me + ' received ' + ghs(tot) + ' from ' + nm + (T.length > 1 ? ' (' + T.length + ' hand-overs)' : '') + ':'];
   T.forEach(function (x) { L.push(''); L.push(dayLbl(x.day) + (x.at ? ' ' + String(x.at).slice(-5) : '') + ' – ' + ghs(x.received) + (x.money ? ' (' + x.money + ')' : ''));
     (x.parts || []).slice(0, 25).forEach(function (p) { L.push('- ' + p.text + ': ' + ghs(p.amt)); }); });
@@ -10642,4 +10644,159 @@ pgMMoney = (function (f) { return function (m0) { var self = this, X = mm28Get()
 ACT.mm91t = function (b) { MM91.t = b.dataset.v; if (MM91.t === 'byo') BY.st = ''; if (MM91.t === 'cnt') md91Load(true); render(); window.scrollTo(0, 0); };
 try { document.head.insertAdjacentHTML('beforeend', '<style>.fk72t.mm91{grid-auto-columns:minmax(112px,1fr)}</style>'); } catch (e) { }
 ACT.mm91c = function (b) { MM91.c = b.dataset.v; render(); };
+// ---------------------------------------------------------------- v2.9.2 (job A): Last month in every date filter
+function lm92() { var t = D.today, y = +t.slice(0, 4), m = +t.slice(5, 7); return [new Date(Date.UTC(y, m - 2, 1, 12)).toISOString().slice(0, 10), new Date(Date.UTC(y, m - 1, 0, 12)).toISOString().slice(0, 10)]; }
+/** A chip is on: Last month = the calendar set to exactly last month; then the calendar chip is not on. */
+function lm92c(st, k, a, z, cal) { var L = lm92(), isL = st === cal && a === L[0] && (z || a) === L[1]; return k === 'lm' ? isL : k === st && !(isL && k === cal); }
+function lm92w(name, attr, set) { var f = ACT[name]; if (!f) return; ACT[name] = function (b) { if (b && b.dataset && b.dataset[attr] === 'lm') { var L = lm92(); set(L[0], L[1]); render(); return; } return f.apply(this, arguments); }; }
+lm92w('p7hp', 'v', function (a, z) { P7HP = 'dates'; P7FROM = a; P7TO = z; try { p7OldGet(); } catch (e) { } });
+lm92w('hfr', 'r', function (a, z) { HF.r = 'dates'; HF.from = a; HF.to = z; });
+lm92w('hm89r', 'r', function (a, z) { HF.r = 'dates'; HF.from = a; HF.to = z; });
+lm92w('drg', 'k', function (a, z) { DRG.k = 'dates'; DRG.from = a; DRG.to = z; });
+lm92w('fkdr', 'k', function (a, z) { FK.dr.k = 'dates'; FK.dr.from = a; FK.dr.to = z; });
+lm92w('mow', 'k', function (a, z) { MO.w = 'dates'; MO.from = a; MO.to = z; });
+lm92w('mmw', 'k', function (a, z) { MM.w = 'dates'; MM.from = a; MM.to = z; });
+lm92w('byop', 'v', function (a, z) { BY.p = 'cal'; BY.from = a; BY.to = z; BY.sel = {}; });
+lm92w('ahper', 'v', function (a, z) { AH.per = 'cal'; AH.from = a; AH.to = z; });
+lm92w('ph89per', 'v', function (a, z) { PH.per = 'cal'; PH.from = a; PH.to = z; });
+lm92w('ho89per', 'v', function (a, z) { HO.per = 'cal'; HO.from = a; HO.to = z; });
+lm92w('ds89per', 'v', function (a, z) { DS.per = 'cal'; DS.from = a; DS.to = z; });
+// Prince › Past deliveries
+function lm92R() { var L = lm92(), a = addDays(D.today, -31); return [L[0] < a ? a : L[0], L[1]]; } /* Prince's list keeps 31 days */
+function lm92Btn(f0) { var L = lm92R(), on = f0 && f0.day === L[0] && f0.to === L[1]; return '<button class="' + (on ? 'on' : '') + '" data-act="rlm92">Last month</button>'; }
+ACT.rlm92 = function () { var f = fl('rdone'), L = lm92R(); f.day = L[0]; f.to = L[1]; flSave(); render(); if (L[0] !== lm92()[0]) toast('Only the last 31 days are kept here'); };
+// the agent's Orders › Done
+o27Range = (function (f) { return function () { var g = fl('odone'); if ((g.per || '') !== 'lm') return f.apply(this, arguments); if (g.from || g.to) { delete g.from; delete g.to; } var L = lm92(); return { from: L[0], to: L[1], w: 'last month', pick: 1 }; }; })(o27Range);
+// ---------------------------------------------------------------- v2.9.2 (job B): find orders by product, totals per product
+var PF92 = {}, PF92T = {}, PF92C = [], PF92O = ['OC', 'CHK', 'SPO', 'SPC', 'HMO', 'HMC', 'BFO', 'BFC'];
+function pf92Lines(o) { if (!o) return []; var K = typeof oKids === 'function' ? oKids(o) || [] : []; return [o].concat(K).reduce(function (a, x) { return a.concat(x.lines || []); }, []); }
+function pf92Map(m) { return Object.keys(m || {}).map(function (k) { return { sku: k, qty: Number(m[k]) || 0 }; }); }
+function pf92Sel(k) { return PF92[k] || (PF92[k] = {}); }
+function pf92Ok(k, lines) { var S = pf92Sel(k), on = Object.keys(S); if (!on.length) return true; return (lines || []).some(function (l) { return S[l.sku] && (Number(l.qty) || 0) > 0; }); }
+function pf92Rank(s) { var i = PF92O.indexOf(skn(s)); return i < 0 ? 99 : i; }
+function pf92Tray(k, LL) { var S = pf92Sel(k), seen = {}; (LL || []).forEach(function (L) { (L || []).forEach(function (l) { if ((Number(l.qty) || 0) > 0) seen[l.sku] = 1; }); }); Object.keys(S).forEach(function (s) { seen[s] = 1; });
+  var K = Object.keys(seen).sort(function (a, b) { return pf92Rank(a) - pf92Rank(b) || (skn(a) < skn(b) ? -1 : 1); }); if (K.length < 2 && !Object.keys(S).length) return '';
+  return '<div class="t2tray pf92"><button class="' + (Object.keys(S).length ? '' : 'on') + '" data-act="pf92" data-k="' + k + '" data-v="">All products</button>' + K.map(function (s) { return '<button class="' + (S[s] ? 'on' : '') + '" data-act="pf92" data-k="' + k + '" data-v="' + esc(s) + '">' + esc(skn(s)) + '</button>'; }).join('') + '</div>'; }
+/** Cartons per product of what is shown (only the chosen products when some are chosen). */
+function pf92Sum(k, LL) { var S = pf92Sel(k), on = Object.keys(S).length, m = {}, t = 0; (LL || []).forEach(function (L) { (L || []).forEach(function (l) { var q = Number(l.qty) || 0; if (q <= 0 || (on && !S[l.sku])) return; m[l.sku] = (m[l.sku] || 0) + q; t += q; }); });
+  if (!t) return on ? '<div class="pf92s">No cartons of ' + Object.keys(S).map(skn).join(', ') + ' delivered here.</div>' : '';
+  return '<div class="pf92s"><b>' + t + ' ctn</b>' + Object.keys(m).sort(function (a, b) { return pf92Rank(a) - pf92Rank(b); }).map(function (s) { return ' · ' + esc(skn(s)) + ' ' + m[s]; }).join('') + '</div>'; }
+ACT.pf92 = function (b) { var S = pf92Sel(b.dataset.k), v = b.dataset.v; if (!v) PF92[b.dataset.k] = {}; else if (S[v]) delete S[v]; else S[v] = 1; render(); };
+try { document.head.insertAdjacentHTML('beforeend', '<style>.pf92 button{min-width:44px}.pf92s{margin:2px 4px 8px;font-size:13px;color:var(--muted)}.pf92s b{color:var(--ink)}</style>'); } catch (e) { }
+LISTR.odone = (function (f) { return function () { PF92T.ag = ''; var h = f.apply(this, arguments); return (PF92T.ag || '') + h; }; })(LISTR.odone);
+LISTR.hist = (function (f) { return function () { PF92T.fh = ''; var h = f.apply(this, arguments); return (PF92T.fh || '') + h; }; })(LISTR.hist);
+LISTR.rdone = (function (f) { return function () { PF92C = []; var h = f.apply(this, arguments), C = PF92C.filter(function (x) { return hasQ('rdone', x.vendor + ' ' + (x.agent || '') + ' ' + (x.oids || []).join(' ') + ' ' + Object.keys(x.kept || {}).concat(Object.keys(x.back || {})).map(skn).join(' ')); });
+  var LL = C.map(function (x) { return pf92Map(x.kept); }); return pf92Tray('rd', LL) + pf92Sum('rd', C.filter(function (x) { return pf92Ok('rd', pf92Map(x.kept)); }).map(function (x) { return pf92Map(x.kept); })) + h; }; })(LISTR.rdone);
+// Frank's Cartons out: All · Omni Haven · Clement · Bernice · Open market (the ones in his history)
+if (typeof DRG !== 'undefined' && DRG.src === undefined) DRG.src = '';
+delRangeHtml = (function (f) { return function (B) { var h = f.apply(this, arguments), N = {}; ((B && B.history) || []).forEach(function (x) { if (!x.old && x.from) N[x.from] = 1; });
+  var K = Object.keys(N).sort(function (a, b) { return a === 'Omni Haven' ? -1 : b === 'Omni Haven' ? 1 : a < b ? -1 : 1; }); if (K.length < 2 && !DRG.src) return h;
+  var tr = '<div class="t2tray dr92">' + [['', 'All']].concat(K.map(function (n) { return [n, n]; })).map(function (x) { return '<button class="' + ((DRG.src || '') === x[0] ? 'on' : '') + '" data-act="dr92" data-v="' + esc(x[0]) + '">' + esc(x[1]) + '</button>'; }).join('') + '</div>';
+  var i = h.indexOf('<div class="card"'); return i >= 0 ? h.slice(0, i) + tr + h.slice(i) : tr + h; }; })(delRangeHtml);
+ACT.dr92 = function (b) { DRG.src = b.dataset.v; render(); };
+// ---------------------------------------------------------------- v2.9.2 (job C): Select all; the manager's receipts; her By order hand-over
+var R92 = { st: '', d: null, t: 0 };
+function r92Mgr() { return !!(D && D.me && D.me.role === 'Supervisor' && !D.viewOf); }
+function r92Load() { if (R92.st === 'wait') return; R92.st = 'wait'; readOp('mrc92', {}, function (r) { R92.st = 'ok'; R92.t = Date.now(); if (r && r.ok) R92.d = r; if (TAB === 'money') render(); }, function () { R92.st = 'ok'; R92.t = Date.now(); }); }
+function r92Fk() { return r92Mgr() ? (R92.d || {}) : (D.fk || {}); }
+function r92Hs() { if (!r92Mgr()) return D.handovers || []; if (!R92.st || (R92.st === 'ok' && Date.now() - R92.t > 120000)) setTimeout(r92Load, 0); var me = D.me.first || '';
+  return (D.handovers || []).filter(function (x) { return !x.out; }).map(function (x) { return Object.assign({}, x, { rby: 'me' }); }).concat((R92.d && R92.d.list) || []).filter(function (x) { return x.from !== me; }); }
+r38Key = (function (f) { return function (x) { return f.apply(this, arguments) + (x && x.rby === 'Frank' ? '|F' : ''); }; })(r38Key);
+R91.w = '';
+r38Rcp = (function (f) { return function () { var h = f.apply(this, arguments); if (!h) return h;
+  if (r92Mgr()) { var i = h.indexOf('<div class="t2tray">'), j = i >= 0 ? h.indexOf('</div>', i) + 6 : -1; if (j > 5) h = h.slice(0, j) + r91Chips('r91w', R91.w, [['', 'All'], ['me', 'To me'], ['Frank', 'To Frank']]) + h.slice(j); }
+  var H = r91List().slice(0, 60), n = H.filter(function (x) { return R91.sel[r38Key(x)]; }).length, k = h.indexOf('<div class="card" style="padding:4px 12px">'); if (!H.length || k < 0) return h;
+  var bar = '<div class="r92b">' + (n < H.length ? '<button class="ghost2" data-act="r92all">Select all</button>' : '') + (n ? '<button class="ghost2" data-act="r92none">Untick all</button>' : '') + '</div>';
+  return h.slice(0, k) + bar + h.slice(k); }; })(r38Rcp);
+ACT.r91w = function (b) { R91.w = b.dataset.v; R91.sel = {}; render(); };
+ACT.r92all = function () { var H = r91List().slice(0, 60); if (!H.length) return; var pk = function (x) { return x.from + '|' + (x.rby || ''); }, on = H.filter(function (x) { return R91.sel[r38Key(x)]; })[0], P = {};
+  H.forEach(function (x) { P[pk(x)] = 1; }); var who = on ? pk(on) : Object.keys(P).length === 1 ? Object.keys(P)[0] : '';
+  if (!who) { toast('Choose one person first'); return; } H.forEach(function (x) { if (pk(x) === who) R91.sel[r38Key(x)] = 1; }); render(); };
+ACT.r92none = function () { R91.sel = {}; render(); };
+// By order: Select all (Frank and the manager), and the manager's Hand over
+byoHtml = (function (f) { return function () { var h = f.apply(this, arguments); if (D.me && D.me.role === 'Supervisor') h = h.replace(/ · waiting for the manager/g, ' · waiting for Frank'); if (!BY.d || BY.f === 'done' || D.viewOf || !(D.me.role === 'Warehouse' || D.me.role === 'Supervisor')) return h;
+  var L = byoList(BY.f); if (!L.length) return h; var n = L.filter(function (r) { return BY.sel[r.ref]; }).length;
+  var bar = '<div class="r92b">' + (n < L.length ? '<button class="ghost2" data-act="by92all">Select all (' + L.length + ')</button>' : '') + (n ? '<button class="ghost2" data-act="by92none">Untick all</button>' : '') + '</div>';
+  var i = h.indexOf('<div class="fkr by89r'); if (i >= 0) h = h.slice(0, i) + bar + h.slice(i);
+  if (D.me.role === 'Supervisor') { var S = byoSel(); if (S.n) h += '<div class="by89go"><button class="main gr wide" data-act="by92go">Hand over ' + ghs(S.amt) + ' (' + S.n + ')</button></div>'; }
+  return h; }; })(byoHtml);
+fkDName = (function (f) { return function (s) { var n = f.apply(this, arguments); return /^SRC-/.test(n) ? n.slice(4).charAt(0) + n.slice(5).toLowerCase() : n; }; })(fkDName); // no codes on screen (the manager has no Frank list of names)
+ACT.byof = (function (f) { return function (b) { BY.sel = {}; return f.apply(this, arguments); }; })(ACT.byof); // ticks belong to one list
+ACT.by92all = function () { byoList(BY.f).forEach(function (r) { BY.sel[r.ref] = 1; }); render(); };
+ACT.by92none = function () { BY.sel = {}; render(); };
+function r292(v) { return Math.round((Number(v) || 0) * 100) / 100; }
+function by92G() { var G = {}; ((BY.d && BY.d.rows) || []).forEach(function (r) { if (!BY.sel[r.ref]) return; var g = G[r.src] = G[r.src] || { src: r.src, sn: r.sn, om: r.om, m: 0, pp: 0, n: 0 }; g.m += r.amt; g.pp += r.pp || 0; g.n++; });
+  return Object.keys(G).map(function (k) { var g = G[k]; g.m = r292(g.m); g.pp = r292(g.pp); g.x = r292(g.m - g.pp); return g; }).sort(function (a, b) { return (b.om || 0) - (a.om || 0); }); }
+ACT.by92go = function () { BY.g92 = { to: 'frank', proof: '', note: '', p: {} }; sheetOpen('by92'); };
+SHEETS.by92 = function () { var Q = BY.g92, G = by92G(); if (!Q || !G.length) return ''; var S = byoSel(), h = shHead('cash', 'green', 'Hand over ' + ghs(S.amt), S.n + ' order' + (S.n === 1 ? '' : 's'));
+  G.forEach(function (g) {
+    if (!/^SRC-/.test(g.src) || g.src === 'SRC-MARKET') { h += '<div class="fkq2">' + esc(g.src === 'SRC-MARKET' ? 'Open market' : 'Extra money') + ' · ' + ghs(g.m) + '</div><p class="small muted">' + (g.src === 'SRC-MARKET' ? 'Not paid to a distributor. Untick it.' : 'Not for a distributor. Move it to an order in Her account first, or untick it.') + '</p>'; return; }
+    if (g.om) { h += '<div class="fkq2">Omni Haven · ' + ghs(g.m) + '</div><div class="vach">' + [['frank', 'Frank (he confirms)'], ['acct', 'The accountant']].map(function (c) { return '<button class="' + (Q.to === c[0] ? 'on' : '') + '" data-act="by92t" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>' +
+      (Q.to === 'acct' ? '<div class="fkq2">Proof</div><div class="vach">' + [['wa', 'WhatsApp'], ['signed', 'He signed – check with me']].map(function (c) { return '<button class="' + (Q.proof === c[0] ? 'on' : '') + '" data-act="by92pf" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>' : ''); return; }
+    var P = Q.p[g.src] = Q.p[g.src] || { m: g.pp > 0 ? 'x' : 'l', a: '' }, a = num(P.a); if (!(g.pp > 0) && P.m === 'x') P.m = 'l';
+    h += '<div class="fkq2">' + esc(g.sn) + '</div>' + fkLn('Money of these orders', ghs(g.m)) + (g.pp > 0 ? fkLn('Their price', ghs(g.x)) + fkLn('Your PP', ghs(g.pp)) : '<p class="small muted">The PP of these orders is not known. Type what you pay ' + esc(g.sn) + '.</p>');
+    h += '<div class="vach">' + (g.pp > 0 ? [['x', 'Exact ' + ghs(g.x)], ['l', 'Less'], ['m', 'More']] : [['l', 'Type the amount']]).map(function (c) { return '<button class="' + (P.m === c[0] ? 'on' : '') + '" data-act="by92m" data-k="' + esc(g.src) + '" data-v="' + c[0] + '">' + esc(c[1]) + '</button>'; }).join('') + '</div>';
+    if (P.m !== 'x') h += '<input class="o2q" data-inp="by92a" data-k="' + esc(g.src) + '" inputmode="decimal" value="' + esc(P.a) + '" placeholder="Amount to ' + esc(g.sn) + '">' +
+      '<div class="by92l" data-k="' + esc(g.src) + '">' + by92Line(g, P) + '</div>'; });
+  h += '<input data-inp="by92n" value="' + esc(Q.note) + '" placeholder="Note (optional)" autocomplete="off">';
+  return h + '<div class="va3"><button class="ghost2" data-act="closeO">Cancel</button><button class="main gr" data-act="by92save">Save</button></div>'; };
+function by92Line(g, P) { var a = num(P.a); if (!(a > 0)) return '<p class="small muted">' + (P.m === 'l' ? 'Less: the rest stays owed to ' + esc(g.sn) + '.' : 'More: the extra comes from your PP.') + '</p>';
+  return P.m === 'l' ? fkLn('Still owed to ' + esc(g.sn), ghs(r292(Math.max(0, g.x - a)))) : fkLn('From your PP', ghs(r292(Math.max(0, a - g.x)))) + fkLn('PP left from these orders', ghs(r292(Math.max(0, g.m - a)))); }
+ACT.by92t = function (b) { BY.g92.to = b.dataset.v; drawSheet(); };
+ACT.by92pf = function (b) { BY.g92.proof = b.dataset.v; drawSheet(); };
+ACT.by92m = function (b) { var P = BY.g92.p[b.dataset.k] = BY.g92.p[b.dataset.k] || { m: 'x', a: '' }; P.m = b.dataset.v; drawSheet(); };
+INP.by92a = function (el) { var k = el.dataset.k, P = BY.g92 && BY.g92.p[k]; if (!P) return; P.a = el.value; var g = by92G().filter(function (x) { return x.src === k; })[0], z = document.querySelector('.by92l[data-k="' + k + '"]'); if (g && z) z.innerHTML = by92Line(g, P); };
+INP.by92n = function (el) { if (BY.g92) BY.g92.note = el.value; };
+ACT.by92save = function () { var Q = BY.g92, G = by92G(), pay = {}; if (!Q || !G.length) return;
+  for (var i = 0; i < G.length; i++) { var g = G[i];
+    if (!/^SRC-/.test(g.src) || g.src === 'SRC-MARKET') { say(g.src === 'SRC-MARKET' ? 'Untick the open market money.' : 'Untick the extra money, or move it to an order first.'); return; }
+    if (g.om) { if (Q.to === 'acct' && !Q.proof) { say('Choose the proof.'); return; } continue; }
+    var P = Q.p[g.src] || { m: 'x', a: '' }, a = P.m === 'x' ? g.x : r292(num(P.a));
+    if (!(a > 0)) { say('Type the amount for ' + g.sn + '.'); return; }
+    if (P.m === 'l' && g.pp > 0 && a >= g.x) { say('Less means under ' + ghs(g.x) + '.'); return; }
+    if (P.m === 'm' && a <= g.x) { say('More means over ' + ghs(g.x) + '.'); return; }
+    if (a > g.m + 0.01) { say('The money of these orders is ' + ghs(g.m) + '. For more, use Pay › My PP.'); return; }
+    pay[g.src] = { mode: P.m, amt: a }; g.a = a; }
+  bgSave('mbyogo92', { refs: Object.keys(BY.sel), to: Q.to, proof: Q.proof, note: String(Q.note || '').trim(), pay: pay }, 'by92-' + uid(), 'Saved', null, true);
+  G.forEach(function (g) { var to = g.om ? (Q.to === 'acct' ? 'Accountant (Omni)' : 'Frank') : g.sn, a = g.om ? g.m : g.a; BY.d.gd[D.today] = r292((BY.d.gd[D.today] || 0) + a);
+    BY.d.hist.unshift({ day: D.today, t: fkTm(), to: to, amt: a, sn: g.om ? 'Omni Haven' : g.sn, src: g.src, st: g.om && Q.to !== 'acct' ? 'Sent' : 'Confirmed', proof: g.om && Q.to === 'acct' ? (Q.proof === 'wa' ? 'WhatsApp' : 'He signed – check with me') : '', n: g.n, note: '' }); });
+  BY.d.rows = BY.d.rows.filter(function (r) { return !BY.sel[r.ref]; }); BY.sel = {}; BY.g92 = null; SHEETK = ''; $('over').innerHTML = ''; if (typeof DP !== 'undefined') DP.st = ''; render();
+  setTimeout(function () { BY.st = ''; if (TAB === 'money') render(); }, 6000); };
+try { document.head.insertAdjacentHTML('beforeend', '<style>.r92b{display:flex;gap:8px;justify-content:flex-end;margin:4px 0 6px}.r92b button{flex:0 0 auto;padding:6px 12px;font-size:13px}.by92l{margin:4px 0 8px}</style>'); } catch (e) { }
+// ---------------------------------------------------------------- v2.9.2 (job D): the manager's My day like Frank's
+var MD92 = { s: 'appr', b: null, st: '', at: 0, o: 0 };
+function md92Load(force) { if (MD92.st === 'wait' || (!force && MD92.b && Date.now() - MD92.at < 60000)) return; MD92.st = 'wait';
+  readOp('mbook92', {}, function (r) { MD92.st = ''; MD92.at = Date.now(); if (r && r.ok) MD92.b = r.book; if (TAB === 'mday') render(); }, function () { MD92.st = ''; MD92.at = Date.now(); }); }
+function md92On() { return !!(D && D.me && D.me.role === 'Supervisor' && !D.viewOf && !D.book && MD92.b); }
+function md92With(f, self, args) { if (!md92On()) return f.apply(self, args); D.book = MD92.b; try { return f.apply(self, args); } finally { delete D.book; } }
+delRangeHtml = (function (f) { return function () { return md92With(f, this, arguments); }; })(delRangeHtml);
+LISTR.hist = (function (f) { return function () { return md92With(f, this, arguments); }; })(LISTR.hist);
+fk73OwedHtml = (function (f) { return function () { return md92With(f, this, arguments); }; })(fk73OwedHtml);
+fk73OwedList = (function (f) { return function () { return md92With(f, this, arguments); }; })(fk73OwedList);
+function md92Today() { var B = MD92.b || {}, t = D.today, H = (B.history || []).filter(function (x) { return !x.old && x.date === t; }), c = 0, by = {}, ow = 0;
+  H.forEach(function (x) { (x.lines || []).forEach(function (l) { var q = Number(l.qty) || 0; c += q; var n = x.from || 'Omni Haven'; by[n] = (by[n] || 0) + q; }); });
+  (B.owedOrders || []).concat(B.owedOther || []).forEach(function (x) { if (x.owing > 0.004) (x.lines || []).forEach(function (l) { ow += Number(l.qty) || 0; }); });
+  return { n: H.length, ctn: c, by: by, owed: ow }; }
+function md92Text() { var T = md92Today(), NL = String.fromCharCode(10), L = ['CupSales – the manager\'s day ' + dayLbl(D.today), 'Orders delivered: ' + T.n, 'Cartons out: ' + T.ctn + (Object.keys(T.by).length ? ' (' + Object.keys(T.by).map(function (n) { return n + ' ' + T.by[n]; }).join(', ') + ')' : ''), 'Cartons not paid for yet: ' + T.owed];
+  var m = md91Text(); if (m) L = L.concat(m.split(NL).slice(1)); return L.join(NL); }
+var md91Page = pgMD91;
+function pgMD92() { md91Load(); md92Load(); var X = MD91.d, B = MD92.b, T = md92Today(), ap = typeof apprCount === 'function' ? apprCount() : 0, s = MD92.s;
+  if (!MD92.o) { MD92.o = 1; if (OW.src === 'SRC-OMINI') OW.src = 'all'; if (!ap) s = MD92.s = 'ctn'; }
+  var h = '<div class="fk72hd"><div class="grow"><b>' + esc(dayLbl(D.today)) + '</b><div class="small muted">Your day</div></div></div>';
+  h += '<div class="fk72n" style="grid-template-columns:repeat(2,1fr)"><div><b>' + (B ? T.n : '…') + '</b><span>orders delivered</span></div><div><b>' + (B ? T.ctn : '…') + '</b><span>cartons out</span></div><div><b>' + (B ? T.owed : '…') + '</b><span>cartons not paid for</span></div><div><b>' + (X ? ghs(md91Sum(X.got)) : '…') + '</b><span>money received</span></div></div>';
+  h += '<div class="t2tray fk72tr">' + [['appr', 'Approvals', ap], ['ctn', 'Cartons out', 0], ['hist', 'Delivered', 0], ['owed', 'Owed', 0], ['money', 'Money', 0], ['sum', 'Summary', 0]].map(function (x) { return '<button class="' + (s === x[0] ? 'on' : '') + '" data-act="md92s" data-v="' + x[0] + '">' + x[1] + (x[2] ? ' <i class="cnt">' + x[2] + '</i>' : '') + '</button>'; }).join('') + '</div>';
+  if (s === 'appr') return h + pgAppr.call(this);
+  if (s === 'money') return h + md91Page.call(this).replace(/<div class="sub" style="margin:14px 2px 4px">Send today[\s\S]*$/, '');
+  if (!B) return h + '<div class="mdsk"><i></i><i></i><i></i></div>';
+  if (s === 'ctn') return h + delRangeHtml(B).replace('<div class="sech">Delivered <span>Omni Haven goods</span></div>', '');
+  if (s === 'hist') return h + filterBar('hist', 'Find a customer or school') + '<div id="flist">' + LISTR.hist() + '</div>';
+  if (s === 'owed') return h + fk73OwedHtml();
+  var by = Object.keys(T.by);
+  h += '<div class="fkpan">' + fkLn('Orders delivered', String(T.n)) + fkLn('Cartons out', String(T.ctn)) + by.map(function (n) { return fkLn('&nbsp;&nbsp;' + esc(n), String(T.by[n])); }).join('') + fkLn('Cartons not paid for yet', String(T.owed)) + '</div>';
+  if (X) h += '<div class="fkpan">' + fkLn('Received', ghs(md91Sum(X.got))) + fkLn('Handed over', ghs(md91Sum(X.gave))) + fkLn('With you now', ghs(md91Sum(X.me))) + fkLn('Still with people', ghs(X.wp)) + '</div>';
+  return h + '<div class="wrep"><a href="https://wa.me/?text=' + encodeURIComponent(md92Text()) + '" target="_blank" rel="noopener"><button class="main">' + ico(ICO.wa) + 'Summary</button></a></div>'; }
+PG27.mday = pgMD92;
+ACT.md92s = function (b) { MD92.s = b.dataset.v; if (MD92.s !== 'appr') APK = ''; render(); };
+// every way into Approvals lands on My day › Approvals
+render = (function (f) { return function () { if (D && D.me && D.me.role === 'Supervisor' && !D.viewOf && TAB === 'appr') { TAB = 'mday'; MD92.s = 'appr'; MD92.o = 1; } return f.apply(this, arguments); }; })(render);
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
