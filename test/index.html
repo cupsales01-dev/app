@@ -5076,7 +5076,7 @@ function n27Auth(r) {
     var p = $('pin').value.trim(); if (!/^\d{4}$/.test(p)) { n27Err('The PIN is 4 numbers.'); return; }
     if (set && p !== ($('pin2').value || '').trim()) { n27Err('The two PINs are not the same. Type it again.'); $('pin2').value = ''; N27.pf = 'pin2'; return; }
     var btn = this; btn.disabled = true;
-    rpc({ t: TOKEN, op: 'login', pin: p }, function (x) { if (x && x.session) { SESSION = x.session; ls(SKEY, x.session); n86Keep(p); n27k('pd', n27Today()); $('main').innerHTML = ''; if (set) toast('PIN saved ✓'); load(goHash); if (set) n27Onb(); } else { var q = x || { auth: 'pin', msg: 'Try again.' }; q.name = q.name || r.name; n27Auth(q); } },
+    rpc({ t: TOKEN, op: 'login', pin: p, as: rd90As(), newpin: set && rd90As() ? 1 : undefined }, function (x) { if (x && x.session) { rd90Ok(x); SESSION = x.session; ls(SKEY, x.session); n86Keep(p); n27k('pd', n27Today()); $('main').innerHTML = ''; if (set) toast('PIN saved ✓'); load(goHash); if (set) n27Onb(); } else { var q = x || { auth: 'pin', msg: 'Try again.' }; q.name = q.name || r.name; n27Auth(q); } },
       function () { btn.disabled = false; if (n86Open(p)) return; n27Err(navigator.onLine === false ? 'No signal – try again.' : 'The system is busy. Try again in a minute.'); });
   };
 }
@@ -6833,7 +6833,7 @@ function whoHtml() {
   var cur = D.views.filter(function (x) { return (x.v || '') === VIEW; })[0] || D.views[0], nm = cur ? cur.name : D.me.first;
   return '<span class="who psw' + (VIEW ? ' vw' : '') + '" data-act="sheet" data-k="psw" title="Look at someone\'s screen"><span>' + (VIEW ? esc(nm) + '\'s screen' : esc(nm) + ' · Me') + ' ▾</span>' + avatar(nm) + '</span>';
 }
-var VWORD = { Manager: 'Dashboard, Team, Orders, Money, Vendors', Agent: 'Her own screen: My day, orders, payments, vendors', Warehouse: 'His screen: orders to approve, his book, payments', Deliveries: 'His screen: route, orders, payments, helpers' };
+var VWORD = { Rider: 'His own screen: his route, General, his cash', Manager: 'Dashboard, Team, Orders, Money, Vendors', Agent: 'Her own screen: My day, orders, payments, vendors', Warehouse: 'His screen: orders to approve, his book, payments', Deliveries: 'His screen: route, orders, payments, helpers' };
 SHEETS.psw = function () {
   var V = D && D.views || []; if (!V.length) return '';
   return shHead('user', 'blue', 'Whose screen?', 'Each person\'s own screen, as they see it – view only until you tap Act for. Your own work is on Me.') + '<div class="list">' + V.map(function (x) { var on = (x.v || '') === VIEW;
@@ -7563,7 +7563,7 @@ ACT.hcopy = function () { var t = $('htext'); try { t.focus(); t.select(); docum
 ICO.r27route = '<circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.5 18H15a3.5 3.5 0 0 0 0-7H9a3.5 3.5 0 0 1 0-7h6.5"/>';
 ICO.r27tgt = '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1" fill="currentColor"/>';
 ICO.r27nav = '<path d="M3 11 21 3l-8 18-2-8z"/>';
-TABS.route = [['route', 'Route', 'r27route'], ['collect', 'Collect', 'cash'], ['target', 'Target', 'r27tgt'], ['rhelp', 'Help items', 'gift']];
+TABS.route = [['route', 'Route', 'r27route'], ['general', 'General', 'b6orders'], ['collect', 'Collect', 'cash'], ['target', 'Target', 'r27tgt'], ['rhelp', 'Help items', 'gift']];
 var R27H_TABS = [['route', 'Route', 'r27route'], ['done', 'My stops', 'done']];
 var R27 = { ride: ls('r27ride') === '1', start: '', rec: null, ld: null, th: null, bar: '' };
 function r27Fmt(n) { return Math.round(Number(n) || 0).toLocaleString('en-US'); }
@@ -8718,7 +8718,7 @@ function mt28Tone(a, M) { var ex = a.t.real * (M.days ? M.gone / M.days : 0), p 
 function pgMTeam() {
   if (MT.a) return mt28AgentPg();
   var wt = (D.teamDay ? D.teamDay.agents.filter(function (a) { return a.status === 'Agreed' || (a.tmr && a.tmr.status === 'Agreed'); }).length : 0);
-  var h = '<div class="t2tray">' + [['today', 'Today', wt], ['month', 'This month', 0], ['prince', 'Prince', 0], ['frank', 'Frank', 0]].map(function (c) { return '<button class="' + (MT.s === c[0] ? 'on' : '') + '" data-act="mts" data-k="' + c[0] + '">' + c[1] + (c[2] ? ' <span class="cnt">' + c[2] + '</span>' : '') + '</button>'; }).join('') + '</div>';
+  var h = '<div class="t2tray">' + [['today', 'Today', wt], ['month', 'This month', 0], ['prince', (D.riders || []).length > 1 ? 'Riders' : 'Prince', 0], ['frank', 'Frank', 0]].map(function (c) { return '<button class="' + (MT.s === c[0] ? 'on' : '') + '" data-act="mts" data-k="' + c[0] + '">' + c[1] + (c[2] ? ' <span class="cnt">' + c[2] + '</span>' : '') + '</button>'; }).join('') + '</div>';
   if (MT.s === 'month') return h + mt28Month();
   if (MT.s === 'prince') return h + mt28Prince();
   if (MT.s === 'frank') return h + mt28Frank();
@@ -9167,12 +9167,12 @@ pgR27Route = (function (f) { return function () { return r82Pg(f.apply(this, arg
 pgR27Route = (function (f) { return function () { return r36Bar() + f.apply(this, arguments); }; })(pgR27Route); PG27.route = pgR27Route; // v2.8.36
 // ---- a forgotten PIN: an email with a one-time link
 ACT.n27forgot = function () { var e = $('n27er'); if (e) e.textContent = 'Sending…';
-  rpc({ t: TOKEN, op: 'pinforgot' }, function (x) { var e2 = $('n27er'); if (e2) e2.textContent = (x && x.msg) || 'Try again.'; }, function () { var e2 = $('n27er'); if (e2) e2.textContent = 'No signal – try again.'; }); };
+  rpc({ t: TOKEN, op: 'pinforgot', as: rd90As() }, function (x) { var e2 = $('n27er'); if (e2) e2.textContent = (x && x.msg) || 'Try again.'; }, function () { var e2 = $('n27er'); if (e2) e2.textContent = 'No signal – try again.'; }); };
 n27Auth = (function (f) { return function (r) { f(r); if (r && r.locked && !RK) { var d = document.querySelector('.n27pin'); if (d) d.innerHTML = LOGO + '<h2>' + (r.name ? 'Hello ' + esc(r.name) : 'CupSales') + '</h2><div class="n27lock">The PIN was wrong 5 times.</div>' +
   '<button class="main big wide" data-act="n27forgot">Email me a reset link</button><div class="n27er" id="n27er"></div><p class="small muted">Or ask the manager to reset your PIN.</p>'; } }; })(n27Auth);
 function pr82Boot() { var m = String(location.search).match(/[?&]pr=([A-Za-z0-9]{20,60})/); if (!m || RK || !TOKEN) return false; var code = m[1];
   try { history.replaceState(null, '', location.pathname + location.search.replace(/[?&]pr=[A-Za-z0-9]+/, '').replace(/^&/, '?')); } catch (e) { }
-  rpc({ t: TOKEN, op: 'pinreset', pr: code }, function (x) { SESSION = ''; try { ls(SKEY, null); } catch (e) { } n27Auth(x || { auth: 'pin', msg: 'Try again.' }); }, function () { n27Auth({ auth: 'pin', msg: 'No signal – open the email link again.' }); }); return true; }
+  rpc({ t: TOKEN, op: 'pinreset', pr: code, as: rd90As() }, function (x) { SESSION = ''; try { ls(SKEY, null); } catch (e) { } n27Auth(x || { auth: 'pin', msg: 'Try again.' }); }, function () { n27Auth({ auth: 'pin', msg: 'No signal – open the email link again.' }); }); return true; }
 // ---- the manager: Me › Settings › Staff PINs
 PG27.n27set = (function (f) { return function () { var h = f.apply(this, arguments); if (!MS.d || !MS.d.pins || !MS.d.pins.length) return h;
   var rows = '<div class="sech">Staff PINs</div><div class="msbox">' + MS.d.pins.map(function (p) { return msRow('mpin', p.uid, esc(p.name), p.locked ? '<span class="t-red">Locked</span>' : p.pin ? 'PIN set' : '<span class="t-amber">No PIN yet</span>', p.email ? '' : 'No email – reset here'); }).join('') + '</div>';
@@ -10329,4 +10329,147 @@ INP.vapay = (function (f) { return function (el) { if (VA.pay) VA.pay.q47 = ''; 
 ACT.vaphow = (function (f) { return function (b) { if (VA.pay) VA.pay.q47 = ''; return f(b); }; })(ACT.vaphow);
 ACT.q47n = function () { if (!VA.pay) return; VA.pay.q47 = 'new'; ACT.vapaygo(); };
 bgSave = (function (f) { return function (op, data) { if (op === 'payment' && Q47NEW && data) data.sure = [data.sure, 'held47'].filter(Boolean).join(','); return f.apply(this, arguments); }; })(bgSave);
+// ---------------------------------------------------------------- v2.9.0: more than one rider (screens)
+(function () { var st = document.createElement('style'); st.textContent =
+  '.rd90{margin:4px 0 10px}.rd90 .t{font-weight:700;margin-bottom:6px}.rd90c{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}.rd90c button{min-width:96px;padding:10px 14px;border-radius:22px;border:2px solid #d0d5dd;background:#fff;font-weight:700;font-size:16px;color:#1d2939}.rd90c button.on{border-color:#16a34a;background:#e8f7ee;color:#14532d}' +
+  '.rd90b{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:14px}.rd90b .grow{flex:1}.rd90b button{padding:4px 10px;font-size:13px}' +
+  '.g90 .fkck small{display:block;font-weight:400;color:#667085;font-size:12px}.g90h{font-weight:800;margin:14px 2px 6px}.g90r{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid #e4e7ec;border-radius:12px;margin-bottom:6px;background:#fff}.g90r .grow{min-width:0}.g90r small{display:block;color:#667085;font-size:12px}' +
+  '.g90to{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.g90to button{padding:5px 10px;border-radius:16px;border:1px solid #98a2b3;background:#fff;font-size:13px;font-weight:700}' +
+  '.fk90g{font-weight:800;margin:12px 2px 6px;display:flex;justify-content:space-between}.fk90r{display:flex;gap:6px;align-items:stretch}.fk90r .fkck{flex:1;min-width:0}.fk90c{flex:0 0 auto;padding:0 10px;border-radius:10px;border:1px solid #98a2b3;background:#fff;font-size:12px;font-weight:700;max-width:96px;margin-bottom:6px}' +
+  '.mt90{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 10px}.mt90 button{padding:6px 14px;border-radius:18px;border:1px solid #d0d5dd;background:#fff;font-weight:700}.mt90 button.on{background:#1d2939;color:#fff;border-color:#1d2939}' +
+  '.ms90 label{display:block;font-size:13px;color:#667085;margin:10px 2px 4px}.ms90 input{width:100%;font-size:16px;padding:10px;border:1px solid #d0d5dd;border-radius:10px}.ms90 .t2tray{margin-top:4px}';
+  document.head.appendChild(st); })();
+// ---- Who is riding? (only on the shared Rider link, when there is more than one rider)
+var RD90 = { pick: ls('cs_as90_' + TOKEN) || '' };
+function rd90L() { try { var L = JSON.parse(ls('cs_rd90_' + TOKEN) || 'null'); return Array.isArray(L) ? L : []; } catch (e) { return []; } }
+function rd90As() { return rd90L().length > 1 && RD90.pick ? RD90.pick : undefined; }
+function rd90Ok(x) { var L = rd90L(); if (L.length < 2 || !RD90.pick) return; if (RD90.pick !== (ls('cs_as90_' + TOKEN) || '')) { ls(CKEY, null); D = null; }
+  ls('cs_as90_' + TOKEN, RD90.pick); L.forEach(function (y) { if (y.id === RD90.pick) y.pin = 1; }); ls('cs_rd90_' + TOKEN, JSON.stringify(L)); }
+n27Auth = (function (f) { return function (r) { r = r || {};
+  if (r.riders && r.riders.length > 1) ls('cs_rd90_' + TOKEN, JSON.stringify(r.riders));
+  var L = rd90L(); if (r.auth !== 'pin' && r.auth !== 'setpin' || L.length < 2) return f(r);
+  if (!RD90.pick && r.uid && String(ls(SKEY) || '').split('.')[0] === r.uid) RD90.pick = r.uid; /* his own phone from before: his name is chosen */
+  var cur = L.filter(function (y) { return y.id === RD90.pick; })[0]; if (!cur) RD90.pick = '';
+  var q = {}; Object.keys(r).forEach(function (k) { q[k] = r[k]; });
+  if (cur) { q.name = cur.name; var about = r.uid ? r.uid === cur.id : !!(r.msg || r.locked); if (!about) q.auth = cur.pin ? 'pin' : 'setpin'; else if (q.auth === 'setpin' && cur.pin && !r.uid) q.auth = 'pin'; }
+  else { q.name = ''; q.locked = 0; }
+  f(q); var box = document.querySelector('.n27pin'); if (!box) return;
+  var h2 = box.querySelector('h2'); if (h2 && !cur) h2.textContent = 'Who is riding?';
+  var d = document.createElement('div'); d.className = 'rd90'; d.innerHTML = (cur ? '<div class="small muted t">Who is riding?</div>' : '') + '<div class="rd90c">' + L.map(function (y) { return '<button class="' + (cur && y.id === cur.id ? 'on' : '') + '" data-act="rd90as" data-v="' + esc(y.id) + '">' + (cur && y.id === cur.id ? '✓ ' : '') + esc(y.name) + '</button>'; }).join('') + '</div>';
+  if (h2 && h2.nextSibling) box.insertBefore(d, h2.nextSibling); else box.appendChild(d);
+  if (!cur) { var g = $('go'), lb = $('n27lbl'); if (g) g.disabled = true; if (lb) lb.textContent = 'Tap your name, then type your PIN'; } }; })(n27Auth);
+ACT.rd90as = function (b) { var v = b.dataset.v; if (v === RD90.pick) return;
+  var had = ls('cs_as90_' + TOKEN) || ''; if (had && v !== had && queue().length) { n27Err('Saves are still sending. Wait for signal, then switch.'); return; }
+  RD90.pick = v; var base = N27A || {}; n27Auth({ auth: 'pin', bye: base.bye }); }; /* the phone's list says who has a PIN */
+n86Keep = (function (f) { return function (p) { f(p); ls('cs_pa86_' + TOKEN, rd90As() || ''); }; })(n86Keep);
+n86Open = (function (f) { return function (p) { if (rd90L().length > 1 && (rd90As() || '') !== (ls('cs_pa86_' + TOKEN) || '')) return false; return f(p); }; })(n86Open);
+/** "Riding: Theophilus · Not you?" on his tabs; switching waits until his saves are sent. */
+function rd90Bar() { if (!D || !D.me || D.me.role !== 'Rider' || D.viewOf || rd90L().length < 2) return '';
+  return '<div class="rd90b"><span class="grow">Riding: <b>' + esc(D.me.first) + '</b></span><button class="ghost" data-act="rd90sw">Not you? Switch</button></div>'; }
+ACT.rd90sw = function () { if (queue().length) { say('Your saves are still sending. Switch when they are sent.'); return; }
+  ask('Switch to another rider?', function () { SESSION = ''; ls(SKEY, null); ls(CKEY, null); ls('cs_as90_' + TOKEN, null); RD90.pick = ''; D = null; SHEETK = ''; $('over').innerHTML = ''; n27Auth({ auth: 'pin' }); }, 'SWITCH'); };
+pgR27Route = (function (f) { return function () { return rd90Bar() + f.apply(this, arguments); }; })(pgR27Route); PG27.route = pgR27Route;
+// ---- General: released orders no rider has taken (first tap wins); his orders not loaded yet can go back
+var G90 = { ag: '', sel: {}, seen: {} };
+function g90Ctn(L) { return (L || []).reduce(function (t, l) { return t + (Number(l.qty) || 0); }, 0); }
+function g90Sub(x) { return esc([x.agent, x.school || x.town].filter(Boolean).join(' · ')) + (x.later ? ' <span class="fk84d">' + esc(dayLbl(x.dlv)) + '</span>' : ''); }
+function g90Mine() { var ok = (D.r27 && D.r27.load && D.r27.load.oids) || [], L = [];
+  (D.stops || []).forEach(function (s) { (s.orders || []).forEach(function (o) { if (ok.indexOf(o.oid) < 0) L.push({ oid: o.oid, vendor: s.name, agent: o.agent, lines: o.lines }); }); });
+  (D.later || []).forEach(function (x) { if (x.released && !x.bike && ok.indexOf(x.oid) < 0) L.push({ oid: x.oid, vendor: x.vendor, agent: x.agent, lines: x.lines, later: 1, dlv: x.dlv }); });
+  return L; }
+function pgG90() {
+  var P = D.pool || [], rider = D.me.role === 'Rider', mgr = D.me.role === 'Supervisor', RS = D.riders || [];
+  P.forEach(function (x) { if (!G90.seen[x.oid]) { G90.seen[x.oid] = 1; if (x.mine) G90.sel[x.oid] = 1; } });
+  var A = {}; P.forEach(function (x) { if (x.auid) A[x.auid] = x.agent; }); if (G90.ag && !A[G90.ag]) G90.ag = '';
+  var R = P.filter(function (x) { return !G90.ag || x.auid === G90.ag; }), h = rd90Bar();
+  if (Object.keys(A).length > 1) h += '<div class="t2tray"><button class="' + (!G90.ag ? 'on' : '') + '" data-act="g90ag" data-v="">All</button>' + Object.keys(A).map(function (k) { return '<button class="' + (G90.ag === k ? 'on' : '') + '" data-act="g90ag" data-v="' + esc(k) + '">' + esc(A[k]) + '</button>'; }).join('') + '</div>';
+  if (!R.length) h += emptyHtml(P.length ? 'Nothing for this agent.' : 'Nothing waiting in General.');
+  else if (rider) { var n = R.filter(function (x) { return G90.sel[x.oid]; }).length, all = n === R.length;
+    h += '<div class="g90"><button class="ghost" data-act="g90all" style="margin:2px 0 8px">' + (all ? 'Untick all' : 'Select all') + '</button>' + R.map(function (x) { var on = !!G90.sel[x.oid];
+      return '<button class="fkck' + (on ? ' on' : '') + '" data-act="g90t" data-o="' + esc(x.oid) + '"><span class="fkbx">' + (on ? '✓' : '') + '</span><span class="grow ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + '<small>' + g90Sub(x) + '</small></span><b>' + esc(fkL(x.lines)) + '</b></button>'; }).join('') +
+      '<button class="main gr fkbig" data-act="g90take"' + (n ? '' : ' disabled') + '>Add to my route · ' + n + '</button></div>'; }
+  else h += R.map(function (x) { return '<div class="g90r"><div class="grow"><b class="ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + '</b><small>' + g90Sub(x) + ' · ' + esc(fkL(x.lines)) + (x.dr ? ' · usually ' + esc(x.dr) : '') + '</small>' +
+      (mgr ? '<div class="g90to">' + RS.map(function (r) { return '<button data-act="g90mv" data-o="' + esc(x.oid) + '" data-r="' + esc(r.id) + '">Give to ' + esc(r.name) + '</button>'; }).join('') + '</div>' : '') + '</div></div>'; }).join('');
+  if (rider) { var M = g90Mine(); if (M.length) h += '<div class="g90h">On my route – not loaded yet</div>' + M.map(function (x) { return '<div class="g90r"><div class="grow"><b class="ell">' + esc(x.vendor) + '</b><small>' + esc(x.agent || '') + ' · ' + esc(fkL(x.lines)) + (x.later ? ' · ' + esc(dayLbl(x.dlv)) : '') + '</small></div><button class="ghost" data-act="g90give" data-o="' + esc(x.oid) + '" data-v="' + esc(x.vendor) + '">Give back</button></div>'; }).join('') +
+    '<p class="small muted" style="margin:4px 2px 0">After you tap I have it, only Frank or the manager can move an order.</p>'; }
+  return h; }
+PG27.general = pgG90;
+BADGE27.push(function (B, r, sup, has) { if (has('route') && B.route && D.me.role !== 'Helper') B.route.general = (D.pool || []).length; });
+ACT.g90ag = function (b) { G90.ag = b.dataset.v || ''; render(); };
+ACT.g90t = function (b) { var k = b.dataset.o; if (G90.sel[k]) delete G90.sel[k]; else G90.sel[k] = 1; render(); };
+ACT.g90all = function () { var R = (D.pool || []).filter(function (x) { return !G90.ag || x.auid === G90.ag; }), all = R.every(function (x) { return G90.sel[x.oid]; }); R.forEach(function (x) { if (all) delete G90.sel[x.oid]; else G90.sel[x.oid] = 1; }); render(); };
+ACT.g90take = function () { var R = (D.pool || []).filter(function (x) { return (!G90.ag || x.auid === G90.ag) && G90.sel[x.oid]; }), ids = R.map(function (x) { return x.oid; }); if (!ids.length) return;
+  D.pool = (D.pool || []).filter(function (x) { return ids.indexOf(x.oid) < 0; }); ids.forEach(function (k) { delete G90.sel[k]; });
+  bgSave('rtake', { oids: ids }, 'rt-' + uid(), 'to my route: ' + ids.length, null, true); toast('Saved'); render(); };
+ACT.g90give = function (b) { var k = b.dataset.o; ask('Give back ' + (b.dataset.v || 'this order') + '? It goes to General for any rider.', function () {
+  bgSave('rgive', { oids: [k] }, 'rg-' + uid(), 'give back: ' + (b.dataset.v || k), null, true); toast('Saved');
+  (D.stops || []).forEach(function (s) { s.orders = (s.orders || []).filter(function (o) { return o.oid !== k; }); }); D.stops = (D.stops || []).filter(function (s) { return (s.orders || []).length; }); D.later = (D.later || []).filter(function (x) { return x.oid !== k; }); render(); }, 'GIVE BACK'); };
+ACT.g90mv = function (b) { var k = b.dataset.o, r = b.dataset.r; D.pool = (D.pool || []).filter(function (x) { return x.oid !== k; }); bgSave('rmove', { oids: [k], rid: r }, 'rm-' + uid(), 'to a rider', null, true); toast('Saved'); render(); };
+// ---- Frank's To load: one group per rider, "Hand to <rider>", and a chip to give an order to another rider
+function fk90Rd(x) { var X = (x && x.x) || {}; return X.rdr || X.drd || ''; }
+function fk90Nm(id) { var r = (D.riders || []).filter(function (y) { return y.id === id; })[0]; return r ? r.name : 'No rider'; }
+fkRows = (function (f) { return function (L) { var RS = D.riders || [];
+  if (FK.flt !== 'ok' || RS.length < 2) return f(L);
+  (L || []).forEach(function (x) { if (x.st === 'ok' && fk84Dlv(x) > D.today && FK.load[x.oid] === undefined) FK.load[x.oid] = false; });
+  var q = norm(FK.q), R = L.filter(function (x) { return x.st === 'ok' && (q.length < 1 || norm(x.vendor + ' ' + x.agent).indexOf(q) >= 0); }); if (!R.length) return f(L);
+  var keys = RS.map(function (r) { return r.id; }); R.forEach(function (x) { var k = fk90Rd(x); if (keys.indexOf(k) < 0) keys.push(k); });
+  return '<div class="fk73ld">' + keys.map(function (k) { var G = R.filter(function (x) { return fk90Rd(x) === k; }); if (!G.length) return '';
+    var T = G.filter(function (x) { return FK.load[x.oid] !== false; }), n = T.length, tc = T.reduce(function (t, x) { return t + g90Ctn(x.lines); }, 0);
+    return '<div class="fk90g"><span>' + esc(fk90Nm(k)) + '</span><span class="small muted">' + n + (n === 1 ? ' order' : ' orders') + ' · ' + tc + (tc === 1 ? ' carton' : ' cartons') + '</span></div>' + G.map(function (x) { var on = FK.load[x.oid] !== false;
+      return '<div class="fk90r"><button class="fkck' + (on ? ' on' : '') + '" data-act="fklt" data-o="' + esc(x.oid) + '"><span class="fkbx">' + (on ? '✓' : '') + '</span><span class="grow ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + fk84Day(x) + fk73Chip(fk73Vid(x)) + '</span><b>' + esc(fkL(x.lines)) + '</b></button><button class="fk90c" data-act="fk90mv" data-o="' + esc(x.oid) + '" aria-label="Change the rider">' + esc(fk90Nm(fk90Rd(x))) + ' ⇄</button></div>'; }).join('') +
+      '<button class="main gr fkbig" data-act="fkhand" data-r="' + esc(k) + '"' + (n ? '' : ' disabled') + '>Hand to ' + esc(fk90Nm(k)) + ' · ' + n + '</button>'; }).join('') +
+    '<p class="small muted" style="margin:4px 2px 0">Not ticked = next trip. ⇄ gives an order to another rider. Each rider confirms on his phone.</p></div>'; }; })(fkRows);
+ACT.fkhand = (function (f) { return function (b) { var r = b && b.dataset && b.dataset.r; if (r === undefined || (D.riders || []).length < 2) return f.apply(this, arguments);
+  var off = []; fkList().forEach(function (x) { if (x.st === 'ok' && fk90Rd(x) !== r && FK.load[x.oid] !== false) { off.push([x.oid, FK.load[x.oid]]); FK.load[x.oid] = false; } });
+  try { return f.apply(this, arguments); } finally { off.forEach(function (p) { if (p[1] === undefined) delete FK.load[p[0]]; else FK.load[p[0]] = p[1]; }); } }; })(ACT.fkhand);
+ACT.fk90mv = function (b) { var k = b.dataset.o, RS = D.riders || [], x = (D.dispatched || []).filter(function (y) { return y.oid === k; })[0]; if (!x || RS.length < 2) return;
+  var cur = x.rdr || x.drd || '', i = RS.map(function (r) { return r.id; }).indexOf(cur), nx = RS[(i + 1) % RS.length];
+  x.rdr = nx.id; x.rdn = nx.name; bgSave('rmove', { oids: [k], rid: nx.id }, 'rm-' + uid(), 'to ' + nx.name, null, true); toast('Saved'); render(); };
+// ---- the agent: her order's rider by name (not "Prince"), and Contact <rider> calls his phone
+function rd90OfO(o) { if (o && o.rdn) return o.rdn; return (D && D.hrider) || 'Prince'; }
+function rd90Ph(id) { var r = ((D && D.riders) || []).filter(function (y) { return y.id === id; })[0]; return r && r.phone ? r.phone : ''; }
+(function () { var busy = 0;
+  function nameAt(n) { var e = n.parentNode && n.parentNode.closest ? n.parentNode.closest('[data-o]') : null, o = e ? oById(e.dataset.o) : null;
+    if (!o && n.parentNode && n.parentNode.closest && n.parentNode.closest('#over') && typeof OX !== 'undefined' && OX) o = oById(OX.oid); return rd90OfO(o); }
+  function fix(root) { if (!D || !D.me || D.me.role !== 'Agent' || (D.riders || []).length < 2 || !root) return;
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), L = [], n; while ((n = w.nextNode())) if (n.nodeValue.indexOf('Prince') >= 0) L.push(n);
+    L.forEach(function (t) { var nm = nameAt(t); if (nm && nm !== 'Prince') t.nodeValue = t.nodeValue.replace(/\bPrince\b(?! [A-Z])/g, nm); /* not a name like Prince Osei */ }); }
+  try { var mo = new MutationObserver(function (M) { if (busy) return; busy = 1; try { M.forEach(function (m) { for (var i = 0; i < m.addedNodes.length; i++) { var a = m.addedNodes[i]; if (a.nodeType === 1) fix(a); else if (a.nodeType === 3 && a.parentNode) fix(a.parentNode); } }); } catch (e) { } busy = 0; });
+    ['main', 'over', 'top'].forEach(function (id) { var el = $(id); if (el) mo.observe(el, { childList: true, subtree: true }); }); } catch (e) { } })();
+SHEETS.opr = (function (f) { return function () { var X = OX, o = X && oById(X.oid); if (!o || !D.ph || (D.riders || []).length < 2) return f.apply(this, arguments);
+  var keep = D.ph.prince, id = o.rdr || D.myRid || '', ph = rd90Ph(id); if (id && id !== 'USR-PRINCE') D.ph.prince = ph; else if (!keep) D.ph.prince = ph;
+  try { return f.apply(this, arguments); } finally { D.ph.prince = keep; } }; })(SHEETS.opr);
+ACT.oprcall = (function (f) { return function () { if (!D.ph || (D.riders || []).length < 2) return f.apply(this, arguments); var X = OX, o = X && oById(X.oid), keep = D.ph.prince, id = (o && o.rdr) || D.myRid || '';
+  if (id && id !== 'USR-PRINCE') D.ph.prince = rd90Ph(id); try { return f.apply(this, arguments); } finally { D.ph.prince = keep; } }; })(ACT.oprcall || function () { });
+o27MoreExtra = (function (f) { return function (o) { var h = f.apply(this, arguments); if ((D.riders || []).length < 2 || !o || !o.rdn) return h; return '<div class="o2l"><span>Rider</span><b>' + esc(o.rdn) + '</b></div>' + h; }; })(o27MoreExtra);
+// ---- the manager: Team › Riders (each rider's month); Settings › Staff (name, phone, her rider, add or stop a rider)
+var MT90 = { r: '' };
+mt28Prince = (function (f) { return function () { var M = D.r27m, RS = (M && M.riders) || []; if (RS.length < 2) return f.apply(this, arguments);
+  if (!RS.some(function (r) { return r.id === MT90.r; })) MT90.r = RS[0].id; var cur = RS.filter(function (r) { return r.id === MT90.r; })[0];
+  var h = '<div class="mt90">' + RS.map(function (r) { return '<button class="' + (r.id === MT90.r ? 'on' : '') + '" data-act="mt90r" data-v="' + esc(r.id) + '">' + esc(r.name) + '</button>'; }).join('') + '</div>';
+  if (cur.id === 'USR-PRINCE' || cur.score === M.score) return h + f.apply(this, arguments);
+  var S = cur.score || {}, tile = function (v, l, s, tone) { return '<div class="mtt ' + (tone || '') + '"><b>' + v + '</b><span>' + l + '</span>' + (s ? '<small>' + s + '</small>' : '') + '</div>'; };
+  return h + '<div class="mtts">' + tile(md28N(S.ctn || 0) + '<small> / ' + Number(S.target || 0).toLocaleString('en-GB') + '</small>', 'Cartons', 'qualifies at ' + (S.qual || 0), S.onPace ? 'g' : 'a') + tile((S.score || 0) + '<small> / 100</small>', 'His score', 'on time ' + ((S.time || {}).pct || 0) + '%') +
+    tile(((S.resp || {}).up || 0) + ' 👍 ' + ((S.resp || {}).down || 0) + ' 👎', 'Respect', 'help items ' + ((S.help || {}).x || 0) + '/' + ((S.help || {}).y || 0)) + '</div><p class="small muted" style="margin:2px">Target = the cartons of the agents he rides for.</p>'; }; })(mt28Prince);
+ACT.mt90r = function (b) { MT90.r = b.dataset.v; render(); };
+function ms90Rid() { return (MS.d && MS.d.riders) || D.riders || []; }
+SHEETS.mpin82 = (function (f) { return function () { var h = f.apply(this, arguments), x = MP82; if (!h || !x || x.link) return h; var p = x.p, RS = ms90Rid();
+  var s = '<div class="ms90"><div class="sech" style="margin-top:16px">Name and phone</div><label for="ms90n">Full name</label><input id="ms90n" value="' + esc(p.full || p.name) + '" autocomplete="off"><label for="ms90p">Phone</label><input id="ms90p" type="tel" inputmode="tel" value="' + esc(p.phone || '') + '" autocomplete="off">' +
+    '<button class="main wide" data-act="ms90sv" style="margin-top:10px">Save</button><p class="small muted" style="margin:6px 2px 0">A new person takes over this login: change the name and phone, Save, then Reset PIN.</p>';
+  if (p.role === 'Agent' && RS.length > 1) s += '<div class="sech" style="margin-top:16px">Her rider</div><div class="t2tray">' + RS.map(function (r) { var on = p.drider === r.id; return '<button class="' + (on ? 'on' : '') + '" data-act="ms90dr" data-v="' + esc(r.id) + '">' + (on ? '✓ ' : '') + esc(r.name) + '</button>'; }).join('') + '</div><p class="small muted" style="margin:6px 2px 0">Her new orders are ticked for this rider in General.</p>';
+  if (p.uid === 'USR-PRINCE' && RS.length > 1) s += '<p class="small t-amber" style="margin:12px 2px 0">Prince\'s link is the Rider link for every rider. After Lost phone: new link, send the new link to every rider.</p>';
+  else if (p.role === 'Rider' && RS.length > 1) s += '<button class="ghost wide" data-act="ms90off" style="margin-top:16px">Stop this rider</button><p class="small muted" style="margin:6px 2px 0">He can no longer sign in. His orders stay until Frank or you move them.</p>';
+  return h + s + '</div>'; }; })(SHEETS.mpin82);
+function ms90Go(data, done) { call('mstaff90', data, 'ms-' + uid(), function (r) { if (r && r.ok) { toast('Saved'); if (done) done(r); msLoad(true); } else say((r && r.error) || 'Try again.'); }, function (m) { say(m || 'No signal – try again.'); }); }
+ACT.ms90sv = function () { var x = MP82; if (!x) return; var n = ($('ms90n') || {}).value || '', ph = ($('ms90p') || {}).value || ''; if (n.trim().length < 2) { say('Type the name.'); return; }
+  ms90Go({ uid: x.p.uid, name: n, phone: ph }, function () { x.p.full = n.trim(); x.p.name = n.trim().split(' ')[0]; x.p.phone = ph.trim(); SHEETK = ''; $('over').innerHTML = ''; render(); }); };
+ACT.ms90dr = function (b) { var x = MP82; if (!x) return; var v = b.dataset.v; ms90Go({ uid: x.p.uid, drider: v }, function () { x.p.drider = v; drawSheet(); }); };
+ACT.ms90off = function () { var x = MP82; if (!x) return; ask('Stop ' + x.p.name + '? He can no longer sign in.', function () { ms90Go({ uid: x.p.uid, off: 1 }, function () { SHEETK = ''; $('over').innerHTML = ''; render(); }); }, 'STOP'); };
+PG27.n27set = (function (f) { return function () { var h = f.apply(this, arguments); if (!MS.d || !MS.d.pins || !MS.d.pins.length) return h;
+  return h.replace('<div class="sech">Rules</div>', '<button class="ghost wide" data-act="ms90add" style="margin:-2px 0 14px">+ Add a rider</button><div class="sech">Rules</div>'); }; })(PG27.n27set);
+ACT.ms90add = function () { sheetOpen('ms90a'); };
+SHEETS.ms90a = function () { return '<div class="n27h"></div><div class="t2sh"><b>Add a rider</b><a data-act="closeO">Close</a></div><div class="ms90"><label for="ms90an">Full name</label><input id="ms90an" autocomplete="off"><label for="ms90ap">Phone</label><input id="ms90ap" type="tel" inputmode="tel" autocomplete="off">' +
+  '<button class="main wide" data-act="ms90ago" style="margin-top:10px">Save</button><p class="small muted" style="margin:6px 2px 0">He signs in on the Rider link: Who is riding? shows his name, and he chooses his own PIN.</p></div>'; };
+HALFK.ms90a = 1;
+ACT.ms90ago = function () { var n = ($('ms90an') || {}).value || '', ph = ($('ms90ap') || {}).value || ''; if (n.trim().length < 2) { say('Type the name.'); return; } ms90Go({ add: 1, name: n, phone: ph }, function () { SHEETK = ''; $('over').innerHTML = ''; render(); }); };
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
