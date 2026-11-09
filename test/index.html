@@ -11019,4 +11019,25 @@ delRangeHtml = (function (f) { return function (B) { var r = ct910Rng(), cut = a
   if (!have) return f.call(this, B).replace('<div class="tiles">', '<div class="tiles" style="opacity:.45">');
   var seen = {}; (B.history || []).forEach(function (x) { seen[x.ref] = 1; });
   return f.call(this, Object.assign({}, B, { history: (B.history || []).concat(CT910.list.filter(function (x) { return !seen[x.ref]; })) })); }; })(delRangeHtml);
+// v2.9.12: Fix this order – add a product she got, take one off (0); and the same Fix from Her account
+var MFO912 = {};
+oById = (function (f) { return function (id) { return f.apply(this, arguments) || MFO912[id] || null; }; })(oById);
+SHEETS.mfix = (function (f) { return function () { var h = f.apply(this, arguments); if (!h || !MFX) return h; var add = MFX.add || {};
+  Object.keys(add).forEach(function (k) { h = h.replace('<b>' + esc(skn(k)) + '</b><div class="small muted">loaded 0</div>', '<b>' + esc(skn(k)) + '</b><div class="small muted">added – not on the order</div>'); });
+  var have = MFX.mx || {}, L = (D.skus || []).map(function (s) { return String(s.id || s.SKU_ID || s); }).filter(function (s) { return /^[A-Z]{3}$/.test(s) && !(s in have); });
+  var box = MFX.pick ? '<div class="mf912"><div class="small muted">Which product did she get?</div><div class="chips">' + L.map(function (s) { return '<button data-act="mf912s" data-v="' + esc(s) + '">' + esc(skn(s)) + '</button>'; }).join('') + '</div></div>'
+    : (L.length ? '<button class="vasm" style="margin:2px 0 6px" data-act="mf912a">+ Add a product</button>' : '');
+  box += '<div class="small muted" style="margin:0 0 6px">To take a product off, set it to 0.</div>';
+  return h.replace('<button class="ghost2" style="width:100%;margin:6px 0" data-act="mfnone">', box + '<button class="ghost2" style="width:100%;margin:6px 0" data-act="mfnone">'); }; })(SHEETS.mfix);
+ACT.mf912a = function () { if (MFX) { MFX.pick = 1; drawSheet(); } };
+ACT.mf912s = function (b) { if (!MFX) return; var s = b.dataset.v; MFX.mx[s] = 0; MFX.q[s] = 1; (MFX.add = MFX.add || {})[s] = 1; MFX.pick = 0; drawSheet(); };
+sr32Html = (function (f) { return function (r) { var s = f.apply(this, arguments); if (!s || !r || !/^ORD-/.test(String(r.ref))) return s;
+  return '<button class="vasm" style="margin-top:6px" data-act="va912f" data-r="' + esc(r.ref) + '">✎ Fix this order</button> ' + s; }; })(sr32Html);
+ACT.va912f = function (b) { var ref = b.dataset.r, r = vaRow(ref), vid = VA.vid;
+  var go = function () { var o = oById(ref); if (!o || !o.outcome || !o.outcome.did) return false; MFO912.__back = vid; ACT.mfix({ dataset: { o: ref } }); return true; };
+  if (go()) return; b.disabled = true;
+  readOp('ordhist', { from: addDays((r && r.day) || D.today, -60), to: D.today, uid: '*' }, function (x) { b.disabled = false; var o = ((x && x.orders) || []).filter(function (y) { return y.oid === ref; })[0];
+    if (o) MFO912[ref] = o; if (!go()) say(o && o.status !== 'Delivered' && o.status !== 'Failed' ? 'Only a delivered order can be fixed.' : 'This order has no delivery to fix.'); }, function (e) { b.disabled = false; toast(e, 'err'); }); };
+ACT.mfsave = (function (f) { return function () { var id = MFX && MFX.oid, r = f.apply(this, arguments); if (id && MFO912[id] && !MFX) delete MFO912[id]; return r; }; })(ACT.mfsave); /* fetched again next time */
+try { document.head.insertAdjacentHTML('beforeend', '<style>.mf912{margin:4px 0 8px}.mf912 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.mf912 .chips button{border:1.5px solid var(--line);border-radius:999px;background:#fff;padding:8px 14px;font-weight:700}</style>'); } catch (e) { }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
