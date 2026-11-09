@@ -10487,11 +10487,11 @@ render = (function (f) { return function () { try { if (!RD91F && D && D.me && D
 // 4: on delivery, not paid – he asks her agent first
 var NP91 = {};
 function np91Rec(vid, gap) { var s = (D.np91 || []).filter(function (x) { return x.vid === vid; })[0], l = NP91[vid], sm = s && Math.abs((s.gap || 0) - gap) < 0.01;
-  if (l && Math.abs(l.gap - gap) < 0.01 && (l.D === D || !sm)) return l; return sm ? s : null; } /* what he asked on this phone, until the next screen data says more */
+  if (l && Math.abs(l.gap - gap) < 0.01 && (l.D === D || queue().some(function (q) { return q.op === 'np91' && q.data && q.data.vid === vid; }))) return l; /* v2.9.11: a refused ask does not wait forever */ return sm ? s : null; } /* what he asked on this phone, until the next screen data says more */
 function np91Need(st, s) { if (!st || !s || ['ALL', 'PART', 'LESS'].indexOf(st.k) < 0 || st.claim && !(Number(String(st.camt || '').replace(/,/g, '')) > 0)) return null; /* MoMo still asks; a claim counts what she says she paid */
-  var amt = r27Due(s, r27Kept(s, st.q)); if (!(amt > 0.004)) return null;
+  var amt = Math.round((r27Due(s, r27Kept(s, st.q)) - (s.promised || 0)) * 100) / 100; if (!(amt > 0.004)) return null; /* v2.9.11: only the new On delivery orders – promised old debt never holds the cartons */
   var paid = st.gave === 'none' ? 0 : st.gave === 'other' ? (Number(String(st.other || '').replace(/,/g, '')) || 0) : st.gave ? Number(st.gave) || 0 : null; if (paid !== null && st.claim) paid += Number(String(st.camt || '').replace(/,/g, '')) || 0; if (paid === null || paid >= amt - 0.004) return null;
-  var O = s.orders.filter(function (o) { return !/credit/i.test(o.pay); }); return { due: amt, paid: paid, gap: Math.round((amt - paid) * 100) / 100, oids: O.map(function (o) { return o.oid; }), an: (O[0] || s.orders[0]).agent || 'the agent' }; }
+  var O = s.orders.filter(function (o) { return !/credit/i.test(o.pay); }); if (!O.length) return null; return { due: amt, paid: paid, gap: Math.round((amt - paid) * 100) / 100, oids: O.map(function (o) { return o.oid; }), an: (O[0] || s.orders[0]).agent || 'the agent' }; }
 SHEETS.r27rec = (function (f) { return function () { var h = f.apply(this, arguments), st = R27.rec, s = st && stop(st.vid), n = np91Need(st, s); if (!h || !n) return h;
   var r = np91Rec(s.id, n.gap), who = esc(n.an), box;
   if (!r) box = '<div class="np91 a">' + (n.paid > 0 ? 'She paid ' + ghs(n.paid) + ' of ' + ghs(n.due) + '. ' + ghs(n.gap) + ' is missing' : 'She did not pay ' + ghs(n.gap)) + '. Ask ' + who + ' before you give the cartons.</div><button class="r27big g" data-act="np91ask">Ask ' + who + '</button>';
