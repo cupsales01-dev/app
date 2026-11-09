@@ -10836,4 +10836,12 @@ function md94Lbl() { var r = md94R(), w = DRG.k === 'today' ? 'today' : DRG.k ==
 PG27.mday = (function (f) { return function () { var h = f.apply(this, arguments); if (!md92On() || typeof h !== 'string') return h;
   if (MD92.s === 'ctn') return h.replace(/<b>[^<]*<\/b><span>cartons out<\/span>/, '<b>' + md94Ctn(MD92.b) + '</b><span>cartons out · ' + esc(md94Lbl()) + '</span>');
   return h.replace('<span>cartons out</span>', '<span>cartons out today</span>'); }; })(PG27.mday);
+// ---------------------------------------------------------------- v2.9.5: no text selection or press-and-hold menu while dragging rows (iPhone)
+try { document.head.insertAdjacentHTML('beforeend', '<style>[data-drag],[data-dh]{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}[data-drag] input,[data-drag] textarea,[data-drag] [contenteditable]{-webkit-user-select:text;user-select:text}[data-dh]{touch-action:none}body.dg95,body.dg95 *{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}</style>'); } catch (e) { }
+function dg95Clear() { try { var s = window.getSelection && window.getSelection(); if (s && s.rangeCount) s.removeAllRanges(); } catch (e) { } }
+document.addEventListener('touchstart', function (e) { var t = e.target; if (t && t.closest && t.closest('[data-dh]')) { e.preventDefault(); document.body.classList.add('dg95'); dg95Clear(); } }, { passive: false, capture: true });
+document.addEventListener('pointerdown', function (e) { var t = e.target; if (t && t.closest && t.closest('[data-dh]')) { document.body.classList.add('dg95'); dg95Clear(); } }, true);
+document.addEventListener('pointermove', function () { if (document.body.classList.contains('dg95')) dg95Clear(); }, { passive: true });
+['pointerup', 'pointercancel', 'touchend', 'touchcancel'].forEach(function (ev) { document.addEventListener(ev, function () { if (document.body.classList.contains('dg95')) { document.body.classList.remove('dg95'); dg95Clear(); } }, true); });
+document.addEventListener('selectstart', function (e) { var t = e.target && e.target.nodeType === 3 ? e.target.parentNode : e.target; if (document.body.classList.contains('dg95') || (t && t.closest && t.closest('[data-dh]'))) e.preventDefault(); }, true);
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
