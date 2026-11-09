@@ -8707,7 +8707,7 @@ function mgrBack() { return mgrMe() && TAB === 'new' ? '<div class="backrow"><bu
   return '<button class="tbell" data-act="mdtasks" aria-label="' + n + (n === 1 ? ' task needs you' : ' tasks need you') + '">' + ico(N27I.task) + '<b>' + n + '</b></button>'; }; })();
 ACT.mdtasks = function () { TAB = 'appr'; APK = ''; MSG = null; SHEETK = ''; render(); window.scrollTo(0, 0); };
 (function () { var p0 = pgAppr; pgAppr = function () { if (!mgrMe()) return p0(); var no = typeof needOpen === 'function' ? needOpen() : 0, t = typeof n27TaskRows === 'function' ? n27TaskRows() : '';
-  return todoBox([no ? tabRow('helpi', 'gift', 'purple', 'Help items: ' + no + ' to release', 'Prince brings them', 0) : '']) + (t ? '<div class="card">' + t + '</div>' : '') + p0(); }; })();
+  return todoBox([no ? tabRow('helpi', 'gift', 'purple', 'Help items: ' + no + ' to release', 'Prince brings them', 0) : '']) + p0(); }; })(); /* v2.9.8: setup tasks only under the tasks sign */
 // ---------------------------------------------------------------- v2.8.0 (job 2): Team – Today · This month · Prince · Frank, and each agent's page
 var MT = { s: 'today', a: '', C: {}, T: {} };
 function mt28Read(op, data, key) { var c = MT.C[key], now = Date.now();
@@ -10393,7 +10393,7 @@ function pgG90() {
   else h += R.map(function (x) { return '<div class="g90r"><div class="grow"><b class="ell">' + (x.urg ? '🚩 ' : '') + esc(x.vendor) + '</b><small>' + g90Sub(x) + ' · ' + esc(fkL(x.lines)) + (x.dr ? ' · usually ' + esc(x.dr) : '') + '</small>' +
       (mgr ? '<div class="g90to">' + RS.map(function (r) { return '<button data-act="g90mv" data-o="' + esc(x.oid) + '" data-r="' + esc(r.id) + '">Give to ' + esc(r.name) + '</button>'; }).join('') + '</div>' : '') + '</div></div>'; }).join('');
   if (rider) { var M = g90Mine(); if (M.length) h += '<div class="g90h">On my route – not loaded yet</div>' + M.map(function (x) { return '<div class="g90r"><div class="grow"><b class="ell">' + esc(x.vendor) + '</b><small>' + esc(x.agent || '') + ' · ' + esc(fkL(x.lines)) + (x.later ? ' · ' + esc(dayLbl(x.dlv)) : '') + '</small></div><button class="ghost" data-act="g90give" data-o="' + esc(x.oid) + '" data-v="' + esc(x.vendor) + '">Give back</button></div>'; }).join('') +
-    '<p class="small muted" style="margin:4px 2px 0">After you tap I have it, only Frank or the manager can move an order.</p>'; }
+    '<p class="small muted" style="margin:4px 2px 0">After you tap I have it, use Give to … on the stop in To deliver.</p>'; }
   return h; }
 PG27.general = pgG90;
 BADGE27.push(function (B, r, sup, has) { if (has('route') && B.route && D.me.role !== 'Helper') B.route.general = (D.pool || []).length; });
@@ -10922,4 +10922,57 @@ ACT.fk97r = function (b) { FK97.rd = b.dataset.v || ''; var el = $('fkol'); if (
 ACT.fkflt = (function (f) { return function (b) { FK97.rd = ''; return f.apply(this, arguments); }; })(ACT.fkflt);
 try { NAV93.fk97r = 1; } catch (e) { }
 try { document.head.insertAdjacentHTML('beforeend', '<style>.fk97{margin-top:-2px}.fk97n{color:#1d4ed8;font-weight:700}</style>'); } catch (e) { }
+// v2.9.8: a rider gives a stop to another rider (To deliver, also after I have it); the manager moves an order in its details
+function rg98Btns(s) { if (!D || !D.me || D.me.role !== 'Rider' || D.viewOf || R72.t !== 'go') return ''; var RS = (D.riders || []).filter(function (r) { return r.id !== D.me.uid; }); if (!RS.length || !s || !(s.orders || []).length) return '';
+  return '<div class="rg98">' + RS.map(function (r) { return '<button class="ghost" data-act="rg98" data-v="' + esc(s.id) + '" data-r="' + esc(r.id) + '" data-n="' + esc(r.name) + '">Give to ' + esc(r.name) + '</button>'; }).join('') + '</div>'; }
+r27Card = (function (f) { return function (s) { var h = f.apply(this, arguments), b = rg98Btns(s); return b && h.slice(-6) === '</div>' ? h.slice(0, -6) + b + '</div>' : h + b; }; })(r27Card);
+ACT.rg98 = function (b) { var vid = b.dataset.v, rid = b.dataset.r, nm = b.dataset.n || 'him', s = (D.stops || []).filter(function (x) { return x.id === vid; })[0]; if (!s) return;
+  var ids = s.orders.map(function (o) { return o.oid; });
+  ask('Give ' + s.name + ' to ' + nm + '? Hand him the cartons. He confirms on his phone.', function () {
+    bgSave('rgive98', { oids: ids, rid: rid }, 'rg98-' + uid(), 'to ' + nm + ': ' + s.name, null, true); toast('Saved');
+    D.stops = (D.stops || []).filter(function (x) { return x.id !== vid; }); R72.open = ''; render(); }, 'GIVE'); };
+SHEETS.ord = (function (f) { return function () { var h = f.apply(this, arguments), o = typeof oById === 'function' ? oById(OSEL) : null, RS = (D && D.riders) || [];
+  if (!h || !o || !mgrMe() || RS.length < 2 || !/released/i.test(o.status || '') || o.hold) return h;
+  if (o.rdn && o.rdn !== 'Prince') h = h.replace(/Prince (takes|has|brings|is) /g, o.rdn + ' $1 ').replace(/Contact Prince/g, 'Contact ' + o.rdn).replace(/with Prince/g, 'with ' + o.rdn); /* the box names the rider who has it */
+  var cur = o.rdr || '', row = '<div class="rg98m"><span class="grow">Rider: <b>' + esc(cur ? (o.rdn || fk90Nm(cur)) : 'General') + '</b></span>' + RS.filter(function (r) { return r.id !== cur; }).map(function (r) { return '<button class="ghost" data-act="rg98m" data-o="' + esc(o.oid) + '" data-r="' + esc(r.id) + '" data-n="' + esc(r.name) + '">Give to ' + esc(r.name) + '</button>'; }).join('') + '</div>';
+  var i = h.lastIndexOf('<a class="o2more"'); return i < 0 ? h + row : h.slice(0, i) + row + h.slice(i); }; })(SHEETS.ord);
+ACT.rg98m = function (b) { var k = b.dataset.o, r = b.dataset.r, nm = b.dataset.n, o = oById(k); if (!o) return;
+  ask('Give this order to ' + nm + '? He confirms on his phone.', function () { o.rdr = r; o.rdn = nm; bgSave('rmove', { oids: [k], rid: r }, 'rm-' + uid(), 'to ' + nm, null, true); toast('Saved'); render(); }, 'GIVE'); };
+try { document.head.insertAdjacentHTML('beforeend', '<style>.rg98{display:flex;gap:8px;margin-top:10px}.rg98 button{flex:1}.rg98m{display:flex;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;border-radius:10px;background:#f1f5f9}</style>'); } catch (e) { }
+// v2.9.8: the manager's Approvals – search, agents (several), dates; only the filters that fit each sub tab
+var AF98 = { ag: {}, r: '', from: '', to: '' };
+function af98Rng() { var t = D.today, wd = new Date(t + 'T12:00:00Z').getUTCDay(), r = AF98.r;
+  if (r === 'today') return [t, t]; if (r === 'week') return [addDays(t, -((wd + 6) % 7)), t]; if (r === 'month') return [t.slice(0, 8) + '01', t]; if (r === 'lm') return lm92();
+  if (r === 'dates' && AF98.from) { var a = AF98.from, z = AF98.to || AF98.from; return a > z ? [z, a] : [a, z]; } return null; }
+function af98Day(v) { return String(v || '').slice(0, 10); }
+function af98Ok(txt, ag, day, dated) { if (!q38Ok('apr', txt + ' ' + (ag || ''))) return false; var A = Object.keys(AF98.ag); if (A.length && A.indexOf(ag || '') < 0) return false;
+  var R = dated ? af98Rng() : null; if (R) { var d = af98Day(day); if (!d || d < R[0] || d > R[1]) return false; } return true; }
+function af98On() { return q38On('apr') || Object.keys(AF98.ag).length || !!af98Rng(); }
+function af98Ags() { var A = {}; ((D.teamDay && D.teamDay.agents) || []).forEach(function (a) { if (a.status === 'Agreed' && !a.leave && a.name) A[a.name] = 1; });
+  (D.chgAsks || []).concat(D.hasks || []).forEach(function (x) { if (x.agent) A[x.agent] = 1; }); (D.needs || []).forEach(function (x) { if (x.ag) A[x.ag] = 1; }); return Object.keys(A).sort(); }
+function af98Bar() { var k = typeof APK === 'string' ? APK : ''; if (['', 'plans', 'chg', 'pay', 'help', 'other'].indexOf(k) < 0) return '';
+  var A = af98Ags(), h = '<div class="af98">' + q38Box('apr', 'Find a vendor or agent');
+  if (A.length > 1 || Object.keys(AF98.ag).length) h += '<div class="t2tray"><button class="' + (Object.keys(AF98.ag).length ? '' : 'on') + '" data-act="af98a" data-v="">All agents</button>' + A.map(function (n) { return '<button class="' + (AF98.ag[n] ? 'on' : '') + '" data-act="af98a" data-v="' + esc(n) + '">' + (AF98.ag[n] ? '✓ ' : '') + esc(n) + '</button>'; }).join('') + '</div>';
+  if (k !== 'plans') { h += '<div class="t2tray">' + [['', 'All dates'], ['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['dates', '📅']].map(function (x) { var on = lm92c(AF98.r, x[0], AF98.from, AF98.to, 'dates');
+      return '<button class="' + (on ? 'on' : '') + '" data-act="af98r" data-v="' + x[0] + '"' + (x[0] === 'dates' ? ' aria-label="Pick dates"' : '') + '>' + x[1] + '</button>'; }).join('') + '</div>';
+    if (AF98.r === 'dates' && !lm92c(AF98.r, 'lm', AF98.from, AF98.to, 'dates')) h += '<div class="n72two"><label class="n72tf"><span>From (or the day)</span><input type="date" data-chg="af98d" data-f="from" value="' + esc(AF98.from) + '" max="' + esc(D.today) + '"></label><label class="n72tf"><span>To (optional)</span><input type="date" data-chg="af98d" data-f="to" value="' + esc(AF98.to) + '" max="' + esc(D.today) + '"></label></div>'; }
+  return h + '</div>'; }
+pgAppr = (function (f) { return function () { if (!D || !D.me || D.me.role !== 'Supervisor' || !af98On()) { var h0 = f.apply(this, arguments); return af98Put(h0); }
+  var td = D.teamDay, ca = D.chgAsks, ha = D.hasks, nd = D.needs;
+  try {
+    if (td && td.agents) D.teamDay = Object.assign({}, td, { agents: td.agents.filter(function (a) { return !(a.status === 'Agreed' && !a.leave) || af98Ok(a.name, a.name, '', false); }) });
+    if (ca) D.chgAsks = ca.filter(function (c) { return af98Ok(c.vendor, c.agent, c.ask && c.ask.at, true); });
+    if (ha) D.hasks = ha.filter(function (a) { return af98Ok(a.vendor + ' ' + nHelpTxt(a.items), a.agent, a.day, true); });
+    if (nd) D.needs = nd.filter(function (x) { return x.nd || af98Ok((x.vendor || '') + ' ' + (x.type || ''), x.ag, x.at, true); });
+    var h = f.apply(this, arguments);
+  } finally { D.teamDay = td; D.chgAsks = ca; D.hasks = ha; D.needs = nd; }
+  if (h.indexOf('<div class="pchips">') < 0 && h.indexOf('Nothing waits for you now') >= 0 && !af98Bar()) APK = ''; /* the filters stay in reach */
+  if (h.indexOf('<div class="pchips">') < 0 && h.indexOf('Nothing waits for you now') >= 0) return '<div class="sech">Approvals</div>' + af98Bar() + emptyHtml('Nothing for this search or filter.');
+  return af98Put(h); }; })(pgAppr);
+function af98Put(h) { if (!D || !D.me || D.me.role !== 'Supervisor') return h; var i = h.indexOf('<div class="pchips">'); if (i < 0) return h; var j = h.indexOf('</div>', i); if (j < 0) return h; j += 6; return h.slice(0, j) + af98Bar() + h.slice(j); }
+ACT.af98a = function (b) { var v = b.dataset.v || ''; if (!v) AF98.ag = {}; else if (AF98.ag[v]) delete AF98.ag[v]; else AF98.ag[v] = 1; render(); };
+ACT.af98r = function (b) { var v = b.dataset.v || ''; if (v === 'lm') { var L = lm92(); AF98.r = 'dates'; AF98.from = L[0]; AF98.to = L[1]; } else { AF98.r = v; if (v !== 'dates') { AF98.from = ''; AF98.to = ''; } } render(); };
+CHG.af98d = function (el) { AF98[el.dataset.f] = el.value; render(); };
+try { NAV93.af98a = 1; NAV93.af98r = 1; } catch (e) { }
+try { document.head.insertAdjacentHTML('beforeend', '<style>.af98{margin:2px 0 10px}.af98 .t2tray{margin-top:8px}</style>'); } catch (e) { }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
