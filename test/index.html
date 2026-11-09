@@ -10901,4 +10901,25 @@ ACT.r73ok = (function (f) { return function () { var C = r73Conf(), on = C.filte
   try { f.apply(this, arguments); } finally { bgSave = bg; (D.stops || []).forEach(function (s, i) { var lost = (keep[i] || []).filter(function (o) { return offIds[o.oid]; }); if (lost.length) s.orders = s.orders.concat(lost); }); }
   Object.keys(R96.ls).forEach(function (k) { if (!offIds[k]) delete R96.ls[k]; }); R96.off = {}; if (C.some(function (s) { return !r96On(s); }) || Object.keys(offIds).length) { R72.t = 'conf'; } render(); }; })(ACT.r73ok);
 try { document.head.insertAdjacentHTML('beforeend', '<style>.r96r{cursor:pointer;gap:10px;align-items:center}.r96r .fkbx{flex:0 0 24px;height:24px;border:2px solid #98a2b3;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800}.r96r .fkbx.on{background:#12b76a;border-color:#12b76a;color:#fff}.r96r.off{opacity:.6}.r96r .grow>.small{display:block}.r96lb{flex:0 0 auto;padding:6px 10px;font-size:13px}</style>'); } catch (e) { }
+// v2.9.7: Frank's Orders – each rider shown
+var FK97 = { rd: '' };
+function fk97On() { return (D.riders || []).length > 1; }
+function fk97Rn(x) { var X = (x && x.x) || {}; if (x.st === 'dl' && X.rider) return X.rider; if (X.rdn) return X.rdn; var k = fk90Rd(x); return k ? fk90Nm(k) : ((D && D.hrider) || 'Prince'); }
+FKST.pr = ['With Prince', '#2563eb'];
+pgFOrders = (function (f) { return function () { FKST.pr[0] = fk97On() ? 'With riders' : 'With Prince'; return f.apply(this, arguments); }; })(pgFOrders); PG27.forders = pgFOrders;
+fkRows = (function (f) { return function (L) { if (!fk97On()) return f(L);
+  var bar = '', LL = L;
+  if (FK.flt === 'pr' || FK.flt === 'dl') { var A = (L || []).filter(function (x) { return x.st === FK.flt; }), names = (D.riders || []).map(function (r) { return r.name; });
+    A.forEach(function (x) { var n = fk97Rn(x); if (names.indexOf(n) < 0) names.push(n); });
+    if (FK97.rd && names.indexOf(FK97.rd) < 0) FK97.rd = '';
+    bar = '<div class="t2tray fkpills fk97">' + [['', 'All', A.length]].concat(names.map(function (n) { return [n, n, A.filter(function (x) { return fk97Rn(x) === n; }).length]; })).map(function (c) { return '<button class="' + (FK97.rd === c[0] ? 'on' : '') + '" data-act="fk97r" data-v="' + esc(c[0]) + '">' + esc(c[1]) + ' ' + c[2] + '</button>'; }).join('') + '</div>';
+    if (FK97.rd) LL = L.filter(function (x) { return x.st !== FK.flt || fk97Rn(x) === FK97.rd; }); }
+  var h = f(LL);
+  (LL || []).forEach(function (x) { if (x.st !== 'pr' && x.st !== 'dl') return; var i = h.indexOf('data-k="' + esc(x.k) + '"'); if (i < 0) return; var j = h.indexOf('<div class="fks ell">', i); if (j < 0) return; j += '<div class="fks ell">'.length;
+    h = h.slice(0, j) + '<span class="fk97n">' + esc(fk97Rn(x)) + '</span> · ' + h.slice(j); });
+  return bar + h; }; })(fkRows);
+ACT.fk97r = function (b) { FK97.rd = b.dataset.v || ''; var el = $('fkol'); if (el) el.innerHTML = fkRows(fkList()); else render(); };
+ACT.fkflt = (function (f) { return function (b) { FK97.rd = ''; return f.apply(this, arguments); }; })(ACT.fkflt);
+try { NAV93.fk97r = 1; } catch (e) { }
+try { document.head.insertAdjacentHTML('beforeend', '<style>.fk97{margin-top:-2px}.fk97n{color:#1d4ed8;font-weight:700}</style>'); } catch (e) { }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
