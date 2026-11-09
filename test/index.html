@@ -11040,4 +11040,32 @@ ACT.va912f = function (b) { var ref = b.dataset.r, r = vaRow(ref), vid = VA.vid;
     if (o) MFO912[ref] = o; if (!go()) say(o && o.status !== 'Delivered' && o.status !== 'Failed' ? 'Only a delivered order can be fixed.' : 'This order has no delivery to fix.'); }, function (e) { b.disabled = false; toast(e, 'err'); }); };
 ACT.mfsave = (function (f) { return function () { var id = MFX && MFX.oid, r = f.apply(this, arguments); if (id && MFO912[id] && !MFX) delete MFO912[id]; return r; }; })(ACT.mfsave); /* fetched again next time */
 try { document.head.insertAdjacentHTML('beforeend', '<style>.mf912{margin:4px 0 8px}.mf912 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.mf912 .chips button{border:1.5px solid var(--line);border-radius:999px;background:#fff;padding:8px 14px;font-weight:700}</style>'); } catch (e) { }
+// v2.9.13: the rider's "Not paid" ask leads straight to the Yes/No answer
+function np94L() { try { return np91Mine().slice().sort(function (a, b) { return (b.at || 0) - (a.at || 0); }); } catch (e) { return []; } }
+function np94Open(x) { if (!x) return false; NP91K = x.k; sheetOpen('np91'); return true; }
+function np94ByTitle(t) { var v = String(t || '').replace(/^Not paid:\s*/, '').replace(/\s+/g, ' ').trim().toLowerCase(); if (!v) return null;
+  return np94L().filter(function (x) { var n = String(x.vn || '').replace(/\s+/g, ' ').trim().toLowerCase(); return n && (n === v || n.indexOf(v) === 0 || v.indexOf(n) === 0); })[0] || null; }
+/* a "Not paid" row in the bell opens the answer (it used to open the Omni Haven list); answered already: says so */
+ACT.n27go = (function (f) { return function (b) { var x = n27List().filter(function (y) { return y.id === b.dataset.i; })[0];
+  if (!x || !/^Not paid:/.test(x.t || '')) return f.apply(this, arguments);
+  n27MarkRead(x.id); SHEETK = ''; $('over').innerHTML = ''; topbar(); if (np94Open(np94ByTitle(x.t))) return;
+  load(function () { if (!np94Open(np94ByTitle(x.t))) toast('Already answered'); }); }; })(ACT.n27go);
+/* the phone notification opens the app on the bell: with a rider waiting, the answer opens instead */
+if (navigator.serviceWorker) try { navigator.serviceWorker.addEventListener('message', function (e) { if (!(e.data && e.data.cs === 'bell' && D)) return;
+  setTimeout(function () { var a = np94L()[0]; if (a) np94Open(a); load(function () { var b = np94L()[0]; if (b && (SHEETK === 'n27bell' || !SHEETK)) np94Open(b); }); }, 0); }); } catch (e) { }
+/* first in her tasks */
+SHEETS.tasks = (function (f) { return function () { var h = f.apply(this, arguments) || ''; if (!h) return h; var rows = [];
+  h = h.replace(/<div class="t2tk" data-act="n27task" data-k="np91:[^"]*">[\s\S]*?<\/div><\/div>/g, function (m) { rows.push(m.replace('class="t2tk"', 'class="t2tk np94t"')); return ''; });
+  if (!rows.length) return h; var i = h.indexOf('</div>'); return i < 0 ? rows.join('') + h : h.slice(0, i + 6) + rows.join('') + h.slice(i + 6); }; })(SHEETS.tasks);
+/* a red line on top of the screen while a rider waits (agent and manager); a fresh ask opens by itself once for the agent */
+var NP94 = {};
+function np94Scan() { try { var m = document.getElementById('main'); if (!m) return; var L = np94L(), old = document.getElementById('np94b');
+  var h = L.map(function (x) { return '<button class="np94b" data-act="n27task" data-k="np91:' + esc(x.k) + '"><span>⏳ <b>' + esc(x.rn || 'The rider') + '</b> is waiting at <b>' + esc(x.vn) + '</b></span><i>Answer ›</i></button>'; }).join('');
+  if (!h) { if (old) old.parentNode.removeChild(old); return; }
+  if (!old || old.parentNode !== m) { if (old) old.parentNode.removeChild(old); m.insertAdjacentHTML('afterbegin', '<div id="np94b"></div>'); old = document.getElementById('np94b'); }
+  if (old.innerHTML !== h) old.innerHTML = h;
+  if (D.me.role === 'Agent' && !SHEETK && !($('dlg') || {}).innerHTML && !/INPUT|SELECT|TEXTAREA/.test((document.activeElement || {}).tagName || '')) { /* not over a dialog or while she types */ var a = L[0], key = a.k + ':' + a.at; if (!NP94[key] && Date.now() - (a.at || 0) < 20 * 60000) { NP94[key] = 1; setTimeout(function () { if (!SHEETK && np94L()[0] && np94L()[0].k === a.k) np94Open(a); }, 0); } }
+  } catch (e) { } }
+mcScan = (function (f) { return function () { var r = f.apply(this, arguments); np94Scan(); return r; }; })(mcScan);
+try { document.head.insertAdjacentHTML('beforeend', '<style>#np94b{margin:0 0 10px}.np94b{display:flex;align-items:center;gap:8px;width:100%;text-align:left;border:0;border-radius:12px;background:#C62828;color:#fff;padding:11px 12px;margin:0 0 6px;font:inherit;font-size:15px;box-shadow:0 2px 8px rgba(198,40,40,.35)}.np94b span{flex:1}.np94b i{font-style:normal;font-weight:800;white-space:nowrap}.np94t{border-left:5px solid #C62828}</style>'); } catch (e) { }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
