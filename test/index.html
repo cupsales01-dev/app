@@ -10844,4 +10844,61 @@ document.addEventListener('pointerdown', function (e) { var t = e.target; if (t 
 document.addEventListener('pointermove', function () { if (document.body.classList.contains('dg95')) dg95Clear(); }, { passive: true });
 ['pointerup', 'pointercancel', 'touchend', 'touchcancel'].forEach(function (ev) { document.addEventListener(ev, function () { if (document.body.classList.contains('dg95')) { document.body.classList.remove('dg95'); dg95Clear(); } }, true); });
 document.addEventListener('selectstart', function (e) { var t = e.target && e.target.nodeType === 3 ? e.target.parentNode : e.target; if (document.body.classList.contains('dg95') || (t && t.closest && t.closest('[data-dh]'))) e.preventDefault(); }, true);
+// v2.9.6: To confirm – tick the orders he got (all ticked at first), Select all / Untick all, and "Less?" when he got fewer cartons
+var R96 = { off: {}, ls: {}, s: '', w: null };
+function r96On(s) { return !R96.off[s.id]; }
+function r96Got(o, l) { var m = R96.ls[o.oid]; return m && (l.sku in m) ? m[l.sku] : l.qty; }
+function r96Less(s) { return s.orders.some(function (o) { return o.lines.some(function (l) { return r96Got(o, l) < l.qty; }); }); }
+function r96Sub(s) { if (!r96Less(s)) return r27Codes(r27Lines(s)); var g = {}, r = {};
+  s.orders.forEach(function (o) { o.lines.forEach(function (l) { var x = r96Got(o, l); if (x) g[l.sku] = (g[l.sku] || 0) + x; if (l.qty - x) r[l.sku] = (r[l.sku] || 0) + l.qty - x; }); });
+  return 'Got ' + r27Codes(g) + ' · <span class="t-amber">at Frank ' + r27Codes(r) + '</span>'; }
+r73ConfHtml = (function (f) { return function (C, HC) { var h = f.apply(this, arguments); if (!C || !C.length) return h;
+  Object.keys(R96.off).forEach(function (k) { if (!C.some(function (s) { return s.id === k; })) delete R96.off[k]; });
+  var n = C.filter(r96On).length, ld = {};
+  C.filter(r96On).forEach(function (s) { s.orders.forEach(function (o) { o.lines.forEach(function (l) { var x = r96Got(o, l); if (x) ld[l.sku] = (ld[l.sku] || 0) + x; }); }); });
+  var rows = C.map(function (s, i) { var at = s.orders.every(function (o) { return o.disp === false; }), on = r96On(s);
+    return '<div class="r27row r96r k-' + (on ? (r96Less(s) ? 'amber' : at ? 'grey' : 'blue') : 'grey') + (on ? '' : ' off') + '" data-act="r96t" data-v="' + esc(s.id) + '"><span class="fkbx' + (on ? ' on' : '') + '">' + (on ? '✓' : '') + '</span><div class="grow"><b class="ell">' + r73Dot(s.id) + (s.urg ? '🚩 ' : '') + esc(s.name) + '</b><span class="ell">' + r96Sub(s) + ((D.hstops || []).some(function (r) { return r.vid === s.id; }) ? ' · + ' + esc((D.hstops || []).filter(function (r) { return r.vid === s.id && (!r.dlv || r.dlv <= D.today); }).map(function (r) { return r.txt; }).join(', ')) : '') + '</span>' + (at ? '<span class="small muted">At Frank</span>' : '') + '</div>' + (on ? '<button class="ghost2 r96lb" data-act="r96l" data-v="' + esc(s.id) + '">Less?</button>' : '') + '</div>'; }).join('');
+  var a = h.indexOf('<div class="r27row'), b = h.indexOf('<div class="r27row k-pur'), e = h.indexOf('<div class="r27dbt'), k = h.indexOf('<button class="r27big g" data-act="r73ok"');
+  var end = b >= 0 ? b : e >= 0 ? e : k; if (a < 0 || end < a) return h;
+  var bar = '<div class="r92b">' + (n < C.length ? '<button class="ghost2" data-act="r96all">Select all</button>' : '') + (n ? '<button class="ghost2" data-act="r96none">Untick all</button>' : '') + '</div>';
+  h = h.slice(0, a) + bar + rows + h.slice(end);
+  var q = h.indexOf('<div class="r27ld">'), qe = q >= 0 ? h.indexOf('</div>', q) : -1; if (qe > q) h = h.slice(0, q) + '<div class="r27ld">' + (n ? 'You have: ' + r27Codes(ld) : 'Tick what Frank gave you') + h.slice(qe);
+  if (!n && !(HC || []).length) h = h.replace('<button class="r27big g" data-act="r73ok">', '<button class="r27big g" data-act="r73ok" disabled>');
+  if (n && n < C.length) h = h.replace('I have it ✓</button>', 'I have these ' + n + ' ✓</button>');
+  return h; }; })(r73ConfHtml);
+ACT.r96t = function (b) { var k = b.dataset.v; if (R96.off[k]) delete R96.off[k]; else R96.off[k] = 1; render(); };
+ACT.r96all = function () { R96.off = {}; render(); };
+ACT.r96none = function () { r73Conf().forEach(function (s) { R96.off[s.id] = 1; }); render(); };
+function r96Stop() { return r73Conf().filter(function (s) { return s.id === R96.s; })[0]; }
+ACT.r96l = function (b) { var s = r73Conf().filter(function (x) { return x.id === b.dataset.v; })[0]; if (!s) return; R96.s = s.id; R96.w = {};
+  s.orders.forEach(function (o) { R96.w[o.oid] = {}; o.lines.forEach(function (l) { R96.w[o.oid][l.sku] = r96Got(o, l); }); }); sheetOpen('r96l'); };
+SHEETS.r96l = function () { var s = r96Stop(); if (!s || !R96.w) return ''; var many = s.orders.length > 1, i = 0;
+  var h = '<div class="r27half">' + shHead('box', 'amber', esc(s.name), 'Type what Frank gave you. The rest stays at Frank.');
+  s.orders.forEach(function (o, n) { o.lines.forEach(function (l) { var v = (R96.w[o.oid] || {})[l.sku]; if (v === undefined) v = l.qty;
+    h += '<div class="o2cl"><div class="grow"><b>' + esc(skn(l.sku)) + '</b> <small class="muted">of ' + l.qty + (many ? ' · order ' + (n + 1) : '') + '</small></div><button class="o2pm" data-act="r96q" data-o="' + esc(o.oid) + '" data-k="' + esc(l.sku) + '" data-d="-1" aria-label="Less">−</button><input class="o2n n87q" inputmode="numeric" pattern="[0-9]*" data-inp="r96q" data-chg="r96q" data-o="' + esc(o.oid) + '" data-k="' + esc(l.sku) + '" value="' + v + '" aria-label="Cartons"><button class="o2pm" data-act="r96q" data-o="' + esc(o.oid) + '" data-k="' + esc(l.sku) + '" data-d="1" aria-label="More">+</button></div>'; i++; }); });
+  var rest = 0; s.orders.forEach(function (o) { o.lines.forEach(function (l) { var v = (R96.w[o.oid] || {})[l.sku]; rest += l.qty - (v === undefined ? l.qty : v); }); });
+  h += '<div class="r27sub">' + (rest ? 'Still at Frank: ' + rest + ' ctn' : 'Same as Frank\'s list') + '</div>';
+  return h + '<div class="vznb"><button class="ghost2" data-act="closeO">Cancel</button><button class="r27big g" data-act="r96ok">Save</button></div></div>'; };
+function r96Max(oid, k) { var s = r96Stop(), q = 0; (s ? s.orders : []).forEach(function (o) { if (o.oid === oid) o.lines.forEach(function (l) { if (l.sku === k) q = l.qty; }); }); return q; }
+ACT.r96q = function (b) { var o = b.dataset.o, k = b.dataset.k; if (!R96.w || !R96.w[o]) return; var m = r96Max(o, k), v = R96.w[o][k]; if (v === undefined) v = m; R96.w[o][k] = Math.max(0, Math.min(m, v + Number(b.dataset.d))); drawSheet(); };
+INP.r96q = function (el) { var v = el.value.replace(/\D/g, ''); if (el.value !== v) el.value = v; if (v === '' || !R96.w || !R96.w[el.dataset.o]) return; var m = r96Max(el.dataset.o, el.dataset.k), n = Math.max(0, Math.min(m, +v)); R96.w[el.dataset.o][el.dataset.k] = n; if (String(n) !== v) el.value = n; };
+CHG.r96q = function () { setTimeout(function () { var a = document.activeElement; if (a && a.classList && a.classList.contains('n87q')) return; drawSheet(); }, 250); };
+ACT.r96ok = function () { var s = r96Stop(); if (!s || !R96.w) return; var a = document.activeElement; if (a && a.dataset && a.dataset.inp === 'r96q') INP.r96q(a);
+  var got = 0; s.orders.forEach(function (o) { o.lines.forEach(function (l) { var v = R96.w[o.oid][l.sku]; got += v === undefined ? l.qty : v; }); });
+  if (!got) { say('Got nothing for ' + s.name + '? Untick it instead – it stays at Frank.'); return; }
+  s.orders.forEach(function (o) { var m = {}, any = 0; o.lines.forEach(function (l) { var v = R96.w[o.oid][l.sku]; if (v !== undefined && v < l.qty) { m[l.sku] = v; any = 1; } }); if (any) R96.ls[o.oid] = m; else delete R96.ls[o.oid]; });
+  delete R96.off[s.id]; R96.w = null; SHEETK = ''; $('over').innerHTML = ''; render(); };
+ACT.r73ok = (function (f) { return function () { var C = r73Conf(), on = C.filter(r96On), offIds = {};
+  C.filter(function (s) { return !r96On(s); }).forEach(function (s) { s.orders.forEach(function (o) { offIds[o.oid] = 1; }); });
+  on.forEach(function (s) { s.orders.forEach(function (o) { var m = R96.ls[o.oid]; if (m && o.lines.every(function (l) { return (l.sku in m) && !(m[l.sku] > 0); })) offIds[o.oid] = 1; }); }); // got nothing of this order: it stays at Frank
+  var less = {}; on.forEach(function (s) { s.orders.forEach(function (o) { if (R96.ls[o.oid] && !offIds[o.oid]) less[o.oid] = R96.ls[o.oid]; }); });
+  if (!on.length && !r89Conf().length) { say('Tick what Frank gave you first.'); return; }
+  // what he did not tick stays in To confirm: hide it from the first save, then put it back
+  var keep = (D.stops || []).map(function (s) { return s.orders; });
+  (D.stops || []).forEach(function (s) { s.orders = s.orders.filter(function (o) { return !offIds[o.oid]; }); });
+  Object.keys(less).forEach(function (oid) { (D.stops || []).forEach(function (s) { s.orders.forEach(function (o) { if (o.oid !== oid) return; o.lines.forEach(function (l) { if (l.sku in less[oid]) l.qty = less[oid][l.sku]; }); o.lines = o.lines.filter(function (l) { return l.qty > 0; }); }); }); });
+  var bg = bgSave; if (Object.keys(less).length) bgSave = function (op, data) { if (op === 'rload' && data && data.act === 'ok') data.less = less; return bg.apply(this, arguments); };
+  try { f.apply(this, arguments); } finally { bgSave = bg; (D.stops || []).forEach(function (s, i) { var lost = (keep[i] || []).filter(function (o) { return offIds[o.oid]; }); if (lost.length) s.orders = s.orders.concat(lost); }); }
+  Object.keys(R96.ls).forEach(function (k) { if (!offIds[k]) delete R96.ls[k]; }); R96.off = {}; if (C.some(function (s) { return !r96On(s); }) || Object.keys(offIds).length) { R72.t = 'conf'; } render(); }; })(ACT.r73ok);
+try { document.head.insertAdjacentHTML('beforeend', '<style>.r96r{cursor:pointer;gap:10px;align-items:center}.r96r .fkbx{flex:0 0 24px;height:24px;border:2px solid #98a2b3;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800}.r96r .fkbx.on{background:#12b76a;border-color:#12b76a;color:#fff}.r96r.off{opacity:.6}.r96r .grow>.small{display:block}.r96lb{flex:0 0 auto;padding:6px 10px;font-size:13px}</style>'); } catch (e) { }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
