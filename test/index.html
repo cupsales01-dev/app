@@ -7186,12 +7186,12 @@ function delRangeHtml(B) {
   L.forEach(function (x) { var full = !(x.owing > 0.004); val += x.value || 0; paid += x.paid || 0; owing += x.owing || 0; (x.lines || []).forEach(function (l) { var b = by[l.sku] = by[l.sku] || { t: 0, p: 0, o: 0 }; b.t += l.qty; tot += l.qty; if (full) { b.p += l.qty; pd += l.qty; } else { b.o += l.qty; ow += l.qty; } }); });
   var r1 = function (n) { return Math.round(n * 10) / 10; };
   var h = '<div class="sech">Delivered <span>' + esc(DRG.src || 'all distributors') + '</span></div><div class="card" style="padding:12px 14px"><div class="seg wrap" style="margin:0 0 10px">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['dates', 'Dates']].map(function (x) { return '<button class="' + (lm92c(DRG.k, x[0], DRG.from, DRG.to, 'dates') ? 'on' : '') + '" data-act="drg" data-k="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>';
-  if (DRG.k === 'dates') h += '<div class="fgrid"><label><span>From</span><input type="date" data-chg="drgd" data-f="from" value="' + esc(r[0]) + '" min="' + esc(addDays(t, -60) < '2026-09-01' ? addDays(t, -60) : '2026-09-01') + '" max="' + esc(t) + '"></label><label><span>To</span><input type="date" data-chg="drgd" data-f="to" value="' + esc(r[1]) + '" max="' + esc(t) + '"></label></div>';
+  if (DRG.k === 'dates') h += '<div class="fgrid"><label><span>From</span><input type="date" data-chg="drgd" data-f="from" value="' + esc(r[0]) + '" min="2026-09-01" max="' + esc(t) + '"></label><label><span>To</span><input type="date" data-chg="drgd" data-f="to" value="' + esc(r[1]) + '" max="' + esc(t) + '"></label></div>';
   h += '<div class="small muted" style="margin:2px 0 8px">' + esc(r[0] === r[1] ? dayLbl(r[0]) : dayLbl(r[0]) + ' – ' + dayLbl(r[1])) + ' · ' + L.length + ' order' + (L.length === 1 ? '' : 's') + '</div>' +
     '<div class="tiles"><div class="tile"><b>' + r1(tot) + '</b><span>cartons delivered</span></div><div class="tile"><b class="t-green">' + r1(pd) + '</b><span>cartons paid</span></div><div class="tile"><b class="t-red">' + r1(ow) + '</b><span>cartons owed (' + ghs(owing) + ')</span></div></div>';
   var ks = Object.keys(by).sort(); if (ks.length) h += '<table class="dt" style="margin-top:8px"><tr><td class="k">Product</td><td><b>Delivered</b> · paid · owed</td></tr>' + ks.map(function (k) { var b = by[k]; return '<tr><td class="k">' + esc(skn(k)) + '</td><td><b>' + r1(b.t) + '</b> · ' + r1(b.p) + ' · <span class="' + (b.o ? 't-red' : '') + '">' + r1(b.o) + '</span></td></tr>'; }).join('') + '</table>';
   else h += '<p class="muted small" style="margin:6px 0 0">Nothing delivered in this period.</p>';
-  return h + '<p class="small muted" style="margin:8px 0 0">Value ' + ghs(val) + ' · paid ' + ghs(paid) + '. An order counts as owed until it is paid in full. Workbook days from 1 Sep; app days for the last 60 days.</p></div>';
+  return h + '<p class="small muted" style="margin:8px 0 0">Value ' + ghs(val) + ' · paid ' + ghs(paid) + '. An order counts as owed until it is paid in full. From 1 Sep: workbook days, then app days.</p></div>';
 }
 ACT.drg = function (b) { DRG.k = b.dataset.k; render(); }; CHG.drgd = function (el) { DRG[el.dataset.f] = el.value; render(); };
 ACT.booksub = function (b) { BOOKSUB = b.dataset.s; OMENU = ''; render(); };
@@ -10975,4 +10975,48 @@ ACT.af98r = function (b) { var v = b.dataset.v || ''; if (v === 'lm') { var L = 
 CHG.af98d = function (el) { AF98[el.dataset.f] = el.value; render(); };
 try { NAV93.af98a = 1; NAV93.af98r = 1; } catch (e) { }
 try { document.head.insertAdjacentHTML('beforeend', '<style>.af98{margin:2px 0 10px}.af98 .t2tray{margin-top:8px}</style>'); } catch (e) { }
+// v2.9.10: one calendar for every From/To date filter – tap two days for a range, or the same day twice for one day
+function cal910Fake(f, v, k) { return { dataset: { f: f, k: k || '' }, value: v || '', type: 'date', closest: function () { return null; } }; }
+function cal910Txt(a, z) { return a ? (a === (z || a) ? dayLbl(a) : dayLbl(a) + ' – ' + dayLbl(z)) : 'Pick the days'; }
+var CAL910T = 0; /* a tap on a "Dates" / "Pick dates" chip opens the calendar at once */
+document.addEventListener('click', function (e) { try { var b = e.target && e.target.closest && e.target.closest('button'); if (!b) return; var v = b.dataset.k || b.dataset.v || b.dataset.r || '';
+  CAL910T = /^(dates|pick|cal)$/.test(v) ? Date.now() : 0; } catch (x) { } }, true);
+document.addEventListener('change', function (e) { try { var t = e.target; if (t && t.tagName === 'SELECT' && /^(dates|pick|cal)$/.test(t.value)) CAL910T = Date.now(); } catch (x) { } }, true);
+function cal910Scan() { try { var made = null;
+  [].forEach.call(document.querySelectorAll('input[type="date"][data-chg][data-f="from"]'), function (a) { var c = a.dataset.chg, k = a.dataset.k || '', box = a.closest('label') || a;
+    var par = box.parentNode; if (!par) return; var z = null; [].forEach.call(par.querySelectorAll('input[type="date"][data-chg="' + c + '"][data-f="to"]'), function (x) { if (!z && (x.dataset.k || '') === k) z = x; });
+    if (!z || (a.min && a.min > D.today)) return; var zb = z.closest('label') || z;
+    var btn = document.createElement('button'); btn.className = 'cal74ch cal910'; btn.setAttribute('data-act', 'cal910'); btn.dataset.c = c; btn.dataset.k = k;
+    btn.dataset.a = a.value || ''; btn.dataset.z = z.value || a.value || ''; btn.dataset.mn = a.min || ''; btn.dataset.mx = a.max || z.max || '';
+    btn.innerHTML = ico(ICO.b6today) + '<span>' + esc(cal910Txt(a.value, z.value || a.value)) + '</span><b>Change</b>';
+    par.insertBefore(btn, box); if (box.parentNode) box.parentNode.removeChild(box); if (zb.parentNode) zb.parentNode.removeChild(zb);
+    if (c === 'fset' && a.value) { var x = document.createElement('button'); x.className = 'cal910x'; x.setAttribute('data-act', 'cal910x'); x.dataset.k = k; x.setAttribute('aria-label', 'Clear the dates'); x.textContent = '✕'; par.insertBefore(x, btn.nextSibling); }
+    if (![].some.call(par.children, function (e) { return !/cal910/.test(e.className); })) par.classList.add('cal910p');
+    if (!made) made = btn; });
+  if (made && CAL910T && Date.now() - CAL910T < 1500 && !SHEETK) { CAL910T = 0; var m = made; setTimeout(function () { if (!SHEETK && document.body.contains(m)) ACT.cal910(m); }, 0); }
+  } catch (e) { } }
+mcScan = (function (f) { return function () { var r = f.apply(this, arguments); cal910Scan(); return r; }; })(mcScan);
+ACT.cal910 = function (b) { var c = b.dataset.c, k = b.dataset.k || '', mn = b.dataset.mn || '', mx = b.dataset.mx || '';
+  cal74Open(b.dataset.a || '', b.dataset.z || '', function (a, z) { var F = CHG[c]; if (!F) return; var oz = b.dataset.z || ''; if (oz && a > oz) { F(cal910Fake('to', z || a, k)); F(cal910Fake('from', a, k)); } else { F(cal910Fake('from', a, k)); F(cal910Fake('to', z || a, k)); } });
+  if (mn) CAL74.min = mn; if (mx && mx < CAL74.max) CAL74.max = mx;
+  var st = b.dataset.a || mx || D.today; if (mn && st < mn) st = mn; CAL74.y = +st.slice(0, 4); CAL74.m = +st.slice(5, 7) - 1; drawSheet(); };
+ACT.cal910x = function (b) { var F = CHG.fset, k = b.dataset.k || ''; if (!F) return; F(cal910Fake('from', '', k)); F(cal910Fake('to', '', k)); };
+SHEETS.cal74 = (function (f) { return function () { var h = f.apply(this, arguments), C = CAL74 || {}, mn = C.min; if (!mn) return h;
+  h = h.replace(/<button data-act="cal74d" data-v="(\d{4}-\d\d-\d\d)"([^>]*)>/g, function (all, v, rest) { return v < mn && rest.indexOf(' disabled') < 0 ? '<button data-act="cal74d" data-v="' + v + '"' + rest + ' disabled>' : all; });
+  if (cal74Ymd(C.y, C.m, 1) <= mn) h = h.replace('<button data-act="cal74m" data-v="-1" aria-label="Month before">', '<button data-act="cal74m" data-v="-1" aria-label="Month before" disabled>');
+  return h; }; })(SHEETS.cal74);
+try { document.head.insertAdjacentHTML('beforeend', '<style>.cal910p{display:block;padding:0;border:0;background:none;box-shadow:none;margin:0}.cal910{grid-column:1/-1;flex:1 1 100%;width:100%}.cal910x{border:0;background:none;font-size:18px;color:var(--mute);padding:4px 10px;margin:-4px 0 4px auto;display:block}.p7dates .cal910,.n72two .cal910{margin:8px 0}</style>'); } catch (e) { }
+
+// v2.9.10: Cartons out reads app days older than the book's 60 days when they are picked (the tiles fill in a moment later)
+var CT910 = { from: '', day: '', list: [], st: '', bk: null };
+function ct910Rng() { var t = D.today, wd = new Date(t + 'T12:00:00Z').getUTCDay(), wk = addDays(t, -((wd + 6) % 7)), mo = t.slice(0, 8) + '01';
+  var r = DRG.k === 'today' ? [t, t] : DRG.k === 'week' ? [wk, t] : DRG.k === 'month' ? [mo, t] : [DRG.from || mo, DRG.to || t]; return r[0] > r[1] ? [r[1], r[0]] : r; }
+delRangeHtml = (function (f) { return function (B) { var r = ct910Rng(), cut = addDays(D.today, -60);
+  if (!B || r[0] >= cut || !D.me || !/^(Warehouse|Supervisor)$/.test(D.me.role) || D.viewOf) return f.apply(this, arguments);
+  var have = CT910.day === D.today && CT910.from && CT910.from <= r[0], fresh = have && CT910.bk === B; /* a new book (a payment came in) reads the older days again, quietly */
+  if (!fresh && !CT910.st) { CT910.st = 'wait'; var want = have ? CT910.from : r[0], bk = B, nope = function () { CT910.st = 'fail'; setTimeout(function () { if (CT910.st === 'fail') CT910.st = ''; }, 20000); };
+    readOp('ctn910', { from: want, to: D.today }, function (x) { if (!(x && x.ok)) { nope(); return; } CT910 = { from: x.from, day: x.day, list: x.list || [], st: '', bk: bk }; render(); }, nope); }
+  if (!have) return f.call(this, B).replace('<div class="tiles">', '<div class="tiles" style="opacity:.45">');
+  var seen = {}; (B.history || []).forEach(function (x) { seen[x.ref] = 1; });
+  return f.call(this, Object.assign({}, B, { history: (B.history || []).concat(CT910.list.filter(function (x) { return !seen[x.ref]; })) })); }; })(delRangeHtml);
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
