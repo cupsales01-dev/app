@@ -9376,7 +9376,7 @@ SHEETS.vacct = function () {
         x += '<input class="o2q" data-inp="vawhy" placeholder="' + (D.me.role === 'Warehouse' ? 'Why? (the agent and the manager see it)' : 'Why? (the agent and Frank see it)') + '" value="' + esc(F.why || '') + '"><button class="' + (F.k === 'move' ? 'main gr' : 'warn') + ' wide" data-act="vafixgo">' + va42Lbl(r, F) + '</button><button class="ghost2 wide" style="margin-top:6px" data-act="vafixx">Cancel</button>'; }
       x += '</div>'; }
     return '<div class="varow kb' + (r.cx ? ' cx' : '') + '"' + (F ? '' : ' data-act="vatap" data-i="' + esc(i) + '"') + '><div class="r1"' + (F ? ' data-act="vafixx"' : '') + '><span>Payment ' + esc(dayLbl(r.day)) + ' · ' + esc(r.how === 'MoMo' ? 'MoMo' : r.how === 'Cash' ? 'cash' : r.how) + (r.by ? ' to ' + esc(r.by) : '') + (r.bk ? ' <i class="vaold">book</i>' : '') + '</span><b class="' + (r.wa && !r.cx ? 't-amber' : 't-green') + '">' + ghs(r.amt) + '</b></div>' +
-      '<div class="r2"><span>' + (r.cx ? 'undone' : vaPd89(r)) + (r.wa && !r.cx ? ' · <b class="t-amber">' + (r.wa.a < r.amt - 0.004 ? ghs(r.wa.a) + ' ' : '') + 'with ' + esc(r.wa.n) + ', not with Frank yet</b>' : '') + '</span></div>' + x + '</div>'; }).join('');
+      '<div class="r2"><span>' + (r.cx ? 'undone' : vaPd89(r)) + (r.wa && !r.cx ? ' · <b class="t-amber">' + (r.wa.a < r.amt - 0.004 ? ghs(r.wa.a) + ' ' : '') + 'with ' + esc(r.wa.n) + ', not with Frank yet</b>' : '') + '</span></div>' + sf95Html(r) + x + '</div>'; }).join(''); /* v2.9.15: sent, not confirmed */
 };
 // Frank (and the manager): find any vendor's account
 function vaFindHtml() { return '<input class="o2q" data-inp="vafq" inputmode="search" placeholder="Find a vendor (name or phone)" value="' + esc(VAF.q) + '" autocomplete="off"><div id="vafl">' + vaFindRows() + '</div>'; }
@@ -11142,4 +11142,16 @@ ACT.c94o = function (b) { C94.op = C94.op === b.dataset.k ? '' : b.dataset.k; re
 ACT.c94x = function () { C94.q = ''; render(); };
 INP.c94q = function (el) { C94.q = el.value; var X = C94.d, box = $('c94l'); if (!X || !box) return; var L = (X.list || []).filter(function (x) { return (C94.k === 'all' || x.k === C94.k) && (C94.p === 'all' || x.from === C94.p) && (C94.s === 'all' || x.src === C94.s); }); box.innerHTML = c94List(L); };
 try { document.head.insertAdjacentHTML('beforeend', '<style>.c94q{position:relative;margin:4px 0 8px}.c94q input{width:100%;box-sizing:border-box;padding:10px 36px 10px 12px;border:1.5px solid #D5D9E0;border-radius:12px;font:inherit;font-size:15px}.c94q button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;font-size:16px;color:var(--mute);padding:6px}.c94t{display:flex;justify-content:space-between;align-items:center;background:#F1F5F9;border-radius:10px;padding:9px 12px;margin:0 0 8px;font-size:14px}.c94t b{font-size:17px}.fk94{margin-bottom:6px}</style>'); } catch (e) { }
+// v2.9.15: a payment an agent/rider sent to Frank that he has not confirmed – said on the payment in Her account; Frank confirms it there
+function sf95Html(r) { if (!r || !r.sf || !r.sf.length || r.cx) return '';
+  return r.sf.map(function (s) { return '<div class="sf95"><span>Sent to ' + esc(s.mine ? 'you' : s.to) + ' by ' + esc(s.n) + ' ' + esc(dayLbl(s.day)) + ' – not confirmed' + (s.a < r.amt - 0.004 ? ' (' + ghs(s.a) + ')' : '') + '</span>' +
+    (s.mine ? '<button class="main gr" data-act="sf95" data-h="' + esc(s.hid) + '" data-r="' + esc(r.id) + '">Received ' + ghs(s.a) + '</button>' : '') + '</div>'; }).join(''); }
+ACT.sf95 = function (b) { var hid = b.dataset.h, rid = b.dataset.r, r = ((VA.d && VA.d.rows) || []).filter(function (x) { return x.k === 'p' && x.id === rid; })[0], s = r && (r.sf || []).filter(function (x) { return x.hid === hid; })[0]; if (!s) return;
+  ask('You received ' + ghs(s.a) + ' from ' + s.n + '?' + String.fromCharCode(10) + 'Count the cash first.', function () {
+    bgSave('sf95', { hid: hid, rid: rid }, 'sf95-' + hid + '-' + rid, 'Saved', null, true);
+    r.sf = r.sf.filter(function (x) { return x !== s; }); if (!r.sf.length) delete r.sf;
+    var cut = function (L) { return (L || []).map(function (c) { if (c.hid !== hid) return c; c.amount = Math.round((Number(c.amount) - s.a) * 100) / 100; return c; }).filter(function (c) { return !(c.hid === hid && c.amount <= 0.004); }); };
+    if (D.toConfirm) D.toConfirm = cut(D.toConfirm); if (typeof M37 !== 'undefined' && M37.d && M37.d.tc) M37.d.tc = cut(M37.d.tc);
+    drawSheet(); toast('Saved'); }, 'YES, RECEIVED'); };
+try { document.head.insertAdjacentHTML('beforeend', '<style>.sf95{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:6px;font-size:13px;color:#B45309;font-weight:600}.sf95 button{width:auto;padding:7px 12px;font-size:13px;min-height:0;flex:none}</style>'); } catch (e) { }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
