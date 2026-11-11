@@ -11132,14 +11132,14 @@ function cnt94Html() { var sup = D.me.role === 'Supervisor'; if (!sup) C94.h = '
   if (!X || X.h !== C94.h) return h + '<div class="mdsk"><i></i><i></i></div>';
   var L = X.list || []; if (!L.length) return h + emptyHtml('Nothing counted yet today.');
   var A1 = L.filter(function (x) { return C94.k === 'all' || x.k === C94.k; }), P = []; A1.forEach(function (x) { if (P.indexOf(x.from) < 0) P.push(x.from); }); c96Prune(P);
-  var A2 = A1.filter(function (x) { return c96P(x.from); }), A3 = A2.filter(function (x) { return C94.s === 'all' || x.src === C94.s; });
+  var A2 = A1.filter(function (x) { return c96P(x.from); }), A3 = A2.filter(function (x) { return c96S(x.src); });
   h += '<div class="t2tray c94k">' + [['all', 'All', L]].concat(C94K.filter(function (k) { return L.some(function (x) { return x.k === k[0]; }); }).map(function (k) { return [k[0], k[1], L.filter(function (x) { return x.k === k[0]; })]; })).map(function (c) { return '<button class="' + (C94.k === c[0] ? 'on' : '') + '" data-act="c94k" data-v="' + c[0] + '">' + c[1] + ' <small>' + ghs(c94Sum(c[2])) + '</small></button>'; }).join('') + '</div>';
-  if (P.length > 1) h += '<div class="t2tray c94p">' + [['all', 'Everyone', A1]].concat(P.map(function (n) { return [n, n, A1.filter(function (x) { return x.from === n; })]; })).map(function (c) { return '<button class="' + (c96On(c[0]) ? 'on' : '') + '" data-act="c94p" data-v="' + esc(c[0]) + '">' + esc(c[1]) + ' <small>' + ghs(c94Sum(c[2])) + '</small></button>'; }).join('') + '</div>';
-  h += '<div class="t2tray c94s">' + ['all'].concat(C94S).map(function (s) { var a = c94Sum(A2.filter(function (x) { return s === 'all' || x.src === s; })); return '<button class="' + (C94.s === s ? 'on' : '') + '" data-act="c94s" data-v="' + esc(s) + '">' + (s === 'all' ? 'All distributors' : esc(s)) + ' <small>' + ghs(a) + '</small></button>'; }).join('') + '</div>';
+  if (P.length) h += '<div class="t2tray c94p">' + [['all', 'Everyone', A1]].concat(P.map(function (n) { return [n, n, A1.filter(function (x) { return x.from === n; })]; })).map(function (c) { return '<button class="' + (c96On(c[0]) ? 'on' : '') + '" data-act="c94p" data-v="' + esc(c[0]) + '">' + esc(c[1]) + ' <small>' + ghs(c94Sum(c[2])) + '</small></button>'; }).join('') + '</div>';
+  h += '<div class="t2tray c94s">' + ['all'].concat(C94S).map(function (s) { var a = c94Sum(A2.filter(function (x) { return s === 'all' || x.src === s; })); return '<button class="' + (c96SOn(s) ? 'on' : '') + '" data-act="c94s" data-v="' + esc(s) + '">' + (s === 'all' ? 'All distributors' : esc(s)) + ' <small>' + ghs(a) + '</small></button>'; }).join('') + '</div>';
   h += '<div class="c94q"><input data-inp="c94q" placeholder="Find a vendor" value="' + esc(C94.q) + '" autocomplete="off">' + (C94.q ? '<button data-act="c94x" aria-label="Clear">✕</button>' : '') + '</div>';
   return h + '<div id="c94l">' + c94List(A3) + '</div>'; }
 function c94List(A3) { var q = norm(C94.q), R = A3.map(function (x) { return { x: x, a: c94Hit(x) }; }).filter(function (y) { return !q || y.a > 0.004; }), tot = Math.round(R.reduce(function (t, y) { return t + y.a; }, 0) * 100) / 100;
-  var h = '<div class="c94t"><span>' + (q ? 'For "' + esc(C94.q) + '"' : c96Sel().length ? esc(c96Sel().join(', ')) : C94.k === 'all' ? 'Everyone' : esc((C94K.filter(function (k) { return k[0] === C94.k; })[0] || ['', ''])[1])) + (C94.s !== 'all' ? ' · ' + esc(C94.s) : '') + ' · ' + R.length + '</span><b>' + ghs(tot) + '</b></div>';
+  var h = '<div class="c94t"><span>' + (q ? 'For "' + esc(C94.q) + '"' : c96Sel().length ? esc(c96Sel().join(', ')) : C94.k === 'all' ? 'Everyone' : esc((C94K.filter(function (k) { return k[0] === C94.k; })[0] || ['', ''])[1])) + (c96SSel().length ? ' · ' + esc(c96SSel().join(', ')) : '') + ' · ' + R.length + '</span><b>' + ghs(tot) + '</b></div>';
   if (!R.length) return h + '<p class="small muted" style="margin:8px 2px">Nothing here.</p>';
   return h + R.map(function (y) { var x = y.x, o = C94.op === x.id || (!!q && x.k !== 'v'), bd = q ? (x.bd || []).filter(function (l) { return norm(l.v).indexOf(q) >= 0; }) : (x.bd || []);
     return '<div class="fkr" style="border-left-color:' + (x.k === 'v' ? '#2563eb' : '#15803d') + '"><div class="grow" data-act="c94o" data-k="' + esc(x.id) + '"><b>' + esc(x.from) + '</b><div class="fks">' + esc(x.t) + ' · ' + esc(x.src) + (x.how === 'MoMo' ? ' · MoMo' : '') + (x.k === 'v' ? ' · paid to ' + (C94.h === 'me' ? 'you' : 'Frank') : '') + (x.exp && Math.abs(x.amt - x.exp) > 0.004 ? ' · <span class="t-red">expected ' + ghs(x.exp) + '</span>' : '') + (bd.length && !o ? ' · ' + bd.length + ' vendor line' + (bd.length === 1 ? '' : 's') + ' ›' : '') + '</div>' +
@@ -11150,7 +11150,7 @@ ACT.c94p = function (b) { C94.p = b.dataset.v; render(); };
 ACT.c94s = function (b) { C94.s = b.dataset.v; render(); };
 ACT.c94o = function (b) { C94.op = C94.op === b.dataset.k ? '' : b.dataset.k; render(); };
 ACT.c94x = function () { C94.q = ''; render(); };
-INP.c94q = function (el) { C94.q = el.value; var X = C94.d, box = $('c94l'); if (!X || !box) return; var L = (X.list || []).filter(function (x) { return (C94.k === 'all' || x.k === C94.k) && c96P(x.from) && (C94.s === 'all' || x.src === C94.s); }); box.innerHTML = c94List(L); };
+INP.c94q = function (el) { C94.q = el.value; var X = C94.d, box = $('c94l'); if (!X || !box) return; var L = (X.list || []).filter(function (x) { return (C94.k === 'all' || x.k === C94.k) && c96P(x.from) && c96S(x.src); }); box.innerHTML = c94List(L); };
 try { document.head.insertAdjacentHTML('beforeend', '<style>.c94q{position:relative;margin:4px 0 8px}.c94q input{width:100%;box-sizing:border-box;padding:10px 36px 10px 12px;border:1.5px solid #D5D9E0;border-radius:12px;font:inherit;font-size:15px}.c94q button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;font-size:16px;color:var(--mute);padding:6px}.c94t{display:flex;justify-content:space-between;align-items:center;background:#F1F5F9;border-radius:10px;padding:9px 12px;margin:0 0 8px;font-size:14px}.c94t b{font-size:17px}.fk94{margin-bottom:6px}</style>'); } catch (e) { }
 // v2.9.15: a payment an agent/rider sent to Frank that he has not confirmed – said on the payment in Her account; Frank confirms it there
 function sf95Html(r) { if (!r || !r.sf || !r.sf.length || r.cx) return '';
@@ -11213,4 +11213,21 @@ ACT.fc35go = function () { var on = fc35On(); if (!on.length) return; var r2 = f
       P.forEach(function (n) { (D.book.received = D.book.received || []).push({ from: n, amount: r2(on.filter(function (x) { return x.who === n; }).reduce(function (t, x) { return t + x.amt; }, 0)) }); }); }
     FC35.tk = {}; render(); toast('Saved'); }, 'YES, RECEIVED'); };
 try { document.head.insertAdjacentHTML('beforeend', '<style>.r97g{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.r97g button{padding:5px 10px;font-size:13px}.r97n{cursor:default}.r97n .fkbx{border-style:dashed}.fc96f{margin-top:10px}</style>'); } catch (e) { }
+// v2.9.16 (b): Frank's Orders › With riders – an order a rider already has can go to another rider
+fkRows = (function (f) { return function (L) { var h = f.apply(this, arguments); try { if (!fk97On() || !D.me || D.me.role !== 'Warehouse' || D.viewOf) return h;
+  (L || []).forEach(function (x) { if (x.st !== 'pr') return; var i = h.indexOf('data-k="' + esc(x.k) + '"'); if (i < 0) return; var j = h.indexOf('<div class="fks ell">', i); if (j < 0) return; var e = h.indexOf('</div>', j); if (e < 0) return; e += 6; var cur = fk90Rd(x);
+    var b = (D.riders || []).filter(function (r) { return r.id !== cur; }).map(function (r) { return '<button class="ghost2" data-act="fk98g" data-o="' + esc(x.oid) + '" data-r="' + esc(r.id) + '" data-n="' + esc(r.name) + '">Give to ' + esc(r.name) + '</button>'; }).join('');
+    if (b) h = h.slice(0, e) + '<div class="fk98b">' + b + '</div>' + h.slice(e); }); } catch (er) { } return h; }; })(fkRows);
+ACT.fk98g = function (b) { var k = b.dataset.o, r = b.dataset.r, nm = b.dataset.n || 'him', x = (D.dispatched || []).filter(function (y) { return y.oid === k; })[0]; if (!x) return;
+  var was = x.rdn || (x.rdr ? fk90Nm(x.rdr) : '');
+  ask('Give ' + (x.vendor || 'this order') + ' to ' + nm + '?' + String.fromCharCode(10) + (was ? was + ' hands him the cartons. ' : '') + nm + ' confirms on his phone.', function () {
+    bgSave('rmove', { oids: [k], rid: r }, 'rm98-' + uid(), 'to ' + nm, null, true); x.rdr = r; x.rdn = nm; toast('Saved'); render(); }, 'GIVE'); };
+// v2.9.16 (b): Counted today – several distributors at once
+C94.ss = {};
+function c96SSel() { return Object.keys(C94.ss || {}).filter(function (k) { return C94.ss[k]; }); }
+function c96S(s) { var S = c96SSel(); return !S.length || S.indexOf(s) >= 0; }
+function c96SOn(v) { var S = c96SSel(); return v === 'all' ? !S.length : S.indexOf(v) >= 0; }
+ACT.c94s = function (b) { var v = b.dataset.v; if (v === 'all') C94.ss = {}; else if (C94.ss[v]) delete C94.ss[v]; else C94.ss[v] = 1; render(); };
+ACT.c94h = (function (f) { return function () { C94.ss = {}; return f.apply(this, arguments); }; })(ACT.c94h);
+try { document.head.insertAdjacentHTML('beforeend', '<style>.fk98b{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.fk98b button{padding:5px 10px;font-size:13px}</style>'); } catch (e) { }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
