@@ -2882,7 +2882,7 @@ function tPill(T, ed) {
 }
 /** The day line: "Plan for Mon 12 Oct" until it is approved, then "Mon 12 Oct", with its coloured status on the right. */
 function tHead(T, ed) { var p = tPill(T, ed), rd = false; if (ed) { try { var k0 = tChecks(T, tDraft(T)); rd = !k0.v && !k0.p && !k0.c; } catch (e) { } } /* v2.7.0: every tab approved → Send plan */
-  return '<div class="t2h"><span class="t2hi">' + ico(ICO.b6today) + '</span><b>' + (ed || T.status === 'Agreed' ? 'Plan for ' + esc(dayLbl(T.day)) : T.day === D.today ? 'Today\'s plan' : esc(dayLbl(T.day))) + '</b>' + (rd ? '<button class="t2send" data-act="tSend">' + ico(ICO.up) + 'Send plan</button>' : p[0] ? '<span class="pill ' + p[1] + '">' + esc(p[0]) + '</span>' : '') + '</div>'; }
+  return '<div class="t2h"><span class="t2hi">' + ico(ICO.b6today) + '</span><b>' + tm18(T, (ed || T.status === 'Agreed' ? 'Plan for ' + esc(dayLbl(T.day)) : T.day === D.today ? 'Today\'s plan' : esc(dayLbl(T.day)))) + '</b>' + (rd ? '<button class="t2send" data-act="tSend">' + ico(ICO.up) + 'Send plan</button>' : p[0] ? '<span class="pill ' + p[1] + '">' + esc(p[0]) + '</span>' : '') + '</div>'; }
 // ---------------------------------------------------------------- the tasks: one amber row, one half sheet
 function tCashL() { return (D.cash || []).filter(function (c) { return c.src !== 'Unallocated' && c.route && c.free > 0.004; }); }
 function tRcptL() { var d3 = addDays(D.today, -3); return (D.receipts || []).filter(function (r) { return !r.sent && !r.answer && (!r.day || r.day >= d3); }); }
@@ -3115,7 +3115,7 @@ function pgDay2() {
   if (!P) return h + emptyHtml('Your plan is not ready – pull down to refresh.');
   var T = tView(), today = T === P; if (TTABD !== T.day) { TTABD = T.day; TTAB = null; TROW = ''; TPSUB = ''; }
   if (today && (P.leave || P.hol || (!P.work && !(P.items || []).length))) return h + tTaskRow() + emptyHtml(P.leave ? 'You are on leave today.' : P.hol ? 'Public holiday today: ' + String(P.hol).replace(/\s*\(.*\)$/, '') + '.' : 'No work on Saturday and Sunday.') + (P.tmr ? '<div class="t2tm" data-act="tdv" data-v="tmr"><b>Plan for ' + esc(dayLbl(P.tmr.day)) + '</b><span>›</span></div>' : '') + otherVisits([]);
-  var ed = tEditable(T), Dr = ed ? tDraft(T) : null, dayMode = today && !ed && T.status === 'Approved';
+  var ed = tEditable(T), Dr = ed ? tDraft(T) : null, dayMode = today && !ed && T.status === 'Approved' && !(D.myDay || {}).end; /* v2.9.18: after End my day no I'M HERE */
   if (P.practice && today) h += '<div class="msg info" style="margin-bottom:8px"><b>Practice day.</b> ' + esc(dayLbl(P.day)) + ' works like a normal Monday on the test system.</div>';
   if (Y.end) h += dayEndCard27(); // v2.7.0: her day in one card, above the plan
   h += tHead(T, ed) + tTaskRow();
@@ -3610,6 +3610,7 @@ function pgNew2() {
     h += '<div class="small" style="font-weight:700;margin:6px 0 4px">How did she pay?</div><div class="t2tray">' + [['ME', 'Cash with me'], ['MOMO', 'MoMo to Frank']].map(function (p) { return '<button class="' + (x.how === p[0] ? 'on' : '') + '" data-act="nhow" data-v="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>' +
       '<div class="o2cl"><div class="grow"><b>Amount</b><div class="small muted">' + (pd < val - 0.004 ? 'The rest ' + ghs(val - pd) + ' is paid on delivery' : 'The whole order') + '</div></div><button class="o2pm" data-act="npaid" data-d="-10">−</button><input class="n2amt" inputmode="decimal" data-inp="npaid" value="' + pd + '"><button class="o2pm" data-act="npaid" data-d="10">+</button></div>' +
       (x.how === 'MOMO' ? '<div class="small muted">Frank\'s MoMo: ' + esc(D.momo || '') + '</div>' : ''); }
+  h += n18Part(x, v, val); /* v2.9.18 */
   if (x.pay === 'CREDIT') { var due = addDays(x.day && x.day !== 'today' ? x.day : D.today, 7);
     h += '<div class="small muted" style="margin:4px 2px">Due ' + esc(dayLbl(due)) + '</div>';
     if (v.pace && v.pace.slow) h += '<div class="o2chg">She pays slowly (about ' + v.pace.avg + ' days). Give about half on credit.' + (x.lines.some(function (l) { return l.qty > 1; }) ? ' <a class="n2a" data-act="nhalf2">Halve it</a>' : '') + '</div>';
@@ -7385,7 +7386,7 @@ function stopAsk(s, st) {
 }
 /** v2.5.0: what is due for the cash orders after the returns typed so far (null = nothing returned). */
 function stopDue(s, st) {
-  return s.orders.reduce(function (t, o) { if (/credit/i.test(o.pay)) return t; var back = 0; if (st && st.what === 'LESS') o.lines.forEach(function (l) { back += (o.retn && o.retn[l.sku] || 0) * (l.price || 0); }); return t + Math.max(0, (o.value || 0) - back - (o.prepaid || 0)); }, 0);
+  return s.orders.reduce(function (t, o) { if (/credit/i.test(o.pay)) return t; var back = 0; if (st && st.what === 'LESS') o.lines.forEach(function (l) { back += (o.retn && o.retn[l.sku] || 0) * (l.price || 0); }); var d18 = Math.max(0, (o.value || 0) - back - (o.prepaid || 0)); return t + (Number(o.pad) > 0 ? Math.min(d18, Number(o.pad)) : d18); }, 0); /* v2.9.18 */
 }
 /** v2.5.0: returns are typed once per product; they are shared over the orders from the last one back. */
 function spreadRet(s, st) {
@@ -7681,7 +7682,7 @@ function r27Open(vid) { if (viewBlock('stop')) return; if (D.me.role === 'Superv
 function r27Kept(s, q) { var left = {}; Object.keys(q).forEach(function (k) { left[k] = q[k]; }); var out = [];
   s.orders.forEach(function (o) { o.lines.forEach(function (l) { var n = Math.min(l.qty, left[l.sku] || 0); left[l.sku] = (left[l.sku] || 0) - n; out.push({ o: o, sku: l.sku, qty: l.qty, kept: n, price: l.price || 0 }); }); }); return out; }
 function r27Due(s, K) { var by = {}; K.forEach(function (x) { by[x.o.oid] = (by[x.o.oid] || 0) + x.kept * x.price; }); var t = 0;
-  s.orders.forEach(function (o) { if (/credit/i.test(o.pay)) return; t += Math.max(0, (by[o.oid] || 0) - (o.prepaid || 0)); }); return Math.round((t + (s.promised || 0)) * 100) / 100; }
+  s.orders.forEach(function (o) { if (/credit/i.test(o.pay)) return; var d18 = Math.max(0, (by[o.oid] || 0) - (o.prepaid || 0)); t += Number(o.pad) > 0 ? Math.min(d18, Number(o.pad)) : d18; }); return Math.round((t + (s.promised || 0)) * 100) / 100; } /* v2.9.18: part at delivery */
 SHEETS.r27rec = function () {
   var st = R27.rec, s = st && stop(st.vid); if (!s) return ''; var T = r27Lines(s), h = '<div class="r27half">' + shHead('box', 'blue', esc(s.name), r27Codes(T));
   if (!st.k) return h + '<div class="r27opts">' + [['ALL', 'Delivered all'], ['PART', 'Part today, rest tomorrow'], ['LESS', 'Some returned'], ['NONE', 'Not delivered']].map(function (x) { return '<button data-act="r27k" data-k="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div><button class="r27link" data-act="r27k" data-k="DIFF">Something is different</button></div>';
@@ -7945,7 +7946,7 @@ function pgDay2() {
   if (!P) return h + emptyHtml('Your plan is not ready – pull down to refresh.');
   var T = tView(), today = T === P; if (TTABD !== T.day) { TTABD = T.day; TTAB = null; TROW = ''; TPSUB = ''; }
   if (today && (P.leave || P.hol || (!P.work && !(P.items || []).length))) return h + emptyHtml(P.leave ? 'You are on leave today.' : P.hol ? 'Public holiday today: ' + String(P.hol).replace(/\s*\(.*\)$/, '') + '.' : 'No work on Saturday and Sunday.') + (P.tmr ? '<div class="t2tm" data-act="tdv" data-v="tmr"><b>Plan for ' + esc(dayLbl(P.tmr.day)) + '</b><span>›</span></div>' : '') + otherVisits([]);
-  var ed = tEditable(T), Dr = ed ? tDraft(T) : null, dayMode = today && !ed && T.status === 'Approved';
+  var ed = tEditable(T), Dr = ed ? tDraft(T) : null, dayMode = today && !ed && T.status === 'Approved' && !(D.myDay || {}).end; /* v2.9.18: after End my day no I'M HERE */
   if (P.practice && today) h += '<div class="msg info" style="margin-bottom:8px"><b>Practice day.</b> ' + esc(dayLbl(P.day)) + ' works like a normal Monday on the test system.</div>';
   if (Y.end) h += dayEndCard27();
   h += tHead(T, ed);
@@ -9360,11 +9361,11 @@ SHEETS.vacct = function () {
   var PX39 = {}; A.rows.forEach(function (p) { if (p.k === 'p') PX39[p.id] = p; });
   var payOf = {}; A.rows.forEach(function (p) { if (p.k === 'p' && !p.cx && !p.bk) (p.to || []).forEach(function (t) { (payOf[t.ref] = payOf[t.ref] || []).push([p.day, t.amt, p.how, p.id, t.aid, t.sku ? (t.sku + ' · ' + t.src) : '']); }); });
   return h + R.map(function (r) { var i = r.k + ':' + (r.ref || r.id), on = VA.op === i;
-    if (r.k === 'o') { var oo42 = Math.round((r.open + (r.hw || 0)) * 100) / 100, pp42 = Math.max(0, Math.round((r.paid - (r.hw || 0)) * 100) / 100); var k = oo42 <= 0.004 ? (r.wa ? 'a' : 'g') : pp42 > 0.004 ? 'a' : 'r', wa = r.wa ? r.wa.map(function (w) { return w.n; }).join(' + ') : '', waA = r.wa ? r.wa.reduce(function (t, w) { return t + w.a; }, 0) : 0;
+    if (r.k === 'o') { var oo42 = Math.round((r.open + (r.hw || 0)) * 100) / 100, pp42 = Math.max(0, Math.round((r.paid - (r.hw || 0)) * 100) / 100); var k = oo42 <= 0.004 ? (r.wa || r.sn ? 'a' : 'g') : pp42 > 0.004 ? 'a' : 'r', wa = r.wa ? r.wa.map(function (w) { return w.n; }).join(' + ') : '', waA = r.wa ? r.wa.reduce(function (t, w) { return t + w.a; }, 0) : 0;
       var d = on ? '<div class="vad"><div><span>Order date: ' + esc(dayLbl(r.day)) + '</span><b>' + esc(r.ln || '') + '</b></div>' + (r.src ? '<div><span>From</span><b>' + esc(r.src) + '</b></div>' : '') + (payOf[r.ref] || []).map(function (p) { return '<div><span>Paid ' + esc(dayLbl(p[0])) + (p[5] ? ' · ' + esc(p[5]) : '') + '</span><b>' + ghs(p[1]) + ' ' + esc(p[2] === 'MoMo' ? 'MoMo' : 'cash') + '</b>' + (p[3] && va39Mv(PX39[p[3]], p[4]) ? ' <button class="vasm" data-act="vafixo" data-k="move" data-r="' + esc(p[3]) + '" data-a="' + esc(p[4] || '') + '">Move</button>' : '') + (p[3] && va39Un(PX39[p[3]]) ? ' <button class="vasm red" data-act="vafixo" data-k="' + (va42Part(PX39[p[3]], p[4]) ? 'undopart' : 'undo') + '" data-r="' + esc(p[3]) + '" data-a="' + esc(p[4] || '') + '">Undo</button>' : '') + (mgr && p[3] && r.sl && !r.grp && !/^new-/.test(p[3]) ? ' <button class="vasm" data-act="sp89" data-r="' + esc(p[3]) + '" data-o="' + esc(r.ref) + '">Split</button>' : '') + '</div>'; }).join('') +
         (r.pon ? '<div><span>Date paid (book)</span><b>' + esc(dayLbl(r.pon)) + '</b></div>' : '') + (r.by ? '<div><span>Received by</span><b>' + esc(r.by) + '</b></div>' : '') + (r.note ? '<p>' + esc(r.note) + '</p>' : '') + (r.bfx ? '<div class="bk92x"><span>Fixed in the app</span><b>' + r.bfx.map(esc).join('<br>') + '</b></div>' : '') + vaTot(r, payOf[r.ref]) + vaPayHtml(r) + (mgr && r.bl ? bk92Html(r) : '') + '</div>' : '';
       return '<div class="varow k' + k + '"' + ((VA.pay && VA.pay.ref === r.ref) || (VA.bf && VA.bf.ref === r.ref) || (SR32 && SR32.ref === r.ref) || (R38 && R38.ref === r.ref) ? '' : ' data-act="vatap" data-i="' + esc(i) + '"') + '><div class="r1"><span>Order ' + esc(dayLbl(r.day)) + (r.ln ? ' · ' + esc(r.ln) : '') + (r.old ? ' <i class="vaold">before app</i>' : '') + (r.bfx ? ' <i class="vaold bk92f">fixed</i>' : '') + '</span><b>' + ghs(r.val) + '</b></div>' +
-        '<div class="r2"><span>' + (r.wa ? '<b class="t-amber">Paid to ' + esc(wa) + ' – not with Frank yet' + (oo42 > 0.004 || waA < r.paid - 0.004 ? ' (' + ghs(waA).replace('GHS ', '') + ')' : '') + '</b>' + (oo42 > 0.004 ? ' · ' : '') : '') + (oo42 <= 0.004 ? (r.wa ? '' : 'paid ✓' + (r.pon ? ' ' + esc(dayLbl(r.pon)) : '')) : (pp42 > 0.004 ? 'paid ' + ghs(pp42).replace('GHS ', '') + ' · ' : '') + '<b>owes ' + ghs(oo42).replace('GHS ', '') + '</b>') + '</span>' + (oo42 > 0.004 ? '<span class="t-red">' + vaDays(r.day) + ' days</span>' : '') + '</div>' + d + '</div>'; }
+        '<div class="r2"><span>' + (r.wa ? '<b class="t-amber">Paid to ' + esc(wa) + ' – not with Frank yet' + (oo42 > 0.004 || waA < r.paid - 0.004 ? ' (' + ghs(waA).replace('GHS ', '') + ')' : '') + '</b>' + (oo42 > 0.004 ? ' · ' : '') : '') + (oo42 <= 0.004 ? (r.wa ? '' : r.sn ? sn18Lbl(r) : 'paid ✓' + (r.pon ? ' ' + esc(dayLbl(r.pon)) : '')) : (pp42 > 0.004 ? 'paid ' + ghs(pp42).replace('GHS ', '') + ' · ' : '') + '<b>owes ' + ghs(oo42).replace('GHS ', '') + '</b>') + '</span>' + (oo42 > 0.004 ? '<span class="t-red">' + vaDays(r.day) + ' days</span>' : '') + '</div>' + d + '</div>'; }
     var to = (r.to || []).map(function (t) { return t.day ? dayLbl(t.day) : 'old book'; }), F = VA.fx && VA.fx.rid === r.id ? VA.fx : null, x = '';
     if (on) { x = '<div class="vad">' + (r.by ? '<div><span>Taken by</span><b>' + esc(r.by) + '</b></div>' : '') + (r.to || []).map(function (t) { return '<div><span>' + vaTo89(t) + '</span><b>' + ghs(t.amt) + '</b>' + (va39Mv(r, t.aid) ? ' <button class="vasm" data-act="vafix" data-k="move" data-r="' + esc(r.id) + '" data-a="' + esc(t.aid) + '">Move</button>' : '') + (!F && va39Un(r) && va42Part(r, t.aid) ? ' <button class="vasm red" data-act="vafix" data-k="undopart" data-r="' + esc(r.id) + '" data-a="' + esc(t.aid) + '">Undo</button>' : '') + '</div>'; }).join('') + (r.note ? '<p>' + esc(r.note) + '</p>' : '');
       if (!F && D.me.role === 'Supervisor' && !D.viewOf && r.bk && !r.cx) x += '<button class="vasm red" data-act="vafix" data-k="bkundo" data-r="' + esc(r.id) + '">Not paid – undo</button>'; /* v2.8.42 */
@@ -10646,7 +10647,7 @@ PG27.mday = pgMD91;
 // Money: the tiles of Frank's Cash + Distributors, Hand-overs, Collected
 pgMMoney = (function (f) { return function (m0) { var self = this, X = mm28Get(); mm37Load(); md91Load();
   var tc = D.toConfirm || [], wpT = ((M37.d && M37.d.wp) || []).reduce(function (t, p) { return t + p.items.reduce(function (s, i) { return s + i.amt; }, 0); }, 0) + ((M37.d && M37.d.tc) || []).concat(tc).reduce(function (t, x) { return t + (Number(x.amount) || 0); }, 0); /* as "Expected from everyone" below, + what is handed to her */
-  var tiles = [['wp', 'With people', M37.d ? ghs(wpT) : '…', tc.length], ['cnt', 'Counted today', MD91.d ? ghs(md91Sum(MD91.d.got)) : '…', 0], ['byo', 'By order', BY.d ? ghs(byoBal()) : 'hand over', 0], ['rc', 'Receipts', 'and history', 0], ['dist', 'Distributors', 'pay · PP', 0], ['ho', 'Hand-overs', 'history', 0], ['col', 'Collected', 'and credit', 0]];
+  var tiles = [['wp', 'With people', M37.d ? ghs(wpT) : '…', tc.length], ['cnt', 'Counted today', MD91.d ? ghs(md91Sum(MD91.d.got)) : '…', 0], ['byo', 'By order', BY.d ? ghs(byoBal()) : 'hand over', 0], ['rc', 'Receipts', 'and history', 0], ['dist', 'Distributors', 'pay · PP', 0], ['ho', 'Hand-overs', 'history', 0], ['nc', 'Not confirmed', NC18.d ? ghs(nc18Sum(NC18.d.list || [])) : 'check', 0], ['col', 'Collected', 'and credit', 0]]; nc18Load();
   var h = '<div class="fk72t mm91">' + tiles.map(function (t) { return '<button class="' + (MM91.t === t[0] ? 'on' : '') + '" data-act="mm91t" data-v="' + t[0] + '"><span>' + t[1] + (t[3] ? ' <i class="cnt">' + t[3] + '</i>' : '') + '</span><b>' + t[2] + '</b></button>'; }).join('') + '</div>';
   var sub = function (s) { var keep = MM.s; MM.s = s; try { var x = f.call(self, m0), i = x.indexOf('</div>'); return i >= 0 ? x.slice(i + 6) : x; } finally { MM.s = keep; } };
   if (MM91.t === 'wp') return h + (tc.length ? confirmHtml() : '') + sub('wp');
@@ -10655,6 +10656,7 @@ pgMMoney = (function (f) { return function (m0) { var self = this, X = mm28Get()
   if (MM91.t === 'rc') { var cur = PSEC.mrc || 'agr'; return h + chips('mrc', [['agr', 'Agents & riders'], ['rcpt', 'Vendors'], ['hist', 'History'], ['acct', 'Accounts']], cur) + (cur === 'agr' ? r93Ag() : cur === 'acct' ? vaFindHtml() : cur === 'rcpt' ? filterBar('prcpt', 'Find a vendor') + '<div id="flist">' + LISTR.prcpt() + '</div>' : filterBar('phist', 'Find a person or amount') + '<div id="flist">' + LISTR.phist() + '</div>'); }
   if (MM91.t === 'dist') return h + sub('dist');
   if (MM91.t === 'ho') return h + hoh89Html();
+  if (MM91.t === 'nc') return h + nc18Html(); /* v2.9.18 */
   return h + '<div class="t2tray">' + [['col', 'Collected'], ['cr', 'Credit']].map(function (c) { return '<button class="' + (MM91.c === c[0] ? 'on' : '') + '" data-act="mm91c" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>' + (X ? sub(MM91.c) : '<div class="mdsk"><i></i><i></i></div>'); }; })(pgMMoney);
 ACT.mm91t = function (b) { MM91.t = b.dataset.v; if (MM91.t === 'byo') BY.st = ''; if (MM91.t === 'cnt') md91Load(true); render(); window.scrollTo(0, 0); };
 try { document.head.insertAdjacentHTML('beforeend', '<style>.fk72t.mm91{grid-auto-columns:minmax(112px,1fr)}</style>'); } catch (e) { }
@@ -11230,4 +11232,156 @@ function c96SOn(v) { var S = c96SSel(); return v === 'all' ? !S.length : S.index
 ACT.c94s = function (b) { var v = b.dataset.v; if (v === 'all') C94.ss = {}; else if (C94.ss[v]) delete C94.ss[v]; else C94.ss[v] = 1; render(); };
 ACT.c94h = (function (f) { return function () { C94.ss = {}; return f.apply(this, arguments); }; })(ACT.c94h);
 try { document.head.insertAdjacentHTML('beforeend', '<style>.fk98b{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.fk98b button{padding:5px 10px;font-size:13px}</style>'); } catch (e) { }
+// ---------------------------------------------------------------- v2.9.18 (job 1): money
+// 3: an order paid with money still in a hand-over nobody confirmed – amber, not "paid ✓"
+function sn18Who(r) { var N = []; (r.sn || []).forEach(function (s) { if (N.indexOf(s.n) < 0) N.push(s.n); }); return N.join(' + '); }
+function sn18Lbl(r) { var T = []; (r.sn || []).forEach(function (s) { if (T.indexOf(s.to) < 0) T.push(s.to); }); return '<b class="t-amber">Paid to ' + esc(sn18Who(r)) + ' – sent to ' + esc(T.join(' + ') || 'Frank') + ', not confirmed</b>'; }
+vaHw42 = (function (f) { return function (r) { var h = f.apply(this, arguments); if (!r || !r.sn || !r.sn.length) return h;
+  return h + r.sn.map(function (s, i) { var me = s.mine && !D.viewOf && /^(Warehouse|Supervisor)$/.test(D.me.role);
+    return '<div class="sn18"><span class="t-amber">Sent to ' + esc(s.to) + ' by ' + esc(s.n) + ' ' + esc(dayLbl(s.day)) + ' – not confirmed</span><b class="t-amber">' + ghs(s.a) + '</b></div>' +
+      (me ? '<div class="sn18i"><input inputmode="decimal" data-inp="sn18" data-k="' + esc(s.hid + '|' + s.rid) + '" value="' + esc(SN18[s.hid + '|' + s.rid] !== undefined ? SN18[s.hid + '|' + s.rid] : String(s.pa)) + '"><button class="main gr" data-act="sn18" data-h="' + esc(s.hid) + '" data-r="' + esc(s.rid) + '" data-n="' + esc(s.n) + '" data-p="' + esc(s.pa) + '">Received from ' + esc(s.n) + '</button></div>' : ''); }).join(''); }; })(vaHw42);
+var SN18 = {};
+INP.sn18 = function (el) { SN18[el.dataset.k] = el.value; };
+ACT.sn18 = function (b) { var hid = b.dataset.h, rid = b.dataset.r, n = b.dataset.n || 'her', p = Number(b.dataset.p) || 0, v = SN18[hid + '|' + rid], a = Math.round(Number(v === undefined ? p : v) * 100) / 100;
+  if (!(a > 0)) { toast('Type the amount'); return; } if (a > p + 0.004) { toast('Up to ' + ghs(p) + ' for this payment'); return; }
+  ask('You received ' + ghs(a) + ' from ' + n + '?' + (a < p - 0.004 ? String.fromCharCode(10) + 'The other ' + ghs(Math.round((p - a) * 100) / 100) + ' stays to confirm.' : ''), function () {
+    bgSave('sf95', { hid: hid, rid: rid, amt: a }, 'sf18-' + hid + '-' + rid + '-' + uid(), 'Saved', null, true); delete SN18[hid + '|' + rid];
+    ((VA.d && VA.d.rows) || []).forEach(function (r) { if (r.sn) { r.sn = r.sn.filter(function (s) { return !(s.hid === hid && s.rid === rid); }); if (!r.sn.length) delete r.sn; } if (r.sf) r.sf = r.sf.filter(function (s) { return !(s.hid === hid && r.id === rid); }); });
+    VA18.rev = ''; toast('Saved'); if (SHEETK === 'vacct') drawSheet(); }, 'YES, RECEIVED'); };
+// 4: Her account refreshes by itself while it is open, and opens with the last copy at once
+var VA18 = { rev: '', t: 0, c: {}, busy: 0 };
+function va18Busy() { var a = document.activeElement; return !!(VA.pay || VA.bf || VA.fx || (typeof R38 !== 'undefined' && R38) || (typeof SR32 !== 'undefined' && SR32) || touching() || (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) || queue().length); }
+vaLoad = function (vid, quiet) { if (!quiet && VA.vid === vid && VA.d && va35Busy() && !noSig()) { va35Wait(vid); return; } var f = VA.vid === vid ? VA.f : 'all', fresh = !quiet && (VA.vid !== vid || SHEETK !== 'vacct') && VA18.c[vid];
+  if (!quiet) VA = { vid: vid, d: fresh ? VA18.c[vid] : null, st: fresh ? 'ok' : 'wait', f: f, from: '', to: '', amt: '', op: '', fx: null };
+  VA18.rev = REV; VA18.t = Date.now(); VA18.busy = 1; if (!quiet) VA18.sr = String(SEENREV || REV || '');
+  readOp('vacct', { vid: vid }, function (r) { VA18.busy = 0; if (VA.vid !== vid) return; if (r && r.ok) { VA18.c[vid] = r; if (quiet && (va18Busy() || JSON.stringify(r) === JSON.stringify(VA.d))) return; VA.d = r; VA.st = 'ok'; } else { if (quiet) return; VA.st = 'err'; VA.err = (r && r.error) || 'Try again.'; } if (SHEETK === 'vacct') drawSheet(); },
+    function (m) { VA18.busy = 0; if (quiet || VA.vid !== vid) return; VA.st = 'err'; VA.err = m; if (SHEETK === 'vacct') drawSheet(); }); };
+/* while Her account is open: a light "anything changed?" check every 5 s (only the change number, nothing read), then a quiet reload */
+VA18.pb = 0; VA18.sr = '';
+setInterval(function () { try { if (SHEETK !== 'vacct' || !VA.vid || VA.st !== 'ok' || VA18.busy || VA18.pb || document.hidden) return;
+  if (REV !== VA18.rev || Date.now() - VA18.t > 90000) { if (!va18Busy()) vaLoad(VA.vid, true); return; }
+  VA18.pb = 1; rpc({ op: 'ping', t: TOKEN }, function (r) { VA18.pb = 0; var v = r && r.rev != null ? String(r.rev) : ''; if (!v) return; var was = VA18.sr; VA18.sr = v;
+    if (was && v !== was && SHEETK === 'vacct' && !VA18.busy && !va18Busy()) vaLoad(VA.vid, true); }, function () { VA18.pb = 0; }); } catch (e) { VA18.pb = 0; } }, 5000);
+// 3: the manager's Money › Not confirmed
+var NC18 = { d: null, st: '', at: 0, p: 'all' };
+function nc18Load(force) { if (NC18.st === 'wait' || (!force && NC18.d && Date.now() - NC18.at < 60000)) return; NC18.st = 'wait';
+  readOp('nc918', {}, function (r) { NC18.st = ''; NC18.at = Date.now(); if (r && r.ok) { NC18.d = r; if (TAB === 'money' && !SHEETK) render(); } }, function () { NC18.st = ''; NC18.at = Date.now(); }); }
+function nc18Sum(A) { return Math.round(A.reduce(function (t, x) { return t + x.a; }, 0) * 100) / 100; }
+function nc18Html() { nc18Load(); var X = NC18.d; if (!X) return '<div class="mdsk"><i></i><i></i></div>'; var L = X.list || [];
+  if (!L.length) return emptyHtml('Every payment is confirmed ✓');
+  var P = []; L.forEach(function (x) { if (P.indexOf(x.who) < 0) P.push(x.who); }); P.sort(); if (NC18.p !== 'all' && P.indexOf(NC18.p) < 0) NC18.p = 'all';
+  var A = NC18.p === 'all' ? L : L.filter(function (x) { return x.who === NC18.p; }), W = A.filter(function (x) { return x.st === 'w'; }), S = A.filter(function (x) { return x.st === 's'; });
+  var h = '<div class="mtts">' + mm28T(mm28G(nc18Sum(A)), 'Not confirmed', A.length + ' payment' + (A.length === 1 ? '' : 's'), 'a') + mm28T(mm28G(nc18Sum(W)), 'Still with people', W.length + ' payment' + (W.length === 1 ? '' : 's'), 'a') + mm28T(mm28G(nc18Sum(S)), 'Sent', 'waiting for a confirm', 'a') + '</div>';
+  h += '<div class="t2tray">' + [['all', 'Everyone', L]].concat(P.map(function (n) { return [n, n, L.filter(function (x) { return x.who === n; })]; })).map(function (c) { return '<button class="' + (NC18.p === c[0] ? 'on' : '') + '" data-act="nc18p" data-v="' + esc(c[0]) + '">' + esc(c[1]) + ' <small>' + ghs(nc18Sum(c[2])) + '</small></button>'; }).join('') + '</div>';
+  return h + A.map(function (x) { return '<div class="fkr" style="border-left-color:#F59E0B"' + (x.vid ? ' data-act="vacct" data-v="' + esc(x.vid) + '"' : '') + '><div class="grow"><b>' + esc(x.v) + '</b><div class="fks ell">' + (x.st === 's' ? 'Sent to ' + esc(x.to) + ' by ' + esc(x.who) + ' ' + esc(dayLbl(x.sd)) : 'With ' + esc(x.who)) + ' · paid ' + esc(dayLbl(x.day)) + '</div></div><b class="t-amber">' + ghs(x.a) + '</b></div>'; }).join(''); }
+ACT.nc18p = function (b) { NC18.p = b.dataset.v; render(); };
+ACT.mm91t = (function (f) { return function (b) { if (b && b.dataset && b.dataset.v === 'nc') nc18Load(true); return f.apply(this, arguments); }; })(ACT.mm91t);
+// 6/8: Frank in the manager's Money › With people (his own chip, not in Everyone) – tick and Received
+mg94Html = (function (f) { return function (d) { var fk = d && d.fk18 && d.fk18.items && d.fk18.items.length ? d.fk18 : null; if (!fk || !mg94Can()) return f.apply(this, arguments);
+  var on = FC35.p === 'Frank', h = f.call(this, on ? Object.assign({}, d, { tc: [], wp: [fk] }) : d), tot = Math.round(fk.items.reduce(function (t, x) { return t + x.amt; }, 0) * 100) / 100;
+  if (on) return h.replace(/<div class="fc35c[^"]*"[^>]*><div class="fc35h"><span>Still with Frank<\/span>/, function (m) { return m.replace('Still with Frank', 'Frank holds'); });
+  var chip = '<button data-act="fc35p" data-v="Frank">Frank <small>' + ghs(tot) + '</small></button>', i = h.indexOf('<div class="t2tray fc35p">');
+  if (i < 0) return '<div class="t2tray fc35p"><button class="on" data-act="fc35p" data-v="all">Everyone</button>' + chip + '</div>' + h;
+  var j = h.indexOf('</div>', i); return h.slice(0, j) + chip + h.slice(j); }; })(mg94Html);
+function mg18Wp() { var d = M37.d || {}; return FC35.p === 'Frank' && d.fk18 ? [d.fk18] : d.wp || []; }
+mg94On = function () { return fc35Items([], mg18Wp()).filter(function (x) { return !x.momo && FC35.tk[x.key] && (FC35.p === 'all' || x.who === FC35.p); }); };
+CHG.mg94all = function (el) { var L = fc35Items([], mg18Wp()).filter(function (x) { return !x.momo && (FC35.p === 'all' || x.who === FC35.p); }); FC35.tk = {}; if (el.checked) L.forEach(function (x) { FC35.tk[x.key] = true; }); render(); };
+bgSave = (function (f) { return function (op, d) { try { if (op === 'receive' && d && d.mg42 && d.from === 'USR-FRANK' && M37.d && M37.d.fk18) { var ids = (d.items || []).map(function (i) { return i.id; }); M37.d.fk18.items = M37.d.fk18.items.filter(function (i) { return !(i.src === d.src && ids.indexOf(i.id) >= 0); }); } } catch (e) { } return f.apply(this, arguments); }; })(bgSave);
+// 6/8: Frank – Hand to the manager (Cash › With people)
+var FH18 = { d: null, st: '', v: {} };
+SHEETS.fh918 = function () { var X = FH18.d, h = '<h3>Hand to the manager</h3>';
+  if (!X) return h + '<div class="mdsk"><i></i><i></i></div>'; var R = X.rows || []; if (!R.length) return h + '<p class="small muted">You hold no money to hand over.</p><button class="ghost" data-act="closeO">Close</button>';
+  h += '<p class="small muted">Type what you give her for each. She confirms it.</p>' + R.map(function (r) { var v = FH18.v[r.src] !== undefined ? FH18.v[r.src] : ''; return '<label class="fh18"><span>' + esc(r.money) + ' <small class="muted">you hold ' + ghs(r.free) + '</small></span><input inputmode="decimal" data-inp="fh18" data-s="' + esc(r.src) + '" placeholder="0" value="' + esc(v) + '"></label>'; }).join('');
+  var t = R.reduce(function (s, r) { return s + (Number(FH18.v[r.src]) || 0); }, 0);
+  return h + '<button class="main gr wide" data-act="fh18go"' + (t > 0 ? '' : ' disabled') + '>Hand over ' + ghs(Math.round(t * 100) / 100) + '</button><button class="ghost" data-act="closeO">Cancel</button>'; };
+INP.fh18 = function (el) { FH18.v[el.dataset.s] = el.value; var t = ((FH18.d && FH18.d.rows) || []).reduce(function (s, r) { return s + (Number(FH18.v[r.src]) || 0); }, 0), b = document.querySelector('[data-act="fh18go"]'); if (b) { b.disabled = !(t > 0); b.textContent = 'Hand over ' + ghs(Math.round(t * 100) / 100); } };
+ACT.fh18 = function () { FH18 = { d: null, st: 'wait', v: {} }; sheetOpen('fh918'); readOp('fh918r', {}, function (r) { FH18.st = ''; FH18.d = r && r.ok ? r : { rows: [] }; if (SHEETK === 'fh918') drawSheet(); }, function () { FH18.st = ''; FH18.d = { rows: [] }; if (SHEETK === 'fh918') drawSheet(); }); };
+ACT.fh18go = function () { var R = ((FH18.d && FH18.d.rows) || []).filter(function (r) { return Number(FH18.v[r.src]) > 0; }); if (!R.length) return;
+  for (var i = 0; i < R.length; i++) { if (Number(FH18.v[R[i].src]) > R[i].free + 0.004) { toast('You hold ' + ghs(R[i].free) + ' ' + R[i].money); return; } }
+  var tot = Math.round(R.reduce(function (s, r) { return s + Number(FH18.v[r.src]); }, 0) * 100) / 100;
+  ask('Give ' + ghs(tot) + ' to the manager now?', function () { R.forEach(function (r) { var a = Math.round(Number(FH18.v[r.src]) * 100) / 100; bgSave('fh918', { src: r.src, amount: a }, 'fh18-' + r.src + '-' + uid(), 'Saved', null, true); }); FH18 = { d: null, st: '', v: {} }; $('over').innerHTML = ''; SHEETK = ''; toast('Saved'); render(); }, 'GIVE'); };
+pgFCash = (function (f) { return function () { var h = f.apply(this, arguments); if (FK.ct !== 'now' || D.viewOf) return h; return h + '<div class="fh18b"><button class="ghost2" data-act="fh18">' + ico(ICO.cash || ICO.wa) + 'Hand to the manager</button></div>'; }; })(pgFCash); PG27.fcash = pgFCash;
+try { document.head.insertAdjacentHTML('beforeend', '<style>.sn18{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin-top:4px}.sn18i{display:flex;gap:8px;margin:6px 0 2px}.sn18i input{width:96px;flex:none}.sn18i button{flex:1;padding:8px 10px;font-size:14px;min-height:0}.fh18{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0}.fh18 input{width:110px}.fh18b{margin:14px 0 4px;text-align:center}.fh18b button{padding:9px 16px}</style>'); } catch (e) { }
+// ---------------------------------------------------------------- v2.9.18 (job 2): screens
+// 1: while a "Not paid" ask is open, the phone checks just that every 5 s
+var NP18 = { busy: 0, at: 0 };
+function np18Need() { if (!D || !D.me || D.viewOf) return false; var r = D.me.role;
+  if (r === 'Rider' || r === 'Helper') { return Object.keys(NP91).some(function (k) { return k.indexOf('a:') !== 0 && NP91[k] && NP91[k].st === 'ask'; }) || (D.np91 || []).some(function (x) { return x.st === 'ask'; }); }
+  return /^(Agent|Supervisor)$/.test(r) && (D.np91 || []).some(function (x) { return x.st === 'ask' && String(x.k || '').indexOf('np91_' + D.today + '_') === 0; }); } /* only today's asks */
+setInterval(function () { try { if (NP18.busy || document.hidden || !np18Need()) return; NP18.busy = 1;
+  readOp('np918s', {}, function (r) { NP18.busy = 0; if (!r || !r.ok || !D) return; var was = JSON.stringify(D.np91 || []), now = JSON.stringify(r.np91 || []); if (was === now) return;
+    var gone = (D.np91 || []).filter(function (x) { return x.st === 'ask' && !(r.np91 || []).some(function (y) { return y.k === x.k && y.st === 'ask'; }); });
+    D.np91 = r.np91 || []; (r.np91 || []).forEach(function (y) { if (y.st !== 'ask' && NP91[y.vid]) delete NP91[y.vid]; });
+    if (SHEETK === 'np91' && gone.some(function (x) { return x.k === NP91K; })) { SHEETK = ''; $('over').innerHTML = ''; toast('Already answered'); }
+    if (SHEETK === 'r27rec') drawSheet(); else if (!SHEETK && !touching()) render(); else topbar(); }, function () { NP18.busy = 0; }); } catch (e) { NP18.busy = 0; } }, 5000);
+// 2: a tap on a phone notification opens the screen it is about
+function n18Open(id, tries) { try { if (!D || !id) return; var x = n27List().filter(function (y) { return y.id === id; })[0];
+  if (!x) { if (!tries) load(function () { n18Open(id, 1); }); return; }
+  SHEETK = ''; $('over').innerHTML = ''; ACT.n27go({ dataset: { i: id } }); } catch (e) { } }
+function n18OrdOpen(ref) { if (!ref) return false; var r = D.me.role;
+  if (r === 'Warehouse') { var f = (typeof fkList === 'function' ? fkList() : []).filter(function (y) { return y.oid === ref; })[0]; if (f) { TAB = 'forders'; render(); FK.k = f.k; FK.split = false; FK.dec = false; FK.why = ''; sheetOpen('fko'); return true; } return false; }
+  var o = (D.myOrders || []).filter(function (y) { return y.oid === ref; })[0]; if (o && typeof oKey === 'function') { OSEL = oKey(o); OMORE = false; sheetOpen('ord'); return true; } return false; }
+ACT.n27go = (function (f) { return function (b) { var x = n27List().filter(function (y) { return y.id === (b && b.dataset && b.dataset.i); })[0]; if (!x || !x.ref || /^Not paid:/.test(x.t || '')) return f.apply(this, arguments);
+  var ref = x.ref, r = D.me.role;
+  if (/^ORD-/.test(ref)) { n27MarkRead(x.id); SHEETK = ''; $('over').innerHTML = ''; topbar(); if (n18OrdOpen(ref)) return; return f.apply(this, arguments); }
+  if (/^HND-/.test(ref) && (r === 'Warehouse' || r === 'Supervisor')) { n27MarkRead(x.id); SHEETK = ''; $('over').innerHTML = ''; if (r === 'Warehouse') { TAB = 'fcash'; FK.ct = 'now'; } else { TAB = 'money'; MM91.t = 'wp'; } render(); window.scrollTo(0, 0); return; }
+  if (/^np91_/.test(ref) && (r === 'Rider' || r === 'Helper')) { n27MarkRead(x.id); SHEETK = ''; $('over').innerHTML = ''; var y = (D.np91 || []).filter(function (z) { return z.k === ref; })[0]; TAB = 'route'; render(); if (y && typeof stop === 'function' && stop(y.vid) && R27.rec && R27.rec.vid === y.vid) sheetOpen('r27rec'); return; }
+  return f.apply(this, arguments); }; })(ACT.n27go);
+if (navigator.serviceWorker) try { navigator.serviceWorker.addEventListener('message', function (e) { var d = e.data || {}; if (d.cs !== 'bell' || !d.id || !D) return; setTimeout(function () { n18Open(String(d.id)); }, 120); }); } catch (e) { }
+var N18H = (function () { try { var m = String(location.hash || '').match(/nt=(NTF-[A-Za-z0-9-]+)/); if (m) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { } return m[1]; } } catch (e) { } return ''; })();
+render = (function (f) { return function () { var r = f.apply(this, arguments); if (N18H && D && D.me) { var id = N18H; N18H = ''; setTimeout(function () { n18Open(id); }, 200); } return r; }; })(render);
+// 9: Frank's order details – Loaded (time + rider), Rider confirmed; Cash / Credit sign on rows and details
+function fk18Day(s) { var p = String(s || '').split('|'); return p[0] ? (p[0] === D.today ? '' : dayLbl(p[0]) + ' ') + (p[1] || '') : ''; }
+function fk18Pay(x) { var o = x.o || x.x || {}; if (x.st === 'cx') return ''; var c = /credit/i.test(String(o.pay || '')), p = Number(o.pad) || 0; return c ? ['Credit', 'c'] : p > 0 ? ['Part', 'p'] : ['Cash', 'g']; }
+SHEETS.fko = (function (f) { return function () { var h = f.apply(this, arguments), x = fkCur(); if (!h || !x) return h; var X = x.x, add = '';
+  if (X && X.ld) add += fkLn('Loaded', esc(fk18Day(X.ld)) + (X.ldr ? ' – to ' + esc(X.ldr) : ''));
+  if (X && X.ld) add += fkLn('Rider confirmed', X.rcf ? esc(fk18Day(X.rcf)) + (String(X.rcf).split('|')[2] ? ' · ' + esc(String(X.rcf).split('|')[2]) : '') : '<span class="t-amber">not yet</span>');
+  var o = x.o || X || {}, p = Number(o.pad) || 0; if (p > 0) add += fkLn('At delivery', ghs(p) + ' · the rest on credit');
+  if (!add) return h; var i = h.indexOf('<div class="fkln"><span>Products</span>'); if (i < 0) return h + add; var j = h.indexOf('</div>', i); return j < 0 ? h + add : h.slice(0, j + 6) + add + h.slice(j + 6); }; })(SHEETS.fko);
+fkRows = (function (f) { return function (L) { var h = f.apply(this, arguments); try { (L || []).forEach(function (x) { var p = fk18Pay(x); if (!p) return; var i = h.indexOf('data-k="' + esc(x.k) + '"'); if (i < 0) return; var j = h.indexOf('</b>', i); if (j < 0) return;
+    h = h.slice(0, j) + ' <i class="pay18 ' + p[1] + '">' + p[0] + '</i>' + h.slice(j); }); } catch (e) { } return h; }; })(fkRows);
+// 10: New order › On delivery: Full or Part (she pays this much at delivery, the rest on credit)
+function n18Part(x, v, val) { if (x.pay !== 'CASH' || !v || nNewV(v) || !(val > 0)) return ''; var pt = x.pt === 'part';
+  var h = '<div class="t2tray n18t">' + [['', 'Full'], ['part', 'Part']].map(function (p) { return '<button class="' + ((x.pt || '') === p[0] ? 'on' : '') + '" data-act="npt" data-v="' + p[0] + '">' + p[1] + '</button>'; }).join('') + '</div>';
+  if (!pt) return h; var a = Number(x.pad) || 0, rest = Math.max(0, Math.round((val - a) * 100) / 100);
+  return h + '<div class="o2cl"><div class="grow"><b>She will pay at delivery</b><div class="small muted" id="n18r">' + (a > 0 && a < val ? 'The rest ' + ghs(rest) + ' is on credit' : 'Less than ' + ghs(val)) + '</div></div><button class="o2pm" data-act="npad" data-d="-10">−</button><input class="n2amt" inputmode="decimal" data-inp="npad" value="' + (a || '') + '" placeholder="0"><button class="o2pm" data-act="npad" data-d="10">+</button></div>'; }
+ACT.npt = function (b) { nEdit(function (x) { x.pt = b.dataset.v || ''; if (x.pt === 'part' && !(Number(x.pad) > 0)) x.pad = Math.round(nVal(x) / 2); }); };
+ACT.npad = function (b) { nEdit(function (x) { var v = nVal(x); x.pad = Math.max(0, Math.min(v, (Number(x.pad) || 0) + Number(b.dataset.d))); }); };
+INP.npad = function (el) { var x = nDr(); x.pad = Math.max(0, Number(String(el.value).replace(/,/g, '')) || 0); nSave(x); var v = nVal(x), r = document.getElementById('n18r'); if (r) r.textContent = x.pad > 0 && x.pad < v ? 'The rest ' + ghs(Math.round((v - x.pad) * 100) / 100) + ' is on credit' : 'Less than ' + ghs(v); };
+ACT.npay = (function (f) { return function (b) { var r = f.apply(this, arguments); if (b && b.dataset && b.dataset.v !== 'CASH') { var x = nDr(); if (x && x.pt) { x.pt = ''; nSave(x); } } return r; }; })(ACT.npay);
+n71Pay = (function (f) { return function (x, v, o) { var h = f.apply(this, arguments); if (!(o && o.nw)) return h; var p = n18Part(x, v, nVal(x)); if (!p) return h;
+  var i = h.indexOf('o2seg n71red'), j = i < 0 ? -1 : h.indexOf('</div>', i); return j < 0 ? h + p : h.slice(0, j + 6) + p + h.slice(j + 6); }; })(n71Pay);
+function n18On(x, v) { return x && x.pay === 'CASH' && x.pt === 'part' && v && !nNewV(v); }
+nMissing = (function (f) { return function (x, v) { var m = f.apply(this, arguments); if (m) return m; if (n18On(x, v)) { var a = Number(x.pad) || 0; if (!(a > 0)) return 'Type what she pays at delivery'; if (a >= nVal(x) - 0.004) return 'Part: less than the order, or tap Full'; } return m; }; })(nMissing);
+nSentence = (function (f) { return function (x, v) { var s = f.apply(this, arguments); if (!n18On(x, v)) return s; var a = Number(x.pad) || 0, r = Math.round((nVal(x) - a) * 100) / 100; return s.replace('Cash on delivery.', 'She pays ' + ghs(a) + ' at delivery, the rest ' + ghs(r) + ' on credit.'); }; })(nSentence);
+bgSave = (function (f) { return function (op, d, key) { try { if (op === 'orders' && d && d.vendors && d.vendors.length === 1 && d.vendors[0].pay === 'CASH' && key) { var x = JSON.parse(ls('cs_nsent_' + key) || 'null'), v = x && vend(x.vid); if (n18On(x, v) && Number(x.pad) > 0) d.vendors[0].pad = Number(x.pad); } } catch (e) { } return f.apply(this, arguments); }; })(bgSave);
+oPayWord = (function (f) { return function (o) { var t = f.apply(this, arguments); return o && Number(o.pad) > 0 && !/credit/i.test(String(o.pay || '')) && !(o.prepaid > 0.004) ? ghs(o.pad) + ' on delivery · the rest on credit' : t; }; })(oPayWord);
+// 11: after End my day: tomorrow's plan as a list, no next-stop row and no I'M HERE until tomorrow starts
+o27NextVids = (function (f) { return function () { var Y = D.myDay || {}; if (Y.end) return []; return f.apply(this, arguments); }; })(o27NextVids);
+function tm18(T, t) { var Y = D.myDay || {}; return T && T.day && T.day > D.today && (Y.end || addDays(D.today, 1) === T.day) ? 'Tomorrow – ' + esc(dayLbl(T.day)) : t; }
+try { document.head.insertAdjacentHTML('beforeend', '<style>.pay18{font-style:normal;font-size:11px;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:6px;vertical-align:1px}.pay18.g{background:#DCFCE7;color:#166534}.pay18.c{background:#FEF3C7;color:#92400E}.pay18.p{background:#E0F2FE;color:#075985}.n18t{margin:6px 0 4px}</style>'); } catch (e) { }
+// ---------------------------------------------------------------- v2.9.18: Not confirmed › Confirmed (chip at the top, dates, people)
+var NC18C = { v: 'nc', w: '7', f: '', t: '', d: null, k: '', st: '', p: 'all' };
+function nc18cWin() { var t = D.today; if (NC18C.w === 'd') return [t, t]; if (NC18C.w === '30') return [addDays(t, -29), t]; if (NC18C.w === 'lm') return lm92(); if (NC18C.w === 'cal' && NC18C.f) return [NC18C.f, NC18C.t || NC18C.f]; return [addDays(t, -6), t]; }
+function nc18cLoad(force) { var r = nc18cWin(), k = r[0] + '|' + r[1]; if (NC18C.st === 'wait' || (!force && NC18C.k === k && NC18C.d)) return; NC18C.st = 'wait'; NC18C.k = k;
+  readOp('nc918c', { f: r[0], t: r[1] }, function (x) { NC18C.st = ''; if (x && x.ok && NC18C.k === k) { NC18C.d = x; if (TAB === 'money' && !SHEETK) render(); } }, function () { NC18C.st = ''; NC18C.k = ''; }); }
+function nc18cHtml() { nc18cLoad(); var r = nc18cWin(), X = NC18C.d && NC18C.k === r[0] + '|' + r[1] ? NC18C.d : null;
+  var h = '<div class="t2tray">' + [['d', 'Today'], ['7', '7 days'], ['30', '30 days'], ['lm', 'Last month']].map(function (c) { return '<button class="' + (NC18C.w === c[0] ? 'on' : '') + '" data-act="nc18w" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') +
+    '<label><input type="date" data-chg="nc18d" data-f="from" value="' + esc(NC18C.w === 'cal' ? r[0] : '') + '" max="' + esc(D.today) + '"></label><label><input type="date" data-chg="nc18d" data-f="to" value="' + esc(NC18C.w === 'cal' ? r[1] : '') + '" max="' + esc(D.today) + '"></label></div>';
+  if (!X) return h + '<div class="mdsk"><i></i><i></i></div>'; var L = X.list || [];
+  if (!L.length) return h + emptyHtml('Nothing confirmed on these days');
+  var P = []; L.forEach(function (x) { if (P.indexOf(x.who) < 0) P.push(x.who); }); P.sort(); if (NC18C.p !== 'all' && P.indexOf(NC18C.p) < 0) NC18C.p = 'all';
+  var A = NC18C.p === 'all' ? L : L.filter(function (x) { return x.who === NC18C.p; });
+  h += '<div class="mtts">' + mm28T(mm28G(nc18Sum(A)), 'Confirmed', A.length + ' payment' + (A.length === 1 ? '' : 's'), 'g') + '</div>';
+  if (P.length > 1) h += '<div class="t2tray">' + [['all', 'Everyone', L]].concat(P.map(function (n) { return [n, n, L.filter(function (x) { return x.who === n; })]; })).map(function (c) { return '<button class="' + (NC18C.p === c[0] ? 'on' : '') + '" data-act="nc18cp" data-v="' + esc(c[0]) + '">' + esc(c[1]) + ' <small>' + ghs(nc18Sum(c[2])) + '</small></button>'; }).join('') + '</div>';
+  h += A.map(function (x) { return '<div class="fkr" style="border-left-color:#16A34A"' + (x.vid ? ' data-act="vacct" data-v="' + esc(x.vid) + '"' : '') + '><div class="grow"><b>' + esc(x.v) + '</b><div class="fks ell">' + esc(x.who) + ' → ' + esc(x.to) + ' · confirmed ' + esc(dayLbl(x.cd)) + (x.ct ? ' ' + esc(x.ct) : '') + (x.by ? ' by ' + esc(x.by) : '') + (x.day ? ' · paid ' + esc(dayLbl(x.day)) : '') + '</div></div><b class="t-green">' + ghs(x.a) + '</b></div>'; }).join('');
+  if (X.more) h += '<div class="small muted" style="margin:8px 4px">' + X.more + ' more – pick fewer days.</div>';
+  return h; }
+nc18Html = (function (f) { return function () { var h = '<div class="t2tray nc18v">' + [['nc', 'Not confirmed'], ['ok', 'Confirmed']].map(function (c) { return '<button class="' + (NC18C.v === c[0] ? 'on' : '') + '" data-act="nc18v" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
+  return h + (NC18C.v === 'ok' ? nc18cHtml() : f.apply(this, arguments)); }; })(nc18Html);
+ACT.nc18v = function (b) { NC18C.v = b.dataset.v; if (NC18C.v === 'ok') nc18cLoad(true); else nc18Load(true); render(); };
+ACT.nc18w = function (b) { NC18C.w = b.dataset.v; NC18C.f = NC18C.t = ''; render(); };
+ACT.nc18cp = function (b) { NC18C.p = b.dataset.v; render(); };
+CHG.nc18d = function (el) { var v = String(el.value || ''); if (el.dataset.f === 'from') { NC18C.f = v; if (!NC18C.t || NC18C.t < v) NC18C.t = v; } else { NC18C.t = v; if (!NC18C.f || NC18C.f > v) NC18C.f = v; } NC18C.w = NC18C.f ? 'cal' : '7'; render(); };
+try { document.head.insertAdjacentHTML('beforeend', '<style>.nc18v{margin-bottom:6px}</style>'); } catch (e) { }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
