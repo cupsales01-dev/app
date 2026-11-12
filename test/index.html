@@ -11453,4 +11453,49 @@ s19Html = (function (f) { return function () { var h = f.apply(this, arguments);
   var R = (X.recs || []).filter(function (x) { return x.rid === S19.r && (S19.a === 'all' || x.agu === S19.a); }), gi = s19Sum(R, 'tin'), go = s19Sum(R, 'tout'), t = [];
   if (s19N(gi)) t.push('Got from another rider: ' + esc(s19Q(gi))); if (s19N(go)) t.push('Gave to another rider: ' + esc(s19Q(go)));
   if (!t.length) return h; var i = h.indexOf('<div class="t2tray s19v">'); return i < 0 ? h : h.slice(0, i) + '<div class="fks s19tr">' + t.join(' · ') + '</div>' + h.slice(i); } catch (e) { return h; } }; })(s19Html);
+// ---------------------------------------------------------------- v2.9.24: the change that was not done before delivery shows on the order; the manager's task opens Fix this order
+o27MoreExtra = (function (f) { return function (o) { var h = f.apply(this, arguments); try { var c = o && o.chg; if (!c || !c.lines || !c.lines.length || ['Delivered', 'Partly delivered'].indexOf(o.status) < 0) return h;
+  return h + '<div class="o2l"><span>Change asked, not done</span><b class="t-red">' + esc(c.lines.map(function (l) { return l.qty + ' ' + l.sku; }).join(', ')) + (c.at ? ' · ' + esc(dayLbl(String(c.at).slice(0, 10))) : '') + '</b></div>'; } catch (e) { return h; } }; })(o27MoreExtra);
+needsList = (function (f) { return function (list) { var h = f.apply(this, arguments); try { (list || []).forEach(function (x) { if (x.type !== 'Change not done before delivery') return; var m = String(x.text || '').match(/(ORD-\d{6}-\d+)/); if (!m) return;
+  var b = '<button data-act="resolve" data-e="' + x.eid + '">DONE</button>', i = h.indexOf(b); if (i < 0) return;
+  h = h.slice(0, i) + '<button class="main" data-act="cw24f" data-o="' + esc(m[1]) + '">✎ Fix this order</button> ' + h.slice(i); }); } catch (e) { } return h; }; })(needsList);
+ACT.cw24f = function (b) { var ref = b.dataset.o, go = function () { var o = oById(ref); if (!o || !o.outcome || !o.outcome.did) return false; ACT.mfix({ dataset: { o: ref } }); return true; };
+  if (go()) return; b.disabled = true; var d6 = ref.slice(4, 10), day = '20' + d6.slice(0, 2) + '-' + d6.slice(2, 4) + '-' + d6.slice(4, 6);
+  readOp('ordhist', { from: addDays(day, -2), to: D.today, uid: '*' }, function (x) { b.disabled = false; var o = ((x && x.orders) || []).filter(function (y) { return y.oid === ref; })[0];
+    if (o) MFO912[ref] = o; if (!go()) say('This order has no delivery to fix.'); }, function (e) { b.disabled = false; toast(e, 'err'); }); };
+// ---------------------------------------------------------------- v2.9.24: Her account opens at once from the copy kept on this phone
+var VA24 = { t: {} };
+function va24Key() { return 'cs_va24_' + (D && D.me ? D.me.uid : '') + '_' + String(TOKEN || '').slice(0, 8); }
+function va24All() { try { var x = JSON.parse(localStorage.getItem(va24Key()) || '{}'); return x && typeof x === 'object' ? x : {}; } catch (e) { return {}; } }
+function va24Keep(vid, r) { try { if (!D || !D.me || JSON.stringify(r).length > 60000) return; var A = va24All(); A[vid] = { t: Date.now(), r: r };
+  var ks = Object.keys(A).sort(function (a, b) { return (A[b].t || 0) - (A[a].t || 0); }); ks.slice(25).forEach(function (k) { delete A[k]; });
+  var n = Math.min(25, ks.length), txt = JSON.stringify(A); while (txt.length > 400000 && n > 1) { n = Math.ceil(n / 2); ks.slice(n).forEach(function (k) { delete A[k]; }); txt = JSON.stringify(A); }
+  try { localStorage.setItem(va24Key(), txt); } catch (e) { var B = {}; B[vid] = A[vid]; try { localStorage.setItem(va24Key(), JSON.stringify(B)); } catch (e2) { } } } catch (e) { } }
+function va24Get(vid) { var x = va24All()[vid]; return x && x.r && x.r.ok && Date.now() - (x.t || 0) < 3 * 86400000 ? x : null; }
+readOp = (function (f) { return function (op, data, ok, fail) { if (op !== 'vacct' || !data || !data.vid) return f.apply(this, arguments); var vid = data.vid;
+  return f(op, data, function (r) { try { if (r && r.ok) { VA24.t[vid] = Date.now(); va24Keep(vid, r); if (VA.vid === vid) VA.old24 = 0; } else if (VA.vid === vid && VA.old24) VA.old24 = 2; } catch (e) { } ok(r); },
+    function (m) { try { if (VA.vid === vid && VA.old24) VA.old24 = 2; } catch (e) { } if (fail) fail(m); }); }; })(readOp);
+vaLoad = (function (f) { return function (vid, quiet) { try { if (!quiet && vid && !VA18.c[vid]) { var k = va24Get(vid); if (k) { VA18.c[vid] = k.r; VA24.t[vid] = k.t; } } } catch (e) { }
+  var out = f.apply(this, arguments);
+  try { if (!quiet && VA.vid === vid && VA.st === 'ok' && VA.d && VA18.busy && Date.now() - (VA24.t[vid] || 0) > 60000) VA.old24 = 1; } catch (e) { } return out; }; })(vaLoad);
+/* an older copy: shown at once, dimmed and not tappable (only Close) until the fresh copy arrives */
+SHEETS.vacct = (function (f) { return function () { var h = f.apply(this, arguments); try { if (!VA.old24 || !h) return h;
+  var i = h.indexOf('data-act="closeO"'), j = i < 0 ? -1 : h.indexOf('</div>', i); if (j < 0) return h; j += 6;
+  var nt = VA.old24 === 2 ? '<p class="small t-red" style="margin:6px 0">Copy from ' + esc(dayLbl(new Date(VA24.t[VA.vid] || Date.now()).toISOString().slice(0, 10))) + ' – not updated. Close and open again.</p>' : '';
+  return h.slice(0, j) + nt + '<div class="va24o">' + h.slice(j) + '</div>'; } catch (e) { return h; } }; })(SHEETS.vacct);
+try { document.head.insertAdjacentHTML('beforeend', '<style>.va24o{opacity:.6;pointer-events:none;transition:opacity .2s}</style>'); } catch (e) { }
+/* the name list for Accounts is kept on the phone too: the first search answers at once, then the list is fetched again */
+function vaf24Key() { return 'cs_vaf24_' + String(TOKEN || '').slice(0, 8); }
+vaf19Load = (function (f) { return function () { try { if (!VAF19.all) { var x = JSON.parse(localStorage.getItem(vaf24Key()) || 'null'); if (x && Array.isArray(x.l) && Date.now() - (x.t || 0) < 7 * 86400000) { VAF19.all = x.l; VAF19.at = 0; } } } catch (e) { } return f.apply(this, arguments); }; })(vaf19Load);
+readOp = (function (f) { return function (op, data, ok, fail) { if (op !== 'vafall') return f.apply(this, arguments);
+  return f(op, data, function (r) { try { if (r && r.ok && Array.isArray(r.list)) localStorage.setItem(vaf24Key(), JSON.stringify({ t: Date.now(), l: r.list })); } catch (e) { } ok(r); }, fail); }; })(readOp);
+/* how long the phone really waited – noted here, sent with the next request, shown in "App: check speed and errors" */
+function pt24() { try { var x = JSON.parse(localStorage.getItem('cs_pt24') || '[]'); return Array.isArray(x) ? x : []; } catch (e) { return []; } }
+var PT24S = 0;
+rpc = (function (f) { return function (req, ok, fail) { var op = req && req.op, t0 = Date.now(), sent = 0;
+  if (req && op !== 'ping' && op !== 'login' && op !== 'pinforgot' && op !== 'pinreset' && (!PT24S || Date.now() - PT24S > 120000)) { var L = pt24(); if (L.length) { req.pt24 = L.slice(-5); sent = L.length; PT24S = Date.now(); } }
+  var note = /^(vacct|init|vafall)$/.test(String(op || '')) && !(req && req.poll);
+  f(req, function (x) { if (sent) PT24S = 0; try { var L2 = pt24(); if (sent && x && !x.error && !x.auth) L2 = L2.slice(sent);
+      var ms = Date.now() - t0, add = note && x && !x.auth && ms >= 1500; if (add) L2.push({ at: t0, op: op, ms: ms });
+      if (add || sent) localStorage.setItem('cs_pt24', JSON.stringify(L2.slice(-20))); } catch (e) { } ok(x); }, function (e) { if (sent) PT24S = 0; if (fail) fail(e); }); }; })(rpc);
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
