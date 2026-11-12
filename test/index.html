@@ -11384,4 +11384,65 @@ ACT.nc18w = function (b) { NC18C.w = b.dataset.v; NC18C.f = NC18C.t = ''; render
 ACT.nc18cp = function (b) { NC18C.p = b.dataset.v; render(); };
 CHG.nc18d = function (el) { var v = String(el.value || ''); if (el.dataset.f === 'from') { NC18C.f = v; if (!NC18C.t || NC18C.t < v) NC18C.t = v; } else { NC18C.t = v; if (!NC18C.f || NC18C.f > v) NC18C.f = v; } NC18C.w = NC18C.f ? 'cal' : '7'; render(); };
 try { document.head.insertAdjacentHTML('beforeend', '<style>.nc18v{margin-bottom:6px}</style>'); } catch (e) { }
+// ---------------------------------------------------------------- v2.9.19 (job A): the name search finds names on the phone; Her account starts loading at the first touch
+var VAF19 = { all: null, st: '', at: 0 };
+function vaf19Load() { if (VAF19.st === 'wait' || (VAF19.all && Date.now() - VAF19.at < 600000)) return; VAF19.st = 'wait';
+  readOp('vafall', {}, function (r) { VAF19.st = ''; if (r && r.ok) { VAF19.all = r.list || []; VAF19.at = Date.now(); if (String(VAF.q || '').replace(/\W/g, '').length >= 2) vaf19Find(VAF.q); } }, function () { VAF19.st = ''; }); }
+function vaf19N(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9]/g, ''); }
+function vaf19Find(q) { var n = vaf19N(q); VAF.list = n.length < 2 ? [] : (VAF19.all || []).filter(function (v) { return vaf19N(v.name + ' ' + v.ph + ' ' + v.vid).indexOf(n) >= 0; }).slice(0, 25);
+  VAF.busy = false; var b = $('vafl'); if (b) b.innerHTML = vaFindRows(); if (VAF.list.length && VAF.list.length <= 3) vaPre19(VAF.list[0].vid); }
+function vaPre19(vid) { if (!vid || VA18.c[vid] || VA18['p' + vid]) return; VA18['p' + vid] = 1; readOp('vacct', { vid: vid }, function (r) { delete VA18['p' + vid]; if (r && r.ok) VA18.c[vid] = r; }, function () { delete VA18['p' + vid]; }); }
+vaFindRows = (function (f) { return function () { vaf19Load(); return f.apply(this, arguments); }; })(vaFindRows);
+INP.vafq = (function (f) { return function (el) { if (!VAF19.all) { vaf19Load(); return f.apply(this, arguments); } VAF.q = el.value; clearTimeout(VAF.t); vaf19Find(VAF.q); if (!VAF.list.length && vaf19N(VAF.q).length >= 3) { VAF19.at = 0; return f.apply(this, arguments); } }; })(INP.vafq);
+try { document.addEventListener('touchstart', function (e) { var t = e.target && e.target.closest ? e.target.closest('[data-act="vacct"][data-v]') : null; if (t && D) { var n = Date.now(); VAF19.pt = (VAF19.pt || []).filter(function (x) { return n - x < 60000; }); if (VAF19.pt.length < 3) { VAF19.pt.push(n); vaPre19(t.getAttribute('data-v')); } } }, { passive: true }); } catch (e) { }
+// ---------------------------------------------------------------- v2.9.19 (job B): Stock with riders – Frank's Stock tab (and the manager from Team › Riders)
+var S19 = { w: 'd', f: '', t: '', r: 'all', a: 'all', v: 'l', d: null, k: '', st: '' }, FS19 = 'st';
+function s19Win() { var t = D.today; if (S19.w === 'y') { var y = addDays(t, -1); return [y, y]; } if (S19.w === '7') return [addDays(t, -6), t]; if (S19.w === 'lm') return lm92(); if (S19.w === 'cal' && S19.f) return [S19.f, S19.t || S19.f]; return [t, t]; }
+function s19Load(force) { var r = s19Win(), k = r[0] + '|' + r[1]; if (S19.st === 'wait' || (!force && S19.k === k && S19.d && Date.now() - (S19.at || 0) < 60000)) return; S19.st = 'wait'; S19.k = k;
+  readOp('stk19', { f: r[0], t: r[1] }, function (x) { S19.st = ''; S19.err = 0; if (x && x.ok && S19.k === k) { S19.d = x; S19.at = Date.now(); if (!SHEETK && (TAB === 'fstock' || TAB === 'stk19')) render(); } }, function () { S19.st = ''; S19.k = ''; S19.err = 1; if (!SHEETK && (TAB === 'fstock' || TAB === 'stk19')) render(); }); }
+function s19Q(q) { var K = Object.keys(q || {}).filter(function (k) { return q[k] > 0; }); return K.length ? K.map(function (k) { return skn(k) + ' ' + q[k]; }).join(' · ') : '–'; }
+function s19N(q) { return Object.keys(q || {}).reduce(function (t, k) { return t + (q[k] > 0 ? q[k] : 0); }, 0); }
+function s19Sum(L, f) { var o = {}; L.forEach(function (x) { var q = x[f] || {}; Object.keys(q).forEach(function (k) { o[k] = (o[k] || 0) + q[k]; }); }); return o; }
+function s19Tile(l, q, tone) { return '<div class="mtt ' + (tone || '') + '"><b>' + s19N(q) + '</b><span>' + l + '</span><small>' + esc(s19Q(q)) + '</small></div>'; }
+function s19Html() { s19Load(); var r = s19Win(), X = S19.d && S19.k === r[0] + '|' + r[1] ? S19.d : null, one = r[0] === r[1];
+  var h = '<div class="t2tray">' + [['d', 'Today'], ['y', 'Yesterday'], ['7', '7 days'], ['lm', 'Last month']].map(function (c) { return '<button class="' + (S19.w === c[0] ? 'on' : '') + '" data-act="s19w" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') +
+    '<label><input type="date" data-chg="s19d" data-f="from" value="' + esc(S19.w === 'cal' ? r[0] : '') + '" max="' + esc(D.today) + '"></label><label><input type="date" data-chg="s19d" data-f="to" value="' + esc(S19.w === 'cal' ? r[1] : '') + '" max="' + esc(D.today) + '"></label></div>';
+  if (!X) return h + (S19.err && S19.st !== 'wait' ? emptyHtml('Could not load – pull down to try again') : '<div class="mdsk"><i></i><i></i></div>');
+  var RS = X.riders || [], AG = []; (X.recs || []).concat(X.dels || []).forEach(function (x) { if (x.agu && !AG.some(function (a) { return a[0] === x.agu; })) AG.push([x.agu, x.ag]); });
+  if (RS.length > 1) h += '<div class="t2tray">' + [['all', 'All riders']].concat(RS.map(function (z) { return [z.id, z.n]; })).map(function (c) { return '<button class="' + (S19.r === c[0] ? 'on' : '') + '" data-act="s19r" data-v="' + esc(c[0]) + '">' + esc(c[1]) + '</button>'; }).join('') + '</div>';
+  if (AG.length > 1) h += '<div class="t2tray">' + [['all', 'All agents']].concat(AG).map(function (c) { return '<button class="' + (S19.a === c[0] ? 'on' : '') + '" data-act="s19a" data-v="' + esc(c[0]) + '">' + esc(c[1]) + '</button>'; }).join('') + '</div>';
+  var ok = function (x) { return (S19.r === 'all' || x.rid === S19.r) && (S19.a === 'all' || x.agu === S19.a); }, R = (X.recs || []).filter(ok), DL = (X.dels || []).filter(ok);
+  h += '<div class="mtts s19t">' + s19Tile(one && r[0] === D.today ? 'From before' : 'At the start', s19Sum(R, 'c')) + s19Tile('Loaded', s19Sum(R, 'l'), 'b') + s19Tile('Delivered', s19Sum(R, 'dl'), 'g') + s19Tile('Back to Frank', s19Sum(R, 'bk')) + s19Tile(r[1] === D.today ? 'With them now' : 'With them at the end', s19Sum(R, 'w'), 'a') + '</div>';
+  if (S19.r === 'all' && RS.length > 1) h += RS.map(function (z) { var Z = R.filter(function (x) { return x.rid === z.id; }), w = s19Sum(Z, 'w'); if (!Z.length) return ''; return '<div class="fkln s19rl"><span>' + esc(z.n) + '</span><b>' + (s19N(w) ? 'has ' + esc(s19Q(w)) : 'nothing with him') + '</b></div>'; }).join('');
+  var LD = R.filter(function (x) { return s19N(x.l); }), WN = R.filter(function (x) { return s19N(x.w); });
+  h += '<div class="t2tray s19v">' + [['l', 'Loaded ' + LD.length], ['w', 'With them ' + WN.length], ['d', 'Delivered ' + DL.length]].map(function (c) { return '<button class="' + (S19.v === c[0] ? 'on' : '') + '" data-act="s19v" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
+  var fk = D.me.role === 'Warehouse' || D.me.role === 'Supervisor';
+  if (S19.v === 'l') { if (!LD.length) return h + emptyHtml('Nothing loaded on ' + (one ? esc(dayLbl(r[0])) : 'these days'));
+    var tv = LD.reduce(function (t, x) { return t + (x.val || 0); }, 0);
+    h += '<div class="s19tot">' + LD.length + ' order' + (LD.length === 1 ? '' : 's') + ' · ' + esc(s19Q(s19Sum(LD, 'l'))) + ' · ' + ghs(tv) + '</div>';
+    return h + LD.map(function (x) { return '<div class="fkr s19r" style="border-left-color:#2563eb"><div class="grow"><b class="ell">' + esc(x.vn) + '</b><div class="fks">' + esc(x.ag) + ' · ' + esc(s19Q(x.l)) + ' · ' + ghs(x.val) + '</div><div class="fks">' + esc(x.pay) + '</div><div class="fks muted">' + (one ? '' : esc(dayLbl(x.ld)) + ' ') + esc(x.lt) + ' · to ' + esc(x.rn) + ' · ' + esc(x.st) + '</div></div></div>'; }).join(''); }
+  if (S19.v === 'w') { if (!WN.length) return h + emptyHtml('Nothing with the riders');
+    return h + WN.map(function (x) { return '<div class="fkr s19r" style="border-left-color:#d97706"><div class="grow"><b class="ell">' + esc(x.vn) + '</b><div class="fks">' + esc(x.rn) + ' has ' + esc(s19Q(x.w)) + ' · ' + esc(x.ag) + '</div><div class="fks muted">Loaded ' + esc(dayLbl(x.ld)) + ' ' + esc(x.lt) + ' · ' + esc(x.why) + '</div></div>' + (fk && x.tk ? '<button class="r92b" data-act="s19bk" data-o="' + esc(x.oid) + '" data-n="' + esc(x.vn) + '" data-r="' + esc(x.rn) + '" data-q="' + esc(s19Q(x.w)) + '">Take back</button>' : '') + '</div>'; }).join(''); }
+  if (!DL.length) return h + emptyHtml('Nothing delivered on ' + (one ? esc(dayLbl(r[0])) : 'these days'));
+  return h + '<div class="s19tot">' + esc(s19Q(s19Sum(DL, 'q'))) + '</div>' + DL.map(function (x) { return '<div class="fkr s19r" style="border-left-color:#16a34a"><div class="grow"><b class="ell">' + esc(x.vn) + '</b><div class="fks">' + esc(x.ag) + ' · ' + esc(s19Q(x.q)) + ' · by ' + esc(x.rn) + '</div><div class="fks muted">' + (one ? '' : esc(dayLbl(x.day)) + ' · ') + esc(x.pay) + '</div></div></div>'; }).join(''); }
+ACT.s19w = function (b) { S19.w = b.dataset.v; S19.f = S19.t = ''; render(); };
+ACT.s19r = function (b) { S19.r = b.dataset.v; render(); };
+ACT.s19a = function (b) { S19.a = b.dataset.v; render(); };
+ACT.s19v = function (b) { S19.v = b.dataset.v; render(); };
+CHG.s19d = function (el) { var v = String(el.value || ''); if (el.dataset.f === 'from') { S19.f = v; if (!S19.t || S19.t < v) S19.t = v; } else { S19.t = v; if (!S19.f || S19.f > v) S19.f = v; } S19.w = S19.f ? 'cal' : 'd'; render(); };
+ACT.s19bk = function (b) { var oid = b.dataset.o; ask('Take back ' + b.dataset.q + ' (' + b.dataset.n + ') from ' + b.dataset.r + '? Count them first. The order goes back to your To load list.', function () {
+  bgSave('stk19back', { oid: oid }, 'stk19b-' + oid + '-' + uid(), 'take back: ' + b.dataset.n, null, true);
+  if (S19.d) S19.d.recs = (S19.d.recs || []).map(function (x) { if (x.oid === oid && x.tk) { x = Object.assign({}, x); x.bk = Object.assign({}, x.w); x.w = {}; x.tk = 0; x.st = 'Back at Frank'; } return x; });
+  render(); setTimeout(function () { s19Load(true); }, 4000); }, 'TAKE BACK'); };
+pgFStock = (function (f) { return function () { var h = '<div class="t2tray s19top">' + [['st', 'In the store'], ['rd', 'With riders']].map(function (c) { return '<button class="' + (FS19 === c[0] ? 'on' : '') + '" data-act="fs19" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
+  return h + (FS19 === 'rd' ? s19Html() : f.apply(this, arguments)); }; })(pgFStock);
+PG27.fstock = pgFStock;
+ACT.fs19 = function (b) { FS19 = b.dataset.v; if (FS19 === 'rd') s19Load(true); render(); };
+try { NAV93.fs19 = 1; NAV93.s19v = 1; } catch (e) { }
+PG27.stk19 = function () { return '<div class="s19hd"><button class="n27bk" data-act="s19back">‹ Team</button><b>Stock with riders</b></div>' + s19Html(); };
+ACT.s19back = function () { TAB = 'plan'; render(); window.scrollTo(0, 0); };
+ACT.s19m = function () { TAB = 'stk19'; s19Load(true); render(); window.scrollTo(0, 0); };
+mt28Prince = (function (f) { return function () { var h = f.apply(this, arguments); if (!D || !D.me || D.me.role !== 'Supervisor') return h;
+  return '<button class="lev6" data-act="s19m" style="margin:0 0 8px"><span class="grow"><b>Stock with riders</b><span class="small muted" style="display:block">loaded · delivered · back · with them now</span></span>' + ico(ICO.right) + '</button>' + (h || ''); }; })(mt28Prince);
+try { document.head.insertAdjacentHTML('beforeend', '<style>.s19t{grid-template-columns:repeat(auto-fit,minmax(96px,1fr))}.s19t small{white-space:normal}.s19tot{margin:8px 2px;font-weight:700}.s19rl{margin:2px 0}.s19r .fks{white-space:normal}.s19hd{display:flex;align-items:center;gap:10px;margin:4px 0 10px}.s19hd b{font-size:18px}.s19top{margin-bottom:8px}</style>'); } catch (e) { }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
