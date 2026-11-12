@@ -11445,4 +11445,12 @@ ACT.s19m = function () { TAB = 'stk19'; s19Load(true); render(); window.scrollTo
 mt28Prince = (function (f) { return function () { var h = f.apply(this, arguments); if (!D || !D.me || D.me.role !== 'Supervisor') return h;
   return '<button class="lev6" data-act="s19m" style="margin:0 0 8px"><span class="grow"><b>Stock with riders</b><span class="small muted" style="display:block">loaded · delivered · back · with them now</span></span>' + ico(ICO.right) + '</button>' + (h || ''); }; })(mt28Prince);
 try { document.head.insertAdjacentHTML('beforeend', '<style>.s19t{grid-template-columns:repeat(auto-fit,minmax(96px,1fr))}.s19t small{white-space:normal}.s19tot{margin:8px 2px;font-weight:700}.s19rl{margin:2px 0}.s19r .fks{white-space:normal}.s19hd{display:flex;align-items:center;gap:10px;margin:4px 0 10px}.s19hd b{font-size:18px}.s19top{margin-bottom:8px}</style>'); } catch (e) { }
+// ---------------------------------------------------------------- v2.9.20 (job A): an account already loading shows as soon as it arrives
+vaPre19 = function (vid) { if (!vid || VA18.c[vid] || VA18['p' + vid]) return; VA18['p' + vid] = 1;
+  readOp('vacct', { vid: vid }, function (r) { delete VA18['p' + vid]; if (!(r && r.ok)) return; VA18.c[vid] = r; if (VA.vid === vid && (VA.st === 'wait' || VA.st === 'err')) { VA.d = r; VA.st = 'ok'; if (SHEETK === 'vacct') drawSheet(); } }, function () { delete VA18['p' + vid]; }); };
+// ---------------------------------------------------------------- v2.9.20 (job B): what one rider got from / gave to another rider
+s19Html = (function (f) { return function () { var h = f.apply(this, arguments); try { var r = s19Win(), X = S19.d && S19.k === r[0] + '|' + r[1] ? S19.d : null; if (!X || S19.r === 'all') return h;
+  var R = (X.recs || []).filter(function (x) { return x.rid === S19.r && (S19.a === 'all' || x.agu === S19.a); }), gi = s19Sum(R, 'tin'), go = s19Sum(R, 'tout'), t = [];
+  if (s19N(gi)) t.push('Got from another rider: ' + esc(s19Q(gi))); if (s19N(go)) t.push('Gave to another rider: ' + esc(s19Q(go)));
+  if (!t.length) return h; var i = h.indexOf('<div class="t2tray s19v">'); return i < 0 ? h : h.slice(0, i) + '<div class="fks s19tr">' + t.join(' · ') + '</div>' + h.slice(i); } catch (e) { return h; } }; })(s19Html);
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
