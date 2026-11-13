@@ -8973,7 +8973,7 @@ function mvRow(v) {
   if (!op) return h + '</div>';
   h += '<div class="sv7rb">' + svMl(SVL[v.st], esc(v.t), v.st === 'stop' ? 't-red' : v.st === 'slow' ? 't-amber' : '') + (v.st === 'stop' ? svMl('Why', v.why ? esc(v.why) : v.said ? 'said' : '<span class="t-amber">agent has not said</span>') : '') + svMl('Stock', esc(mvLeftTxt(v)), l != null && l <= 0 ? 't-red' : '') + svMl('Last visit', svLv(v.lv));
   var r90 = mvR(v.id); if (r90) h += r90[4] ? svMl('Company code', r90[5] ? esc(r90[5]) : 'none yet', r90[5] ? '' : 't-amber') : svMl('Stage', 'Registered – not bought yet', 't-amber');
-  if (v.ow > 0) h += svMl('Owes', ghs(v.ow) + (v.late > 0 ? ' · ' + v.late + ' day' + (v.late === 1 ? '' : 's') + ' late' : ''), v.late > 0 ? 't-red' : '');
+  if (v.ow > 0) h += svMl('Owes', ghs(v.ow) + (v.on > 1 ? ' · ' + v.on + ' orders' : '') + (v.late > 0 ? ' · ' + v.late + ' day' + (v.late === 1 ? '' : 's') + ' late' : ''), v.late > 0 ? 't-red' : '');
   if (H.length) h += svMl('Help items', esc(H.map(function (a) { return a.i + (a.q > 1 ? ' × ' + a.q : ''); }).join(', ')), H[0].d > 7 ? 't-amber' : '');
   if (v.pr) h += svMl('Promise', svPrTxt(v.pr), v.pr.dk < 0 ? 't-red' : v.pr.dk === 0 ? 't-amber' : ''); else if (v.nx) h += svMl('Next', esc(v.nx));
   return h + '<div class="sv7rx">' + (v.ph ? '<a class="sv7b" href="tel:' + esc(v.ph) + '">📞 Call</a>' : '') + n90RetBtn(v) + '<button class="sv7b" data-act="vacct" data-v="' + v.id + '">Account</button><button class="sv7b g" data-act="svopen" data-k="v" data-i="' + v.id + '">More ›</button></div></div></div>';
@@ -11621,4 +11621,24 @@ ACT.rt97mksave = function () { var F = SV.f; if (!SVOK.rt97mk()) return; var t =
   else { if (!x) { x = { id: F.vid, n: v.n, ag: v.ag || '' }; L.unshift(x); if (SVM) SVM.rt97 = L; } x.t = t; x.c = 'Kept'; x.r = t === 'Replacement' ? F.repl : ''; x.rn = r ? r.n : ''; x.pl = t === 'Existing' ? pm : ''; x.pc = t === 'Existing' ? String(F.pctn || '').trim() : ''; }
   SV.f = null; sheetOpen('svmgr'); };
 rt97Html = (function (f) { return function () { return '<button class="sv7add" data-act="rt97mk">+ Mark a vendor: existing customer or replacement</button>' + f.apply(this, arguments); }; })(rt97Html);
+// ---------------------------------------------------------------- v2.9.31 (4): every Her account kept on the phone, fetched in one quiet request
+var VA31 = { at: 0, rev: null, busy: 0, rs: 0, t0: Date.now() };
+function va31Key() { return 'cs_va31_' + (D && D.me ? D.me.uid : '') + '_' + String(TOKEN || '').slice(0, 8); }
+function va31Ok() { return !!(D && D.me && !D.viewOf && /^(Agent|Warehouse|Supervisor)$/.test(D.me.role)); }
+function va31Put(v, r, t) { if ((VA24.t[v] || 0) >= t) return; VA18.c[v] = r; VA24.t[v] = t; if (VA.vid === v && SHEETK === 'vacct' && !VA.d && (VA.st === 'wait' || VA.st === 'err')) { VA.d = r; VA.st = 'ok'; VA.old24 = 1; drawSheet(); } }
+function va31Restore() { if (VA31.rs || !va31Ok()) return; VA31.rs = 1; try { var x = JSON.parse(localStorage.getItem(va31Key()) || 'null'); if (!x || !x.all || Date.now() - (x.t || 0) > 3 * 86400000) return;
+  Object.keys(x.all).forEach(function (v) { if (!VA18.c[v]) va31Put(v, x.all[v], x.t); }); } catch (e) { } }
+function va31Get() { if (VA31.busy || !va31Ok() || document.hidden || Date.now() - VA31.t0 < 20000 || VA18.busy) return; /* the start screens and her first taps go first */ var rv = String(REV || ''), n = Date.now();
+  var gap = D.me.role === 'Agent' ? 300000 : 600000; if (VA31.at && (n - VA31.at < gap || (VA31.rev === rv && n - VA31.at < 3600000))) return; VA31.busy = 1; var t = Date.now();
+  readOp('vacctall', {}, function (r) { VA31.busy = 0; VA31.at = Date.now(); if (!r || !r.ok || !r.all) return; VA31.rev = rv; if (va35Busy() || queue().length) return; /* a save is on its way: wait for the next round */
+    Object.keys(r.all).forEach(function (v) { if (VA.vid === v && SHEETK === 'vacct' && VA.d && !VA.old24) return; va31Put(v, r.all[v], t); });
+    if (!r.part) { try { localStorage.setItem(va31Key(), JSON.stringify({ t: t, all: r.all })); } catch (e) { try { localStorage.removeItem(va31Key()); } catch (e2) { } } } },
+    function () { VA31.busy = 0; VA31.at = Date.now(); }); }
+setTimeout(function () { try { if (D) { va31Restore(); va31Get(); } } catch (e) { } }, 4000);
+setTimeout(function () { try { if (D) { va31Restore(); va31Get(); } } catch (e) { } }, 21000);
+setInterval(function () { try { if (D) { va31Restore(); va31Get(); } } catch (e) { } }, 15000);
+// ---------------------------------------------------------------- v2.9.31 (1): manager Vendors › "2+ orders unpaid"
+(function () { var i = -1; MVF.forEach(function (f, j) { if (f[0] === 'owes') i = j; }); MVF.splice(i < 0 ? MVF.length : i + 1, 0, ['owes2', '2+ orders unpaid']); })();
+mvOk = (function (f) { return function (v, k) { if (k === 'owes2') return v.st !== 'closed' && v.ow > 0 && (v.on || 0) >= 2; return f.apply(this, arguments); }; })(mvOk);
+mvSort = (function (f) { return function (k) { if (k !== 'owes2') return f.apply(this, arguments); return function (a, b) { return ((b.on || 0) - (a.on || 0)) || ((b.ow || 0) - (a.ow || 0)); }; }; })(mvSort);
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
