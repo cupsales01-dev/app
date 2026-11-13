@@ -11498,4 +11498,38 @@ rpc = (function (f) { return function (req, ok, fail) { var op = req && req.op, 
   f(req, function (x) { if (sent) PT24S = 0; try { var L2 = pt24(); if (sent && x && !x.error && !x.auth) L2 = L2.slice(sent);
       var ms = Date.now() - t0, add = note && x && !x.auth && ms >= 1500; if (add) L2.push({ at: t0, op: op, ms: ms });
       if (add || sent) localStorage.setItem('cs_pt24', JSON.stringify(L2.slice(-20))); } catch (e) { } ok(x); }, function (e) { if (sent) PT24S = 0; if (fail) fail(e); }); }; })(rpc);
+// v2.9.27: Register a vendor – New vendor / Existing customer / Replacement; the manager keeps or reverses
+var RT97K = { 'New vendor': 'New', 'Existing customer': 'Existing', 'Replacement': 'Replacement' }, RT97D = null, RT97M = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function rt97Mon() { var t = String(D.today || ''), y = +t.slice(0, 4), m = +t.slice(5, 7), L = []; for (var i = 0; i < 6; i++) { var mm = m - i, yy = y; while (mm < 1) { mm += 12; yy--; } L.push([RT97M[mm - 1] + (yy !== y ? ' ' + yy : ''), yy + '-' + (mm < 10 ? '0' : '') + mm]); } return L; }
+function rt97Ym(lb) { var L = rt97Mon(); for (var i = 0; i < L.length; i++) if (L[i][0] === lb) return L[i][1]; if (lb === 'Earlier') { var t = String(D.today || ''), y = +t.slice(0, 4), m = +t.slice(5, 7) - 6; while (m < 1) { m += 12; y--; } return y + '-' + (m < 10 ? '0' : '') + m; } return ''; }
+function rt97Lb(p) { var m = /^(\d{4})-(\d\d)/.exec(p || ''); return m ? RT97M[+m[2] - 1] + ' ' + m[1] : String(p || ''); }
+function rt97Hits() { var F = SV.f, q = String(F.rpq || '').trim().toLowerCase(), L = ((SV.d && SV.d.v) || []).filter(function (v) { return v.m && v.rl && (!q || String(v.n).toLowerCase().indexOf(q) >= 0); });
+  L.sort(function (a, b) { return (a.st === 'stop' ? 0 : 1) - (b.st === 'stop' ? 0 : 1) || (a.n < b.n ? -1 : 1); });
+  if (!L.length) return '<p class="sv7fine">' + (q ? 'No vendor of yours with that name has stopped buying.' : 'None of your vendors has stopped buying.') + '</p>';
+  return L.slice(0, 8).map(function (v) { return '<div class="sv7hc"><div class="sv7hn"><b>' + esc(v.n) + '</b><span class="small muted">' + esc(v.t || '') + '</span></div><button class="sv7b g" data-act="rt97p" data-i="' + esc(v.id) + '">She replaces her</button></div>'; }).join(''); }
+function rt97Form() { var F = SV.f, h = svQ('Is she') + svTr('rtype', ['New vendor', 'Existing customer', 'Replacement']);
+  if (F.rtype === 'Existing customer') h += svQ('When did she last buy?') + svTr('plast', rt97Mon().map(function (x) { return x[0]; }).concat(['Earlier'])) + svQ('Cartons a month', 'optional') + svIn('pctn', 'e.g. 3', 'numeric') + '<p class="sv7fine">She is not counted as a new vendor. The manager checks it.</p>';
+  if (F.rtype === 'Replacement') { var r = F.repl ? svV(F.repl) : null;
+    h += svQ('She replaces') + (r ? '<div class="sv7okb row"><span><b>' + esc(r.n) + '</b> ✓</span><button class="sv7lk" data-act="rt97x">Change</button></div>' : svIn('rpq', 'Type her name') + '<div id="rt97l">' + rt97Hits() + '</div>') + '<p class="sv7fine">She takes the place of a vendor who stopped buying, so she is not a new vendor. The manager checks it.</p>'; }
+  return h; }
+ACT.rt97p = function (b) { SV.f.repl = b.dataset.i; drawSheet(); }; ACT.rt97x = function () { SV.f.repl = ''; SV.f.rpq = ''; drawSheet(); };
+svLive = (function (f) { return function () { f.apply(this, arguments); var x = $('rt97l'); if (x && SHEETK === 'svregv') x.innerHTML = rt97Hits(); }; })(svLive);
+SHEETS.svregv = (function (f) { return function () { var h = f.apply(this, arguments), F = SV.f; if (!F || F.saved || !F.sid || F.who === 'The school itself') return h;
+  var k = '<div class="sv7fq">WhatsApp', i = h.indexOf(k); return i > 0 ? h.slice(0, i) + rt97Form() + h.slice(i) : h; }; })(SHEETS.svregv);
+SVOK.svregv = (function (f) { return function () { if (!f.apply(this, arguments)) return false; var F = SV.f; if (!F || F.who === 'The school itself') return true;
+  var t = RT97K[F.rtype]; if (!t) return false; if (t === 'Existing') return !!rt97Ym(F.plast) && (!String(F.pctn || '').trim() || /^\d{1,3}(\.\d)?$/.test(String(F.pctn).trim())); if (t === 'Replacement') return !!F.repl; return true; }; })(SVOK.svregv);
+ACT.svregvsave = (function (f) { return function () { var F = SV.f; RT97D = F && F.who !== 'The school itself' && RT97K[F.rtype] ? { rtype: RT97K[F.rtype], plast: RT97K[F.rtype] === 'Existing' ? rt97Ym(F.plast) : '', pctn: RT97K[F.rtype] === 'Existing' ? String(F.pctn || '').trim() : '', repl: RT97K[F.rtype] === 'Replacement' ? F.repl : '' } : null;
+  try { return f.apply(this, arguments); } finally { RT97D = null; } }; })(ACT.svregvsave);
+svCall = (function (f) { return function (op, data) { if (op === 'svvreg' && RT97D && data) { for (var k in RT97D) data[k] = RT97D[k]; } return f.apply(this, arguments); }; })(svCall);
+var RT97 = { open: '' };
+function rt97Html() { var L = (SVM && SVM.rt97) || []; if (!L.length) return ''; var w = L.filter(function (x) { return x.c === 'Waiting'; }).length;
+  return '<div class="sv7lbl">Existing customers and replacements (' + (w ? w + ' to check' : L.length) + ')</div>' + L.map(function (x) { var on = RT97.open === x.id, rev = x.c === 'Reversed';
+    var what = x.t === 'Replacement' ? 'in place of ' + (x.rn || x.r) : 'existing customer' + (x.pl ? ', last bought ' + rt97Lb(x.pl) : '') + (x.pc ? ', about ' + x.pc + ' ctn a month' : '');
+    return '<div class="dup92' + (x.c === 'Waiting' ? ' d92hi' : '') + '"><div class="dup92t" data-act="rt97t" data-k="' + esc(x.id) + '"><b>' + esc(x.n) + '</b><span>' + esc([x.ag, what, x.c === 'Waiting' ? 'to check' : x.c === 'Kept' ? 'kept' : 'reversed – a new vendor'].filter(String).join(' · ')) + '</span></div>' +
+      (on ? '<div class="va3">' + (x.c !== 'Kept' ? '<button class="main gr" data-act="rt97" data-v="' + esc(x.id) + '" data-h="' + (rev ? 'redo' : 'keep') + '">' + (rev ? (x.t === 'Replacement' ? 'Make it a replacement again' : 'Make her existing again') : 'Keep') + '</button>' : '') + (!rev ? '<button class="ghost" data-act="rt97" data-v="' + esc(x.id) + '" data-h="reverse">Reverse – a new vendor</button>' : '') + '</div>' : '') + '</div>'; }).join(''); }
+ACT.rt97t = function (b) { RT97.open = RT97.open === b.dataset.k ? '' : b.dataset.k; drawSheet(); };
+ACT.rt97 = function (b) { var id = b.dataset.v, h = b.dataset.h, x = ((SVM && SVM.rt97) || []).filter(function (y) { return y.id === id; })[0]; if (!x) return;
+  var go = function () { bgSave('rt97', { vid: id, act: h }, 'rt97-' + id + '-' + h + '-' + uid(), (h === 'reverse' ? 'reverse ' : 'keep ') + x.n, b); x.c = h === 'reverse' ? 'Reversed' : 'Kept'; RT97.open = ''; drawSheet(); };
+  if (h === 'reverse') ask('Reverse ' + x.n + '? She counts as a new vendor' + (x.t === 'Replacement' ? ' and ' + (x.rn || x.r) + ' is back in the vendor base' : '') + '. You can change it again later.', go, 'REVERSE'); else go(); };
+dup92Html = (function (f) { return function () { return rt97Html() + f.apply(this, arguments); }; })(dup92Html);
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
