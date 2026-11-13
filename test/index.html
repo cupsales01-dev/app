@@ -11261,7 +11261,7 @@ VA18.pb = 0; VA18.sr = '';
 setInterval(function () { try { if (SHEETK !== 'vacct' || !VA.vid || VA.st !== 'ok' || VA18.busy || VA18.pb || document.hidden) return;
   if (REV !== VA18.rev || Date.now() - VA18.t > 90000) { if (!va18Busy()) vaLoad(VA.vid, true); return; }
   VA18.pb = 1; rpc({ op: 'ping', t: TOKEN }, function (r) { VA18.pb = 0; var v = r && r.rev != null ? String(r.rev) : ''; if (!v) return; var was = VA18.sr; VA18.sr = v;
-    if (was && v !== was && SHEETK === 'vacct' && !VA18.busy && !va18Busy()) vaLoad(VA.vid, true); }, function () { VA18.pb = 0; }); } catch (e) { VA18.pb = 0; } }, 5000);
+    if (was && v !== was && SHEETK === 'vacct' && !VA18.busy && !va18Busy()) vaLoad(VA.vid, true); }, function () { VA18.pb = 0; }); } catch (e) { VA18.pb = 0; } }, 10000);
 // 3: the manager's Money › Not confirmed
 var NC18 = { d: null, st: '', at: 0, p: 'all' };
 function nc18Load(force) { if (NC18.st === 'wait' || (!force && NC18.d && Date.now() - NC18.at < 60000)) return; NC18.st = 'wait';
@@ -11308,7 +11308,7 @@ var NP18 = { busy: 0, at: 0 };
 function np18Need() { if (!D || !D.me || D.viewOf) return false; var r = D.me.role;
   if (r === 'Rider' || r === 'Helper') { return Object.keys(NP91).some(function (k) { return k.indexOf('a:') !== 0 && NP91[k] && NP91[k].st === 'ask'; }) || (D.np91 || []).some(function (x) { return x.st === 'ask'; }); }
   return /^(Agent|Supervisor)$/.test(r) && (D.np91 || []).some(function (x) { return x.st === 'ask' && String(x.k || '').indexOf('np91_' + D.today + '_') === 0; }); } /* only today's asks */
-setInterval(function () { try { if (NP18.busy || document.hidden || !np18Need()) return; NP18.busy = 1;
+setInterval(function () { try { if (NP18.busy || document.hidden || !np18Need() || Date.now() - (NP18.t28 || 0) < np28Gap()) return; NP18.busy = 1; NP18.t28 = Date.now();
   readOp('np918s', {}, function (r) { NP18.busy = 0; if (!r || !r.ok || !D) return; var was = JSON.stringify(D.np91 || []), now = JSON.stringify(r.np91 || []); if (was === now) return;
     var gone = (D.np91 || []).filter(function (x) { return x.st === 'ask' && !(r.np91 || []).some(function (y) { return y.k === x.k && y.st === 'ask'; }); });
     D.np91 = r.np91 || []; (r.np91 || []).forEach(function (y) { if (y.st !== 'ask' && NP91[y.vid]) delete NP91[y.vid]; });
@@ -11532,4 +11532,69 @@ ACT.rt97 = function (b) { var id = b.dataset.v, h = b.dataset.h, x = ((SVM && SV
   var go = function () { bgSave('rt97', { vid: id, act: h }, 'rt97-' + id + '-' + h + '-' + uid(), (h === 'reverse' ? 'reverse ' : 'keep ') + x.n, b); x.c = h === 'reverse' ? 'Reversed' : 'Kept'; RT97.open = ''; drawSheet(); };
   if (h === 'reverse') ask('Reverse ' + x.n + '? She counts as a new vendor' + (x.t === 'Replacement' ? ' and ' + (x.rn || x.r) + ' is back in the vendor base' : '') + '. You can change it again later.', go, 'REVERSE'); else go(); };
 dup92Html = (function (f) { return function () { return rt97Html() + f.apply(this, arguments); }; })(dup92Html);
+// ---------------------------------------------------------------- v2.9.28 (1): every notification opens its own place
+function np28Gap() { try { var n = Date.now(), A = (D && D.np91) || []; if (typeof NP91 === 'object' && NP91 && Object.keys(NP91).some(function (k) { return k.indexOf('a:') !== 0 && NP91[k] && NP91[k].st === 'ask'; })) return 10000; return A.some(function (x) { var t = typeof x.at === 'number' ? x.at : Date.parse(x.at || ''); return x.st === 'ask' && t && n - t < 1800000; }) ? 10000 : 60000; } catch (e) { return 15000; } }
+function n28Oid(ref) { var m = String(ref || '').match(/ORD-\d{6}-\d{3}/); return m ? m[0] : ''; }
+function n28Tab(t) { if (!tabOk(t)) return false; TAB = t; render(); window.scrollTo(0, 0); return true; }
+function n28Appr(k) { var K = apprKinds().filter(function (y) { return y[0] === k; })[0]; TAB = 'mday'; MD92.s = 'appr'; MD92.o = 1; APK = K && K[2] ? k : ''; MSG = null; render(); window.scrollTo(0, 0); return true; }
+function n28Go(x) { var r = D.me.role, ref = String(x.ref || ''), t = String(x.t || ''), oid = n28Oid(ref);
+  if (D.viewOf) return false;
+  if (r === 'Supervisor') {
+    if (/^plan-/.test(ref)) return apprPlans().length ? n28Appr('plans') : n28Tab('plan');
+    if (/^endday-|^r27df-/.test(ref)) return n28Tab('plan');
+    if (/^has-/.test(ref)) return n28Appr('help');
+    if (/^ochgask-/.test(ref)) return n28Appr('chg');
+    if (/^nd-/.test(ref)) return n28Appr('nd');
+    if (/^out-/.test(ref)) return n28Appr('out');
+    if (/^(mck-|CLA-)/.test(ref)) return n28Appr('');
+    if (/^bday-/.test(ref)) return n28Tab('vendors');
+    return false; }
+  if (r === 'Agent') {
+    if (/^Not paid:/.test(t)) { if (np94L().some(function (y) { return y.k === ref; })) return false; n28Tab('today'); toast('Already answered'); return true; }
+    if (/^actfor-/.test(ref)) return n28Tab('plan');
+    if (/^HND-/.test(ref)) return n28Tab('pays');
+    if (/^r27df-/.test(ref)) return n28Tab('today');
+    if (oid) { TAB = 'today'; render(); window.scrollTo(0, 0); n18OrdOpen(oid); return true; }
+    return false; }
+  if (r === 'Rider' || r === 'Helper') {
+    if (/^HND-/.test(ref) || /^Frank received/.test(t)) return n28Tab('collect') || n28Tab('route');
+    if (/^For /.test(t)) { R72.t = 'later'; return n28Tab('route'); }
+    if (/^Ready to pick up/.test(t)) { var mine = (D.stops || []).some(function (s) { return (s.orders || []).some(function (o) { return o.oid === oid; }); });
+      if (!mine && tabOk('general')) return n28Tab('general'); R72.t = pickStops().length ? 'conf' : 'go'; return n28Tab('route'); }
+    return false; }
+  return false; }
+var N28F = { orders: { Agent: 'today', Supervisor: 'today', Warehouse: 'forders', Rider: 'route', Helper: 'route' }, payments: { Agent: 'pays', Supervisor: 'money', Warehouse: 'fcash', Rider: 'collect', Helper: 'route' },
+  plan: { Agent: 'plan', Supervisor: 'plan', Warehouse: 'fday', Rider: 'route', Helper: 'route' }, route: { Rider: 'route', Helper: 'route' }, oh: { Agent: 'today' } };
+ACT.n27go = (function (f) { return function (b) { var id = b && b.dataset && b.dataset.i, x = n27List().filter(function (y) { return y.id === id; })[0]; if (!x || !D || !D.me) return f.apply(this, arguments);
+  if (/^Not paid:/.test(x.t || '')) N28SW = 0;
+  try { n27MarkRead(x.id); SHEETK = ''; $('over').innerHTML = ''; topbar(); if (n28Go(x)) return; } catch (e) { }
+  var t0 = TAB; TAB = '__n28'; var out; try { out = f.apply(this, arguments); } catch (e) { }
+  if (TAB === '__n28') { var to = (N28F[x.tab] || {})[D.me.role]; TAB = t0; if (!(to && !SHEETK && n28Tab(to))) render(); } return out; }; })(ACT.n27go);
+/* a tap on a phone notification opens a waiting "Not paid" ask only when that is the notification tapped */
+var N28SW = 0;
+if (navigator.serviceWorker) try { navigator.serviceWorker.addEventListener('message', function (e) { var d = e.data || {}; if (d.cs !== 'bell' || !D) return; var x = d.id ? n27List().filter(function (y) { return y.id === String(d.id); })[0] : null;
+  N28SW = d.id && x && !/^Not paid:/.test(x.t || '') ? Date.now() : 0; }); } catch (e) { }
+np94Open = (function (f) { return function () { if (N28SW && Date.now() - N28SW < 15000 && !(window.event && /click|touch|pointer/.test(window.event.type))) return; return f.apply(this, arguments); }; })(np94Open);
+// ---------------------------------------------------------------- v2.9.28 (2): Her account – the kept copy shows clear, only the money buttons wait; no answer after 25 s says so
+try { document.head.insertAdjacentHTML('beforeend', '<style>.va24o{opacity:1;pointer-events:auto}.va24o button:not([data-act=vaf]):not([data-act=vacal]):not([data-act=vacalx]):not([data-act=closeO]),.va24o input:not([data-inp=vaamt]),.va24o a:not([href^="tel:"]){pointer-events:none;opacity:.45}.va28r{margin:4px 0 12px}</style>'); } catch (e) { }
+vaLoad = (function (f) { return function (vid, quiet) { var out = f.apply(this, arguments); if (!quiet && vid) { var st = VA.t28 = Date.now() + Math.random(); setTimeout(function () { if (VA.vid === vid && VA.t28 === st && VA.st === 'wait' && SHEETK === 'vacct') { VA.st = 'err'; VA.err = 'No answer yet – Google is slow right now.'; drawSheet(); } }, 25000); } return out; }; })(vaLoad);
+SHEETS.vacct = (function (f) { return function () { var h = f.apply(this, arguments); try { if (!h || VA.st !== 'err' || VA.d) return h; var i = h.indexOf('<p class="small t-red" style="margin:14px 0">'); if (i < 0) return h; var j = h.indexOf('</p>', i); if (j < 0) return h;
+  return h.slice(0, j + 4) + '<button class="main va28r" data-act="va28r">Try again</button>' + h.slice(j + 4); } catch (e) { return h; } }; })(SHEETS.vacct);
+ACT.va28r = function () { var vid = VA.vid; if (!vid) return; VA18.busy = 0; vaLoad(vid); drawSheet(); };
+// ---------------------------------------------------------------- v2.9.28 (4): the rider sees what the money is for
+function r28Parts(s) { var r2 = function (x) { return Math.round(x * 100) / 100; }, P = [];
+  (s.orders || []).forEach(function (o) { var due = Math.max(0, r2((o.value || 0) - (o.prepaid || 0))), cr = /credit/i.test(String(o.pay || '')), pad = Number(o.pad) || 0, col = cr ? 0 : pad > 0 ? Math.min(due, pad) : due;
+    var nm = 'Order ' + (o.date ? dayLbl(o.date) : '') + ((o.lines || []).length ? ' · ' + o.lines.map(function (l) { return l.qty + ' ' + l.sku; }).join(' + ') : ''), why = [];
+    if (cr) why.push('on credit'); else if (pad > 0 && pad < due - 0.004) why.push('part – the rest on credit');
+    if ((o.prepaid || 0) > 0.004) why.push(ghs(o.prepaid) + ' already paid');
+    P.push({ n: nm, w: why.join(' · '), a: col }); });
+  if ((Number(s.promised) || 0) > 0.004) P.push({ n: 'Old debt', w: 'the agent typed it', a: Number(s.promised) });
+  return P; }
+r27Collect = (function (f) { return function (s) { var h = f.apply(this, arguments); try { var P = r28Parts(s || {}); if (!P.length || (P.length === 1 && !P[0].w)) return h;
+  return h + '<div class="r28b">' + P.map(function (p) { return '<div><span>' + esc(p.n) + (p.w ? '<i>' + esc(p.w) + '</i>' : '') + '</span><b>' + ghs(p.a) + '</b></div>'; }).join('') + '</div>'; } catch (e) { return h; } }; })(r27Collect);
+try { document.head.insertAdjacentHTML('beforeend', '<style>.r28b{margin:-2px 0 10px;padding:6px 10px;border-radius:10px;background:rgba(127,127,127,.10);font-size:13px}.r28b div{display:flex;justify-content:space-between;gap:10px;padding:3px 0}.r28b span{flex:1}.r28b i{display:block;font-style:normal;opacity:.75;font-size:12px}.r28b b{white-space:nowrap}</style>'); } catch (e) { }
+/* a stop split into "at Frank" and "on the bike" counts a part payment (On delivery – part) the same way as the whole stop */
+stopPart = (function (f) { return function (s, disp) { var c = f.apply(this, arguments); try { if (!c || c === s) return c; var r2 = function (x) { return Math.round(x * 100) / 100; }, col = 0, cr = 0;
+  (c.orders || []).forEach(function (o) { var due = Math.max(0, r2((o.value || 0) - (o.prepaid || 0))), pad = Number(o.pad) || 0; if (/credit/i.test(String(o.pay || ''))) cr += due; else if (pad > 0) { col += Math.min(due, pad); cr += Math.max(0, due - pad); } else col += due; });
+  c.collect = r2(col); c.credit = r2(cr); c.ask = r2(col + (c.promised || 0)); } catch (e) { } return c; }; })(stopPart);
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
