@@ -3374,7 +3374,7 @@ SHEETS.ord = function () { var o = oById(OSEL); if (!o) return ''; var st = oSta
   var K = oKids(o); if (K.length) h += '<div class="o2chg" style="background:#F6F7F9;border-color:var(--line);color:var(--ink)"><b>One order, from ' + (K.length + 1) + ' places</b>' + [o].concat(K).map(function (x) { return '<div class="o2l" style="border:0;padding:3px 0"><span>' + esc(x.rel ? x.rel.from : 'Omni') + '</span><span>' + esc(oLinesTxt(x.lines)) + '</span></div>'; }).join('') + '<div class="small muted">One total and one balance for her.</div></div>';
   h += '<div class="o2l"><span>Value</span><b>' + ghs(del && c.value ? c.value : oValAll(o)) + '</b></div><div class="o2l"><span>She pays</span><b>' + esc(oPayWord(o)) + '</b></div>';
   if (del) h += '<div class="o2l"><span>Paid</span><b>' + ghs(c.paid) + '</b></div><div class="o2l"><span>Still owes</span><b class="' + (c.owing > 0.004 ? 't-red' : 't-green') + '">' + (c.owing > 0.004 ? ghs(c.owing) : 'nothing') + '</b></div>';
-  if (o.promised) h += '<div class="o2l"><span>Old debt she will pay</span><b>' + ghs(o.promised) + '</b></div>';
+  if (o.promised) h += '<div class="o2l"><span>Old debt she will pay</span><b>' + ghs(o.promised) + '</b></div>' + pf32Det(o);
   h += '<div class="o2l"><span>Needed</span><b>' + esc(o.dlv ? dayLbl(o.dlv) : 'As soon as possible') + (o.time ? ', ' + esc(o.time) : '') + '</b></div>';
   h += o27MoreExtra(o); /* v2.7.0: credit checks, the change made */
   if ((o.pmsg || []).length) h += '<div class="small" style="margin-top:8px"><b>To Prince:</b> ' + o.pmsg.map(function (m) { return esc((m.k === 'call' ? 'Called' : m.t) + (m.note ? ' – ' + m.note : '') + ' (' + oTm(m.at) + ')'); }).join('; ') + '</div>';
@@ -3618,7 +3618,7 @@ function pgNew2() {
     if (first) h += x.cc && !x.ccOpen ? '<div class="n2ok" data-act="nccopen">✓ Credit checks confirmed' + (String(x.ccNote || '').trim() ? ' · ' + esc(String(x.ccNote).trim().slice(0, 40)) : '') + ' <span>▾</span></div>' : '<div class="n2cc"><b>First order on credit: check her first</b><div class="small">If she does not pay, you answer for it.</div><label class="o2tk"><input type="checkbox" class="chk" data-chg="ncc"' + (x.cc ? ' checked' : '') + '> ' + esc(NCC_TXT) + '</label><input data-inp="nccn" value="' + esc(x.ccNote) + '" placeholder="Anything else? (optional)">' + (x.cc ? '<a class="n2a" data-act="nccclose">Fold ▴</a>' : '<div class="small t-red">Tick to send on credit</div>') + '</div>'; }
   // old debt
   if (v.debt > 0.004) { h += '<div class="n2f" data-act="npopen"><span><b>She\'ll also pay old debt</b> · she owes ' + ghs(v.debt) + (x.promised > 0 ? ' · <b>' + ghs(x.promised) + '</b>' : '') + '</span><span>' + (x.pOpen ? '▴' : '▾') + '</span></div>';
-    if (x.pOpen) h += '<div class="o2cl"><div class="grow small muted">Prince collects it with the order</div><button class="o2pm" data-act="nprom" data-d="-10">−</button><input class="n2amt" inputmode="decimal" data-inp="nprm" data-chg="nprm" value="' + (Number(x.promised) || 0) + '"><button class="o2pm" data-act="nprom" data-d="10">+</button></div>';
+    if (x.pOpen) h += '<div class="o2cl"><div class="grow small muted">Prince collects it with the order</div><button class="o2pm" data-act="nprom" data-d="-10">−</button><input class="n2amt" inputmode="decimal" data-inp="nprm" data-chg="nprm" value="' + (Number(x.promised) || 0) + '"><button class="o2pm" data-act="nprom" data-d="10">+</button></div>' + pf32Html(x);
     if ((Number(v.days) || 0) > 21) h += '<div class="small t-red" style="margin:2px">Old debt ' + v.days + ' days: collect the old debt first.</div>'; }
   // when
   var days = dlvDays(), dshow = o27Days(x, v, days); /* v2.7.0: tomorrow, then her ★ day */
@@ -3711,7 +3711,7 @@ document.addEventListener('pointercancel', function () { if (NSW) { NSW.row.styl
 function nSentence(x, v) { var pd = x.paid == null ? nVal(x) : x.paid, val = nVal(x);
   return 'Send ' + nLinesTxt(x.lines) + ' to ' + v.name + '. ' + nCt(nCtn(x)) + ' · ' + ghs(val) + '. ' +
     (x.pay === 'CREDIT' ? 'Credit, due ' + dayLbl(addDays(x.day && x.day !== 'today' ? x.day : D.today, 7)) + '.' : x.pay === 'NOW' ? 'Paid now ' + ghs(pd) + (x.how === 'MOMO' ? ' by MoMo to Frank' : ' – cash with you') + (pd < val - 0.004 ? ', the rest ' + ghs(val - pd) + ' on delivery' : '') + '.' : 'Cash on delivery.') +
-    (x.promised > 0 ? ' Old debt ' + ghs(x.promised) + ' too.' : '') + ' Needed ' + (x.day === 'today' ? 'today' : dayLbl(x.day)) + ', ' + nTimeTxt(x, v).toLowerCase() + '.' + (x.urg ? ' 🚩 Urgent: ' + nUrgTxt(x) + '.' : ''); }
+    (x.promised > 0 ? ' Old debt ' + ghs(x.promised) + pf32Txt(x) + ' too.' : '') + ' Needed ' + (x.day === 'today' ? 'today' : dayLbl(x.day)) + ', ' + nTimeTxt(x, v).toLowerCase() + '.' + (x.urg ? ' 🚩 Urgent: ' + nUrgTxt(x) + '.' : ''); }
 function nTimeTxt(x, v) { return x.time === NTIMES[0] && nClose(v) ? 'Any time before she closes (' + nHm(nClose(v)) + ')' : x.time; }
 function nUrgTxt(x) { return x.urgWhy === 'Other' ? 'Other: ' + String(x.urgNote).replace(/\s+/g, ' ').trim() : x.urgWhy; }
 ACT.nchk = function () { var x = nDr(), v = vend(x.vid); if (!v || nMissing(x, v)) return; sheetOpen('nchk'); };
@@ -3727,7 +3727,7 @@ ACT.nsend = function () { var x = nDr(), v = vend(x.vid); if (!v || nMissing(x, 
   if (!x.lines.some(function (l) { return l.qty > 0; })) { SHEETK = ''; $('over').innerHTML = ''; ls(nKey(), null); NUNDO = null; nSentAdd({ vid: v.id, sid: x.sid, name: v.name, ctn: 0, val: 0, day: '', urg: 0, help: nHelpN(x) }); NJUST = true; NQ = ''; NF = ''; render(); window.scrollTo(0, 0); return; }
   var val = nVal(x), pd = x.pay === 'NOW' ? (x.paid == null ? val : Math.min(x.paid, val)) : 0, pay = x.pay === 'NOW' ? (x.how === 'MOMO' ? 'PAID_MOMO' : 'PAID_ME') : x.pay;
   var rk = pay === 'PAID_ME' && pd > 0 ? rkNew() : '';
-  var data = { vendors: [{ vid: v.id, lines: x.lines.filter(function (l) { return l.qty > 0; }).map(function (l) { return { sku: l.sku, qty: l.qty }; }), pay: pay, paid: pd, promised: Number(x.promised) || 0, note: String(x.note || '').trim(), dlv: x.day === 'today' ? '' : x.day, rk: rk,
+  var data = { vendors: [{ vid: v.id, lines: x.lines.filter(function (l) { return l.qty > 0; }).map(function (l) { return { sku: l.sku, qty: l.qty }; }), pay: pay, paid: pd, promised: Number(x.promised) || 0, pf: pf32Send(x), note: String(x.note || '').trim(), dlv: x.day === 'today' ? '' : x.day, rk: rk,
     via: x.via === 'Other' ? 'Other: ' + String(x.viaNote).replace(/\s+/g, ' ').trim() : x.via, time: nTimeTxt(x, v), urg: x.urg ? nUrgTxt(x) : '', cc: x.pay === 'CREDIT' && nNewV(v) && x.cc ? 1 : 0, ccNote: x.ccNote || '' }] };
   SHEETK = ''; $('over').innerHTML = ''; ls('cs_nsent_' + x.sid, JSON.stringify(x)); ls(nKey(), null); NUNDO = null; nSentAdd({ vid: v.id, sid: x.sid, name: v.name, ctn: nCtn(x), val: val, day: x.day, urg: x.urg ? 1 : 0, help: nHelpN(x) }); NJUST = true; NQ = ''; NF = '';
   bgSave('orders', data, x.sid, 'order for ' + v.name, null, true); render(); window.scrollTo(0, 0);
@@ -4290,7 +4290,7 @@ function vzSaveVisit() {
   if (ordered) { var miss = nMissing(x, v); if (miss) { SHEETK = ''; $('over').innerHTML = ''; X.tab = 'o'; vzDraw(); say('Order: ' + miss); return; } }
   // the order first (the visit names it), then the visit
   if (ordered) { var val = nVal(x), pd = x.pay === 'NOW' ? (x.paid == null ? val : Math.min(x.paid, val)) : 0, pay = x.pay === 'NOW' ? (x.how === 'MOMO' ? 'PAID_MOMO' : 'PAID_ME') : x.pay, rk = pay === 'PAID_ME' && pd > 0 ? rkNew() : '';
-    var od = { vendors: [{ vid: v.id, lines: x.lines.filter(function (l) { return l.qty > 0; }).map(function (l) { return { sku: l.sku, qty: l.qty }; }), pay: pay, paid: pd, promised: Math.min(Number(x.promised) || 0, Math.max(0, vzLeft())), note: tx(x.note), dlv: x.day === 'today' ? '' : x.day, rk: rk, via: 'At her spot', time: nTimeTxt(x, v), urg: x.urg ? nUrgTxt(x) : '', cc: x.pay === 'CREDIT' && nNewV(v) && x.cc ? 1 : 0, ccNote: x.ccNote || '' }] };
+    var od = { vendors: [{ vid: v.id, lines: x.lines.filter(function (l) { return l.qty > 0; }).map(function (l) { return { sku: l.sku, qty: l.qty }; }), pay: pay, paid: pd, promised: Math.min(Number(x.promised) || 0, Math.max(0, vzLeft())), pf: pf32Send(x), note: tx(x.note), dlv: x.day === 'today' ? '' : x.day, rk: rk, via: 'At her spot', time: nTimeTxt(x, v), urg: x.urg ? nUrgTxt(x) : '', cc: x.pay === 'CREDIT' && nNewV(v) && x.cc ? 1 : 0, ccNote: x.ccNote || '' }] };
     osid = x.sid; ls('cs_nsent_' + x.sid, JSON.stringify(Object.assign({}, x, { via: 'At her spot' }))); nSentAdd({ vid: v.id, sid: x.sid, name: v.name, ctn: vzCtn(x), val: val, day: x.day, urg: x.urg ? 1 : 0 });
     bgSave('orders', od, x.sid, 'order for ' + v.name, null, true); n90CodeSave(x, v);
     if (rk) rcptOffer({ rk: rk, rids: [], vendor: v.name, phone: v.phone || '', amount: pd, by: D.me.first }); }
@@ -8015,7 +8015,7 @@ function pgNew2() {
   h += nHelpRow(x); // v2.8.13
   if (nHasL(x) || !nHelpN(x)) h += n71Pay(x, v, { nw: 1 });
   if (v.debt > 0.004) { h += '<div class="n2f" data-act="npopen"><span><b>She\'ll also pay old debt</b> · she owes ' + ghs(v.debt) + (x.promised > 0 ? ' · <b>' + ghs(x.promised) + '</b>' : '') + '</span><span>' + (x.pOpen ? '▴' : '▾') + '</span></div>';
-    if (x.pOpen) h += '<div class="o2cl"><div class="grow small muted">Prince collects it with the order</div><button class="o2pm" data-act="nprom" data-d="-10">−</button><input class="n2amt" inputmode="decimal" data-inp="nprm" data-chg="nprm" value="' + (Number(x.promised) || 0) + '"><button class="o2pm" data-act="nprom" data-d="10">+</button></div>';
+    if (x.pOpen) h += '<div class="o2cl"><div class="grow small muted">Prince collects it with the order</div><button class="o2pm" data-act="nprom" data-d="-10">−</button><input class="n2amt" inputmode="decimal" data-inp="nprm" data-chg="nprm" value="' + (Number(x.promised) || 0) + '"><button class="o2pm" data-act="nprom" data-d="10">+</button></div>' + pf32Html(x);
     if ((Number(v.days) || 0) > 21) h += '<div class="small t-red" style="margin:2px">Old debt ' + v.days + ' days: collect the old debt first.</div>'; }
   h += nWhere(x, v); // v2.8.13
   if (nHasL(x) || !nHelpN(x)) h += n71When(x, v, true);
@@ -8128,7 +8128,7 @@ function vzOrder(v) {
   if (!x.lines.length) return h + (VZ.o.none ? '<div class="vzok">No order today.</div>' : '') + vzNextBtn('o', '', VZ.o.none ? '' : 'No order today');
   h += n71Pay(x, v, { left: left });
   if (left > 0.004) { h += '<div class="n2f" data-act="npopen"><span><b>She\'ll also pay old debt</b> · she owes ' + ghs(left) + (x.promised > 0 ? ' · <b>' + ghs(Math.min(x.promised, left)) + '</b>' : '') + '</span><span>' + (x.pOpen ? '▴' : '▾') + '</span></div>';
-    if (x.pOpen) h += '<div class="o2cl"><div class="grow small muted">Prince collects it with the order</div><button class="o2pm" data-act="nprom" data-d="-10">−</button><input class="n2amt" inputmode="decimal" data-inp="nprm" data-chg="nprm" value="' + (Number(x.promised) || 0) + '"><button class="o2pm" data-act="nprom" data-d="10">+</button></div>'; } // v2.8.35
+    if (x.pOpen) h += '<div class="o2cl"><div class="grow small muted">Prince collects it with the order</div><button class="o2pm" data-act="nprom" data-d="-10">−</button><input class="n2amt" inputmode="decimal" data-inp="nprm" data-chg="nprm" value="' + (Number(x.promised) || 0) + '"><button class="o2pm" data-act="nprom" data-d="10">+</button></div>' + pf32Html(x); } // v2.8.35
   h += n71When(x, v, false);
   h += '<a class="vzlk" data-act="vzempty">Empty the basket</a>';
   var nx = vzNext('o'), c = vzCtn(x), val = nVal(x), miss = nMissing(x, v);
@@ -11588,7 +11588,9 @@ function r28Parts(s) { var r2 = function (x) { return Math.round(x * 100) / 100;
     if (cr) why.push('on credit'); else if (pad > 0 && pad < due - 0.004) why.push('part – the rest on credit');
     if ((o.prepaid || 0) > 0.004) why.push(ghs(o.prepaid) + ' already paid');
     P.push({ n: nm, w: why.join(' · '), a: col }); });
-  if ((Number(s.promised) || 0) > 0.004) P.push({ n: 'Old debt', w: 'the agent typed it', a: Number(s.promised) });
+  var pm = r2(Number(s.promised) || 0), G = {}, gk = []; (s.orders || []).forEach(function (o) { (o.pf || []).forEach(function (x) { var k = x.d || ''; if (!(k in G)) { G[k] = 0; gk.push(k); } G[k] += Number(x.a) || 0; }); }); /* v2.9.32: the orders the agent ticked */
+  gk.sort().forEach(function (k) { var a = Math.min(r2(G[k]), pm); if (a <= 0.004) return; P.push({ n: 'Old debt · ' + (k ? 'order of ' + dayLbl(k) : 'an earlier order'), w: 'the agent ticked it', a: a }); pm = r2(pm - a); });
+  if (pm > 0.004) P.push({ n: 'Old debt', w: 'the agent typed it', a: pm });
   return P; }
 r27Collect = (function (f) { return function (s) { var h = f.apply(this, arguments); try { var P = r28Parts(s || {}); if (!P.length || (P.length === 1 && !P[0].w)) return h;
   return h + '<div class="r28b">' + P.map(function (p) { return '<div><span>' + esc(p.n) + (p.w ? '<i>' + esc(p.w) + '</i>' : '') + '</span><b>' + ghs(p.a) + '</b></div>'; }).join('') + '</div>'; } catch (e) { return h; } }; })(r27Collect);
@@ -11641,4 +11643,37 @@ setInterval(function () { try { if (D) { va31Restore(); va31Get(); } } catch (e)
 (function () { var i = -1; MVF.forEach(function (f, j) { if (f[0] === 'owes') i = j; }); MVF.splice(i < 0 ? MVF.length : i + 1, 0, ['owes2', '2+ orders unpaid']); })();
 mvOk = (function (f) { return function (v, k) { if (k === 'owes2') return v.st !== 'closed' && v.ow > 0 && (v.on || 0) >= 2; return f.apply(this, arguments); }; })(mvOk);
 mvSort = (function (f) { return function (k) { if (k !== 'owes2') return f.apply(this, arguments); return function (a, b) { return ((b.on || 0) - (a.on || 0)) || ((b.ow || 0) - (a.ow || 0)); }; }; })(mvSort);
+// ---------------------------------------------------------------- v2.9.32 (2): she ticks the orders the old-debt money pays
+function pf32Rows(x) { var v = x && x.vid && typeof pk46On === 'function' ? pk46On(x.vid) : null; return v ? pk46Rows(v) : []; }
+function pf32K(r) { return r.refs.join(','); }
+function pf32Amt(x) { var p = Number(x && x.promised) || 0; if (VZ && !VZ.done && TAB === 'visit') p = Math.min(p, Math.max(0, vzLeft())); return pk46r(p); }
+function pf32Auto(x) { var R = pf32Rows(x), left = pf32Amt(x); x.pf = {}; R.forEach(function (r) { if (left <= 0.004) return; var a = pk46r(Math.min(r.o, left)); x.pf[pf32K(r)] = String(a); left = pk46r(left - a); }); }
+function pf32St(x) { var R = pf32Rows(x), P = x.pf || {}, t = 0, bad = false, all = R.length > 0;
+  R.forEach(function (r) { var k = pf32K(r); if (!(k in P)) { all = false; return; } var a = pk46r(num(P[k])); if (!(a > 0 && a <= r.o + 0.004)) bad = true; if (Math.abs(a - r.o) > 0.004) all = false; t += a > 0 ? a : 0; });
+  t = pk46r(t); var rest = pk46r(pf32Amt(x) - t); return { R: R, t: t, rest: rest, ok: !bad && (Math.abs(rest) < 0.005 || (rest > 0 && all)) }; }
+function pf32Sum(s) { return s.rest > 0.004 && !s.ok ? '<b class="t-red">' + ghs(s.rest) + ' not placed yet</b> – tick an order or type.' : s.rest < -0.004 ? '<b class="t-red">' + ghs(-s.rest) + ' too much</b> – lower a number.' : s.ok && s.t > 0 ? '<b class="t-green">' + ghs(s.t) + ' placed ✓</b>' : '<b class="t-red">Type what it pays.</b>'; }
+function pf32Html(x) { if (!(pf32Amt(x) > 0.004)) return ''; if (!x.pf) { pf32Auto(x); nSave(x); } var s = pf32St(x), P = x.pf || {}; if (!s.R.length) return '';
+  return '<div class="pf32"><div class="small" style="font-weight:700;margin:2px 2px 6px">Which orders does it pay?</div>' + s.R.map(function (r) { var k = pf32K(r), on = k in P;
+    return '<div class="pk46r' + (on ? ' on' : '') + '"><button class="pk46t" data-act="pf32t" data-k="' + esc(k) + '"><i>' + (on ? '✓' : '') + '</i><span><b>' + esc(pk46Lbl(r)) + '</b><small>' + esc(pk46Sub(r)) + '</small></span></button>' +
+      (on ? '<div class="pk46a"><span class="small">Pays</span><input inputmode="decimal" data-inp="pf32a" data-chg="pf32a" data-k="' + esc(k) + '" value="' + esc(P[k]) + '"></div>' : '') + '</div>'; }).join('') +
+    '<div class="small" id="pf32s" style="margin:2px 2px 8px">' + pf32Sum(s) + '</div></div>'; }
+function pf32Send(x) { try { var s = pf32St(x), P = x.pf || {}; if (!s.R.length || !(pf32Amt(x) > 0.004)) return null;
+  var L = s.R.filter(function (r) { var k = pf32K(r); return k in P && pk46r(num(P[k])) > 0; }).map(function (r) { return { r: r.refs, a: pk46r(num(P[pf32K(r)])) }; }); return L.length ? L : null; } catch (e) { return null; } }
+function pf32Txt(x) { try { var s = pf32St(x), P = x.pf || {}, n = s.R.filter(function (r) { return pf32K(r) in P; }).map(function (r) { return pk46Lbl(r).replace(/ order$/, ''); }); return n.length ? ' for ' + (n.length > 1 ? 'the orders of ' : 'the order of ') + n.join(', ') : ''; } catch (e) { return ''; } }
+function pf32Det(o) { var G = {}, gk = []; (o.pf || []).forEach(function (x) { var k = x.d || ''; if (!(k in G)) { G[k] = 0; gk.push(k); } G[k] += Number(x.a) || 0; });
+  return gk.sort().map(function (k) { return '<div class="small muted" style="margin:-2px 2px 6px;text-align:right">' + ghs(G[k]) + ' for the order of ' + esc(k ? dayLbl(k) : 'earlier') + '</div>'; }).join(''); }
+ACT.pf32t = function (b) { var x = nDr(), k = b.dataset.k, r = pf32Rows(x).filter(function (y) { return pf32K(y) === k; })[0]; if (!r) return; x.pf = x.pf || {};
+  if (k in x.pf) delete x.pf[k]; else { var s = pf32St(x), f = pk46r(Math.min(r.o, Math.max(0, s.rest))); x.pf[k] = f > 0 ? String(f) : ''; }
+  nSave(x); render(); if (x.pf[k] === '') setTimeout(function () { var el = document.querySelector('[data-inp=pf32a][data-k="' + k + '"]'); if (el) el.focus(); }, 50); };
+INP.pf32a = function (el) { var x = nDr(); x.pf = x.pf || {}; x.pf[el.dataset.k] = el.value; nSave(x); var sm = document.getElementById('pf32s'); if (sm) sm.innerHTML = pf32Sum(pf32St(x)); };
+CHG.pf32a = function () { render(); };
+INP.nprm = (function (f) { return function () { var out = f.apply(this, arguments); try { var x = nDr(); pf32Auto(x); nSave(x); } catch (e) { } return out; }; })(INP.nprm);
+ACT.nprom = (function (f) { return function () { var out = f.apply(this, arguments); try { var x = nDr(); pf32Auto(x); nSave(x); render(); } catch (e) { } return out; }; })(ACT.nprom);
+nMissing = (function (f) { return function (x, v) { var m = f.apply(this, arguments); if (m) return m; try { if (pf32Amt(x) > 0.004 && pf32Rows(x).length && !pf32St(x).ok) return 'Old debt: tick the orders it pays'; } catch (e) { } return m; }; })(nMissing);
+// ---------------------------------------------------------------- v2.9.32 (S1): "Update now" – the phone waits for the background run
+ACT.mgnow = function () { if (MR.up || viewBlock('mrepnow')) return; MR.up = Date.now(); render();
+  var done = function () { MR.up = 0; MR.C = {}; render(); };
+  readOp('mrepnow', {}, function (x) { if (!x || x.error) { MR.up = 0; render(); if (x && x.error) toast(x.error, 'err'); return; } if (!x.up32) { done(); return; } mr32Wait(done); }, function () { mr32Wait(done); }); };
+function mr32Wait(done) { setTimeout(function () { if (!MR.up) return; if (Date.now() - MR.up > 300000) { done(); return; }
+  readOp('mrep32st', {}, function (x) { if (x && x.ok && !x.up32) { done(); toast('Updated'); return; } mr32Wait(done); }, function () { mr32Wait(done); }); }, 15000); }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
