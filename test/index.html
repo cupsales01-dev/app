@@ -1118,7 +1118,7 @@ function flush(after) {
     if (!r || r.auth) { if (r && r.auth) authScreen(r); topbar(); after && after(); return; } // kept on the phone; sent after the PIN
     var busy = r.error && r.retry, broke = r.error && /went wrong/i.test(r.error);
     if (busy || (broke && (FAILS[x.sid] = (FAILS[x.sid] || 0) + 1) < 3)) { clearTimeout(RETRYT); RETRYT = setTimeout(function () { flush(); }, busy ? 20000 : 30000); topbar(); after && after(); return; } // kept; tried again soon
-    setQ(queue().filter(function (y) { return y.sid !== x.sid; }));
+    setQ(queue().filter(function (y) { return y.sid !== x.sid; })); try { sv39Fin(x.op, x.data, r); } catch (e39) { } // v2.9.39
     if (r.ask) { whenFree(function () { dlgOpen('About: ' + x.label + '\n\n' + r.ask, null, 'YES, SAVE', 'No', function () { x.data.sure = (x.data.sure ? x.data.sure + ',' : '') + (r.code || 'yes'); var q2 = queue(); q2.unshift(x); setQ(q2); render(); toast('✓ Sent'); flush(); }, function () { toast('Not saved: ' + x.label, 'err'); later(); }); }); }
     else if (r.error) { if (x.op === 'orders') nBack(x); whenFree(function () { dlgOpen('NOT SAVED – ' + x.label + ':\n\n' + r.error, null, 'OK', null, null); }); } // v2.6.3: back on New order
     else {
@@ -9617,7 +9617,7 @@ ACT.dp32go = function () { var G = DP.go, X = DP.d; if (!G || !X) return; var x 
   bgSave('mpaygo32', { src: G.src, amt: a, from: G.from, to: G.to, proof: G.proof, note: String(G.note || '').trim() }, 'dp32-' + uid(), 'Saved', null, true);
   if (x.om) x.held = Math.round((x.held - a) * 100) / 100; else { x.left = Math.round((x.left - a) * 100) / 100; if (G.from === 'cash') x.held = Math.round((x.held - a) * 100) / 100; else X.prof.avail = Math.round((X.prof.avail - a) * 100) / 100; }
   X.pays.unshift({ day: D.today, src: G.src, sn: x.name, amt: a, pf: !x.om && G.from === 'profit' ? 1 : 0, to: x.om ? (G.to === 'frank' ? 'Frank' : 'Accountant') : '', st: x.om && G.to === 'frank' ? 'Sent' : 'Confirmed', note: '' });
-  DP.go = null; SHEETK = ''; $('over').innerHTML = ''; DS.C = {}; render(); setTimeout(function () { DP.st = ''; if (TAB === 'money') render(); }, 6000); };
+  DP.go = null; SHEETK = ''; $('over').innerHTML = ''; DS.C = {}; render(); };
 // ---------------------------------------------------------------- v2.8.20: Prince's last place – in the order's details (on the way), Team › Prince, and always fresh while his app is open
 var RLW = null, RLS = { t: 0, lat: 0, lng: 0 };
 function rl89Dist(a, b, c, d) { var R = 6371000, x = (c - a) * Math.PI / 180, y = (d - b) * Math.PI / 180 * Math.cos((a + c) / 2 * Math.PI / 180); return Math.sqrt(x * x + y * y) * R; }
@@ -11794,5 +11794,24 @@ ACT.nc34w = function (b) { NC34.w = b.dataset.v; render(); };
 ACT.nc34s = function (b) { var v = b.dataset.v; if (!v) NC34.s = {}; else if (NC34.s[v]) delete NC34.s[v]; else NC34.s[v] = 1; render(); };
 ACT.nc34p = function (b) { var v = b.dataset.v; if (!v) NC34.p = {}; else if (NC34.p[v]) delete NC34.p[v]; else NC34.p[v] = 1; render(); };
 ACT.nc34d = function (b) { NC34.dw = b.dataset.v; NC34.f = NC34.t = ''; render(); };
+
+/* v2.9.39: money screens follow every save – rows confirmed leave Not confirmed at once, kept Her account copies are dropped, Pay re-reads after the save */
+var MON39 = { sf95: 1, receive: 1, fcount: 1, mpaygo32: 1, mbyogo92: 1, mpayfix: 1, payment: 1, clr91: 1, fh918: 1, fkremit: 1, msplit89: 1, bkundo42: 1, bkfix92: 1, mfixdel: 1, msrc32: 1, mdisc89: 1 };
+function sv39Rids(op, d) { var R = []; if (!d) return R; if (d.rid) R.push(String(d.rid)); (d.rids || []).forEach(function (x) { R.push(String(x)); }); (d.items || []).forEach(function (i) { if (i && i.id) R.push(String(i.id)); }); return R; }
+function sv39Vids(d) { var V = []; if (!d) return V; if (d.vid) V.push(String(d.vid)); (d.items || []).forEach(function (i) { if (i && i.vid) V.push(String(i.vid)); }); if (typeof VA !== 'undefined' && VA.vid && SHEETK === 'vacct') V.push(VA.vid); return V; }
+function sv39Drop(V) { try { var A = va24All(), all = !V.length; Object.keys(VA18.c || {}).forEach(function (k) { if (all || V.indexOf(k) >= 0) delete VA18.c[k]; });
+  Object.keys(A).forEach(function (k) { if (all || V.indexOf(k) >= 0) delete A[k]; }); (all ? Object.keys(VA24.t) : V).forEach(function (k) { VA24.t[k] = Date.now(); }); localStorage.setItem(va24Key(), JSON.stringify(A)); } catch (e) { } }
+/* the tap: the Not confirmed rows it covers go at once (the list is read again when the save is done) */
+bgSave = (function (f) { return function (op, d) { var out = f.apply(this, arguments); try { if ((op === 'sf95' || op === 'receive') && NC18.d && NC18.d.list) { var R = sv39Rids(op, d), am = {};
+    (d.items || []).forEach(function (i) { if (i && i.id) am[i.id] = (am[i.id] || 0) + Number(i.amt || 0); });
+    var tot = 0; if (d.rids) NC18.d.list.forEach(function (x) { if (R.indexOf(x.rid) >= 0) tot += x.a; });
+    NC18.d.list = NC18.d.list.filter(function (x) { if (R.indexOf(x.rid) < 0) return true; if (op === 'sf95' && x.st !== 's') return true; if (d.rids) return Number(d.amt || 0) < tot - 0.004; if (op === 'sf95' && d.amt && Number(d.amt) < x.a - 0.004) return true; if (am[x.rid] && am[x.rid] < x.a - 0.004) return true; return false; });
+    if (TAB === 'money' && !SHEETK) render(); } } catch (e) { } return out; }; })(bgSave);
+/* the save is done: read again what it changed */
+function sv39Fin(op, d, r) { if (!MON39[op]) return; sv39Drop(sv39Vids(d || {}).length && op !== 'mpaygo32' && op !== 'mbyogo92' && op !== 'fcount' ? sv39Vids(d) : []);
+  try { NC18.at = 0; if (typeof NC18C !== 'undefined') NC18C.k = ''; } catch (e) { }
+  try { if (!queue().some(function (q) { return q.op === 'mpaygo32' || q.op === 'mbyogo92'; })) { DP.st = ''; BY.st = ''; } } catch (e) { } /* the Pay numbers are read again once no pay is still on its way */
+  try { if (SHEETK === 'vacct' && VA.vid && !(VA18 && VA18.busy)) vaLoad(VA.vid, true); } catch (e) { }
+  if (TAB === 'money' && !SHEETK) render(); }
 CHG.nc34c = function (el) { var v = String(el.value || ''); if (el.dataset.f === 'from') { NC34.f = v; if (!NC34.t || NC34.t < v) NC34.t = v; } else { NC34.t = v; if (!NC34.f || NC34.f > v) NC34.f = v; } NC34.dw = NC34.f ? 'cal' : 'all'; render(); };
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
