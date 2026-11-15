@@ -3244,7 +3244,7 @@ function oStage(o) {
   if (s === 'Manager check') return { k: 'mgr', w: 'Waiting for the manager' }; // v2.8.12
   if (s === 'Submitted') return { k: 'frank', w: 'Waiting for Frank' + (o.fpos ? ' · ' + nth(o.fpos) : '') };
   if (rel && o.hold) return { k: 'prob', w: 'Not delivered · ' + (o.wants ? 'manager deciding' : 'ask her') };
-  if (rel && o.disp) return { k: 'prince', w: 'With Prince' + (o.ppos ? ' · ' + nth(o.ppos) + ' stop' : '') + (s === 'Partly released' && !oKids(o).length ? ' · part sent' : '') };
+  if (rel && o.disp) return { k: 'prince', w: 'With ' + (o.rdn || 'Prince') + (o.ppos ? ' · ' + nth(o.ppos) + ' stop' : '') + (s === 'Partly released' && !oKids(o).length ? ' · part sent' : '') };
   if (rel) return { k: 'appr', w: 'Frank approved' + (s === 'Partly released' && !oKids(o).length ? ' · part' : '') + (o.dlv ? ' · for ' + dayLbl(o.dlv) : '') };
   if (s === 'Delivered') { if (/^Not correct/.test(c.vans || '') && !c.decision) return { k: 'prob', w: 'She says it is not right · manager deciding' }; return { k: 'del', w: 'Delivered · ' + (c.owing > 0.004 ? 'owes ' + ghs(c.owing) : 'paid') }; }
   if (s === 'Failed') return { k: 'prob', w: 'Came back to Frank' };
@@ -3329,7 +3329,7 @@ function oPayWord(o) { var t = o.pay === 'Credit' ? 'Credit' : 'On delivery'; if
 function oBox(o) { var st = oStage(o), c = o.outcome || {}, t = '', s = '';
   if (st.k === 'frank') { t = o.status === 'Sending' ? (noSig() ? '✓ Saved on your phone' : 'Waiting for Frank') : o.fpos ? nth(o.fpos) + ' in Frank\'s list' : 'Waiting for Frank'; s = o.status === 'Sending' ? (noSig() ? 'It goes to Frank by itself.' : '') : 'Waiting for Frank' + (oWaitDays(o) ? ' · ' + oWaitDays(o) + ' days' : ''); }
   else if (st.k === 'appr') { t = 'Frank approved'; s = 'Prince takes it ' + (o.dlv && o.dlv > D.today ? dayLbl(o.dlv) : 'on his next run') + (o.time ? ', ' + o.time : ''); }
-  else if (st.k === 'prince') { t = o.ppos ? nth(o.ppos) + ' in Prince\'s line' : 'With Prince'; s = o27Line(o); } /* v2.7.0: stops before hers · expected */
+  else if (st.k === 'prince') { t = o.ppos ? nth(o.ppos) + ' in ' + esc(o.rdn || 'Prince') + '\'s line' : 'With ' + esc(o.rdn || 'Prince'); s = o27Line(o); } /* v2.7.0: stops before hers · expected */
   else if (st.k === 'del') { t = 'Delivered'; s = esc(dayLbl(c.at)) + (c.time ? ' ' + c.time : '') + (c.owing > 0.004 ? ' · she owes ' + ghs(c.owing) : ' · paid'); }
   else if (o.hold) { t = 'Not delivered'; s = o.wants ? 'She wants: ' + o.wants.w + ' · manager deciding' : 'Manager deciding – ask her what she wants'; }
   else if (st.k === 'prob' && o.status === 'Delivered') { t = 'She says it is not right'; s = (c.vcom ? '“' + c.vcom + '” · ' : '') + 'the manager decides'; }
@@ -3362,7 +3362,7 @@ SHEETS.ord = function () { var o = oById(OSEL); if (!o) return ''; var st = oSta
   var S = [['Sent', oTm(o.sentAt) || dayLbl(o.date), (o.via ? o.via : ''), true]];
   if (rej) S.push([/^Manager:/.test(o.why || '') ? 'Manager declined' : 'Frank declined', '', String(o.why || '').replace(/^Manager:\s*/, ''), true]);
   else S.push(['Frank approved', o.relAt ? oTm(o.relAt) : '', o.rel ? 'from ' + (o.rel.from || 'Omni') : 'waiting', rel]);
-  if (!rej) S.push(['With Prince', o.dispAt ? oTm(o.dispAt) : '', o.disp ? '' : 'not yet', !!o.disp]);
+  if (!rej) S.push(['With ' + (o.rdn || 'Prince'), o.dispAt ? oTm(o.dispAt) : '', o.disp ? '' : 'not yet', !!o.disp]);
   if (o.hold) S.push(['Not delivered', '', oNdWhy(o).replace(/^not delivered /, ''), true]);
   else if (!rej) S.push(['Delivered', del ? dayLbl(c.at) + ' ' + (c.time || '') : '', del && c.rider ? 'by ' + c.rider : '', del]);
   if (del) S.push(['She checked the receipt', c.vat ? oTm(c.vat) : '', /^Confirmed/.test(c.vans || '') ? '✓ she says it is right' : /^Not correct/.test(c.vans || '') ? 'she says it is NOT right' : c.rsent ? 'sent, no answer yet' : 'not sent yet', !!c.vans]);
@@ -3723,7 +3723,7 @@ SHEETS.nchk = function () { var x = nDr(), v = vend(x.vid); if (!v || nMissing(x
 ACT.nsend = function () { var x = nDr(), v = vend(x.vid); if (!v || nMissing(x, v) || viewBlock('orders')) return;
   var tw = nTw(x, v), lm = nLm(x, v); if (tw !== (v.town || '') || lm !== (v.lm || '')) { bgSave('vtown', { vid: v.id, town: tw, lm: lm }, 'vt-' + x.sid, 'place for ' + v.name, null, true); v.town = tw; v.lm = lm; } // v2.8.13
   n90CodeSave(x, v);
-  var hl = nHelpL(x); if (hl.length) bgSave('hneed', { vid: v.id, sid: x.sid, items: hl }, 'hn-' + x.sid, 'help items for ' + v.name, null, true); // v2.8.13
+  var hl = nHelpL(x), ho33 = nh33(x); if (hl.length) bgSave('hneed', { vid: v.id, sid: x.sid, items: hl, old: ho33 ? { day: ho33.day, rd: ho33.rd } : null }, 'hn-' + x.sid, 'help items for ' + v.name, null, true); // v2.8.13
   if (!x.lines.some(function (l) { return l.qty > 0; })) { SHEETK = ''; $('over').innerHTML = ''; ls(nKey(), null); NUNDO = null; nSentAdd({ vid: v.id, sid: x.sid, name: v.name, ctn: 0, val: 0, day: '', urg: 0, help: nHelpN(x) }); NJUST = true; NQ = ''; NF = ''; render(); window.scrollTo(0, 0); return; }
   var val = nVal(x), pd = x.pay === 'NOW' ? (x.paid == null ? val : Math.min(x.paid, val)) : 0, pay = x.pay === 'NOW' ? (x.how === 'MOMO' ? 'PAID_MOMO' : 'PAID_ME') : x.pay;
   var rk = pay === 'PAID_ME' && pd > 0 ? rkNew() : '';
@@ -8308,7 +8308,7 @@ ACT.mfq = function (b) { var k = b.dataset.k; MFX.q[k] = Math.max(0, Math.min(99
 ACT.mfnone = function () { Object.keys(MFX.q).forEach(function (k) { MFX.q[k] = 0; }); drawSheet(); };
 INP.mfwhy = function (el) { MFX.why = el.value; };
 ACT.mfsave = function () { if (!MFX || viewBlock('mfixdel')) return; if (String(MFX.why).trim().length < 3) { toast('Write why', 'err'); return; } var m = MFX, o = oById(m.oid); MFX = null; SHEETK = ''; $('over').innerHTML = ''; if (o && o.outcome) o.outcome.delivered = Object.keys(m.q).filter(function (k) { return m.q[k] > 0; }).map(function (k) { return { sku: k, qty: m.q[k] }; });
-  bgSave('mfixdel', { oid: m.oid, lines: Object.keys(m.q).map(function (k) { return { sku: k, qty: m.q[k] }; }), why: String(m.why).trim(), cash: String(m.cash).trim() !== '' && !m.cst && Math.abs((Number(m.cash) || 0) - (m.cash0 || 0)) > 0.004 ? Number(m.cash) || 0 : '' }, 'mf-' + m.oid + '-' + uid(), 'order fixed', null, true); render(); };
+  bgSave('mfixdel', { oid: m.oid, lines: Object.keys(m.q).map(function (k) { return { sku: k, qty: m.q[k] }; }), why: String(m.why).trim(), rider: m.rd && m.rd !== m.rd0 ? m.rd : '', cash: String(m.cash).trim() !== '' && !m.cst && Math.abs((Number(m.cash) || 0) - (m.cash0 || 0)) > 0.004 ? Number(m.cash) || 0 : '' }, 'mf-' + m.oid + '-' + uid(), 'order fixed', null, true); render(); };
 var R72 = { t: 'go', open: '', c: 'with', f: '' };
 function r95Key(s) { return { t: s.town || '', a: ((s.orders || [])[0] || {}).agent || '' }; } // v2.8.13: Town / Agent filter
 function r95Fil(R) { var f = R72.f; if (!f) return R; var k = f.slice(0, 1), v = f.slice(2), L = R.filter(function (s) { return r95Key(s)[k] === v; }); if (!L.length) { R72.f = ''; return R; } return L; }
@@ -11676,4 +11676,63 @@ ACT.mgnow = function () { if (MR.up || viewBlock('mrepnow')) return; MR.up = Dat
   readOp('mrepnow', {}, function (x) { if (!x || x.error) { MR.up = 0; render(); if (x && x.error) toast(x.error, 'err'); return; } if (!x.up32) { done(); return; } mr32Wait(done); }, function () { mr32Wait(done); }); };
 function mr32Wait(done) { setTimeout(function () { if (!MR.up) return; if (Date.now() - MR.up > 300000) { done(); return; }
   readOp('mrep32st', {}, function (x) { if (x && x.ok && !x.up32) { done(); toast('Updated'); return; } mr32Wait(done); }, function () { mr32Wait(done); }); }, 15000); }
+// ---------------------------------------------------------------- v2.9.33 (A): chips with counts – agent 2+ orders unpaid / Not bought this month; manager's Relapsed renamed
+(function () { var i = -1; SVX.forEach(function (f, j) { if (f[0] === 'owes') i = j; }); SVX.splice(i < 0 ? SVX.length : i + 1, 0, ['owes2', '2+ orders unpaid'], ['nb', 'Not bought this month']); })();
+svVok = (function (f) { return function (v, k) { if (k === 'owes2') return v.ow > 0 && (v.on || 0) >= 2; if (k === 'nb') return !!v.nb; return f.apply(this, arguments); }; })(svVok);
+MVF.forEach(function (f) { if (f[0] === 'rel') f[1] = 'Not bought this month'; });
+n90Rel = function (v) { var r = mvR(v.id); return !!(r && (r[4] || r[7]) && !(r[6] && r[6] >= mvM1())); };
+// ---------------------------------------------------------------- v2.9.33 (B): Fix this order › Delivered by
+ACT.mfix = (function (f) { return function (b) { f.apply(this, arguments); var o = oById(b.dataset.o); if (MFX && o) { MFX.rd = MFX.rd0 = String(o.rdr || ''); } if (MFX && SHEETK === 'mfix') drawSheet(); }; })(ACT.mfix);
+SHEETS.mfix = (function (f) { return function () { var h = f.apply(this, arguments); var RS = D.riders || []; if (!h || !MFX || !RS.length) return h;
+  var row = '<div class="small" style="font-weight:700;margin:8px 2px 4px">Delivered by</div><div class="t2tray">' + RS.map(function (r) { return '<button class="' + (MFX.rd === r.id ? 'on' : '') + '" data-act="mf33r" data-r="' + esc(r.id) + '">' + esc(r.name) + '</button>'; }).join('') + '</div>';
+  var i = h.indexOf('<div class="small muted" style="margin-bottom:6px">What did she really get?</div>'); return i < 0 ? h + row : h.slice(0, i) + row + h.slice(i); }; })(SHEETS.mfix);
+ACT.mf33r = function (b) { if (!MFX) return; MFX.rd = b.dataset.r; MFX.rd0 = ''; drawSheet(); }; /* a tapped rider is always sent */
+// ---------------------------------------------------------------- v2.9.33 (C): help items – new, or already given before (old)
+function nh33(x) { return x && x.hold && x.hold.on ? x.hold : null; }
+function nh33Rn(id) { if (id === 'self') return 'herself'; var r = (D.riders || []).filter(function (y) { return y.id === id; })[0]; return r ? r.name : ''; }
+SHEETS.nhelp = (function (f) { return function () { var h = f.apply(this, arguments), x = nDr(); if (!h || !x.vid) return h; var o = nh33(x);
+  var top = '<div class="t2tray"><button class="' + (o ? '' : 'on') + '" data-act="nh33" data-k="new">New – Frank sends it</button><button class="' + (o ? 'on' : '') + '" data-act="nh33" data-k="old">Already given (old)</button></div>';
+  if (o) { top += '<div class="small" style="font-weight:700;margin:8px 2px 4px">Day it was given</div><input type="date" data-inp="nh33d" data-chg="nh33d" max="' + esc(D.today) + '" value="' + esc(o.day || '') + '">' +
+    '<div class="small" style="font-weight:700;margin:8px 2px 4px">Who brought it</div><div class="t2tray">' + (D.riders || []).concat([{ id: 'self', name: 'I gave it' }]).map(function (r) { return '<button class="' + (o.rd === r.id ? 'on' : '') + '" data-act="nh33r" data-r="' + esc(r.id) + '">' + esc(r.name) + '</button>'; }).join('') + '</div>'; }
+  h = h.replace('<span class="small muted">The manager approves first</span>', '<span class="small muted">' + (o ? 'Logged as given – nothing is sent' : 'The manager approves first') + '</span>');
+  var i = h.indexOf('<div class="vzck">'); return i < 0 ? h : h.slice(0, i) + top + h.slice(i); }; })(SHEETS.nhelp);
+ACT.nh33 = function (b) { var x = nDr(); x.hold = b.dataset.k === 'old' ? (x.hold && x.hold.day !== undefined ? Object.assign(x.hold, { on: 1 }) : { on: 1, day: '', rd: '' }) : Object.assign(x.hold || {}, { on: 0 }); nSave(x); drawSheet(); };
+ACT.nh33r = function (b) { var x = nDr(); if (!nh33(x)) return; x.hold.rd = b.dataset.r; nSave(x); drawSheet(); };
+INP.nh33d = function (el) { var x = nDr(); if (!nh33(x)) return; x.hold.day = el.value && el.value <= D.today ? el.value : ''; nSave(x); };
+CHG.nh33d = function (el) { INP.nh33d(el); drawSheet(); };
+nHelpRow = (function (f) { return function (x) { var h = f.apply(this, arguments), o = nh33(x); if (!o || !nHelpL(x).length) return h;
+  return h.replace('The manager approves first. Frank sends them. Prince brings them.', 'Already given' + (o.day ? ' on ' + esc(dayLbl(o.day)) : '') + (o.rd ? ' by ' + esc(nh33Rn(o.rd)) : '') + ' – logged, nothing is sent.'); }; })(nHelpRow);
+nMissing = (function (f) { return function (x, v) { var o = nh33(x); if (o && nHelpL(x).length && (!o.day || !o.rd)) return 'Old help items: pick the day and who brought it'; return f.apply(this, arguments); }; })(nMissing);
+SHEETS.nchk = (function (f) { return function () { var h = f.apply(this, arguments), x = nDr(); if (!h || !nh33(x)) return h; return h.replace('. The manager approves first.</div>', ' – already given, logged.</div>'); }; })(SHEETS.nchk);
+// ---------------------------------------------------------------- v2.9.33 (D): merge two vendors / undo a merge (manager, Changes window)
+dup92Html = (function (f) { return function () { var h = f.apply(this, arguments), L = (SVM && SVM.mg33) || [];
+  h = '<button class="sv7add" data-act="mg33o">⇄ Merge two vendors</button>' + h;
+  if (L.length) h += '<div class="sv7lbl">Merged – can be undone (' + L.filter(function (x) { return x.st === 'Merged'; }).length + ')</div>' + L.map(function (x) { var c = SV.mgc === x.id;
+    return '<div class="sv7chg"><b>' + esc(x.gn) + ' → ' + esc(x.kn) + '</b><span>' + esc(dayLbl(x.at)) + (x.st === 'Undone' ? ' · undone' : '') + '</span>' + (x.st === 'Merged' ? '<button class="sv7b' + (c ? ' r' : '') + '" style="margin-top:6px" data-act="mg33u" data-i="' + esc(x.id) + '">' + (c ? 'Tap again to undo' : '↺ Undo') + '</button>' : '') + '</div>'; }).join('');
+  return h; }; })(dup92Html);
+ACT.mg33u = function (b) { var id = b.dataset.i; if (SV.mgc !== id) { SV.mgc = id; drawSheet(); return; } SV.mgc = ''; if (viewBlock('mg33u')) return;
+  bgSave('mg33u', { mid: id }, 'mg33u-' + id, 'undo merge', null, true); ((SVM && SVM.mg33) || []).forEach(function (x) { if (x.id === id) x.st = 'Undone'; }); SV.d = null; drawSheet(); };
+ACT.mg33o = function () { SV.f = { mg: 1, q: '', q2: '', a: '', b: '', keep: '' }; sheetOpen('mg33'); if (!SV.d) { svLoad(); var t = 0, w = setInterval(function () { if (++t > 20 || SHEETK !== 'mg33') { clearInterval(w); return; } if (SV.d) { clearInterval(w); svLive(); } }, 1000); } };
+function mg33Hits(p, not) { var q = String((SV.f && SV.f[p]) || '').trim().toLowerCase(); if (q.length < 2) return '<p class="sv7fine">Type 2 or more letters of her name.</p>';
+  var L = ((SV.d && SV.d.v) || []).filter(function (v) { return v.id !== not && (String(v.n).toLowerCase().indexOf(q) >= 0 || v.id.toLowerCase() === q); }).slice(0, 10);
+  if (!L.length) return '<p class="sv7fine">' + (SV.d ? 'No vendor found.' : 'Loading vendors…') + '</p>';
+  return L.map(function (v) { return '<div class="sv7hc"><div class="sv7hn"><b>' + esc(v.n) + '</b><span class="small muted">' + esc([v.id, v.ag, v.sn].filter(Boolean).join(' · ')) + '</span></div><button class="sv7b g" data-act="mg33p" data-p="' + p + '" data-i="' + esc(v.id) + '">Choose</button></div>'; }).join(''); }
+function mg33Card(id, k) { var v = svV(id) || { n: id }; return '<div class="sv7okb row"><span><b>' + esc(v.n) + '</b> · ' + esc([id, v.ag, v.sn].filter(Boolean).join(' · ')) + '</span><button class="sv7lk" data-act="mg33x" data-k="' + k + '">Change</button></div>'; }
+SHEETS.mg33 = function () { var F = SV.f; if (!F || !F.mg) return ''; var h = svHead('Merge two vendors', 'The same person registered twice. Her orders and payments come together; you can undo it later.');
+  if (!F.a) return h + '<div class="sv7lbl">First vendor</div>' + svIn('q', 'Type her name') + '<div id="svlive">' + mg33Hits('q', '') + '</div>';
+  h += '<div class="sv7lbl">First vendor</div>' + mg33Card(F.a, 'a');
+  if (!F.b) return h + '<div class="sv7lbl">The same person under another name</div>' + svIn('q2', 'Type her name') + '<div id="svlive">' + mg33Hits('q2', F.a) + '</div>';
+  h += '<div class="sv7lbl">Same person</div>' + mg33Card(F.b, 'b');
+  var va = svV(F.a) || { n: F.a }, vb = svV(F.b) || { n: F.b };
+  h += '<div class="sv7lbl">Which one stays?</div><div class="t2tray">' + [[F.a, va.n], [F.b, vb.n]].map(function (x) { return '<button class="' + (F.keep === x[0] ? 'on' : '') + '" data-act="mg33k" data-i="' + esc(x[0]) + '">' + esc(x[1]) + ' (' + esc(x[0]) + ')</button>'; }).join('') + '</div>';
+  return h + svSaveBtn('Merge', 'mg33go'); };
+SVLIVE.mg33 = function () { var F = SV.f; return !F || !F.mg ? '' : !F.a ? mg33Hits('q', '') : !F.b ? mg33Hits('q2', F.a) : ''; };
+SVOK.mg33 = function () { var F = SV.f; return !!(F && F.a && F.b && F.keep); };
+ACT.mg33p = function (b) { var F = SV.f; if (!F) return; if (b.dataset.p === 'q') F.a = b.dataset.i; else F.b = b.dataset.i; drawSheet(); };
+ACT.mg33x = function (b) { var F = SV.f; if (!F) return; if (b.dataset.k === 'a') { F.a = ''; F.b = ''; } else F.b = ''; F.keep = ''; drawSheet(); };
+ACT.mg33k = function (b) { if (SV.f) { SV.f.keep = b.dataset.i; drawSheet(); } };
+ACT.mg33go = function () { var F = SV.f; if (!SVOK.mg33() || viewBlock('mg33')) return; var keep = F.keep, gone = keep === F.a ? F.b : F.a, vk = svV(keep) || { n: keep }, vg = svV(gone) || { n: gone };
+  bgSave('mg33', { keep: keep, gone: gone }, 'mg33-' + gone + '-' + uid(), 'merge ' + vg.n, null, true);
+  if (SVM) { SVM.mg33 = [{ id: 'new-' + gone, at: D.today, k: keep, kn: vk.n, g: gone, gn: vg.n, st: 'Sending' }].concat(SVM.mg33 || []); }
+  SV.f = null; SV.d = null; sheetOpen('svmgr'); setTimeout(function () { try { ACT.svmgr(); } catch (e) { } }, 6000); };
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
