@@ -6903,6 +6903,20 @@ function apprSum() { return apprKinds().filter(function (k) { return k[2]; }).ma
 function hasDrop(r) { D.hasks = (D.hasks || []).filter(function (a) { return a.ref !== r; }); } // v2.8.13
 ACT.hasok = function (b) { var r = b.dataset.r; if (viewBlock('hask')) return; hasDrop(r); bgSave('hask', { ref: r, ok: 1 }, 'ha-' + r, 'help items approved', null, true); render(); };
 ACT.hasno = function (b) { var r = b.dataset.r; if (viewBlock('hask')) return; askIn('Why not? (optional)', '', '', function (t) { hasDrop(r); bgSave('hask', { ref: r, ok: 0, why: String(t || '').trim() }, 'ha-' + r, 'help items declined', null, true); render(); }, 'DECLINE'); };
+/* v2.9.38: help items asked – "Already given" filter, tick several, Approve ticked; items she already got show ✓ given */
+var HAS38 = { f: 'all', t: {} };
+function has38Card(HA) { var ng = HA.filter(function (a) { return a.gv; }).length, L = HAS38.f === 'g' ? HA.filter(function (a) { return a.gv; }) : HA, T = L.filter(function (a) { return HAS38.t[a.ref]; });
+  return '<div class="card"><h3>Help items asked</h3><div class="chips" style="margin:4px 0 6px"><button class="chip' + (HAS38.f === 'all' ? ' on' : '') + '" data-act="has38f" data-v="all">All ' + HA.length + '</button><button class="chip' + (HAS38.f === 'g' ? ' on' : '') + '" data-act="has38f" data-v="g">Already given ' + ng + '</button></div>' +
+    '<div class="btns" style="margin:0 0 6px"><button data-act="has38a">' + (T.length && T.length === L.length ? 'Untick all' : 'Select all') + '</button>' + (T.length ? '<button class="main" data-act="has38ok">Approve ' + T.length + ' ticked</button>' : '') + '</div>' +
+    (L.length ? L.map(function (a) { var gl = a.items.filter(function (i) { return i.g; }).map(function (i) { return (i.item === 'Other' ? i.detail || 'Other' : i.item) + ' ✓ given ' + dayLbl(i.g); });
+      return '<div style="padding:8px 0;border-top:1px solid var(--line);display:flex;gap:10px"><input type="checkbox" data-act="has38t" data-r="' + esc(a.ref) + '"' + (HAS38.t[a.ref] ? ' checked' : '') + ' style="width:22px;height:22px;flex:none;margin-top:2px"><div style="flex:1;min-width:0"><b>' + esc(a.vendor) + '</b> <span class="small muted">· ' + esc(a.agent) + ' · ' + esc(dayLbl(a.day)) + '</span><div>' + esc(nHelpTxt(a.items)) + '</div>' +
+        (gl.length ? '<div class="small t-green">' + esc(gl.join(' · ')) + (a.gv === 2 ? ' – approving just closes it' : '') + '</div>' : '') + ha89Html(a) +
+        '<div class="btns" style="margin-top:6px"><button class="main" data-act="hasok" data-r="' + esc(a.ref) + '">Approve</button><button data-act="hasno" data-r="' + esc(a.ref) + '">Decline</button></div></div></div>'; }).join('') : '<p class="small muted">None.</p>') + '</div>'; }
+ACT.has38f = function (b) { HAS38.f = b.dataset.v; HAS38.t = {}; render(); };
+ACT.has38t = function (b) { var r = b.dataset.r; if (HAS38.t[r]) delete HAS38.t[r]; else HAS38.t[r] = 1; render(); };
+ACT.has38a = function () { var HA = D.hasks || [], L = HAS38.f === 'g' ? HA.filter(function (a) { return a.gv; }) : HA, all = L.length && L.every(function (a) { return HAS38.t[a.ref]; }); HAS38.t = {}; if (!all) L.forEach(function (a) { HAS38.t[a.ref] = 1; }); render(); };
+ACT.has38ok = function () { if (viewBlock('hask')) return; var R = Object.keys(HAS38.t).filter(function (r) { return (D.hasks || []).some(function (a) { return a.ref === r; }); }); if (!R.length) return;
+  ask('Approve help items for ' + R.length + ' vendor' + (R.length > 1 ? 's' : '') + '?', function () { R.forEach(function (r) { hasDrop(r); bgSave('hask', { ref: r, ok: 1 }, 'ha-' + r, 'help items approved', null, true); }); HAS38.t = {}; toast('Saved'); render(); }, 'YES, APPROVE'); };
 ACT.apk = function (b) { APK = b.dataset.s; MSG = null; render(); };
 ACT.ochgd = function (b) { var dn = b.dataset.v === '1', nm = b.dataset.n; askIn((dn ? 'Done: the change to ' + nm + '\'s order is made with Frank?' : 'Not made: ' + nm + '\'s order stays as it is?') + '\nA note for the agent (optional):', '', '', function (t) { bgSave('ochgdone', { oid: b.dataset.o, done: dn ? 1 : 0, note: String(t || '').trim() }, 'ocd-' + b.dataset.o + '-' + uid(), (dn ? 'change done: ' : 'change not made: ') + nm, null, true); }, dn ? 'DONE' : 'NOT MADE'); }; // v2.6.2
 function pgAppr() {
@@ -6916,7 +6930,7 @@ function pgAppr() {
   var CA = D.chgAsks || []; if (CA.length && on('chg')) h += '<div class="card"><h3>Order changes asked</h3><p class="sub" style="margin-top:0">The agent spoke to Frank. Tap OK: Frank confirms the stock with one tap and the order changes by itself.</p>' + CA.map(function (c) { var a = c.ask || {}; // v2.6.2
     return '<div style="padding:8px 0;border-top:1px solid var(--line)"><b>' + esc(c.vendor) + '</b> <span class="small muted">· ' + esc(c.agent) + (c.disp ? ' · with Prince' : '') + '</span><div>' + esc(a.diff || '') + '</div><div class="small muted">New order: ' + esc((a.lines || []).map(function (l) { return l.qty + ' ' + skn(l.sku); }).join(' + ')) + (a.at ? ' · asked ' + esc(oTm(a.at)) : '') + '</div>' + (a.note ? '<div class="small">Her note: ' + esc(a.note) + '</div>' : '') +
       '<div class="btns" style="margin-top:6px;flex-wrap:wrap"><button class="main" data-act="ochgok" data-o="' + esc(c.oid) + '" data-n="' + esc(c.vendor) + '">OK – to Frank</button><button data-act="ochgd" data-o="' + esc(c.oid) + '" data-v="1" data-n="' + esc(c.vendor) + '">Made by hand</button><button data-act="ochgd" data-o="' + esc(c.oid) + '" data-v="0" data-n="' + esc(c.vendor) + '">Not made</button></div></div>'; }).join('') + '</div>';
-  var HA = D.hasks || []; if (HA.length && on('help')) h += '<div class="card"><h3>Help items asked</h3>' + HA.map(function (a) { return '<div style="padding:8px 0;border-top:1px solid var(--line)"><b>' + esc(a.vendor) + '</b> <span class="small muted">· ' + esc(a.agent) + ' · ' + esc(dayLbl(a.day)) + '</span><div>' + esc(nHelpTxt(a.items)) + '</div>' + ha89Html(a) + '<div class="btns" style="margin-top:6px"><button class="main" data-act="hasok" data-r="' + esc(a.ref) + '">Approve</button><button data-act="hasno" data-r="' + esc(a.ref) + '">Decline</button></div></div>'; }).join('') + '</div>'; // v2.8.13
+  var HA = D.hasks || []; if (HA.length && on('help')) h += has38Card(HA); // v2.9.38: already given filter, ticks, approve several
   if (decNeeds().length && on('pay')) h += '<div class="card"><h3>Payment cases</h3><p class="sub" style="margin-top:0">Tap a case, check both sides, then record what really happened.</p>' + needsList(decNeeds()) + '</div>';
   if (on('nd') || on('out')) h += todoBox([on('nd') ? ndHtml() : '', on('out') ? outCardHtml() : '']);
   if (otherNeeds().length && on('other')) h += '<div class="card"><h3>Other problems</h3>' + needsList(otherNeeds()) + '</div>';
@@ -10241,8 +10255,8 @@ try { document.head.insertAdjacentHTML('beforeend', '<style>.q38{margin:6px 0 8p
 function va39Mv(p, aid) { if (!p || p.cx || p.bk || D.viewOf) return false; if (D.me.role === 'Supervisor') return true; return D.me.role === 'Warehouse' && !!(p.fs && aid && p.fs[aid]); }
 function va39Un(p) { if (!p || p.cx || p.bk || D.viewOf) return false; return D.me.role === 'Supervisor' || (D.me.role === 'Warehouse' && !!p.fu); }
 // v2.8.42: Her account – money still with an agent shows apart and is still owed (Frank + manager); undo one line; undo a book payment
-function vaHw42(r) { if (!r || !(r.hw > 0.004)) return ''; var n = (r.wa || []).filter(function (w) { return w.n !== 'the manager'; }).map(function (w) { return w.n; }).join(' + ');
-  return '<div><span class="t-amber">With ' + esc(n || 'the agent') + ' – not with Frank yet</span><b class="t-amber">' + ghs(r.hw) + '</b></div>'; }
+function vaHw42(r) { var hw38 = Math.round((((r && r.hw) || 0) - ((r && r.hs) || 0)) * 100) / 100; if (!r || !(hw38 > 0.004)) return ''; var n = (r.wa || []).filter(function (w) { return w.n !== 'the manager'; }).map(function (w) { return w.n; }).join(' + ');
+  return '<div><span class="t-amber">With ' + esc(n || 'the agent') + ' – not with Frank yet</span><b class="t-amber">' + ghs(hw38) + '</b></div>'; }
 function va42Part(p, aid) { return !!(p && aid && !p.bk && (p.to || []).length > 1 && (p.to || []).some(function (t) { return t.aid === aid; })); }
 function va42Amt(r, F) { if (F.k === 'undopart') return ((r.to || []).filter(function (t) { return t.aid === F.aid; })[0] || {}).amt || 0;
   return (r.to || []).filter(function (t) { return !F.oref || t.ref === F.oref; }).reduce(function (s, t) { return s + t.amt; }, 0); }
@@ -11156,7 +11170,7 @@ INP.c94q = function (el) { C94.q = el.value; var X = C94.d, box = $('c94l'); if 
 try { document.head.insertAdjacentHTML('beforeend', '<style>.c94q{position:relative;margin:4px 0 8px}.c94q input{width:100%;box-sizing:border-box;padding:10px 36px 10px 12px;border:1.5px solid #D5D9E0;border-radius:12px;font:inherit;font-size:15px}.c94q button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:none;font-size:16px;color:var(--mute);padding:6px}.c94t{display:flex;justify-content:space-between;align-items:center;background:#F1F5F9;border-radius:10px;padding:9px 12px;margin:0 0 8px;font-size:14px}.c94t b{font-size:17px}.fk94{margin-bottom:6px}</style>'); } catch (e) { }
 // v2.9.15: a payment an agent/rider sent to Frank that he has not confirmed – said on the payment in Her account; Frank confirms it there
 function sf95Html(r) { if (!r || !r.sf || !r.sf.length || r.cx) return '';
-  return r.sf.map(function (s) { return '<div class="sf95"><span>Sent to ' + esc(s.mine ? 'you' : s.to) + ' by ' + esc(s.n) + ' ' + esc(dayLbl(s.day)) + ' – not confirmed' + (s.a < r.amt - 0.004 ? ' (' + ghs(s.a) + ')' : '') + '</span>' +
+  return r.sf.map(function (s) { return '<div class="sf95"><span>Sent to ' + esc(s.mine && !(D.me.role === 'Supervisor' && s.to === 'Frank') ? 'you' : s.to) + ' by ' + esc(s.n) + ' ' + esc(dayLbl(s.day)) + ' – not confirmed' + (s.a < r.amt - 0.004 ? ' (' + ghs(s.a) + ')' : '') + '</span>' +
     (s.mine ? '<button class="main gr" data-act="sf95" data-h="' + esc(s.hid) + '" data-r="' + esc(r.id) + '">Received ' + ghs(s.a) + '</button>' : '') + '</div>'; }).join(''); }
 ACT.sf95 = function (b) { var hid = b.dataset.h, rid = b.dataset.r, r = ((VA.d && VA.d.rows) || []).filter(function (x) { return x.k === 'p' && x.id === rid; })[0], s = r && (r.sf || []).filter(function (x) { return x.hid === hid; })[0]; if (!s) return;
   ask('You received ' + ghs(s.a) + ' from ' + s.n + '?' + String.fromCharCode(10) + 'Count the cash first.', function () {
@@ -11236,17 +11250,23 @@ try { document.head.insertAdjacentHTML('beforeend', '<style>.fk98b{display:flex;
 // 3: an order paid with money still in a hand-over nobody confirmed – amber, not "paid ✓"
 function sn18Who(r) { var N = []; (r.sn || []).forEach(function (s) { if (N.indexOf(s.n) < 0) N.push(s.n); }); return N.join(' + '); }
 function sn18Lbl(r) { var T = []; (r.sn || []).forEach(function (s) { if (T.indexOf(s.to) < 0) T.push(s.to); }); return '<b class="t-amber">Paid to ' + esc(sn18Who(r)) + ' – sent to ' + esc(T.join(' + ') || 'Frank') + ', not confirmed</b>'; }
+/* v2.9.38: one line per hand-over for this vendor; the amount covers all her payments in it */
+function sn38P(hid) { return ((VA.d && VA.d.rows) || []).filter(function (x) { return x.k === 'p' && (x.sf || []).some(function (s) { return s.hid === hid; }); }); }
+function sn38Max(hid) { return Math.round(sn38P(hid).reduce(function (t, x) { return t + (x.sf || []).filter(function (s) { return s.hid === hid; }).reduce(function (u, s) { return u + Number(s.a || 0); }, 0); }, 0) * 100) / 100; }
 vaHw42 = (function (f) { return function (r) { var h = f.apply(this, arguments); if (!r || !r.sn || !r.sn.length) return h;
-  return h + r.sn.map(function (s, i) { var me = s.mine && !D.viewOf && /^(Warehouse|Supervisor)$/.test(D.me.role);
-    return '<div class="sn18"><span class="t-amber">Sent to ' + esc(s.to) + ' by ' + esc(s.n) + ' ' + esc(dayLbl(s.day)) + ' – not confirmed</span><b class="t-amber">' + ghs(s.a) + '</b></div>' +
-      (me ? '<div class="sn18i"><input inputmode="decimal" data-inp="sn18" data-k="' + esc(s.hid + '|' + s.rid) + '" value="' + esc(SN18[s.hid + '|' + s.rid] !== undefined ? SN18[s.hid + '|' + s.rid] : String(s.pa)) + '"><button class="main gr" data-act="sn18" data-h="' + esc(s.hid) + '" data-r="' + esc(s.rid) + '" data-n="' + esc(s.n) + '" data-p="' + esc(s.pa) + '">Received from ' + esc(s.n) + '</button></div>' : ''); }).join(''); }; })(vaHw42);
+  var G = [], by = {}; r.sn.forEach(function (s) { var g = by[s.hid]; if (!g) { g = by[s.hid] = { hid: s.hid, n: s.n, to: s.to, day: s.day, a: 0, mine: s.mine }; G.push(g); } g.a = Math.round((g.a + Number(s.a || 0)) * 100) / 100; });
+  return h + G.map(function (g) { var me = g.mine && !D.viewOf && /^(Warehouse|Supervisor)$/.test(D.me.role), mx = sn38Max(g.hid) || g.a;
+    return '<div class="sn18"><span class="t-amber">Sent to ' + esc(g.to) + ' by ' + esc(g.n) + ' ' + esc(dayLbl(g.day)) + ' – not confirmed</span><b class="t-amber">' + ghs(g.a) + '</b></div>' +
+      (me ? '<div class="sn18i"><input inputmode="decimal" data-inp="sn18" data-k="' + esc(g.hid) + '" value="' + esc(SN18[g.hid] !== undefined ? SN18[g.hid] : String(mx)) + '"><button class="main gr" data-act="sn18" data-h="' + esc(g.hid) + '" data-n="' + esc(g.n) + '">Received from ' + esc(g.n) + '</button></div>' : ''); }).join(''); }; })(vaHw42);
 var SN18 = {};
 INP.sn18 = function (el) { SN18[el.dataset.k] = el.value; };
-ACT.sn18 = function (b) { var hid = b.dataset.h, rid = b.dataset.r, n = b.dataset.n || 'her', p = Number(b.dataset.p) || 0, v = SN18[hid + '|' + rid], a = Math.round(Number(v === undefined ? p : v) * 100) / 100;
-  if (!(a > 0)) { toast('Type the amount'); return; } if (a > p + 0.004) { toast('Up to ' + ghs(p) + ' for this payment'); return; }
+ACT.sn18 = function (b) { var hid = b.dataset.h, n = b.dataset.n || 'her', P = sn38P(hid), p = sn38Max(hid), v = SN18[hid], a = Math.round(Number(v === undefined ? p : v) * 100) / 100;
+  if (!(a > 0)) { toast('Type the amount'); return; }
+  if (a > p + 0.004) { var why = P.map(function (x) { var k = (x.sf || []).filter(function (s) { return s.hid === hid; }).reduce(function (u, s) { return u + Number(s.a || 0); }, 0), o = Math.round((Number(x.amt || 0) - k) * 100) / 100; return o > 0.004 ? ghs(o) + ' of her ' + ghs(x.amt) + ' payment of ' + dayLbl(x.day || '') + ' is not in this hand-over.' : ''; }).filter(String);
+    ask('This hand-over has ' + ghs(p) + ' of her money.' + (why.length ? String.fromCharCode(10) + why.join(String.fromCharCode(10)) : '') + String.fromCharCode(10) + 'Type up to ' + ghs(p) + '.', function () { }, 'OK'); return; }
   ask('You received ' + ghs(a) + ' from ' + n + '?' + (a < p - 0.004 ? String.fromCharCode(10) + 'The other ' + ghs(Math.round((p - a) * 100) / 100) + ' stays to confirm.' : ''), function () {
-    bgSave('sf95', { hid: hid, rid: rid, amt: a }, 'sf18-' + hid + '-' + rid + '-' + uid(), 'Saved', null, true); delete SN18[hid + '|' + rid];
-    ((VA.d && VA.d.rows) || []).forEach(function (r) { if (r.sn) { r.sn = r.sn.filter(function (s) { return !(s.hid === hid && s.rid === rid); }); if (!r.sn.length) delete r.sn; } if (r.sf) r.sf = r.sf.filter(function (s) { return !(s.hid === hid && r.id === rid); }); });
+    bgSave('sf95', { hid: hid, rids: P.map(function (x) { return x.id; }), amt: a }, 'sf38-' + hid + '-' + uid(), 'Saved', null, true); delete SN18[hid];
+    if (a >= p - 0.004) ((VA.d && VA.d.rows) || []).forEach(function (r) { if (r.sn) { r.sn = r.sn.filter(function (s) { return s.hid !== hid; }); if (!r.sn.length) delete r.sn; } if (r.sf) { r.sf = r.sf.filter(function (s) { return s.hid !== hid; }); if (!r.sf.length) delete r.sf; } });
     VA18.rev = ''; toast('Saved'); if (SHEETK === 'vacct') drawSheet(); }, 'YES, RECEIVED'); };
 // 4: Her account refreshes by itself while it is open, and opens with the last copy at once
 var VA18 = { rev: '', t: 0, c: {}, busy: 0 };
