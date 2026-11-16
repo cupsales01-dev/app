@@ -4772,21 +4772,21 @@ SHEETS.fres = function () {
   var h = '<div class="fksh">' + shHead('', '', esc(skn(C.s)) + ' reserved', r.set ? 'For CupSales orders' : 'First count – how many cartons are for CupSales?');
   h += '<div class="fkden"><span>Reserved</span><button class="o2pm" data-act="fkrv" data-d="-1">−</button><input class="o2n fknum" inputmode="numeric" data-inp="fkrv" value="' + C.to + '"><button class="o2pm" data-act="fkrv" data-d="1">+</button></div>';
   h += fkLn('Approved so far', String(r.u)) + '<div id="fkrl">' + fkLn('Left', String(C.to - r.u)) + '</div>';
-  if (ch && r.set) h += '<div class="fkq2">Why?</div><div class="t2tray">' + FKWHY.map(function (w) { return '<button class="' + (C.why === w ? 'on' : '') + '" data-act="fkrw" data-v="' + esc(w) + '">' + esc(w) + '</button>'; }).join('') + '</div><p class="small muted">The manager sees every change.</p>';
+  h += '<div id="fk44w">' + fk44Why(C, r) + '</div>'; if (0) h += '<div class="fkq2">Why?</div><div class="t2tray">' + FKWHY.map(function (w) { return '<button class="' + (C.why === w ? 'on' : '') + '" data-act="fkrw" data-v="' + esc(w) + '">' + esc(w) + '</button>'; }).join('') + '</div><p class="small muted">The manager sees every change.</p>';
   h += '<div class="fkden"><span>Warn me at</span><button class="o2pm" data-act="fklv" data-d="-1">−</button><b class="o2n">' + C.lvl + '</b><button class="o2pm" data-act="fklv" data-d="1">+</button></div>';
   h += '<div class="fkq2">Omni has it?</div><div class="o2seg"><button class="' + (!C.out ? 'on' : '') + '" data-act="fkio" data-v="0">In</button><button class="' + (C.out ? 'on' : '') + '" data-act="fkio" data-v="1">Out</button></div>' + (C.out ? '<p class="small muted">The manager chooses who sends it.</p>' : '');
-  return h + '<button class="main gr fkbig" data-act="fkrsave"' + (ch && r.set && !C.why ? ' disabled' : '') + '>Save</button></div>';
+  return h + '<button class="main gr fkbig" data-act="fkrsave"' + '' + '>Save</button></div>';
 };
 ACT.fkrv = function (b) { var C = FK.rc, r = (fkF().res || {})[C.s] || { u: 0 }; C.to = Math.max(r.u || 0, C.to + Number(b.dataset.d)); drawSheet(); };
-INP.fkrv = function (el) { var C = FK.rc, r = (fkF().res || {})[C.s] || { u: 0 }, n = parseInt(el.value, 10); if (!(n >= 0)) return; C.to = n; var l = $('fkrl'); if (l) l.innerHTML = fkLn('Left', String(n - (r.u || 0))); };
+INP.fkrv = function (el) { setTimeout(fk44Upd, 0); var C = FK.rc, r = (fkF().res || {})[C.s] || { u: 0 }, n = parseInt(el.value, 10); if (!(n >= 0)) return; C.to = n; var l = $('fkrl'); if (l) l.innerHTML = fkLn('Left', String(n - (r.u || 0))); };
 CHG.fkrv = function () { setTimeout(drawSheet, 0); };
-ACT.fkrw = function (b) { FK.rc.why = b.dataset.v; drawSheet(); };
+ACT.fkrw = function (b) { FK.rc.why = b.dataset.v; FK.rc.a44 = 0; drawSheet(); };
 ACT.fklv = function (b) { FK.rc.lvl = Math.max(0, FK.rc.lvl + Number(b.dataset.d)); drawSheet(); };
 ACT.fkio = function (b) { FK.rc.out = b.dataset.v === '1'; drawSheet(); };
 ACT.fkrsave = function () {
   var C = FK.rc; if (!C) return; var r = (fkF().res || {})[C.s] || { r: 0, u: 0, lvl: 10, set: false }; if (C.to < (r.u || 0)) { say('It cannot go below what is already approved (' + r.u + ').'); return; }
   var did = [];
-  if (C.to !== r.r || !r.set || C.lvl !== r.lvl) { bgSave('fres', { sku: C.s, to: C.to, why: C.why, lvl: C.lvl }, 'fr-' + uid(), skn(C.s) + ' reserved ' + C.to, null, true); if (D.fk && D.fk.res) { var k = D.fk.res[C.s]; k.r = C.to; k.set = true; k.left = C.to - k.u; k.lvl = C.lvl; } did.push(C.to !== r.r && r.set ? 'Saved. The manager sees: ' + C.why + '.' : 'Saved.'); }
+  fk44Def(C, r); if (C.to !== r.r || !r.set || C.lvl !== r.lvl) { bgSave('fres', { sku: C.s, to: C.to, why: C.why, lvl: C.lvl }, 'fr-' + uid(), skn(C.s) + ' reserved ' + C.to, null, true); if (D.fk && D.fk.res) { var k = D.fk.res[C.s]; k.r = C.to; k.set = true; k.left = C.to - k.u; k.lvl = C.lvl; } did.push(C.to !== r.r && r.set ? 'Saved. The manager sees: ' + C.why + '.' : 'Saved.'); }
   if (C.out !== isOut(C.s)) { var sk = ((D.out || {}).skus || []).filter(function (x) { return x !== C.s; }); if (C.out) sk.push(C.s); bgSave('outstock', { skus: sk }, 'os-' + uid(), C.out ? 'out of stock: ' + skn(C.s) : skn(C.s) + ' back in', null, true); if (D.out) D.out.skus = sk; did.push(C.out ? skn(C.s) + ' out: the manager is told.' : skn(C.s) + ' in again.'); }
   FK.rc = null; SHEETK = ''; $('over').innerHTML = ''; render(); toast(did.join(' ') || 'No change.');
 };
@@ -11909,25 +11909,29 @@ function mo42Grp(k, g) { var hd = function (t, L) { return '<div class="o2dh"><s
   if (k !== 'prince') return hd(OCOL[k][0], g); var B = {}, ord = []; g.forEach(function (o) { var r = o.rdn || 'Prince'; if (!B[r]) { B[r] = []; ord.push(r); } B[r].push(o); });
   return ord.map(function (r) { return hd('With ' + r, B[r]); }).join(''); }
 /* v2.9.43: Money › Distributors › Who owes – vendors and orders still owing each distributor */
-var W43 = { st: '', d: null, s: '', ag: '', q: '', o: '' };
+var W43 = { st: '', d: null, s: '', ag: '', q: '', o: '', w: '' };
 function w43N(s) { return { 'SRC-OMINI': 'Omni', 'SRC-CLEMENT': 'Clement', 'SRC-BERNICE': 'Bernice', 'SRC-MARKET': 'Open market' }[s] || String(s || '').replace(/^SRC-/, ''); }
 function w43L(x) { return '<a data-act="w43o" data-v="' + esc(x.src) + '" style="text-decoration:underline;font-weight:700">vendors still owe ' + ghs(x.vo) + '</a>'; }
 function w43Load() { W43.st = 'wait'; readOp('mwho43', {}, function (r) { if (!r || r.error) { W43.st = 'err'; W43.err = (r && r.error) || 'No answer – try again.'; } else { W43.d = r; W43.st = 'ok'; } if (TAB === 'money' && DP.s === 'who') render(); }, function (e) { W43.st = 'err'; W43.err = e; if (TAB === 'money' && DP.s === 'who') render(); }); }
-function w43Rows() { var q = W43.q.trim().toLowerCase(); return ((W43.d && W43.d.rows) || []).filter(function (r) { return (!W43.s || r.s === W43.s) && (!W43.ag || r.ag === W43.ag) && (!q || r.v.toLowerCase().indexOf(q) >= 0); }); }
-function w43List() { var L = w43Rows(), V = {}, ord = [];
-  L.forEach(function (r) { var x = V[r.vid]; if (!x) { x = V[r.vid] = { vid: r.vid, v: r.v, ag: r.ag, t: 0, o: [], d: r.d }; ord.push(x); } x.t += r.open; x.o.push(r); if (r.d && (!x.d || r.d < x.d)) x.d = r.d; });
-  ord.sort(function (a, b) { return b.t - a.t; }); var tot = L.reduce(function (t, r) { return t + r.open; }, 0);
-  var h = '<div class="by3"><div><span>Still owed</span><b>' + ghs(Math.round(tot)) + '</b></div><div><span>Vendors</span><b>' + ord.length + '</b></div><div><span>Orders</span><b>' + L.length + '</b></div></div>';
-  if (!ord.length) return h + emptyHtml(W43.q || W43.s || W43.ag ? 'Nobody owes with this filter.' : 'Nobody owes ✓');
-  return h + ord.map(function (x) { var op = W43.o === x.vid;
-    var h2 = '<div class="fkr" style="border-left-color:#d97706" data-act="w43v" data-v="' + esc(x.vid) + '"><div class="grow"><b>' + esc(x.v) + '</b><div class="fks">' + esc([x.ag, x.o.length + ' order' + (x.o.length === 1 ? '' : 's'), x.d ? 'oldest ' + dayLbl(x.d) : ''].filter(Boolean).join(' · ')) + '</div></div><b class="fkam">' + ghs(Math.round(x.t)) + '</b></div>';
+function w43Rows() { var q = W43.q.trim().toLowerCase(); return ((W43.d && W43.d.rows) || []).filter(function (r) { return (!W43.s || r.s === W43.s) && (!W43.ag || r.ag === W43.ag) && (!q || r.v.toLowerCase().indexOf(q) >= 0) && (!W43.w || (W43.w === 'l' ? w44Late(r) : W43.w === 'p' ? r.hw > 0.004 : r.open > 0.004)); }); }
+function w43HL(w) { return w.k === 's' ? 'Sent to ' + (w.to || 'Frank') + ' by ' + w.n + ' – not confirmed' : w.k === 'f' ? 'With Frank' : 'With ' + w.n; }
+function w43List() { var L = w43Rows(), V = {}, ord = [], vo = 0, hw = 0;
+  L.forEach(function (r) { var x = V[r.vid]; if (!x) { x = V[r.vid] = { vid: r.vid, v: r.v, ag: r.ag, t: 0, op: 0, h: 0, hn: {}, o: [], d: r.d }; ord.push(x); } x.op += r.open; x.h += r.hw || 0; x.t += r.open + (r.hw || 0); (r.h || []).forEach(function (w) { var k = w43HL(w); x.hn[k] = (x.hn[k] || 0) + w.a; if ((w.dd || 0) > (x.dd || 0)) x.dd = w.dd; }); x.o.push(r); if (r.d && (!x.d || r.d < x.d)) x.d = r.d; vo += r.open; hw += r.hw || 0; });
+  ord.sort(function (a, b) { return b.t - a.t; });
+  var h = '<div class="by3"><div><span>Vendors owe</span><b>' + ghs(Math.round(vo)) + '</b></div><div><span>Paid, not with you</span><b style="color:#b45309">' + ghs(Math.round(hw)) + '</b></div><div><span>Vendors</span><b>' + ord.length + '</b></div></div>';
+  if (!ord.length) return h + emptyHtml(W43.q || W43.s || W43.ag || W43.w ? 'Nobody owes with this filter.' : 'Nobody owes ✓');
+  return h + ord.map(function (x) { var op = W43.o === x.vid, hk = Object.keys(x.hn);
+    var h2 = '<div class="fkr" style="border-left-color:' + (x.op > 0.004 ? '#d97706' : '#2563eb') + '" data-act="w43v" data-v="' + esc(x.vid) + '"><div class="grow"><b>' + esc(x.v) + '</b><div class="fks">' + esc([x.ag, x.o.length + ' order' + (x.o.length === 1 ? '' : 's'), x.d ? 'oldest ' + dayLbl(x.d) : ''].filter(Boolean).join(' · ')) + '</div>' +
+      (hk.length ? '<div class="fks" style="color:' + (x.dd > 2 ? '#dc2626' : '#b45309') + ';font-weight:600">' + esc('Paid ' + ghs(Math.round(x.h)) + ' – ' + hk.join(', ') + (x.dd > 2 ? ' · ' + x.dd + ' days' : '')) + '</div>' : '') + '</div><b class="fkam">' + ghs(Math.round(x.t)) + '</b></div>';
     if (!op) return h2;
-    return h2 + '<div style="margin:0 0 8px 12px">' + x.o.slice().sort(function (a, b) { return a.d < b.d ? -1 : a.d > b.d ? 1 : 0; }).map(function (r) { return '<div class="row small" style="padding:4px 0;border-bottom:1px solid var(--line)"><span class="grow">' + esc(r.d ? dayLbl(r.d) : 'Order') + ' · ' + esc(w43N(r.s)) + (/^LEG/.test(r.ref) ? ' · book' : '') + '</span><b>' + ghs(Math.round(r.open)) + '</b><span class="muted">&nbsp;of ' + ghs(Math.round(r.val)) + '</span></div>'; }).join('') +
+    return h2 + '<div style="margin:0 0 8px 12px">' + x.o.slice().sort(function (a, b) { return a.d < b.d ? -1 : a.d > b.d ? 1 : 0; }).map(function (r) { return '<div style="padding:4px 0;border-bottom:1px solid var(--line)"><div class="row small"><span class="grow">' + esc(r.d ? dayLbl(r.d) : 'Order') + ' · ' + esc(w43N(r.s)) + (/^LEG/.test(r.ref) ? ' · book' : '') + '</span>' + (r.open > 0.004 ? '<b>owes ' + ghs(Math.round(r.open)) + '</b>' : '<span class="muted">paid</span>') + '<span class="muted">&nbsp;of ' + ghs(Math.round(r.val)) + '</span></div>' +
+      (r.h || []).map(function (w) { return '<div class="small" style="color:' + ((w.dd || 0) > 2 ? '#dc2626' : '#b45309') + ';font-weight:600">' + esc(w43HL(w)) + ' · ' + ghs(Math.round(w.a)) + (w.dd === undefined ? '' : ' · ' + (w.dd ? w.dd + ' day' + (w.dd === 1 ? '' : 's') : 'today')) + '</div>'; }).join('') + '</div>'; }).join('') +
       '<button class="ghost2" style="margin-top:6px" data-act="vacct" data-v="' + esc(x.vid) + '">Her account ›</button></div>'; }).join(''); }
 function w43Html() { if (!W43.st) w43Load(); if (W43.st === 'err' && !W43.d) return emptyHtml(W43.err) + '<button class="ghost" data-act="w43r">Try again</button>'; if (!W43.d) return '<div class="mdsk"><i></i><i></i></div>';
-  var R = W43.d.rows || [], S = {}, A = {}; R.forEach(function (r) { S[r.s] = (S[r.s] || 0) + r.open; if (r.ag) A[r.ag] = 1; });
+  var R = W43.d.rows || [], S = {}, A = {}; R.forEach(function (r) { S[r.s] = (S[r.s] || 0) + r.open + (r.hw || 0); if (r.ag) A[r.ag] = 1; });
   var src = ['SRC-OMINI', 'SRC-CLEMENT', 'SRC-BERNICE', 'SRC-MARKET'].concat(Object.keys(S).filter(function (s) { return ['SRC-OMINI', 'SRC-CLEMENT', 'SRC-BERNICE', 'SRC-MARKET'].indexOf(s) < 0; }));
   var h = '<div class="chips" style="margin:6px 0">' + [['', 'All']].concat(src.map(function (s) { return [s, w43N(s) + ' ' + ghs(Math.round(S[s] || 0))]; })).map(function (c) { return '<button class="chip' + (W43.s === c[0] ? ' on' : '') + '" data-act="w43s" data-v="' + esc(c[0]) + '">' + esc(c[1]) + '</button>'; }).join('') + '</div>';
+  h += '<div class="chips" style="margin:0 0 6px">' + [['', 'Everyone'], ['v', 'Vendor still owes'], ['p', 'Paid, not with you'], ['l', 'Held too long']].map(function (c) { return '<button class="chip' + (W43.w === c[0] ? ' on' : '') + '" data-act="w43w" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
   var ags = Object.keys(A).sort(); if (ags.length > 1) h += '<div class="chips" style="margin:0 0 6px">' + [''].concat(ags).map(function (a) { return '<button class="chip' + (W43.ag === a ? ' on' : '') + '" data-act="w43a" data-v="' + esc(a) + '">' + esc(a || 'All agents') + '</button>'; }).join('') + '</div>';
   h += '<input class="o2q" data-inp="w43q" placeholder="Find a vendor" value="' + esc(W43.q) + '">';
   return h + '<div id="w43l">' + w43List() + '</div>'; }
@@ -11938,10 +11942,16 @@ pgMMoney = (function (f) { return function () { if (MM.s !== 'dist' && !(typeof 
   if (!who) return s; s = s.replace('<button class="on" data-act="dp32s" data-v="more">', '<button class="" data-act="dp32s" data-v="more">');
   var i = s.indexOf('data-v="who">Who owes</button></div>'); return i < 0 ? s : s.slice(0, i + 'data-v="who">Who owes</button></div>'.length) + w43Html(); }; })(pgMMoney);
 ACT.dp32s = (function (f) { return function (b) { if (b.dataset.v === 'who') W43.st = ''; return f.apply(this, arguments); }; })(ACT.dp32s);
-ACT.w43o = function (b) { DP.s = 'who'; W43.s = b.dataset.v || ''; W43.ag = ''; W43.q = ''; W43.o = ''; W43.st = ''; render(); };
+ACT.w43o = function (b) { DP.s = 'who'; W43.s = b.dataset.v || ''; W43.ag = ''; W43.q = ''; W43.w = ''; W43.o = ''; W43.st = ''; render(); };
 ACT.w43s = function (b) { W43.s = b.dataset.v || ''; W43.o = ''; render(); };
 ACT.w43a = function (b) { W43.ag = b.dataset.v || ''; W43.o = ''; render(); };
 ACT.w43v = function (b) { W43.o = W43.o === b.dataset.v ? '' : b.dataset.v; render(); };
 ACT.w43r = function () { W43.st = ''; render(); };
 INP.w43q = function (el) { W43.q = el.value || ''; var l = document.getElementById('w43l'); if (l) l.innerHTML = w43List(); };
+/* v2.9.44: Who owes – where filter; Frank's reserve reason filled as he types */
+function w44Late(r) { return (r.h || []).some(function (w) { return (w.dd || 0) > 2; }); }
+ACT.w43w = function (b) { W43.w = b.dataset.v || ''; W43.o = ''; render(); };
+function fk44Def(C, r) { if (!C || !r || !r.set) return; if (C.to === r.r) { if (C.a44) C.why = ''; return; } if (!C.why || C.a44) { C.why = C.to > r.r ? 'More came in' : 'Less than expected'; C.a44 = 1; } }
+function fk44Why(C, r) { fk44Def(C, r); if (!(r.set && C.to !== r.r)) return ''; return '<div class="fkq2">Why?</div><div class="t2tray">' + FKWHY.map(function (w) { return '<button class="' + (C.why === w ? 'on' : '') + '" data-act="fkrw" data-v="' + esc(w) + '">' + esc(w) + '</button>'; }).join('') + '</div><p class="small muted">The manager sees every change.</p>'; }
+function fk44Upd() { var C = FK.rc, b = $('fk44w'); if (!C || !b) return; var r = (fkF().res || {})[C.s] || { r: 0, u: 0, set: false }; b.innerHTML = fk44Why(C, r); }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
