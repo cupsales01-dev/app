@@ -2898,7 +2898,7 @@ SHEETS.tasks = function () {
   if (tRcptL().length) h += '<div class="small muted">"She checked it with me": nothing is sent.</div>';
   var cl = myClaims(); if (cl.length) h += '<div class="t2tk" data-act="sheet" data-k="claims"><b>' + (cl.length === 1 ? esc(cl[0].vendor) + ' says she paid you ' + ghs(cl[0].amount) : cl.length + ' vendors say they paid you') + '</b><div class="small muted">Tap to answer ›</div></div>';
   var due = remsOpen().filter(remNow()); if (due.length) h += '<div class="t2tk" data-act="' + (due.length === 1 ? 'remv' : 'sheet') + '" data-i="' + esc(due[0].id) + '" data-k="rems"><b>' + (due.length === 1 ? 'Reminder: ' + esc(due[0].about) : due.length + ' reminders due now') + '</b><div class="small muted">Tap to see ›</div></div>';
-  var on2 = oNeedN(); if (on2) h += '<div class="t2tk" data-act="otasks"><b>' + (on2 === 1 ? '1 order needs you' : on2 + ' orders need you') + '</b><div class="small muted">' + esc(oNeeds().map(function (x) { return x.o ? x.o.vendor : x.k === 'rate' ? 'Rate Prince' : x.k === 'hconf' ? 'Help items: ' + x.c.vendor : x.k === 'ppart' ? 'Part delivered: ' + x.p.vendor : 'Enter in Omni Haven'; }).slice(0, 3).join(' · ')) + ' ›</div></div>'; // v2.6.2
+  var on2 = oNeedN(); if (on2) h += '<div class="t2tk" data-act="otasks"><b>' + (on2 === 1 ? '1 order needs you' : on2 + ' orders need you') + '</b><div class="small muted">' + esc(oNeeds().map(function (x) { return x.o ? x.o.vendor : x.k === 'rate' ? 'Rate Prince' : x.k === 'hconf' ? 'Help items: ' + x.c.vendor : x.k === 'hc42' ? 'Help items to confirm: ' + x.c.vn : x.k === 'ppart' ? 'Part delivered: ' + x.p.vendor : 'Enter in Omni Haven'; }).slice(0, 3).join(' · ')) + ' ›</div></div>'; // v2.6.2
   var hv = ndHelpRest(planItems()); if (hv.length) h += '<div class="t2tk" data-act="sheet" data-k="ndhelp"><b>Help items ready for ' + hv.length + ' vendor' + (hv.length === 1 ? '' : 's') + ' not on today\'s plan</b><div class="small muted">Tap to see ›</div></div>';
   return h;
 };
@@ -3301,7 +3301,7 @@ function oNeedsHtml(N) {
 function oWayHtml(W) {
   var F = { '': function () { return true; }, frank: function (o) { return oStage(o).k === 'frank'; }, appr: function (o) { return oStage(o).k === 'appr'; }, prince: function (o) { return oStage(o).k === 'prince'; }, prob: function (o) { return oStage(o).k === 'prob'; }, urg: function (o) { return !!o.urg; } };
   var h = '<input class="o2q" data-inp="oq" placeholder="Search a vendor or school" value="' + esc(OQ) + '">';
-  h += '<div class="t2tray">' + [['', 'All'], ['frank', 'Waiting for Frank'], ['appr', 'Frank approved'], ['prince', 'With Prince'], ['prob', 'Problem'], ['urg', '🚩 Urgent']].filter(function (f) { return f[0] !== 'urg' || W.some(F.urg) || OF === 'urg'; }).map(function (f) { return '<button class="' + (OF === f[0] ? 'on' : W.filter(F[f[0]]).length ? '' : 'o27z') + '" data-act="of" data-v="' + f[0] + '">' + (OCOL[f[0]] ? '<i class="o2dot" style="background:' + OCOL[f[0]][1] + '"></i>' : '') + f[1] + ' (' + W.filter(F[f[0]]).length + ')</button>'; }).join('') + '</div>';
+  h += '<div class="t2tray">' + [['', 'All'], ['frank', 'Waiting for Frank'], ['appr', 'Frank approved'], ['prince', esc(rd42Lbl(W))], ['prob', 'Problem'], ['urg', '🚩 Urgent']].filter(function (f) { return f[0] !== 'urg' || W.some(F.urg) || OF === 'urg'; }).map(function (f) { return '<button class="' + (OF === f[0] ? 'on' : W.filter(F[f[0]]).length ? '' : 'o27z') + '" data-act="of" data-v="' + f[0] + '">' + (OCOL[f[0]] ? '<i class="o2dot" style="background:' + OCOL[f[0]][1] + '"></i>' : '') + f[1] + ' (' + W.filter(F[f[0]]).length + ')</button>'; }).join('') + '</div>';
   h += '<div id="o2wl">' + oWayList(W, F) + '</div>';
   return h;
 }
@@ -3562,7 +3562,7 @@ function nCtn(x) { return x.lines.reduce(function (t, l) { return t + l.qty; }, 
 function nLinesTxt(L) { return L.filter(function (l) { return l.qty > 0; }).map(function (l) { return l.qty + ' ' + skn(l.sku); }).join(' + '); }
 function nCard(v) { var c = nCalled(v.id), op = nOpenO(v.id), ch = [];
   if (c) ch.push('<span class="n2c g">You called her ' + esc(nHm(c.at)) + (c.out ? ' · ' + esc(String(c.out).replace(/^Call – /, '')) : '') + '</span>');
-  if (op.length) { var st = oStage(op[0]); ch.push('<span class="n2c b">' + (st.k === 'frank' ? 'Waiting for Frank' : st.k === 'prince' ? 'With Prince' : 'Frank approved') + ': ' + (function (n) { return n + (n === 1 ? ' carton' : ' cartons'); })(op.reduce(function (t, o) { return t + oCtnAll(o); }, 0)) + '</span>'); }
+  if (op.length) { var st = oStage(op[0]); ch.push('<span class="n2c b">' + (st.k === 'frank' ? 'Waiting for Frank' : st.k === 'prince' ? 'With ' + esc(op[0].rdn || 'Prince') : 'Frank approved') + ': ' + (function (n) { return n + (n === 1 ? ' carton' : ' cartons'); })(op.reduce(function (t, o) { return t + oCtnAll(o); }, 0)) + '</span>'); }
   if (nNewV(v)) ch.push('<span class="n2c g">New vendor' + (v.reg === D.today ? ' · registered today' : '') + '</span>');
   if (v.debt > 0.004) ch.push('<span class="n2c r">Owes ' + ghs(v.debt) + '</span>');
   if (!c && !op.length && (v.stock === 'Likely out' || v.due)) ch.push('<span class="n2c a">Likely out of stock</span>');
@@ -6901,7 +6901,7 @@ function apprCount() { if (!D || D.me.role !== 'Supervisor') return 0; return ap
 var APK1 = { help: 'help item ask', plans: 'day plan', chg: 'order change', pay: 'payment case', nd: 'not delivered', out: 'out of stock', other: 'other' };
 function apprSum() { return apprKinds().filter(function (k) { return k[2]; }).map(function (k) { return k[2] + ' ' + (k[2] === 1 ? APK1[k[0]] : k[0] === 'pay' ? 'payment cases' : k[1].toLowerCase()); }).join(' · '); }
 function hasDrop(r) { D.hasks = (D.hasks || []).filter(function (a) { return a.ref !== r; }); } // v2.8.13
-ACT.hasok = function (b) { var r = b.dataset.r; if (viewBlock('hask')) return; hasDrop(r); bgSave('hask', { ref: r, ok: 1 }, 'ha-' + r, 'help items approved', null, true); render(); };
+ACT.hasok = function (b) { var r = b.dataset.r; if (viewBlock('hask')) return; if (!has42Ok(r)) { toast('Nothing left – tap Decline'); return; } hasDrop(r); bgSave('hask', has42P(r), 'ha-' + r, 'help items approved', null, true); delete HAS42[r]; render(); };
 ACT.hasno = function (b) { var r = b.dataset.r; if (viewBlock('hask')) return; askIn('Why not? (optional)', '', '', function (t) { hasDrop(r); bgSave('hask', { ref: r, ok: 0, why: String(t || '').trim() }, 'ha-' + r, 'help items declined', null, true); render(); }, 'DECLINE'); };
 /* v2.9.38: help items asked – "Already given" filter, tick several, Approve ticked; items she already got show ✓ given */
 var HAS38 = { f: 'all', t: {} };
@@ -6909,14 +6909,14 @@ function has38Card(HA) { var ng = HA.filter(function (a) { return a.gv; }).lengt
   return '<div class="card"><h3>Help items asked</h3><div class="chips" style="margin:4px 0 6px"><button class="chip' + (HAS38.f === 'all' ? ' on' : '') + '" data-act="has38f" data-v="all">All ' + HA.length + '</button><button class="chip' + (HAS38.f === 'g' ? ' on' : '') + '" data-act="has38f" data-v="g">Already given ' + ng + '</button></div>' +
     '<div class="btns" style="margin:0 0 6px"><button data-act="has38a">' + (T.length && T.length === L.length ? 'Untick all' : 'Select all') + '</button>' + (T.length ? '<button class="main" data-act="has38ok">Approve ' + T.length + ' ticked</button>' : '') + '</div>' +
     (L.length ? L.map(function (a) { var gl = a.items.filter(function (i) { return i.g; }).map(function (i) { return (i.item === 'Other' ? i.detail || 'Other' : i.item) + ' ✓ given ' + dayLbl(i.g); });
-      return '<div style="padding:8px 0;border-top:1px solid var(--line);display:flex;gap:10px"><input type="checkbox" data-act="has38t" data-r="' + esc(a.ref) + '"' + (HAS38.t[a.ref] ? ' checked' : '') + ' style="width:22px;height:22px;flex:none;margin-top:2px"><div style="flex:1;min-width:0"><b>' + esc(a.vendor) + '</b> <span class="small muted">· ' + esc(a.agent) + ' · ' + esc(dayLbl(a.day)) + '</span><div>' + esc(nHelpTxt(a.items)) + '</div>' +
+      return '<div style="padding:8px 0;border-top:1px solid var(--line);display:flex;gap:10px"><input type="checkbox" data-act="has38t" data-r="' + esc(a.ref) + '"' + (HAS38.t[a.ref] ? ' checked' : '') + ' style="width:22px;height:22px;flex:none;margin-top:2px"><div style="flex:1;min-width:0"><b>' + esc(a.vendor) + '</b> <span class="small muted">· ' + esc(a.agent) + ' · ' + esc(dayLbl(a.day)) + '</span>' + has42Txt(a) +
         (gl.length ? '<div class="small t-green">' + esc(gl.join(' · ')) + (a.gv === 2 ? ' – approving just closes it' : '') + '</div>' : '') + ha89Html(a) +
         '<div class="btns" style="margin-top:6px"><button class="main" data-act="hasok" data-r="' + esc(a.ref) + '">Approve</button><button data-act="hasno" data-r="' + esc(a.ref) + '">Decline</button></div></div></div>'; }).join('') : '<p class="small muted">None.</p>') + '</div>'; }
 ACT.has38f = function (b) { HAS38.f = b.dataset.v; HAS38.t = {}; render(); };
 ACT.has38t = function (b) { var r = b.dataset.r; if (HAS38.t[r]) delete HAS38.t[r]; else HAS38.t[r] = 1; render(); };
 ACT.has38a = function () { var HA = D.hasks || [], L = HAS38.f === 'g' ? HA.filter(function (a) { return a.gv; }) : HA, all = L.length && L.every(function (a) { return HAS38.t[a.ref]; }); HAS38.t = {}; if (!all) L.forEach(function (a) { HAS38.t[a.ref] = 1; }); render(); };
 ACT.has38ok = function () { if (viewBlock('hask')) return; var R = Object.keys(HAS38.t).filter(function (r) { return (D.hasks || []).some(function (a) { return a.ref === r; }); }); if (!R.length) return;
-  ask('Approve help items for ' + R.length + ' vendor' + (R.length > 1 ? 's' : '') + '?', function () { R.forEach(function (r) { hasDrop(r); bgSave('hask', { ref: r, ok: 1 }, 'ha-' + r, 'help items approved', null, true); }); HAS38.t = {}; toast('Saved'); render(); }, 'YES, APPROVE'); };
+  ask('Approve help items for ' + R.length + ' vendor' + (R.length > 1 ? 's' : '') + '?', function () { R = R.filter(has42Ok); R.forEach(function (r) { hasDrop(r); bgSave('hask', has42P(r), 'ha-' + r, 'help items approved', null, true); delete HAS42[r]; }); HAS38.t = {}; toast('Saved'); render(); }, 'YES, APPROVE'); };
 ACT.apk = function (b) { APK = b.dataset.s; MSG = null; render(); };
 ACT.ochgd = function (b) { var dn = b.dataset.v === '1', nm = b.dataset.n; askIn((dn ? 'Done: the change to ' + nm + '\'s order is made with Frank?' : 'Not made: ' + nm + '\'s order stays as it is?') + '\nA note for the agent (optional):', '', '', function (t) { bgSave('ochgdone', { oid: b.dataset.o, done: dn ? 1 : 0, note: String(t || '').trim() }, 'ocd-' + b.dataset.o + '-' + uid(), (dn ? 'change done: ' : 'change not made: ') + nm, null, true); }, dn ? 'DONE' : 'NOT MADE'); }; // v2.6.2
 function pgAppr() {
@@ -8860,11 +8860,11 @@ function pgMOrd() {
     h += CA ? '<div class="mdlk a" data-act="moapk" data-k="chg"><div class="grow"><b>' + CA + ' order change' + (CA === 1 ? '' : 's') + ' to OK</b><div class="small muted">The agent spoke to Frank</div></div>' + chev(false) + '</div>' : '';
     h += N.length ? N.map(function (x) { return moRow(x.o, x.why); }).join('') : (CA ? '' : emptyHtml('Nothing needs you.'));
   } else if (MO.t === 'w') {
-    var rank = ['prob', 'mgr', 'frank', 'appr', 'prince'], G = {};
+    var rank = ['prob', 'mgr', 'frank', 'appr', 'prince'], G = {}; OCOL.prince[0] = esc(rd42Lbl(W));
     W.forEach(function (o) { var k = oStage(o).k; (G[k] = G[k] || []).push(o); });
     h += '<div class="mdkey" style="margin:2px 2px 6px">' + rank.map(function (k) { return '<span><i style="background:' + OCOL[k][1] + '"></i>' + OCOL[k][0] + '</span>'; }).join('') + '</div>';
     h += W.length ? rank.filter(function (k) { return G[k]; }).map(function (k) { var g = G[k].sort(function (a, b) { return (b.urg ? 1 : 0) - (a.urg ? 1 : 0) || (a.fpos || 0) - (b.fpos || 0) || (a.ppos || 0) - (b.ppos || 0); });
-      return '<div class="o2dh"><span>' + OCOL[k][0] + '</span><span>' + g.length + ' · ' + g.reduce(function (t, o) { return t + oCtnAll(o); }, 0) + ' ctn</span></div>' + g.map(function (o) { return moRow(o); }).join(''); }).join('') : emptyHtml('No order on the way.');
+      return mo42Grp(k, g); }).join('') : emptyHtml('No order on the way.');
   } else {
     var R = moWin(), X = moDone();
     h += '<div class="t2tray">' + [['today', 'Today'], ['week', 'This week'], ['month', 'This month'], ['lm', 'Last month'], ['dates', '📅']].map(function (c) { return '<button class="' + (lm92c(MO.w, c[0], MO.from, MO.to, 'dates') ? 'on' : '') + '" data-act="mow" data-k="' + c[0] + '">' + (c[0] === 'dates' && MO.w === 'dates' ? '📅 ' + esc(R[0] === R[1] ? dayLbl(R[0]) : dayLbl(R[0]) + ' – ' + dayLbl(R[1])) : c[1]) + '</button>'; }).join('') + '</div>';
@@ -11833,4 +11833,79 @@ function sv39Fin(op, d, r) { if (!MON39[op]) return; sv39Drop(sv39Vids(d || {}).
   try { if (SHEETK === 'vacct' && VA.vid && !(VA18 && VA18.busy)) vaLoad(VA.vid, true); } catch (e) { }
   if (TAB === 'money' && !SHEETK) render(); }
 CHG.nc34c = function (el) { var v = String(el.value || ''); if (el.dataset.f === 'from') { NC34.f = v; if (!NC34.t || NC34.t < v) NC34.t = v; } else { NC34.t = v; if (!NC34.f || NC34.f > v) NC34.f = v; } NC34.dw = NC34.f ? 'cal' : 'all'; render(); };
+/* v2.9.42: the manager changes a help-item ask before approving (+ / −, typed, ✕, + Add an item) */
+var HAS42 = {}, HAS42O = '', HAS42A = '';
+function has42L(a) { return HAS42[a.ref] || (HAS42[a.ref] = a.items.map(function (i) { return { lever: i.lever, item: i.item, detail: i.detail || '', qty: i.qty, o: i.qty }; })); }
+function has42Ok(r) { var L = HAS42[r]; return !L || L.some(function (i) { return i.qty > 0; }); }
+function has42P(r) { var L = HAS42[r], p = { ref: r, ok: 1 }; if (L) p.items = L.map(function (i) { return { lever: i.lever, item: i.item, detail: i.detail, qty: i.qty }; }); return p; }
+function has42Nm(i) { return i.item === 'Other' ? i.detail || 'Other' : i.item; }
+function has42Txt(a) { var ed = HAS42[a.ref], L = ed || a.items;
+  if (HAS42O !== a.ref) return '<div>' + esc(nHelpTxt(L.filter(function (i) { return i.qty > 0; })) || 'Nothing') + (ed ? ' <span class="small t-amber">changed</span>' : '') + ' <a class="small" data-act="has42o" data-r="' + esc(a.ref) + '" style="font-weight:700;white-space:nowrap">✎ Change</a></div>';
+  L = has42L(a); var r = esc(a.ref);
+  var h = '<div style="margin:6px 0">' + L.map(function (i, n) { return '<div style="display:flex;align-items:center;gap:6px;padding:4px 0' + (i.qty ? '' : ';opacity:.45') + '"><span style="flex:1;min-width:0' + (i.qty ? '' : ';text-decoration:line-through') + '">' + esc(has42Nm(i)) + '</span>' +
+    '<button class="ghost2" style="min-width:34px;padding:4px 0" data-act="has42q" data-r="' + r + '" data-n="' + n + '" data-d="-1">−</button><input type="number" inputmode="numeric" min="0" max="500" style="width:58px;text-align:center" value="' + i.qty + '" data-inp="has42" data-r="' + r + '" data-n="' + n + '">' +
+    '<button class="ghost2" style="min-width:34px;padding:4px 0" data-act="has42q" data-r="' + r + '" data-n="' + n + '" data-d="1">+</button><button class="ghost2" style="min-width:34px;padding:4px 0" data-act="has42x" data-r="' + r + '" data-n="' + n + '" aria-label="Take out">✕</button></div>'; }).join('');
+  if (HAS42A === a.ref) { var have = {}; L.forEach(function (i) { have[i.item] = 1; }); var H = D.help || HELPD, ch = [];
+    Object.keys(H).forEach(function (lv) { (H[lv] || []).forEach(function (it) { if (!have[it]) ch.push('<button class="chip" data-act="has42p" data-r="' + r + '" data-l="' + esc(lv) + '" data-i="' + esc(it) + '">' + esc(it) + '</button>'); }); });
+    h += '<div class="small" style="font-weight:700;margin:6px 0 4px">Add an item</div><div class="chips" style="flex-wrap:wrap">' + ch.join('') + '</div>'; }
+  else h += '<button class="ghost2" style="margin-top:4px" data-act="has42a" data-r="' + r + '">+ Add an item</button>';
+  return h + ' <a class="small" data-act="has42o" data-r="" style="font-weight:700">Done</a></div>'; }
+function has42Find(r) { return (D.hasks || []).filter(function (a) { return a.ref === r; })[0]; }
+ACT.has42o = function (b) { var r = b.dataset.r; HAS42A = ''; if (r) { var a = has42Find(r); if (a) has42L(a); } HAS42O = r; render(); };
+ACT.has42q = function (b) { var L = HAS42[b.dataset.r]; if (!L) return; var i = L[+b.dataset.n]; if (!i) return; i.qty = Math.max(0, Math.min(500, (i.qty || 0) + Number(b.dataset.d))); render(); };
+ACT.has42x = function (b) { var L = HAS42[b.dataset.r]; if (!L) return; var i = L[+b.dataset.n]; if (!i) return; i.qty = i.qty ? 0 : (i.o || 1); render(); };
+ACT.has42a = function (b) { HAS42A = b.dataset.r; render(); };
+ACT.has42p = function (b) { var L = HAS42[b.dataset.r]; if (!L) return; L.push({ lever: b.dataset.l, item: b.dataset.i, detail: '', qty: 1, o: 1 }); HAS42A = ''; render(); };
+INP.has42 = function (el) { var L = HAS42[el.dataset.r]; if (!L) return; var i = L[+el.dataset.n]; if (i) i.qty = Math.max(0, Math.min(500, Math.round(Number(el.value) || 0))); };
+
+/* v2.9.42: the agent confirms help items marked as given – Orders › Needs you › Help items */
+var HC42 = {}, HC42O = '';
+function hc42S(x) { var s = HC42[x.vid]; if (!s) { s = HC42[x.vid] = { t: {}, q: {}, day: '', rd: x.rd || '' }; x.items.forEach(function (i) { s.t[i.k] = 1; s.q[i.k] = i.q; }); } return s; }
+function hc42Of(vid) { return (D.hc42 || []).filter(function (x) { return x.vid === vid; })[0]; }
+oNeeds = (function (f) { return function () { var L = f(); if (!D || !D.me || D.me.role !== 'Agent') return L; (D.hc42 || []).forEach(function (c) { if (c.items && c.items.length) L.push({ k: 'hc42', c: c }); }); return L; }; })(oNeeds);
+oNeedN = function () { var L = oNeeds(), h = L.filter(function (x) { return x.k === 'hc42'; }).length; return L.length - h + (h ? 1 : 0); }; /* all help items to confirm = one task */
+oNeedsHtml = (function (f) { return function (N) { var H = (N || []).filter(function (x) { return x.k === 'hc42'; }), O = (N || []).filter(function (x) { return x.k !== 'hc42'; });
+  if (!H.length) { if (ONS === 'hc42') ONS = 'do'; return f(O); }
+  var nr = O.filter(function (x) { return x.k === 'rate'; }).length, nt = O.length - nr;
+  var bar = '<div class="n73sub"><button class="' + (ONS === 'do' ? 'on' : '') + '" data-act="ons" data-v="do">To do<i>' + nt + '</i></button>' + (nr ? '<button class="' + (ONS === 'rate' ? 'on' : '') + '" data-act="ons" data-v="rate">Rate Prince<i>' + nr + '</i></button>' : '') + '<button class="' + (ONS === 'hc42' ? 'on' : '') + '" data-act="ons" data-v="hc42">Help items<i>' + H.length + '</i></button></div>';
+  if (ONS === 'hc42') return bar + hc42Html(H.map(function (x) { return x.c; }));
+  var h = f(O).replace(/^<div class="n73sub">[\s\S]*?<\/div>/, '');
+  if (ONS === 'do') h = '<div class="r27row k-blue" data-act="ons" data-v="hc42"><div class="grow"><b class="ell">Help items to confirm</b><span class="ell">' + H.length + ' vendor' + (H.length === 1 ? '' : 's') + ' · the day, who brought it, the numbers</span></div><b>›</b></div>' + h.replace(/<p class="small muted"[^>]*>Nothing needs you ✓<\/p>/, '');
+  return bar + h; }; })(oNeedsHtml);
+function hc42Html(L) {
+  var h = '<p class="small muted" style="margin:4px 2px 8px">These are marked as given. Check each one: the day, who brought it and the numbers. ✕ what she did not get.</p>';
+  return h + L.map(function (x) { var s = hc42S(x), op = HC42O === x.vid, v = esc(x.vid);
+    var sum = x.items.map(function (i) { return (s.q[i.k] > 1 ? s.q[i.k] + ' ' : '') + has42Nm(i) + (s.q[i.k] ? '' : ' ✕'); }).join(', ');
+    if (!op) return '<div class="r27row k-blue" data-act="hc42o" data-v="' + v + '"><div class="grow"><b class="ell">' + esc(x.vn) + '</b><span class="ell">' + esc(sum) + '</span></div><b>›</b></div>';
+    var it = x.items.map(function (i) { var k = esc(i.k), q = s.q[i.k] || 0, on = !!s.t[i.k];
+      return '<div style="display:flex;align-items:center;gap:6px;padding:5px 0' + (q ? '' : ';opacity:.5') + '"><input type="checkbox" data-act="hc42t" data-v="' + v + '" data-k="' + k + '"' + (on ? ' checked' : '') + ' style="width:22px;height:22px;flex:none"><span style="flex:1;min-width:0' + (q ? '' : ';text-decoration:line-through') + '">' + esc(has42Nm(i)) + '</span>' +
+        '<button class="ghost2" style="min-width:34px;padding:4px 0" data-act="hc42q" data-v="' + v + '" data-k="' + k + '" data-d="-1">−</button><input type="number" inputmode="numeric" min="0" max="500" style="width:58px;text-align:center" value="' + q + '" data-inp="hc42q" data-v="' + v + '" data-k="' + k + '">' +
+        '<button class="ghost2" style="min-width:34px;padding:4px 0" data-act="hc42q" data-v="' + v + '" data-k="' + k + '" data-d="1">+</button><button class="ghost2" style="min-width:34px;padding:4px 0" data-act="hc42x" data-v="' + v + '" data-k="' + k + '" aria-label="Not given">✕</button></div>'; }).join('');
+    var give = x.items.some(function (i) { return s.t[i.k] && s.q[i.k] > 0; });
+    var who = give ? '<div class="small" style="font-weight:700;margin:8px 2px 4px">Day it was given</div><input type="date" data-inp="hc42d" data-chg="hc42d" data-v="' + v + '" max="' + esc(D.today) + '" value="' + esc(s.day || '') + '">' +
+      '<div class="small" style="font-weight:700;margin:8px 2px 4px">Who brought it</div><div class="t2tray">' + (D.riders || []).concat([{ id: 'self', name: 'I gave it' }]).map(function (r) { return '<button class="' + (s.rd === r.id ? 'on' : '') + '" data-act="hc42r" data-v="' + v + '" data-r="' + esc(r.id) + '">' + esc(r.name) + '</button>'; }).join('') + '</div>' : '';
+    var nT = x.items.filter(function (i) { return s.t[i.k]; }).length;
+    return '<div class="card" style="margin:6px 0"><div class="row" data-act="hc42o" data-v=""><b class="grow">' + esc(x.vn) + '</b><span class="small muted">' + esc(x.sn || '') + ' ▴</span></div>' + it + who +
+      '<button class="main" style="width:100%;margin-top:10px" data-act="hc42s" data-v="' + v + '"' + (nT ? '' : ' disabled') + '>' + (nT < x.items.length && nT ? 'Save ' + nT + ' ticked' : 'Save') + '</button>' +
+      (nT < x.items.length ? '<div class="small muted" style="margin-top:4px">Unticked items stay here for later (another day).</div>' : '') + '</div>'; }).join(''); }
+ACT.hc42o = function (b) { HC42O = b.dataset.v || ''; render(); };
+ACT.hc42t = function (b) { var x = hc42Of(b.dataset.v); if (!x) return; var s = hc42S(x), k = b.dataset.k; if (s.t[k]) delete s.t[k]; else s.t[k] = 1; render(); };
+ACT.hc42q = function (b) { var x = hc42Of(b.dataset.v); if (!x) return; var s = hc42S(x), k = b.dataset.k; s.q[k] = Math.max(0, Math.min(500, (s.q[k] || 0) + Number(b.dataset.d))); s.t[k] = 1; render(); };
+ACT.hc42x = function (b) { var x = hc42Of(b.dataset.v); if (!x) return; var s = hc42S(x), k = b.dataset.k, i = x.items.filter(function (y) { return y.k === k; })[0]; s.q[k] = s.q[k] ? 0 : (i ? i.q : 1); s.t[k] = 1; render(); };
+ACT.hc42r = function (b) { var x = hc42Of(b.dataset.v); if (!x) return; hc42S(x).rd = b.dataset.r; render(); };
+INP.hc42q = function (el) { var x = hc42Of(el.dataset.v); if (!x) return; var s = hc42S(x); s.q[el.dataset.k] = Math.max(0, Math.min(500, Math.round(Number(el.value) || 0))); s.t[el.dataset.k] = 1; };
+INP.hc42d = function (el) { var x = hc42Of(el.dataset.v); if (!x) return; hc42S(x).day = el.value && el.value <= D.today ? el.value : ''; };
+CHG.hc42d = function (el) { INP.hc42d(el); render(); };
+ACT.hc42s = function (b) { var x = hc42Of(b.dataset.v); if (!x) return; if (viewBlock('hc42')) return; var s = hc42S(x), T = x.items.filter(function (i) { return s.t[i.k]; }); if (!T.length) return;
+  var give = T.some(function (i) { return s.q[i.k] > 0; });
+  if (give && !s.day) { toast('Pick the day it was given'); return; } if (give && !s.rd) { toast('Pick who brought it'); return; }
+  bgSave('hc42', { vid: x.vid, day: give ? s.day : '', rd: give ? s.rd : '', lines: T.map(function (i) { return { k: i.k, q: s.q[i.k] || 0 }; }) }, 'hc42-' + x.vid + '-' + uid(), 'help items confirmed', null, true);
+  x.items = x.items.filter(function (i) { return !s.t[i.k]; }); s.t = {}; x.items.forEach(function (i) { s.t[i.k] = 1; });
+  if (!x.items.length) { D.hc42 = (D.hc42 || []).filter(function (y) { return y.vid !== x.vid; }); delete HC42[x.vid]; HC42O = ''; } toast('Saved'); render(); };
+
+/* v2.9.42: Orders – one heading per rider ("With Theophilus", "With Prince") */
+function rd42Lbl(W) { var n = {}; (W || []).forEach(function (o) { if (oStage(o).k === 'prince') n[o.rdn || 'Prince'] = 1; }); var k = Object.keys(n); return k.length === 1 ? 'With ' + k[0] : (D.riders || []).length > 1 ? 'With riders' : 'With Prince'; }
+function mo42Grp(k, g) { var hd = function (t, L) { return '<div class="o2dh"><span>' + esc(t) + '</span><span>' + L.length + ' · ' + L.reduce(function (s, o) { return s + oCtnAll(o); }, 0) + ' ctn</span></div>' + L.map(function (o) { return moRow(o); }).join(''); };
+  if (k !== 'prince') return hd(OCOL[k][0], g); var B = {}, ord = []; g.forEach(function (o) { var r = o.rdn || 'Prince'; if (!B[r]) { B[r] = []; ord.push(r); } B[r].push(o); });
+  return ord.map(function (r) { return hd('With ' + r, B[r]); }).join(''); }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
