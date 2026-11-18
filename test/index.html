@@ -2056,7 +2056,7 @@ ACT.clsave = function (b) {
   var c = myClaims().filter(function (x) { return x.id === b.dataset.c; })[0], st = CLA[b.dataset.c]; if (!c) return; var amt = st.ans === 'YES' ? c.amount : num(st.amount);
   if (st.ans === 'DIFF' && !(amt > 0)) { say('Type how much she gave you.'); return; }
   ask(c.vendor + ':\n' + (st.ans === 'NO' ? 'She did NOT pay you.\nIt goes to the manager to decide; her debt stays until then.' : 'She paid you ' + ghs(amt) + '.\nHer debt goes down and the cash counts as with you until you hand it over.') + (st.note ? '\nNote: ' + st.note : ''), function () {
-    bgSave('claim', { id: c.id, ans: st.ans, amount: st.ans === 'DIFF' ? amt : '', note: st.note }, 'cl-' + c.id, (st.ans === 'NO' ? 'not paid' : 'paid ' + ghs(amt)) + ' – ' + c.vendor, null, true); delete CLA[c.id]; }, 'SEND');
+    bgSave('claim', { id: c.id, ans: st.ans, amount: st.ans === 'DIFF' ? amt : '', note: st.note, n46: 1 }, 'cl-' + c.id, (st.ans === 'NO' ? 'not paid' : 'paid ' + ghs(amt)) + ' – ' + c.vendor, null, true); delete CLA[c.id]; }, 'SEND');
 };
 // ---------------------------------------------------------------- v2.5.6: register a new vendor (replaces the Register form)
 var REG = null;
@@ -5484,11 +5484,11 @@ SHEETS.p7cl = function () {
   h += '<div class="small muted">She owes ' + p7g(c.owes) + ' now.</div><div class="p7q">Did she pay you?</div>' + p7Tray('p7ca', [['yes', 'Yes, she paid me'], ['no', 'No, she did not pay me'], ['ns', 'Not sure, I will ask her']], P7S.ans);
   if (P7S.ans === 'yes') { if (!P7S.diff) P7S.diff = c.amount; h += p7Tray('p7cd', [['same', 'She paid ' + p7g(c.amount)], ['diff', 'She paid a different amount']], P7S.dk || 'same');
     if (P7S.dk === 'diff') h += p7Step('p7cs', P7S.diff, 'She gave me');
-    h += '<div class="p7conf small">Saved as cash with you. Give it to Frank today. The manager sees it came late.</div>'; }
+    h += p7c46(c); h += '<div class="p7conf small">' + (String(P7S.s46 || '').indexOf('s:') === 0 ? 'Nothing new is recorded. Prince gets his answer.' : 'Saved as cash with you. Give it to Frank today. The manager sees it came late.') + '</div>'; }
   if (P7S.ans === 'no') h += '<input class="o2q" data-inp="p7cn" placeholder="Anything the manager should know? (optional)" value="' + esc(P7S.note || '') + '"><div class="small muted">The manager decides.</div>';
   if (P7S.ans === 'ns') h += '<div class="small muted">Reminder ' + esc(dayLbl(p7NextDay(D.today))) + ', 9:00 am.</div>';
-  var lbl = P7S.ans === 'yes' ? 'Record ' + p7g(P7S.dk === 'diff' ? P7S.diff : c.amount) + ' and answer Prince' : P7S.ans === 'ns' ? 'Remind me' : 'Send to the manager';
-  return h + '<button class="main gr p7big" data-act="p7csend"' + (P7S.ans ? '' : ' disabled') + '>' + lbl + '</button>';
+  var lbl = P7S.ans === 'yes' && String(P7S.s46 || '').indexOf('s:') === 0 ? 'Same money – answer Prince' : P7S.ans === 'yes' ? 'Record ' + p7g(P7S.dk === 'diff' ? P7S.diff : c.amount) + ' and answer Prince' : P7S.ans === 'ns' ? 'Remind me' : 'Send to the manager';
+  return h + '<button class="main gr p7big" data-act="p7csend"' + (P7S.ans && !(P7S.ans === 'yes' && c.rec && c.rec.length && !P7S.s46) ? '' : ' disabled') + '>' + lbl + '</button>';
 };
 ACT.p7ca = function (b) { P7S.ans = P7S.ans === b.dataset.v ? '' : b.dataset.v; drawSheet(); };
 ACT.p7cd = function (b) { P7S.dk = b.dataset.v; drawSheet(); };
@@ -5497,8 +5497,9 @@ INP.p7cn = function (el) { P7S.note = el.value; };
 ACT.p7csend = function () { var c = (D.claims || []).filter(function (x) { return x.id === P7S.id; })[0]; if (!c || !P7S.ans) return; var a = P7S.ans; p7Close();
   if (a === 'ns') { bgSave('rem', { act: 'add', day: p7NextDay(D.today), time: '09:00', kind: 'Call', about: 'Ask ' + c.vendor + ' about the GHS ' + c.amount + ' she says she paid', vid: c.vid }, 'cln-' + c.id, 'remind me: ' + c.vendor, null, true); return; }
   if (a === 'no') { bgSave('claim', { id: c.id, ans: 'NO', note: String(P7S.note || '').trim() }, 'cl-' + c.id, c.vendor + ': she did not pay me', null, true); return; }
+  var s46 = String(P7S.s46 || ''); if (s46.indexOf('s:') === 0) { bgSave('claim', { id: c.id, ans: 'SAME', rid: s46.slice(2) }, 'cl-' + c.id, c.vendor + ': same money', null, true); return; } /* v2.9.46 */
   var diff = P7S.dk === 'diff' && Math.abs(P7S.diff - c.amount) > 0.004;
-  bgSave('claim', diff ? { id: c.id, ans: 'DIFF', amount: P7S.diff } : { id: c.id, ans: 'YES' }, 'cl-' + c.id, c.vendor + ' paid me ' + p7g(diff ? P7S.diff : c.amount), null, true); };
+  bgSave('claim', diff ? { id: c.id, ans: 'DIFF', amount: P7S.diff, n46: 1 } : { id: c.id, ans: 'YES', n46: 1 }, 'cl-' + c.id, c.vendor + ' paid me ' + p7g(diff ? P7S.diff : c.amount), null, true); };
 // ⊕ More on a payment: what it paid oldest first, the receipt, the steps, fix / cancel or ask the manager
 SHEETS.p7pay = function () {
   var p = p7Pay(P7S.id); if (!p) return ''; var r = p7Rcpt(p), h = p7Head(esc(p.vn));
@@ -6991,7 +6992,7 @@ function pgHelpI() {
   var gq = given.reduce(function (t, x) { return t + x.q; }, 0), op = asked.filter(function (x) { return !x.g; }).length;
   var h = '<div class="sech">Help items</div>' + hRelRows() + '<div class="tiles">' + mtile(asked.length, 'asked for') + mtile(gq, 'given', 't-purple') + mtile(op, 'not given yet', op ? 't-amber' : '') + '</div>' + hFilters(false);
   h += fold('hday', '<b>Given per day</b> <span class="small muted">' + gq + ' item' + (gq === 1 ? '' : 's') + ' in these days</span>', function () { return hDays(L); });
-  var e = H.eff; h += fold('heff', '<b>Does it work?</b> <span class="small muted">' + (e && e.n ? 'cartons a week, 4 weeks before → after' : 'results 4 weeks after the first item') + '</span>' + (e && e.n ? '<div class="small">Given items: <b>' + e.before + ' → ' + e.after + '</b> · given nothing: ' + e.obefore + ' → ' + e.oafter + '</div>' : ''), function () {
+  var e = H.eff; if (H.imp) h += hi46Fold(H.imp); else h += fold('heff', '<b>Does it work?</b> <span class="small muted">' + (e && e.n ? 'cartons a week, 4 weeks before → after' : 'results 4 weeks after the first item') + '</span>' + (e && e.n ? '<div class="small">Given items: <b>' + e.before + ' → ' + e.after + '</b> · given nothing: ' + e.obefore + ' → ' + e.oafter + '</div>' : ''), function () {
     return (e && e.n ? '<table class="cmpt" style="width:100%"><tr><td>' + e.n + ' vendor' + (e.n === 1 ? '' : 's') + ' given items</td><td class="r"><b>' + e.before + ' → ' + e.after + '</b> ctn a week</td></tr><tr><td>' + e.on + ' vendors given nothing (same weeks)</td><td class="r">' + e.obefore + ' → ' + e.oafter + ' ctn a week</td></tr></table><p class="small muted">Before = the 4 weeks before her first item, after = the 4 weeks from that day. Judge on 5 or more vendors, not one.</p>' : '<p class="small muted">' + (e && e.waiting ? e.waiting + ' vendor' + (e.waiting === 1 ? '' : 's') + ' got items less than 4 weeks ago – their result shows 4 weeks after.' : 'No vendor has been given items yet.') + '</p>') +
       ((D.interv && D.interv.list.length) || (D.needs2 && D.needs2.items && D.needs2.items.length) ? '<button class="big" data-act="sheet" data-k="interv">By item, and by way of helping</button>' : ''); });
   return h + '<div class="sech">The list <span>' + L.length + ' row' + (L.length === 1 ? '' : 's') + '</span></div>' + hList(L) + '<p class="small muted">Each row is one vendor on one day. Tap it for the items. The Help_Log tab has every item, one row each.</p>';
@@ -9369,8 +9370,9 @@ SHEETS.vacct = function () {
   var R = A.rows.filter(function (r) { if (VA.from && (r.day < VA.from || r.day > (VA.to || VA.from))) return false;
     return VA.f === 'un' ? r.k === 'o' && r.open + (r.hw || 0) > 0.004 : VA.f === 'o' ? r.k === 'o' : VA.f === 'p' ? r.k === 'p' : true; });
   h += vaCtn91(A);
-  h += '<div class="vach">' + [['all', 'All'], ['un', 'Unpaid'], ['o', 'Orders'], ['p', 'Payments']].map(function (c) { return '<button class="' + (VA.f === c[0] ? 'on' : '') + '" data-act="vaf" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') +
+  h += '<div class="vach">' + [['all', 'All'], ['un', 'Unpaid'], ['o', 'Orders'], ['p', 'Payments']].concat(A.hi && A.hi.length ? [['hi', 'Help items']] : []).map(function (c) { return '<button class="' + (VA.f === c[0] ? 'on' : '') + '" data-act="vaf" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') +
     '<button class="' + (VA.from ? 'on' : '') + '" data-act="vacal">📅 ' + (VA.from ? esc(VA.from === (VA.to || VA.from) ? dayLbl(VA.from) : dayLbl(VA.from) + ' – ' + dayLbl(VA.to)) : 'Dates') + '</button>' + (VA.from ? '<button data-act="vacalx" aria-label="All dates">✕</button>' : '') + '</div>';
+  if (VA.f === 'hi') return h + hi46Html(A); /* v2.9.46 */
   if (!R.length) return h + '<p class="small muted" style="text-align:center;margin:16px 0">Nothing here.</p>';
   var PX39 = {}; A.rows.forEach(function (p) { if (p.k === 'p') PX39[p.id] = p; });
   var payOf = {}; A.rows.forEach(function (p) { if (p.k === 'p' && !p.cx && !p.bk) (p.to || []).forEach(function (t) { (payOf[t.ref] = payOf[t.ref] || []).push([p.day, t.amt, p.how, p.id, t.aid, t.sku ? (t.sku + ' · ' + t.src) : '']); }); });
@@ -11954,4 +11956,40 @@ ACT.w43w = function (b) { W43.w = b.dataset.v || ''; W43.o = ''; render(); };
 function fk44Def(C, r) { if (C && r && r.set && !C.o45) C.out = C.to > r.r && C.to > (r.u || 0) ? false : !!isOut(C.s); /* v2.9.45: more came in = Omni has it */ if (!C || !r || !r.set) return; if (C.to === r.r) { if (C.a44) C.why = ''; return; } if (!C.why || C.a44) { C.why = C.to > r.r ? 'More came in' : 'Less than expected'; C.a44 = 1; } }
 function fk44Why(C, r) { fk44Def(C, r); if (!(r.set && C.to !== r.r)) return ''; return '<div class="fkq2">Why?</div><div class="t2tray">' + FKWHY.map(function (w) { return '<button class="' + (C.why === w ? 'on' : '') + '" data-act="fkrw" data-v="' + esc(w) + '">' + esc(w) + '</button>'; }).join('') + '</div><p class="small muted">The manager sees every change.</p>'; }
 function fk44Upd() { var C = FK.rc, b = $('fk44w'); if (!C || !b) return; var r = (fkF().res || {})[C.s] || { r: 0, u: 0, set: false }; b.innerHTML = fk44Why(C, r); [].forEach.call(document.querySelectorAll('[data-act=fkio]'), function (x) { x.className = (x.dataset.v === '1') === !!C.out ? 'on' : ''; }); }
+// ---------------------------------------------------------------- v2.9.46: the manager clears one payment on its line (never paid)
+r38Va = (function (f) { return function (r) { var h = f.apply(this, arguments); try { if (!r || !r.wr || !r.wr.length || !D.me || D.me.role !== 'Supervisor' || D.viewOf) return h; var P = [];
+  r.wr.forEach(function (w) { if (w.n !== 'the manager' && w.u && P.indexOf(w.n) < 0) P.push(w.n); });
+  P.forEach(function (n) { var a = r38R(r.wr.filter(function (w) { return w.n === n; }).reduce(function (t, w) { return t + w.a; }, 0)); if (a > 0.004) h += '<button class="vasm red" data-act="cl46" data-r="' + esc(r.ref) + '" data-n="' + esc(n) + '" style="margin:4px 0 8px">Clear ' + ghs(a) + ' – ' + esc(n) + ' never got it</button>'; });
+  } catch (e) { } return h; }; })(r38Va);
+ACT.cl46 = function (b) { var r = vaRow(b.dataset.r), n = b.dataset.n; if (!r) return; var E = (r.wr || []).filter(function (w) { return w.n === n && w.u; }); if (!E.length) return; var u = E[0].u; E = E.filter(function (w) { return w.u === u; });
+  var a = r38R(E.reduce(function (t, w) { return t + w.a; }, 0));
+  askIn('Clear ' + ghs(a) + ' with ' + n + '? Never paid: she owes it again. Why?', '', 'text', function (why) { why = String(why || '').trim(); if (why.length < 3) { say('Write why.'); return; }
+    bgSave('clr91', { uid: u, why: why, items: E.map(function (e) { return { id: e.rid, src: e.src, amt: e.a, ref: e.ref || r.ref }; }) }, 'cl46-' + uid(), 'Saved', null, true);
+    r.wr = r.wr.filter(function (w) { return !(w.n === n && w.u === u); }); (r.wa || []).forEach(function (w) { if (w.n === n) w.a = r38R(w.a - a); }); r.wa = (r.wa || []).filter(function (w) { return w.a > 0.004; }); if (!r.wa.length) r.wa = null;
+    r.hw = r38R(r.wr.reduce(function (t, w) { return t + (w.n === 'the manager' ? 0 : w.a); }, 0)); if (!(r.hw > 0.004)) delete r.hw; r.open = r38R(r.open + a); r.paid = r38R(r.paid - a);
+    toast('Saved'); drawSheet(); }, 'CLEAR'); };
+// ---------------------------------------------------------------- v2.9.46: an old "she paid you" question – the same money?
+function p7c46(c) { if (!c || !c.rec || !c.rec.length) return '';
+  return '<div class="p7q">You recorded ' + c.rec.map(function (x) { return p7g(x.a) + ' on ' + esc(dayLbl(x.day)); }).join(' and ') + ' from her after ' + esc(c.raisedBy || 'Prince') + ' asked. Is it the same money?</div>' +
+    p7Tray('p7c46', c.rec.map(function (x) { return ['s:' + x.rid, 'Yes, the ' + p7g(x.a) + ' of ' + dayLbl(x.day)]; }).concat([['new', 'No, she paid me again']]), P7S.s46 || ''); }
+ACT.clsave = (function (f) { return function (b) { var c = (D.claims || []).filter(function (x) { return x.id === b.dataset.c; })[0], st = typeof CLA !== 'undefined' ? CLA[b.dataset.c] : null;
+  if (c && st && st.ans && st.ans !== 'NO' && c.rec && c.rec.length && !st.ok46) { ask('Already recorded from ' + c.vendor + ': ' + c.rec.map(function (x) { return ghs(x.a) + ' on ' + dayLbl(x.day); }).join(', ') + '. Is this new money? If it is the same money, tap No.', function () { st.ok46 = 1; ACT.clsave(b); }, 'NEW MONEY'); return; }
+  return f.apply(this, arguments); }; })(ACT.clsave);
+ACT.p7c46 = function (b) { P7S.s46 = P7S.s46 === b.dataset.v ? '' : b.dataset.v; drawSheet(); };
+// ---------------------------------------------------------------- v2.9.46: help items in Her account + Does it work? per item
+function n46(x) { x = Math.round((+x || 0) * 10) / 10; return String(x); }
+function hi46Html(A) { var L = (A.hi || []).filter(function (x) { return !VA.from || (x.d >= VA.from && x.d <= (VA.to || VA.from)); });
+  if (!L.length) return '<p class="small muted" style="text-align:center;margin:16px 0">Nothing here.</p>';
+  return L.map(function (x) { var ch = x.nd ? Math.round((x.a - x.b) * 10) / 10 : null;
+    return '<div class="varow kg"><div class="r1"><span>' + x.its.map(function (i) { return esc(i[0]) + (i[1] > 1 ? ' ×' + i[1] : ''); }).join(', ') + '</span><b>' + esc(dayLbl(x.d)) + '</b></div>' +
+      '<div class="r2"><span>' + (x.nd ? 'Cartons ' + x.nd + ' day' + (x.nd === 1 ? '' : 's') + ' before ' + n46(x.b) + ' → after ' + n46(x.a) + (x.nd < 30 ? ' (so far)' : '') : 'Given today – compare later') + '</span>' + (ch === null ? '' : '<b class="' + (ch > 0 ? 't-green' : ch < 0 ? 't-red' : '') + '">' + (ch > 0 ? '+' : '') + n46(ch) + '</b>') + '</div></div>'; }).join('') +
+    '<p class="small muted" style="margin:8px 2px">Cartons she bought in the same number of days before and after the day (up to 30).</p>'; }
+function hi46Fold(m) { var A = m.all || {}, ok = A.n > 0;
+  var sub = ok ? 'cartons in 30 days · given items ' + n46(A.b) + ' → ' + n46(A.a) + ' · given nothing ' + n46(A.cb) + ' → ' + n46(A.ca) : 'results 30 days after an item is given';
+  return fold('heff', '<b>Does it work?</b> <span class="small muted">' + sub + '</span>', function () {
+    var rows = (m.items || []).map(function (s) { var x = s.n ? Math.round(((s.a - s.b) - (s.ca - s.cb)) * 10) / 10 : null;
+      return '<tr><td>' + esc(s.i) + '<div class="small muted">' + (s.n ? s.v + ' vendor' + (s.v === 1 ? '' : 's') : 'none yet') + (s.w ? ' · ' + s.w + ' waiting' : '') + '</div></td><td class="r">' + (s.n ? n46(s.b) + ' → ' + n46(s.a) : '–') + '</td><td class="r">' + (s.n ? n46(s.cb) + ' → ' + n46(s.ca) : '–') + '</td><td class="r"><b class="' + (x > 0 ? 't-green' : x < 0 ? 't-red' : '') + '">' + (x === null ? '–' : (x > 0 ? '+' : '') + n46(x)) + '</b></td></tr>'; }).join('');
+    return '<table class="cmpt" style="width:100%"><tr><th style="text-align:left">Item</th><th class="r">Given it</th><th class="r">Given nothing</th><th class="r">Extra</th></tr>' + rows + '</table>' +
+      '<p class="small muted">Cartons a vendor bought in the 30 days before → the 30 days after the day (book + app). Given nothing = vendors who bought in the 3 months before and got no item within 30 days, same days. Extra = how much more their buying changed than the others. Waiting = given less than 30 days ago. As at ' + esc(dayLbl(m.at)) + ', after each model run.</p>' +
+      ((D.interv && D.interv.list.length) || (D.needs2 && D.needs2.items && D.needs2.items.length) ? '<button class="big" data-act="sheet" data-k="interv">By item, and by way of helping</button>' : ''); }); }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
