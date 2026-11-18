@@ -4782,11 +4782,11 @@ INP.fkrv = function (el) { setTimeout(fk44Upd, 0); var C = FK.rc, r = (fkF().res
 CHG.fkrv = function () { setTimeout(drawSheet, 0); };
 ACT.fkrw = function (b) { FK.rc.why = b.dataset.v; FK.rc.a44 = 0; drawSheet(); };
 ACT.fklv = function (b) { FK.rc.lvl = Math.max(0, FK.rc.lvl + Number(b.dataset.d)); drawSheet(); };
-ACT.fkio = function (b) { FK.rc.out = b.dataset.v === '1'; drawSheet(); };
+ACT.fkio = function (b) { FK.rc.out = b.dataset.v === '1'; FK.rc.o45 = 1; drawSheet(); };
 ACT.fkrsave = function () {
   var C = FK.rc; if (!C) return; var r = (fkF().res || {})[C.s] || { r: 0, u: 0, lvl: 10, set: false }; if (C.to < (r.u || 0)) { say('It cannot go below what is already approved (' + r.u + ').'); return; }
   var did = [];
-  fk44Def(C, r); if (C.to !== r.r || !r.set || C.lvl !== r.lvl) { bgSave('fres', { sku: C.s, to: C.to, why: C.why, lvl: C.lvl }, 'fr-' + uid(), skn(C.s) + ' reserved ' + C.to, null, true); if (D.fk && D.fk.res) { var k = D.fk.res[C.s]; k.r = C.to; k.set = true; k.left = C.to - k.u; k.lvl = C.lvl; } did.push(C.to !== r.r && r.set ? 'Saved. The manager sees: ' + C.why + '.' : 'Saved.'); }
+  fk44Def(C, r); if (C.to !== r.r || !r.set || C.lvl !== r.lvl) { bgSave('fres', { sku: C.s, to: C.to, why: C.why, lvl: C.lvl, ko: C.out ? 1 : 0 }, 'fr-' + uid(), skn(C.s) + ' reserved ' + C.to, null, true); if (D.fk && D.fk.res) { var k = D.fk.res[C.s]; k.r = C.to; k.set = true; k.left = C.to - k.u; k.lvl = C.lvl; } did.push(C.to !== r.r && r.set ? 'Saved. The manager sees: ' + C.why + '.' : 'Saved.'); }
   if (C.out !== isOut(C.s)) { var sk = ((D.out || {}).skus || []).filter(function (x) { return x !== C.s; }); if (C.out) sk.push(C.s); bgSave('outstock', { skus: sk }, 'os-' + uid(), C.out ? 'out of stock: ' + skn(C.s) : skn(C.s) + ' back in', null, true); if (D.out) D.out.skus = sk; did.push(C.out ? skn(C.s) + ' out: the manager is told.' : skn(C.s) + ' in again.'); }
   FK.rc = null; SHEETK = ''; $('over').innerHTML = ''; render(); toast(did.join(' ') || 'No change.');
 };
@@ -11951,7 +11951,7 @@ INP.w43q = function (el) { W43.q = el.value || ''; var l = document.getElementBy
 /* v2.9.44: Who owes – where filter; Frank's reserve reason filled as he types */
 function w44Late(r) { return (r.h || []).some(function (w) { return (w.dd || 0) > 2; }); }
 ACT.w43w = function (b) { W43.w = b.dataset.v || ''; W43.o = ''; render(); };
-function fk44Def(C, r) { if (!C || !r || !r.set) return; if (C.to === r.r) { if (C.a44) C.why = ''; return; } if (!C.why || C.a44) { C.why = C.to > r.r ? 'More came in' : 'Less than expected'; C.a44 = 1; } }
+function fk44Def(C, r) { if (C && r && r.set && !C.o45) C.out = C.to > r.r && C.to > (r.u || 0) ? false : !!isOut(C.s); /* v2.9.45: more came in = Omni has it */ if (!C || !r || !r.set) return; if (C.to === r.r) { if (C.a44) C.why = ''; return; } if (!C.why || C.a44) { C.why = C.to > r.r ? 'More came in' : 'Less than expected'; C.a44 = 1; } }
 function fk44Why(C, r) { fk44Def(C, r); if (!(r.set && C.to !== r.r)) return ''; return '<div class="fkq2">Why?</div><div class="t2tray">' + FKWHY.map(function (w) { return '<button class="' + (C.why === w ? 'on' : '') + '" data-act="fkrw" data-v="' + esc(w) + '">' + esc(w) + '</button>'; }).join('') + '</div><p class="small muted">The manager sees every change.</p>'; }
-function fk44Upd() { var C = FK.rc, b = $('fk44w'); if (!C || !b) return; var r = (fkF().res || {})[C.s] || { r: 0, u: 0, set: false }; b.innerHTML = fk44Why(C, r); }
+function fk44Upd() { var C = FK.rc, b = $('fk44w'); if (!C || !b) return; var r = (fkF().res || {})[C.s] || { r: 0, u: 0, set: false }; b.innerHTML = fk44Why(C, r); [].forEach.call(document.querySelectorAll('[data-act=fkio]'), function (x) { x.className = (x.dataset.v === '1') === !!C.out ? 'on' : ''; }); }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
