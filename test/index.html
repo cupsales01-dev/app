@@ -12000,4 +12000,12 @@ function r48Less(st, s, d) { if (!st || !st.claim || !(d > 0.004)) return '<div 
 CHG.r48cm = function (el) { var st = R27.rec; if (!st) return; st.camt = el.value; if (st.gave !== 'none' && st.gave !== 'other') st.gave = ''; setTimeout(drawSheet, 0); };
 (function () { var f = CHG.r27cl; CHG.r27cl = function (el) { var st = R27.rec; if (st && st.gave !== 'none' && st.gave !== 'other') st.gave = ''; f(el); }; })();
 (function () { var s = document.createElement('style'); s.textContent = '.r27row .grow>span.ell,.r72h .grow>span.ell{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere}'; document.head.appendChild(s); })();
+/* v2.9.49: a new "Not paid" ask reaches the agent (and the manager) from the ping, also inside a visit */
+var NP49 = { busy: 0, seen: '', t: 0 };
+function np49(r) { if (!r || !r.np49 || !D || !D.me || D.viewOf || !/^(Agent|Supervisor)$/.test(D.me.role)) return;
+  var L = r.np49.filter(function (x) { return D.me.role === 'Supervisor' || x[1] === D.me.uid; }).map(function (x) { return x[0]; });
+  var have = (D.np91 || []).filter(function (x) { return x.st === 'ask'; }).map(function (x) { return x.k; }), miss = L.filter(function (k) { return have.indexOf(k) < 0; });
+  if (!miss.length || NP49.busy) return; var key = miss.join(','); if (key === NP49.seen && Date.now() - NP49.t < 60000) return; NP49.seen = key; NP49.t = Date.now(); NP49.busy = 1;
+  readOp('np918s', {}, function (q) { NP49.busy = 0; if (!q || !q.ok || !D) return; D.np91 = q.np91 || []; try { np94Scan(); topbar(); } catch (e) { } }, function () { NP49.busy = 0; }); }
+rpc = (function (f) { return function (req, ok, fail) { if (req && req.op === 'ping' && typeof ok === 'function') { var ok0 = ok; ok = function (r) { try { np49(r); } catch (e) { } return ok0.apply(this, arguments); }; } return f.call(this, req, ok, fail); }; })(rpc);
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
