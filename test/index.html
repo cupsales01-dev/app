@@ -2927,7 +2927,7 @@ ACT.tdv = function (b) { TDV = b.dataset.v; TTAB = null; TROW = ''; render(); wi
 ACT.tpsub = function (b) { TPSUB = b.dataset.v; TREG = null; render(); };
 function tKeyLine(day) { return '<div class="t2key"><i class="k0"></i>To do<i class="k1"></i>Done' + (day ? '<i class="k3"></i>Not visited' : '') + '<i class="k2"></i>From manager</div>'; }
 // chips: what matters about her (owes, re-order due, likely out...), in short words
-var T2TAG = { out: ['Re-order due', 'amber'], notbought: ['Not bought this month', 'amber'], dormant: ['Stopped buying', 'red'], risk: ['Slowing', 'amber'], signup: ['No first carton yet', 'blue'], target: ['Counts for your target', 'green'], way: ['Order on the way', 'blue'], 'new': ['New vendor', 'green'], follow: ['Follow-up', 'blue'], check: ['Check result', 'blue'], cover: ['Not visited this month', ''] };
+var T2TAG = { out: ['Re-order due', 'amber'], notbought: ['Not bought this month', 'amber'], dormant: ['Inactive', 'red'], risk: ['Slowing', 'amber'], signup: ['No first carton yet', 'blue'], target: ['Counts for your target', 'green'], way: ['Order on the way', 'blue'], 'new': ['New vendor', 'green'], follow: ['Follow-up', 'blue'], check: ['Check result', 'blue'], cover: ['Not visited this month', ''] };
 // tChips: v2.7.0 (d) – drawn in the Today part d module below
 /** "Last visit Tue 6 Oct: GHS 500 cash · no order, she had stock · asked for exercise books" + See all. */
 function tLastTxt(v) { var l = v && v.lv; if (!l) return ''; var p = [];
@@ -4782,7 +4782,7 @@ INP.fkrv = function (el) { setTimeout(fk44Upd, 0); var C = FK.rc, r = (fkF().res
 CHG.fkrv = function () { setTimeout(drawSheet, 0); };
 ACT.fkrw = function (b) { FK.rc.why = b.dataset.v; FK.rc.a44 = 0; drawSheet(); };
 ACT.fklv = function (b) { FK.rc.lvl = Math.max(0, FK.rc.lvl + Number(b.dataset.d)); drawSheet(); };
-ACT.fkio = function (b) { FK.rc.out = b.dataset.v === '1'; FK.rc.o45 = 1; drawSheet(); };
+ACT.fkio = function (b) { if (b.dataset.v === '1' && fk51Up()) { toast('You are adding cartons, so Omni has it.'); return; } FK.rc.out = b.dataset.v === '1'; FK.rc.o45 = 1; drawSheet(); };
 ACT.fkrsave = function () {
   var C = FK.rc; if (!C) return; var r = (fkF().res || {})[C.s] || { r: 0, u: 0, lvl: 10, set: false }; if (C.to < (r.u || 0)) { say('It cannot go below what is already approved (' + r.u + ').'); return; }
   var did = [];
@@ -5657,7 +5657,7 @@ function p7HeldHtml() { var H = D.held27; if (!H || !(H.people || []).length) re
    with colour bars; a row = name + one round + (tomorrow's plan); the colour edge is the status; first tap = the main facts,
    "More ›" = the full page. Other agents' vendors: no phone, no money. Data: one read 'svdir' kept on the phone, 'svpage' per page. */
 var SV = { d: null, busy: false, q: '', tab: null, vf: 'all', sf: 'all', x: '', oth: false, rest: false, moe: false, pg: null, pt: 'sum', pd: {}, vfl: 'all', vo: 0, lvm: false, buy: false, chg: false, kept: false, regdV: 0, regdS: 0, f: null, undo: null, mf: '', ma: '' };
-var SVC = { buy: '#16a34a', slow: '#f59e0b', stop: '#dc2626', 'new': '#2563eb', closed: '#9ca3af' }, SVL = { buy: 'Buying', slow: 'Slowing', stop: 'Stopped', 'new': 'New', closed: 'Closed' };
+var SVC = { buy: '#16a34a', slow: '#f59e0b', stop: '#dc2626', 'new': '#2563eb', closed: '#9ca3af' }, SVL = { buy: 'Buying', slow: 'Slowing', stop: 'Inactive', 'new': 'New', closed: 'Closed' };
 var SSC = { pros: '#8b5cf6', ready: '#0d9488', our: '#16a34a', noint: '#9ca3af', moe: '#cbd5e1' }, SSL = { pros: 'Prospect', ready: 'Ready', our: 'Ours', noint: 'Not interested', moe: 'Not visited' };
 var SVSRCH = '<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>';
 var SVK = ['buy', 'slow', 'stop', 'new'], SSK = ['pros', 'ready', 'our', 'noint', 'moe'];
@@ -7118,7 +7118,7 @@ function pgMonth() {
     '<button class="link6" data-act="mTog" data-k="prod">By product ' + (MPROD ? '▴' : '▾') + '</button>' + (MPROD ? (X.bySku.length ? X.bySku.map(function (s) { return '<div class="sumrow6"><span>' + esc(s[0]) + '</span><b>' + s[1] + '</b></div>'; }).join('') : '<div class="small muted">No cartons delivered yet this month.</div>') : '') + '</div>';
   var tabs = [['not', 'Not yet', X.not.length], ['buy', 'Bought', X.buy.length], ['new', 'New', X.nw.filter(function (v) { return v.st === 'new'; }).length]];
   h += '<div class="seg6">' + tabs.map(function (t) { return '<button class="' + (MTAB === t[0] ? 'on' : '') + '" data-act="mTab" data-k="' + t[0] + '">' + t[1] + ' ' + t[2] + '</button>'; }).join('') + '</div>';
-  var L = MTAB === 'not' ? X.not : MTAB === 'buy' ? X.buy : X.nw, key = MTAB === 'not' ? [['slow', 'Slowing'], ['stop', 'Stopped'], ['', 'Not yet']] : MTAB === 'new' ? [['new', 'Bought (counts)'], ['', 'No order yet']] : [['buy', 'Bought'], ['new', 'New vendor']];
+  var L = MTAB === 'not' ? X.not : MTAB === 'buy' ? X.buy : X.nw, key = MTAB === 'not' ? [['slow', 'Slowing'], ['stop', 'Inactive'], ['', 'Not yet']] : MTAB === 'new' ? [['new', 'Bought (counts)'], ['', 'No order yet']] : [['buy', 'Bought'], ['new', 'New vendor']];
   h += '<div class="ckey6">' + key.map(function (k) { return '<span><i class="k-' + (k[0] || 'none') + '"></i>' + k[1] + '</span>'; }).join('') + '</div>';
   var show = MMORE ? L : L.slice(0, 8);
   h += show.length ? '<div class="vrows6">' + show.map(function (v) { return '<div class="vrow6 k-' + (v.st || 'none') + '" data-act="mRow" data-v="' + esc(v.id) + '"><span class="grow"><b>' + esc(v.name) + '</b>' + (MOPEN === v.id && v.why ? '<span class="small muted" style="display:block">' + esc(v.why) + '</span>' : '') + '</span>' + (v.phone ? '<a class="ibl" href="tel:' + esc(v.phone) + '" aria-label="Call ' + esc(v.name) + '"><span class="ib sm">' + ico(ICO.phone) + '</span></a>' : '') + '</div>'; }).join('') + '</div>' : emptyHtml(MTAB === 'not' ? 'Every vendor has bought this month.' : MTAB === 'buy' ? 'Nobody has bought yet this month.' : 'No new vendors yet this month.');
@@ -8250,10 +8250,11 @@ function fkDToday() { var m = (fkDist().days || {})[D.today] || {}; return Objec
 function pgFCash() {
   var B = D.book || { received: [], withPeople: [] }, T = D.toConfirm || [], W = B.withPeople || [], F = fkF(), late = new Date().getHours() >= 17;
   var tc = T.reduce(function (t, x) { return t + x.amount; }, 0), wp = W.reduce(function (t, p) { return t + p.total; }, 0), cf = (B.received || []).reduce(function (t, x) { return t + x.amount; }, 0);
-  var tabs = [['now', 'With people', ghs(tc + wp), fc34Grp(T).length, late && wp > 0.004], ['cnt', 'Counted today', ghs(cf), 0], ['byo', 'By order', BY.d ? ghs(byoBal()) : 'hand over', 0], ['rc', 'Receipts', 'and history', 0], ['dist', 'Cash Breakdown', ghs(fkDToday()), 0]];
+  var tabs = [['now', 'With people', ghs(tc + wp), fc34Grp(T).length, late && wp > 0.004], ['cnt', 'Counted today', ghs(cf), 0], ['byo', 'By order', BY.d ? ghs(byoBal()) : 'hand over', 0], ['rc', 'Receipts', 'and history', 0], ['dist', 'Cash Breakdown', ghs(fkDToday()), 0], ['acc', 'To the accountant', ACC51.d ? ghs(ACC51.d.tot.send) : 'full cartons', 0]]; /* v2.9.51 */
   var h = '<div class="fk72t">' + tabs.map(function (t) { return '<button class="' + (FK.ct === t[0] ? 'on' : '') + (t[4] ? ' red' : '') + '" data-act="fk72t" data-v="' + t[0] + '"><span>' + t[1] + (t[3] ? ' <i class="cnt">' + t[3] + '</i>' : '') + '</span><b>' + t[2] + '</b></button>'; }).join('') + '</div>';
   if (FK.ct === 'cnt') return h + fk87Box() + cnt94Html(); // v2.8.19: + what each pays, + his own receipts
   if (FK.ct === 'byo') return h + byoHtml();
+  if (FK.ct === 'acc') return h + acc51Html(); /* v2.9.51 */
   if (FK.ct === 'rc') { var cur = PSEC.fcash || 'agr'; return h + chips('fcash', [['agr', 'Agents & riders'], ['rcpt', 'Vendors'], ['hist', 'History'], ['acct', 'Accounts'], ['ho', 'Hand-overs']], cur) + (cur === 'agr' ? r93Ag() : cur === 'ho' ? hoh89Html() : cur === 'acct' ? vaFindHtml() : cur === 'rcpt' ? filterBar('prcpt', 'Find a vendor') + '<div id="flist">' + LISTR.prcpt() + '</div>' : filterBar('phist', 'Find a person or amount') + '<div id="flist">' + LISTR.phist() + '</div>'); }
   if (FK.ct === 'dist') return h + fkDistHtml();
   if (D.book && D.book.wp35) return h + fc37Html(T, D.book.wp35); // v2.8.35; v2.8.37: one row per vendor
@@ -8780,7 +8781,7 @@ function mt28AgentPg() {
   var S = X.st, nm = function (L) { return L.map(function (x) { return esc(x.n); }).join(', '); };
   h += fold('mtven', '<b>Her vendors</b> <span class="small muted">' + X.vendors + '</span><div class="small ell">' + S.buy + ' buying · ' + S.slowN + ' slowing · ' + S.stopN + ' stopped · ' + S.nw + ' new</div>', function () {
     return '<div class="mdstk"><em class="g" style="width:' + md28Pct(S.buy, X.vendors) + '%"></em><em style="background:#F59E0B;width:' + md28Pct(S.slowN, X.vendors) + '%"></em><em class="r" style="width:' + md28Pct(S.stopN, X.vendors) + '%"></em><em class="b" style="width:' + md28Pct(S.nw, X.vendors) + '%"></em></div>' +
-      (S.slow.length ? '<div class="mdln"><b>Slowing:</b> ' + nm(S.slow) + (S.slowN > S.slow.length ? ' …' : '') + '</div>' : '') + (S.stop.length ? '<div class="mdln"><b>Stopped:</b> ' + nm(S.stop) + (S.stopN > S.stop.length ? ' …' : '') + '</div>' : '') +
+      (S.slow.length ? '<div class="mdln"><b>Slowing:</b> ' + nm(S.slow) + (S.slowN > S.slow.length ? ' …' : '') + '</div>' : '') + (S.stop.length ? '<div class="mdln"><b>Inactive:</b> ' + nm(S.stop) + (S.stopN > S.stop.length ? ' …' : '') + '</div>' : '') +
       (X.notBoughtN ? '<div class="mdln"><b>Not bought this month (' + X.notBoughtN + '):</b> <span class="small">' + X.notBought.map(esc).join(', ') + (X.notBoughtN > X.notBought.length ? ' …' : '') + '</span></div>' : ''); });
   var V = X.visits;
   h += fold('mtvis', '<b>Visits</b> <span class="small muted">this month</span><div class="small ell">' + V.n + ' visits · ' + V.calls + ' calls · ' + (V.n ? md28Pct(V.ord, V.n) : 0) + '% ended in an order</div>', function () {
@@ -11953,7 +11954,7 @@ INP.w43q = function (el) { W43.q = el.value || ''; var l = document.getElementBy
 /* v2.9.44: Who owes – where filter; Frank's reserve reason filled as he types */
 function w44Late(r) { return (r.h || []).some(function (w) { return (w.dd || 0) > 2; }); }
 ACT.w43w = function (b) { W43.w = b.dataset.v || ''; W43.o = ''; render(); };
-function fk44Def(C, r) { if (C && r && r.set && !C.o45) C.out = C.to > r.r && C.to > (r.u || 0) ? false : !!isOut(C.s); /* v2.9.45: more came in = Omni has it */ if (!C || !r || !r.set) return; if (C.to === r.r) { if (C.a44) C.why = ''; return; } if (!C.why || C.a44) { C.why = C.to > r.r ? 'More came in' : 'Less than expected'; C.a44 = 1; } }
+function fk44Def(C, r) { if (C && r && r.set && C.to > r.r && C.to > (r.u || 0)) { C.out = false; C.o45 = 0; } /* v2.9.51: adding cartons = Omni has it */ if (C && r && r.set && !C.o45) C.out = C.to > r.r && C.to > (r.u || 0) ? false : !!isOut(C.s); /* v2.9.45: more came in = Omni has it */ if (!C || !r || !r.set) return; if (C.to === r.r) { if (C.a44) C.why = ''; return; } if (!C.why || C.a44) { C.why = C.to > r.r ? 'More came in' : 'Less than expected'; C.a44 = 1; } }
 function fk44Why(C, r) { fk44Def(C, r); if (!(r.set && C.to !== r.r)) return ''; return '<div class="fkq2">Why?</div><div class="t2tray">' + FKWHY.map(function (w) { return '<button class="' + (C.why === w ? 'on' : '') + '" data-act="fkrw" data-v="' + esc(w) + '">' + esc(w) + '</button>'; }).join('') + '</div><p class="small muted">The manager sees every change.</p>'; }
 function fk44Upd() { var C = FK.rc, b = $('fk44w'); if (!C || !b) return; var r = (fkF().res || {})[C.s] || { r: 0, u: 0, set: false }; b.innerHTML = fk44Why(C, r); [].forEach.call(document.querySelectorAll('[data-act=fkio]'), function (x) { x.className = (x.dataset.v === '1') === !!C.out ? 'on' : ''; }); }
 // ---------------------------------------------------------------- v2.9.46: the manager clears one payment on its line (never paid)
@@ -12008,4 +12009,67 @@ function np49(r) { if (!r || !r.np49 || !D || !D.me || D.viewOf || !/^(Agent|Sup
   if (!miss.length || NP49.busy) return; var key = miss.join(','); if (key === NP49.seen && Date.now() - NP49.t < 60000) return; NP49.seen = key; NP49.t = Date.now(); NP49.busy = 1;
   readOp('np918s', {}, function (q) { NP49.busy = 0; if (!q || !q.ok || !D) return; D.np91 = q.np91 || []; try { np94Scan(); topbar(); } catch (e) { } }, function () { NP49.busy = 0; }); }
 rpc = (function (f) { return function (req, ok, fail) { if (req && req.op === 'ping' && typeof ok === 'function') { var ok0 = ok; ok = function (r) { try { np49(r); } catch (e) { } return ok0.apply(this, arguments); }; } return f.call(this, req, ok, fail); }; })(rpc);
+// ---------------------------------------------------------------- v2.9.51 (a): Frank – is this the money she already recorded? (three answers)
+var A51 = null;
+function fk51Up() { var C = FK.rc; if (!C) return false; var r = (fkF().res || {})[C.s] || {}; return !!(r.set && C.to > r.r && C.to > (r.u || 0)); }
+fk44Upd = (function (f) { return function () { var x = f.apply(this, arguments); try { var up = fk51Up(); [].forEach.call(document.querySelectorAll('[data-act=fkio][data-v="1"]'), function (b) { b.style.display = up ? 'none' : ''; }); } catch (e) { } return x; }; })(fk44Upd);
+drawSheet = (function (f) { return function () { var x = f.apply(this, arguments); try { if (FK && FK.rc && SHEETK === 'fres') fk44Upd(); } catch (e) { } return x; }; })(drawSheet);
+var LAST51 = null;
+rpc = (function (f) { return function (req, ok, fail) { return f.call(this, req, function (r) { try { if (r && r.no51 && r.ask) LAST51 = { r: r, d: req && req.data }; } catch (e) { } return ok && ok.apply(this, arguments); }, fail); }; })(rpc);
+dlgOpen = (function (f) { return function (text, input, okLabel, cancelLabel, cb, noCb) { var L = LAST51;
+  if (!L || String(text).indexOf(L.r.ask) < 0) return f.apply(this, arguments); LAST51 = null; A51 = { L: L, cb: cb, no: noCb }; DLGCB = null; DLGNO = null;
+  $('dlg').innerHTML = '<div class="overlay" style="z-index:50"><div class="sheet"><p style="white-space:pre-line;font-size:16px;margin:0 0 10px">' + esc(text) + '</p>' +
+    '<div class="row" style="margin-top:12px"><button class="grow" data-act="a51n">' + esc(L.r.nol51 || 'No') + '</button><button class="main grow" data-act="a51y">' + esc(L.r.yes51 || 'Yes') + '</button></div>' +
+    '<div style="text-align:center;margin-top:10px"><button class="small" style="background:none;border:0;color:var(--mute);min-height:0" data-act="a51c">Cancel – save nothing</button></div></div></div>'; }; })(dlgOpen);
+function a51Go(k) { var A = A51; A51 = null; $('dlg').innerHTML = ''; if (!A) return;
+  if (k === 'n') { var p = A.L.r.no51 || {}; Object.keys(p).forEach(function (q) { if (A.L.d) A.L.d[q] = p[q]; }); }
+  if (k === 'c') { if (A.no) A.no(); else setTimeout(nextLater, 50); return; } if (A.cb) A.cb(); }
+ACT.a51y = function () { a51Go('y'); };
+ACT.a51n = function () { a51Go('n'); };
+ACT.a51c = function () { a51Go('c'); };
+// ---------------------------------------------------------------- v2.9.51 (c): Frank › Cash › To the accountant
+var ACC51 = { w: 'd', f: '', t: '', d: null, k: '', st: '', go: 0, proof: '', note: '' };
+function acc51Win() { var t = D.today, wd = new Date(t + 'T12:00:00Z').getUTCDay(); if (ACC51.w === '7') return [addDays(t, -6), t]; if (ACC51.w === 'm') return [t.slice(0, 8) + '01', t]; if (ACC51.w === 'lm') return lm92(); if (ACC51.w === 'cal' && ACC51.f) return [ACC51.f, ACC51.t || ACC51.f]; return [t, t]; }
+function acc51Load(force) { var r = acc51Win(), k = r[0] + '|' + r[1]; if (ACC51.st === 'wait' || (!force && ACC51.k === k && ACC51.d && Date.now() - (ACC51.at || 0) < 60000) || (!force && ACC51.err && ACC51.k === k && Date.now() - (ACC51.fail || 0) < 15000)) return; if (force) ACC51.err = 0; ACC51.st = 'wait'; ACC51.k = k;
+  readOp('acc51', { f: r[0], t: r[1] }, function (x) { ACC51.st = ''; ACC51.err = 0; if (x && x.ok && ACC51.k === k) { ACC51.d = x; ACC51.at = Date.now(); if (!SHEETK && TAB === 'fcash' && FK.ct === 'acc') render(); } }, function () { ACC51.st = ''; ACC51.err = 1; ACC51.fail = Date.now(); if (!SHEETK && FK.ct === 'acc') render(); }); }
+function acc51C(n) { return (Math.round(n * 100) / 100).toLocaleString('en-GB', { maximumFractionDigits: 2 }); }
+function acc51Html() { acc51Load(); var r = acc51Win(), X = ACC51.d;
+  var h = '';
+  if (!X) return h + (ACC51.err && ACC51.st !== 'wait' ? emptyHtml('Could not load – pull down to try again') : '<div class="mdsk"><i></i><i></i></div>');
+  // what he holds now
+  var T = X.tot || { g: 0, send: 0, keep: 0 };
+  h += '<div class="mtts"><div class="mtt"><b>' + ghs(T.g) + '</b><span>Omni money with you</span></div><div class="mtt g"><b>' + ghs(T.send) + '</b><span>Send now (full cartons)</span></div><div class="mtt a"><b>' + ghs(T.keep) + '</b><span>You keep</span></div></div>';
+  if (!(X.held || []).length) h += emptyHtml('No Omni money with you');
+  else h += '<div class="card" style="padding:10px 12px">' + X.held.map(function (x) { return '<div class="fkln"><span><b>' + esc(x.code) + '</b> ' + ghs(x.g) + (x.p ? ' <small class="muted">· GHS ' + x.p + ' a carton</small>' : '') + '</span><b>' + (x.n ? x.n + ' ctn = ' + ghs(x.send) : 'not a full carton') + (x.keep > 0.004 ? ' <small class="muted">· keep ' + ghs(x.keep) + '</small>' : '') + '</b></div>'; }).join('') + '</div>';
+  if (T.send > 0.004) { if (!ACC51.go) h += '<button class="main" style="width:100%;margin:8px 0" data-act="acc51o">Hand over ' + ghs(T.send) + ' to the accountant</button>';
+    else h += '<div class="card" style="padding:12px"><b>Hand over ' + ghs(T.send) + '</b><div class="fkq2">Proof</div><div class="t2tray">' + [['wa', 'WhatsApp'], ['signed', 'He signed – check with me']].map(function (c) { return '<button class="' + (ACC51.proof === c[0] ? 'on' : '') + '" data-act="acc51p" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>' +
+      '<input data-inp="acc51n" placeholder="Note (optional)" value="' + esc(ACC51.note) + '" style="margin-top:8px"><div class="row" style="margin-top:10px"><button class="grow" data-act="acc51x">Cancel</button><button class="main grow" data-act="acc51s">Save</button></div></div>'; }
+  // received on the chosen days, in cartons
+  h += '<div class="fkq2" style="margin-top:14px">Received</div><div class="t2tray">' + [['d', 'Today'], ['7', '7 days'], ['m', 'This month'], ['lm', 'Last month']].map(function (c) { return '<button class="' + (ACC51.w === c[0] ? 'on' : '') + '" data-act="acc51w" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') +
+    '<label><input type="date" data-chg="acc51d" data-f="from" value="' + esc(ACC51.w === 'cal' ? r[0] : '') + '" max="' + esc(D.today) + '"></label><label><input type="date" data-chg="acc51d" data-f="to" value="' + esc(ACC51.w === 'cal' ? r[1] : '') + '" max="' + esc(D.today) + '"></label></div>';
+  var RC = X.rec || [];
+  if (!(ACC51.d && ACC51.k === r[0] + '|' + r[1])) return h + '<div class="mdsk"><i></i></div>';
+  if (!RC.length) return h + emptyHtml('No Omni money received ' + (r[0] === r[1] ? 'on ' + esc(dayLbl(r[0])) : 'on these days'));
+  var tc = RC.reduce(function (t, x) { return t + (x.ctn || 0); }, 0);
+  h += '<div class="s19tot">' + ghs(X.rtot) + ' · ' + acc51C(tc) + ' cartons</div><div class="card" style="padding:10px 12px">' + RC.map(function (x) { return '<div class="fkln"><span><b>' + esc(x.code) + '</b> ' + ghs(x.g) + '</span><b>' + (x.p ? acc51C(x.ctn) + ' ctn' : '–') + '</b></div>'; }).join('') + '</div><p class="small muted">At the vendor price. Your own receipts and what agents and riders gave you.</p>';
+  return h; }
+ACT.acc51w = function (b) { ACC51.w = b.dataset.v; ACC51.f = ACC51.t = ''; render(); };
+CHG.acc51d = function (el) { var v = String(el.value || ''); if (el.dataset.f === 'from') { ACC51.f = v; if (!ACC51.t || ACC51.t < v) ACC51.t = v; } else { ACC51.t = v; if (!ACC51.f || ACC51.f > v) ACC51.f = v; } ACC51.w = ACC51.f ? 'cal' : 'd'; render(); };
+ACT.acc51o = function () { ACC51.go = 1; render(); };
+ACT.acc51x = function () { ACC51.go = 0; ACC51.proof = ''; ACC51.note = ''; render(); };
+ACT.acc51p = function (b) { ACC51.proof = b.dataset.v; render(); };
+INP.acc51n = function (el) { ACC51.note = el.value; };
+ACT.acc51s = function (b) { var X = ACC51.d; if (!X || !ACC51.proof) { say('Choose the proof.'); return; } var amt = X.tot.send;
+  bgSave('acc51go', { amt: amt, proof: ACC51.proof, note: String(ACC51.note || '').trim() }, 'acc-' + uid(), 'handed over ' + ghs(amt), b, true);
+  ACC51.go = 0; ACC51.proof = ''; ACC51.note = ''; X.tot = { g: X.tot.g - amt, send: 0, keep: X.tot.keep }; X.held = (X.held || []).map(function (x) { return Object.assign({}, x, { g: x.keep, n: 0, send: 0 }); }); ACC51.at = Date.now(); render(); };
+try { MON39.acc51go = 1; } catch (e) { }
+// v2.9.51: the first time – Frank counts the Omni money he has
+acc51Html = (function (f) { return function () { var h = f.apply(this, arguments), X = ACC51.d; if (!X || X.open || D.me.role !== 'Warehouse') return h;
+  var c = '<div class="card" style="padding:12px;border-left:4px solid #f59e0b"><b>First time: count your Omni money</b><p class="small muted" style="margin:4px 0 8px">The app has ' + ghs(X.tot.g) + ' with you. Type what you really have now – the rest is recorded as already given to the accountant.</p>' +
+    '<input data-inp="acc51h" inputmode="numeric" placeholder="GHS you have now" value="' + esc(ACC51.have || '') + '"><button class="main" style="width:100%;margin-top:8px" data-act="acc51h">Save my count</button></div>';
+  var i = h.indexOf('<div class="mtts">'); return i >= 0 ? h.slice(0, i) + c + h.slice(i) : c + h; }; })(acc51Html);
+INP.acc51h = function (el) { ACC51.have = el.value; };
+ACT.acc51h = function (b) { var v = String(ACC51.have || '').replace(/[^\d]/g, ''); if (!v) { say('Type the GHS you have now.'); return; }
+  bgSave('acc51open', { have: Number(v) }, 'aco-' + uid(), 'Omni money counted', b, true); if (ACC51.d) ACC51.d.open = 1; ACC51.at = Date.now(); ACC51.have = ''; setTimeout(function () { acc51Load(true); }, 6000); render(); };
+try { MON39.acc51open = 1; } catch (e) { }
 </script><script>if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function () { }); }</script></body></html>
