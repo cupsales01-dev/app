@@ -9003,7 +9003,7 @@ function pgMVen() {
   var h = '<div class="sv7"><div class="sv7h mvh"><b>Vendors</b><button class="mvreq" data-act="svmgr">Changes and requests' + (MV.d && MV.d.dupN ? ' <span class="dup92n">' + MV.d.dupN + '</span>' : '') + ' ›</button></div>';
   if (!SV.d) return h + svSkel() + '</div>';
   var V = SV.d.v.filter(function (v) { return v.st !== 'closed'; }), S = SV.d.s;
-  h += '<div class="sv7tabs t2" role="tablist">' + [['v', 'Vendors', V.length], ['s', 'Schools', S.filter(function (s) { return s.ty !== 'moe'; }).length]].map(function (t) { var on = MV.t === t[0]; return '<button role="tab" aria-selected="' + on + '" class="sv7tab' + (on ? ' on' : '') + '" data-act="mvt" data-t="' + t[0] + '"><b>' + t[1] + '</b><em>' + t[2] + '</em></button>'; }).join('') + '</div>';
+  h += '<div class="sv7tabs t2" role="tablist">' + [['v', 'Vendors', MV.d && MV.d.base54 != null ? MV.d.base54 : V.length], ['s', 'Schools', S.filter(function (s) { return s.ty !== 'moe'; }).length]].map(function (t) { var on = MV.t === t[0]; return '<button role="tab" aria-selected="' + on + '" class="sv7tab' + (on ? ' on' : '') + '" data-act="mvt" data-t="' + t[0] + '"><b>' + t[1] + '</b><em>' + t[2] + '</em></button>'; }).join('') + '</div>';
   h += '<div class="sv7qw">' + ico(SVSRCH) + '<input class="sv7q" data-inp="mvq" value="' + esc(MV.q) + '" placeholder="' + (MV.t === 'v' ? 'Search a vendor, school or phone' : 'Search a school or area') + '" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search">' + (MV.q ? '<button class="sv7qx" data-act="mvqx" aria-label="Clear">✕</button>' : '') + '</div>';
   return h + '<div id="mvb">' + (MV.t === 'v' ? mvVen(V) : mvSch(S)) + '</div></div>';
 }
@@ -10335,6 +10335,25 @@ ACT.sr52go = function () { var F = SR32, r = F && vaRow(F.ref), vid = VA.vid; if
   var L = r.c52, a = L.filter(function (l) { return l[0] === F.sku && l[1] === F.from; })[0], b = L.filter(function (l) { return l[0] === F.sku && l[1] === F.to; })[0];
   if (a) a[2] -= n; if (b) b[2] += n; else L.push([F.sku, F.to, n, '']); r.c52 = L.filter(function (l) { return l[2] > 0; });
   SR32 = null; drawSheet(); va35Wait(vid); };
+// v2.9.54: manager Vendors – the report's numbers: Customer base, Active / Inactive (purchasing cycle), Inactive (no purchasing trend) …
+function r54(v) { return MV.d && MV.d.rb54 ? MV.d.rb54[v.id] || null : null; }
+mvOk = (function (f) { return function (v, k) { var x = r54(v), R = !!(MV.d && MV.d.rb54), q;
+  if (k === 'base') return !!x && x[0] === 1;
+  if (k === 'act') return !!x && x[0] === 1 && x[1] > 0;
+  if (k === 'ic') return !!x && x[0] === 1 && !x[1] && x[2] === 1;
+  if (k === 'stop' && R) return !!x && x[0] === 1 && !x[1] && !x[2];
+  if (k === 'bm') return !!x && x[3] === 1;
+  if (k === 'rel' && R) return !!x && x[1] > 0 && !x[3];
+  if (k === 'new') { q = mvR(v.id); return v.st !== 'closed' && !!(q && q[3] && q[3] >= mvM1()); }
+  if (k === 'nb54') { q = mvR(v.id); return v.st !== 'closed' && !!(q && q[3] && q[3] >= mvM1() && q[4]); }
+  return f.apply(this, arguments); }; })(mvOk);
+(function () { var L = [['all', 'All'], ['base', 'Customer base'], ['act', 'Active (purchasing cycle)'], ['ic', 'Inactive (purchasing cycle)'], ['stop', 'Inactive (no purchasing trend)'], ['bm', 'Bought this month'], ['rel', 'Not bought this month'], ['ret', 'Retired'], ['new', 'New this month'], ['nb54', 'New this month and bought']], k = {};
+  L.forEach(function (f) { k[f[0]] = 1; }); MVF.forEach(function (f) { if (!k[f[0]]) L.push(f); }); MVF.length = 0; L.forEach(function (f) { MVF.push(f); }); })();
+SVC.act = '#16a34a'; SVC.ic = '#dc2626';
+mvRow = (function (f) { return function (v) { var h = f.apply(this, arguments), x = r54(v); if (!x || h.indexOf('<div class="sv7rb">') < 0) return h;
+  var t = x[1] === 2 ? 'Active – the visit of ' + dayLbl(x[4]) + ' says she has stock' : x[1] ? 'Active (purchasing cycle)' : x[2] ? 'Inactive (purchasing cycle)' : 'Inactive (no purchasing trend)';
+  if (!x[0]) t += ' · not counted in the customer base yet';
+  return h.replace('<div class="sv7rb">', '<div class="sv7rb">' + svMl('Report', esc(t), x[1] ? '' : 't-red')); }; })(mvRow);
 if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 // ---------------------------------------------------------------- v2.8.46: the agent ticks the orders a payment pays
 var PK46 = null, PK46P = null;
