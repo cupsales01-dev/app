@@ -10079,6 +10079,21 @@ ACT.dup92 = function (b) { var A = b.dataset.a, B = b.dataset.b, h = b.dataset.h
   if (h === 'same') ask('Join ' + nb + ' (' + B + ') into ' + na + ' (' + A + ')? Her orders, payments and visits go together under ' + A + ', named ' + (kp === B ? nb : na) + '. This cannot be undone.', go); else go(); };
 // v2.8.37: the manager's New order – first "For which agent?", then that agent's own New order with Act for
 var N37 = 0;
+// v2.9.53: New order finds her retired vendors; the order brings her back
+var N53 = {};
+function n53Of(id) { var L = (D && D.ret53) || []; for (var i = 0; i < L.length; i++) if (L[i].id === id) return L[i]; return N53[id] || null; }
+vend = (function (f) { return function (id) { return f(id) || n53Of(id); }; })(vend);
+function n53List() { var q = norm(NQ); if (q.length < 2) return []; var ag = D && D.viewOf && D.viewOf.uid ? D.viewOf.uid : (typeof agOn === 'function' ? agOn() : '');
+  return ((D && D.ret53) || []).filter(function (v) { return (!ag || v.agent === ag) && !(D.vendors || []).some(function (w) { return w.id === v.id; }) && norm(v.name + ' ' + (v.school || '') + ' ' + (v.phone || '')).indexOf(q) >= 0; }).slice(0, 10); }
+function n53Card(v) { return '<div class="n2v n53" data-act="n53pick" data-v="' + esc(v.id) + '"><div class="n2vh"><b class="ell">' + esc(v.name) + '</b><span>Order ›</span></div>' + (v.school ? '<div class="small muted ell">' + esc(v.school) + '</div>' : '') + '<div class="small t-amber">Retired · an order brings her back</div></div>'; }
+nList = (function (f) { return function (V) { var h = f(V), R = n53List(); if (!R.length) return h;
+  var b = '<div class="n2grp"><b>Retired (' + R.length + ')</b></div>' + R.map(n53Card).join('');
+  return /No vendor found/.test(h) && h.indexOf('n2v') < 0 ? b + '<p class="small muted" style="text-align:center;margin-top:8px">Not her? Register a new vendor:</p>' + h.replace('<p class="small muted" style="text-align:center">No vendor found.</p>', '') : h + b; }; })(nList);
+ACT.n53pick = function (b) { var v = n53Of(b.dataset.v); if (!v) return;
+  ask(v.name + ' is retired. Order for her? Once the order is sent she is back on your list.', function () { N53[v.id] = v; NJUST = false; nEdit(function (x) { nStart(x, v); }); window.scrollTo(0, 0); render(); }, 'Order'); };
+// v2.9.53: manager Vendors – Not bought this month = active vendors only; the red chip says Inactive
+mvOk = (function (f) { return function (v, k) { if (k === 'rel' && v.st === 'stop') return false; return f.apply(this, arguments); }; })(mvOk);
+MVF.forEach(function (x) { if (x[0] === 'stop') x[1] = 'Inactive'; });
 function n37Pick() { var A = (D.views || []).filter(function (x) { return x.v && x.role === 'Agent'; });
   return '<div class="sech">New order – for which agent?</div><div class="list">' + A.map(function (x) { return '<div class="li" data-act="n37go" data-v="' + esc(x.v) + '">' + avatar(x.name) + '<div class="grow"><div class="t">' + esc(x.name) + '</div><div class="s">Her New order, saved as you for her</div></div><span class="go">' + ico(ICO.right) + '</span></div>'; }).join('') + '</div>'; }
 ACT.n37go = function (b) { N37 = Date.now(); setView(b.dataset.v); };
