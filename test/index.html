@@ -10288,6 +10288,38 @@ sr32Html = (function (f) { return function (r) { var s = f.apply(this, arguments
   if (F.sku) s = s.replace(/ ✓<\/button>/g, '</button>').replace(new RegExp('(data-v="' + cur[F.sku] + '">[^<]*)</button>'), '$1 ✓</button>');
   return s.replace('<div class="vapf"><div class="small muted">Where did this order come from?</div>', '<div class="vapf">' + chips + '<div class="small muted">' + (F.sku ? 'Where did the ' + esc(F.sku) + ' come from?' : 'Where did this order come from?') + '</div>'); }; })(sr32Html);
 ACT.sr42p = function (b) { if (!SR32) return; SR32.sku = b.dataset.v || ''; var r = vaRow(SR32.ref); if (SR32.sku && r && r.sl) { var l = r.sl.filter(function (x) { return x[0] === SR32.sku; })[0]; SR32.to = l ? (l[5] || 'SRC-OMINI') : SR32.to; } drawSheet(); };
+// v2.9.52: Came from – some cartons of one product (From / To / How many cartons)
+(function () { try { var st = document.createElement('style'); st.textContent = '.vad>.vapf{display:block}'; document.head.appendChild(st); } catch (e) { } })(); // the Came from box was squeezed into one row
+function sr52Nm(id) { var c = SRC32.filter(function (x) { return x[0] === id; })[0]; return c ? c[1] : id; }
+function sr52Skus(L) { var P = []; L.forEach(function (l) { if (P.indexOf(l[0]) < 0) P.push(l[0]); }); return P; }
+function sr52Set(F, r) { var L = r && r.c52; if (!L || !F || !F.sku) return; var M = L.filter(function (l) { return l[0] === F.sku; }); if (!M.length) return;
+  if (!M.some(function (l) { return l[1] === F.from; })) F.from = M[0][1]; var m = M.filter(function (l) { return l[1] === F.from; })[0];
+  F.max = m[2]; F.n = m[2]; F.lr = m[3] || ''; F.to = ''; }
+function sr52Chips(P, cur) { return '<div class="small muted">Which product?</div><div class="vach">' + [['', 'All']].concat(P.map(function (p) { return [p, p]; })).map(function (c) { return '<button class="' + ((cur || '') === c[0] ? 'on' : '') + '" data-act="sr42p" data-v="' + esc(c[0]) + '">' + esc(c[1]) + '</button>'; }).join('') + '</div>'; }
+sr32Html = (function (f) { return function (r) { var F = SR32 && r && SR32.ref === r.ref ? SR32 : null, L = r && r.c52; if (!F || !L || !L.length) return f.apply(this, arguments);
+  var P = sr52Skus(L); if (P.length === 1 && !F.sku && !F.all52) { F.sku = P[0]; sr52Set(F, r); }
+  if (!F.sku) { var s0 = f.apply(this, arguments); if (P.length < 2 || s0.indexOf('data-act="sr42p"') >= 0) return s0; return s0.replace('<div class="vapf">', '<div class="vapf">' + sr52Chips(P, '')); }
+  if (F.max === undefined) sr52Set(F, r);
+  var M = L.filter(function (l) { return l[0] === F.sku; }), now = M.map(function (l) { return esc(sr52Nm(l[1])) + ' ' + l[2]; }).join(' · ');
+  var h = '<div class="vapf">' + (P.length > 1 ? sr52Chips(P, F.sku) : '') + '<div class="small" style="margin:4px 0">' + esc(F.sku) + ' now: <b>' + now + '</b></div>';
+  if (M.length > 1) h += '<div class="small muted">Move cartons from</div><div class="vach">' + M.map(function (l) { return '<button class="' + (F.from === l[1] ? 'on' : '') + '" data-act="sr52f" data-v="' + esc(l[1]) + '">' + esc(sr52Nm(l[1])) + ' ' + l[2] + '</button>'; }).join('') + '</div>';
+  h += '<div class="small muted">Where did they come from?</div><div class="vach">' + SRC32.filter(function (c) { return c[0] !== F.from; }).map(function (c) { return '<button class="' + (F.to === c[0] ? 'on' : '') + '" data-act="sr32t" data-v="' + c[0] + '">' + c[1] + '</button>'; }).join('') + '</div>';
+  h += '<div class="small muted">How many cartons? (' + F.max + ' from ' + esc(sr52Nm(F.from)) + ' now)</div><div style="display:flex;gap:8px;align-items:center;margin:6px 0"><button class="vasm" data-act="sr52m" aria-label="Less">−</button><input class="o2q" style="width:70px;text-align:center" data-inp="sr52n" inputmode="numeric" value="' + esc(String(F.n)) + '"><button class="vasm" data-act="sr52p" aria-label="More">+</button></div>';
+  return h + '<input class="o2q" data-inp="sr32w" placeholder="Why? (the agent sees it)" value="' + esc(F.why || '') + '"><div class="va3"><button class="ghost2" data-act="sr32x">Cancel</button><button class="main gr" data-act="sr52go">Save</button></div></div>'; }; })(sr32Html);
+ACT.sr42p = (function (f) { return function (b) { f.apply(this, arguments); if (!SR32) return; var r = vaRow(SR32.ref); if (!r || !r.c52) return; delete SR32.max;
+  if (SR32.sku) sr52Set(SR32, r); else { SR32.all52 = 1; SR32.to = r.sid || ''; } drawSheet(); }; })(ACT.sr42p);
+ACT.sr52f = function (b) { if (!SR32) return; SR32.from = b.dataset.v; sr52Set(SR32, vaRow(SR32.ref)); drawSheet(); };
+ACT.sr52m = function () { if (!SR32) return; SR32.n = Math.max(1, (parseInt(SR32.n, 10) || 1) - 1); drawSheet(); };
+ACT.sr52p = function () { if (!SR32) return; SR32.n = Math.min(SR32.max || 1, (parseInt(SR32.n, 10) || 0) + 1); drawSheet(); };
+INP.sr52n = function (el) { if (SR32) SR32.n = el.value; };
+ACT.sr52go = function () { var F = SR32, r = F && vaRow(F.ref), vid = VA.vid; if (!r || !F.sku) return; var n = Number(F.n);
+  if (!F.to || F.to === F.from) { say('Choose where they came from.'); return; }
+  if (!(n >= 1) || Math.floor(n) !== n || n > F.max) { say('Type 1 to ' + F.max + ' cartons.'); return; }
+  if (String(F.why || '').trim().length < 3) { say('Write why.'); return; }
+  bgSave('msrc32', { ref: F.lr || r.ref, vid: vid, src: F.to, from: F.from, sku: F.sku, n: n, why: String(F.why).trim() }, 'src52-' + r.ref + '-' + Date.now(), 'Saved', null, true);
+  var L = r.c52, a = L.filter(function (l) { return l[0] === F.sku && l[1] === F.from; })[0], b = L.filter(function (l) { return l[0] === F.sku && l[1] === F.to; })[0];
+  if (a) a[2] -= n; if (b) b[2] += n; else L.push([F.sku, F.to, n, '']); r.c52 = L.filter(function (l) { return l[2] > 0; });
+  SR32 = null; drawSheet(); va35Wait(vid); };
 if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 // ---------------------------------------------------------------- v2.8.46: the agent ticks the orders a payment pays
 var PK46 = null, PK46P = null;
