@@ -11594,7 +11594,7 @@ function rt97Ym(lb) { var L = rt97Mon(); for (var i = 0; i < L.length; i++) if (
 function rt97Lb(p) { var m = /^(\d{4})-(\d\d)/.exec(p || ''); return m ? RT97M[+m[2] - 1] + ' ' + m[1] : String(p || ''); }
 function rt97Hits() { var F = SV.f, q = String(F.rpq || '').trim().toLowerCase(), L = ((SV.d && SV.d.v) || []).filter(function (v) { return v.m && v.rl && (!F.agn || v.ag === F.agn) && v.id !== F.vid && (!q || String(v.n).toLowerCase().indexOf(q) >= 0); });
   L.sort(function (a, b) { return (a.st === 'stop' ? 0 : 1) - (b.st === 'stop' ? 0 : 1) || (a.n < b.n ? -1 : 1); });
-  if (!L.length) return '<p class="sv7fine">' + (q ? 'No vendor of yours with that name has stopped buying.' : 'None of your vendors has stopped buying.') + '</p>';
+  if (!L.length) return '<p class="sv7fine">' + (q ? 'No vendor of yours with that name who has not bought this month.' : 'Every vendor of yours has bought this month.') + '</p>';
   return L.slice(0, 8).map(function (v) { return '<div class="sv7hc"><div class="sv7hn"><b>' + esc(v.n) + '</b><span class="small muted">' + esc(v.t || '') + '</span></div><button class="sv7b g" data-act="rt97p" data-i="' + esc(v.id) + '">She replaces her</button></div>'; }).join(''); }
 function rt97Form() { var F = SV.f, h = svQ('Is she') + svTr('rtype', ['New vendor', 'Existing customer', 'Replacement']);
   if (F.rtype === 'Existing customer') h += svQ('When did she last buy?') + svTr('plast', rt97Mon().map(function (x) { return x[0]; }).concat(['Earlier'])) + svQ('Cartons a month', 'optional') + svIn('pctn', 'e.g. 3', 'numeric') + '<p class="sv7fine">She is not counted as a new vendor. The manager checks it.</p>';
