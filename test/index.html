@@ -10354,6 +10354,9 @@ mvRow = (function (f) { return function (v) { var h = f.apply(this, arguments), 
   var t = x[1] === 2 ? 'Active – the visit of ' + dayLbl(x[4]) + ' says she has stock' : x[1] ? 'Active (purchasing cycle)' : x[2] ? 'Inactive (purchasing cycle)' : 'Inactive (no purchasing trend)';
   if (!x[0]) t += ' · not counted in the customer base yet';
   return h.replace('<div class="sv7rb">', '<div class="sv7rb">' + svMl('Report', esc(t), x[1] ? '' : 't-red')); }; })(mvRow);
+// v2.9.56: agent chips New this month / New this month and bought
+(function () { var i = -1; SVX.forEach(function (f, j) { if (f[0] === 'nb') i = j; }); SVX.splice(i < 0 ? SVX.length : i + 1, 0, ['nw56', 'New this month'], ['nwb56', 'New this month and bought']); })();
+svVok = (function (f) { return function (v, k) { if (k === 'nw56') return !!v.nw56; if (k === 'nwb56') return v.nw56 === 2; return f.apply(this, arguments); }; })(svVok);
 if (RK) rcpBoot(); else if (!pr82Boot() && !n27Gate()) load(goHash); // v2.7.0: the PIN once a day
 // ---------------------------------------------------------------- v2.8.46: the agent ticks the orders a payment pays
 var PK46 = null, PK46P = null;
